@@ -1,0 +1,8 @@
+[out:json][timeout:240];
+area["ISO3166-1"="JP"]["admin_level"="2"]->.jp;
+(
+  node["shop"="books"](area.jp);
+  way["shop"="books"](area.jp);
+  relation["shop"="books"](area.jp);
+);
+out center tags;

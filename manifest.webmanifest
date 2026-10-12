@@ -1,0 +1,15 @@
+{
+  "name": "本屋の地図（試作）",
+  "short_name": "本屋の地図",
+  "description": "本屋との出会いを残す地図。行った店に色がつき、買った本のバーコードでカードが1枚できます。",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f1e8",
+  "theme_color": "#c8381f",
+  "lang": "ja",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

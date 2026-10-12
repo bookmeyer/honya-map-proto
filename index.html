@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>本屋の地図（試作）</title>
+<meta name="description" content="本屋をめぐる位置ゲームの試作。店に近づくとピンが光り、その店だけの印が手に入る。買った本のバーコードでカードが1枚。">
+<meta name="theme-color" content="#c8381f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="本屋の地図">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
+<link href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=0.2.0">
+</head>
+<body>
+<header id="top">
+  <div class="brand">本屋の地図 <span class="tag">試作</span></div>
+  <div class="lv"><span id="lv-label">Lv.1</span><div class="xpbar"><i id="xp-fill"></i></div><span id="xp-text" class="xp-text">0 XP</span></div>
+</header>
+
+<main id="main">
+  <section id="view-map" class="view active">
+    <div id="map"></div>
+    <div id="search-box">
+      <input id="search" type="search" placeholder="店の名前や住所でさがす" autocomplete="off">
+      <div id="search-results" class="hidden"></div>
+    </div>
+    <div class="map-ctl">
+      <button id="btn-locate" class="round" title="現在地を追う" aria-label="現在地を追う">◎</button>
+      <button id="btn-trial" class="round" title="お試し歩き" aria-label="お試し歩き">👣</button>
+      <button id="btn-warp" class="round hidden" title="本屋の近くへワープ" aria-label="本屋の近くへワープ">⤴</button>
+      <button id="btn-add" class="round" title="地図にない本屋を追加" aria-label="地図にない本屋を追加">✎</button>
+    </div>
+    <div id="trial-banner" class="banner hidden">お試し歩き：地図を押した場所に、自分がいることになります</div>
+    <div id="radar-strip"><div id="radar-items"></div></div>
+  </section>
+
+  <section id="view-radar" class="view">
+    <div class="pane">
+      <h2>レーダー</h2>
+      <div id="radar-status" class="box muted">現在地がまだありません。地図の「◎」で追い始めるか、「👣」のお試し歩きで地図を押してください。</div>
+      <p class="muted small">店から <b>120m</b> 以内に入ると射程内。印を手に入れられます。位置はこの端末の中で距離を出すためだけに使い、どこにも送りません。</p>
+      <div id="radar-list" class="list"></div>
+    </div>
+  </section>
+
+  <section id="view-zukan" class="view">
+    <div class="pane">
+      <h2>図鑑</h2>
+      <div id="stats" class="stats"></div>
+      <div id="titles" class="titles"></div>
+      <div class="subtabs">
+        <button data-sub="stamps" class="active">集めた印</button>
+        <button data-sub="cards">カード</button>
+        <button data-sub="log">帳</button>
+        <button data-sub="prefs">都道府県</button>
+      </div>
+      <div id="sub-stamps" class="sub active"><div id="stamp-grid" class="stamp-grid"></div></div>
+      <div id="sub-cards" class="sub"><p class="muted small">「この店で、この本と出会った」の記録。読んだかどうかは問いません。</p><div id="card-grid" class="card-grid"></div></div>
+      <div id="sub-log" class="sub">
+        <h3>○年前の今日</h3><div id="anniv" class="box muted">まだありません。来年のこの日に、今日の記録がここに出ます。</div>
+        <h3>行った店</h3><div id="visit-list" class="list"></div>
+        <h3>バックアップ</h3>
+        <p class="muted small">記録はこの端末の中だけにあります。機種を変えるときは書き出して、新しい端末で読み込んでください。</p>
+        <div class="row wrap"><button id="btn-export">書き出す</button><label class="btn-like">読み込む<input type="file" id="file-import" accept="application/json" hidden></label><button id="btn-clear" class="danger">すべて消す</button></div>
+        <div id="backup-area"></div>
+        <p class="muted small">版 <span id="ver"></span></p>
+      </div>
+      <div id="sub-prefs" class="sub"><p class="muted small">印を手に入れた県が塗られます（住所の情報がない店は近い県に寄せた目安）。</p><div id="prefs" class="prefs"></div></div>
+    </div>
+  </section>
+
+  <section id="view-mission" class="view">
+    <div class="pane">
+      <h2>ミッション</h2>
+      <h3>今週 <span id="week-label" class="muted small"></span></h3>
+      <div id="mission-list" class="mlist"></div>
+      <h3>ご当地ラリー</h3>
+      <p class="muted small">決められた店の印をぜんぶ集めると称号。試作では、店のデータから自動で作った組です。</p>
+      <div id="rally-list" class="mlist"></div>
+    </div>
+  </section>
+</main>
+
+<nav id="tabs">
+  <button data-view="map" class="active">地図</button>
+  <button data-view="radar">レーダー</button>
+  <button data-view="zukan">図鑑</button>
+  <button data-view="mission">ミッション</button>
+</nav>
+
+<div id="sheet" class="sheet hidden" role="dialog">
+  <button class="close" id="sheet-close" aria-label="閉じる">×</button>
+  <div id="sheet-body"></div>
+</div>
+<div id="modal" class="modal hidden" role="dialog" aria-modal="true"><div class="modal-box" id="modal-box"></div></div>
+<div id="capture" class="capture hidden" role="dialog" aria-modal="true"><div class="capture-box" id="capture-box"></div></div>
+<div id="toast" class="toast hidden"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="app.js?v=0.2.0"></script>
+</body>
+</html>
