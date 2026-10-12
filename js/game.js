@@ -1,0 +1,105 @@
+// 遊びの仕組み：経験値・称号・実績・印泥・ミッション・ラリー・ガチャ・カード
+import { XP, TITLES, ACHIEVEMENTS, levelOf, INK } from './config.js';
+import { S, save, inkUse, inkNow, inkNextMs } from './state.js';
+import { BYID, RALLIES, GACHA_ISBNS, FEAT, isFeat, rarityOf } from './data.js';
+import { prefOf, todayISO, weekKey, weekStartISO, monthKey, emit } from './util.js';
+
+export const visitsOf = (id) => S.visits.filter((v) => v.s === id);
+export const cardsOf = (id) => S.cards.filter((c) => c.s === id);
+export const hasStamp = (id) => !!S.stamps[id];
+export function stateOf(id) { const n = visitsOf(id).length + cardsOf(id).length; return n === 0 ? 0 : n >= 3 ? 2 : 1; }
+export function addXP(n) { const before = levelOf(S.xp); S.xp += n; const after = levelOf(S.xp); save(); emit('xp', { n, before, after }); return { before, after }; }
+function bump(kind, n = 1) { const d = todayISO(); S.daily = S.daily || {}; S.daily[d] = S.daily[d] || {}; S.daily[d][kind] = (S.daily[d][kind] || 0) + n; }
+const dailyCount = (kind) => ((S.daily || {})[todayISO()] || {})[kind] || 0;
+
+// ---- 集計 ----
+export function stats() {
+  const ids = Object.keys(S.stamps); const sts = ids.map((id) => BYID.get(id)).filter(Boolean);
+  const prefs = new Set(sts.map(prefOf)); const used = sts.filter((s) => s.u).length; const rare = sts.filter((s) => rarityOf(s) === 3).length;
+  const visited = new Set([...S.visits.map((v) => v.s), ...S.cards.map((c) => c.s)]);
+  const featTotal = Object.values(S.featDone).reduce((a, b) => a + b.length, 0);
+  return { stamps: ids.length, stores: visited.size, cards: S.cards.length, prefs: prefs.size, used, rare, featTotal, gacha: S.gachaCount || 0, met: S.met.length, rally: Object.keys(S.rallyDone).length, share: S.shareCount || 0, streak: streakWeeks() };
+}
+export function streakWeeks() {
+  const weeks = new Set(Object.values(S.stamps).map((v) => weekKey(new Date(v.d)))); if (!weeks.size) return 0;
+  let n = 0; const d = new Date(); const cur = weekKey(d); if (!weeks.has(cur)) d.setDate(d.getDate() - 7); // 今週まだなら先週から数える
+  for (let i = 0; i < 200; i++) { if (!weeks.has(weekKey(d))) break; n++; d.setDate(d.getDate() - 7); }
+  return n;
+}
+export function titles() { const st = stats(); return TITLES.map((t) => ({ ...t, ok: (t.kind === 'stamps' ? st.stamps : t.kind === 'prefs' ? st.prefs : t.kind === 'used' ? st.used : st.rare) >= t.n, need: `${{ stamps: '印', prefs: '県', used: '古書店', rare: '秘境の印' }[t.kind]}${t.n}` })).concat(RALLIES.map((r) => ({ id: 'r_' + r.id, name: r.title, ok: !!S.rallyDone[r.id], need: r.name }))); }
+export function currentTitle() { const t = titles().filter((x) => x.ok); return t.length ? t[t.length - 1].name : ''; }
+export function achievements() { const st = stats(); return ACHIEVEMENTS.map((a) => { const cur = st[a.kind] ?? 0; return { ...a, cur: Math.min(cur, a.n), ok: cur >= a.n }; }); }
+
+// ---- ミッション ----
+export function dailyMissions() {
+  return [
+    { id: 'd1', name: '今日、印を1つ', sub: '店の射程内で印をもらう', cur: dailyCount('stamp'), goal: 1 },
+    { id: 'd2', name: 'ガチャを1回', sub: '券があれば引ける。出た本は読みたい棚へ', cur: dailyCount('gacha'), goal: 1 },
+    { id: 'd3', name: '行きたい店を1つ', sub: '店のページで☆を付ける', cur: dailyCount('want'), goal: 1 },
+  ];
+}
+export function weeklyMissions() {
+  const ws = weekStartISO(); const wk = weekKey();
+  const weekStamps = Object.entries(S.stamps).filter(([, v]) => v.d >= ws).map(([id]) => BYID.get(id)).filter(Boolean);
+  const prefsBefore = new Set(Object.entries(S.stamps).filter(([, v]) => v.d < ws).map(([id]) => BYID.get(id)).filter(Boolean).map(prefOf));
+  const newPrefs = new Set(weekStamps.map(prefOf).filter((p) => !prefsBefore.has(p)));
+  return [
+    { id: 'w1', name: '印を3つ集める', sub: '今週、射程内で押した印の数', cur: weekStamps.length, goal: 3 },
+    { id: 'w2', name: '古書店で印を1つ', sub: '古書店のピンは灰色がかった色', cur: weekStamps.filter((s) => s.u).length, goal: 1 },
+    { id: 'w3', name: '初めての県で印を1つ', sub: 'まだ印のない県の本屋へ', cur: newPrefs.size, goal: 1 },
+    { id: 'w4', name: '本と出会う', sub: '今週、カードを1枚', cur: S.cards.filter((c) => c.d >= ws).length, goal: 1 },
+    { id: 'w5', name: '今週の推し店で印を1つ', sub: '紫の輪の店（県ごとに1店）', cur: (S.featDone[wk] || []).length, goal: 1 },
+  ];
+}
+export function checkRewards() {
+  const rewards = []; const wk = weekKey(); const d = todayISO(); const mk = monthKey();
+  S.claimedW[wk] = S.claimedW[wk] || []; S.claimedD[d] = S.claimedD[d] || [];
+  for (const m of dailyMissions()) if (m.cur >= m.goal && !S.claimedD[d].includes(m.id)) { S.claimedD[d].push(m.id); addXP(XP.daily); rewards.push(`今日のお題「${m.name}」 +${XP.daily} XP`); }
+  for (const m of weeklyMissions()) if (m.cur >= m.goal && !S.claimedW[wk].includes(m.id)) { S.claimedW[wk].push(m.id); addXP(XP.weekly); rewards.push(`今週のお題「${m.name}」 +${XP.weekly} XP`); }
+  const sk = streakWeeks(); S.streakClaimed = S.streakClaimed || {}; if (sk >= 2 && !S.streakClaimed[wk]) { S.streakClaimed[wk] = sk; addXP(XP.streak); rewards.push(`${sk}週つづけて本屋へ +${XP.streak} XP`); }
+  for (const r of RALLIES) { if (!S.rallyDone[r.id] && r.stores.every((id) => hasStamp(id))) { S.rallyDone[r.id] = d; addXP(XP.rally); rewards.push(`ラリー制覇「${r.name}」 称号「${r.title}」 +${XP.rally} XP`); } }
+  // 古い日の記録は間引く
+  if (S.daily) for (const k of Object.keys(S.daily)) if (k < d.slice(0, 7)) delete S.daily[k];
+  if (rewards.length) save(); return rewards;
+}
+export function rallyProgress() { return RALLIES.map((r) => ({ ...r, got: r.stores.filter((id) => hasStamp(id)).length, done: !!S.rallyDone[r.id] })); }
+
+// ---- チェックイン（印） ----
+export function checkin(st, { near, memo, trial }) {
+  const today = todayISO(); const stampedBefore = hasStamp(st.i); const visitedToday = visitsOf(st.i).some((v) => v.d === today);
+  const feat = isFeat(st.i); const wk = weekKey(); const featGot = (S.featDone[wk] || []).includes(st.i);
+  if (near && !stampedBefore && !inkUse()) return { inkEmpty: true, nextMs: inkNextMs() };
+  S.visits.push({ s: st.i, n: st.n, d: today, t: Date.now(), near, memo, trial: trial ? 1 : 0 });
+  let gain = 0, isNew = false, ticket = 0; const r = rarityOf(st); const extras = [];
+  if (near) {
+    if (!stampedBefore) { S.stamps[st.i] = { d: today, r, trial: trial ? 1 : 0 }; isNew = true; gain += XP.shuFirst + (r === 3 ? XP.rare3 : r === 2 ? XP.rare2 : 0); ticket = 1; S.tickets += 1; bump('stamp'); }
+    else gain += visitedToday ? 0 : XP.shuRepeat;
+    if (feat && !featGot) { S.featDone[wk] = S.featDone[wk] || []; S.featDone[wk].push(st.i); gain += XP.feat; extras.push(`👑 今週の推し店 +${XP.feat} XP`); }
+  } else gain += visitsOf(st.i).length <= 1 ? XP.sumiFirst : (visitedToday ? 0 : XP.sumiRepeat);
+  const lv = addXP(gain); save();
+  const rewards = [...extras, ...checkRewards()];
+  emit('records'); return { gain, isNew, ticket, lv, rewards, r, ink: inkNow() };
+}
+export function toggleWant(id) { const i = S.wants.indexOf(id); if (i >= 0) S.wants.splice(i, 1); else { S.wants.push(id); bump('want'); } save(); const rewards = checkRewards(); emit('records'); return { on: i < 0, rewards }; }
+
+// ---- カード（本との出会い） ----
+export function cardBonus(st, book) { const today = todayISO(); const inStore = !!(S.stamps[st.i] && S.stamps[st.i].d === today) || visitsOf(st.i).some((v) => v.d === today && v.near); const wanted = !!(book && book.isbn && S.wantBooks.some((w) => w.isbn === book.isbn)); return { inStore, wanted, total: XP.card + (inStore ? XP.cardInStore : 0) + (wanted ? XP.cardWanted : 0) }; }
+export function makeCard(st, book, why, pub) {
+  const { wanted, total } = cardBonus(st, book); const today = todayISO();
+  S.cards.push({ id: 'c' + Date.now(), s: st.i, sn: st.n, d: today, t: Date.now(), isbn: book ? book.isbn : '', title: book.title, author: book.author || '', publisher: book.publisher || '', cover: book.cover || '', why, pub: pub ? 1 : 0 });
+  if (wanted) { S.wantBooks = S.wantBooks.filter((w) => w.isbn !== book.isbn); S.met.push(book.isbn); }
+  bump('card'); const lv = addXP(total); save(); const rewards = checkRewards(); emit('records'); return { total, lv, rewards };
+}
+export function deleteCard(id) { S.cards = S.cards.filter((x) => x.id !== id); save(); emit('records'); }
+
+// ---- ガチャ ----
+export function gachaPull() {
+  if (S.tickets <= 0 || !GACHA_ISBNS.length) return null;
+  S.tickets -= 1; S.gachaCount = (S.gachaCount || 0) + 1; bump('gacha');
+  const pool = GACHA_ISBNS.filter((i) => !S.wantBooks.some((w) => w.isbn === i) && !S.met.includes(i)); const src = pool.length ? pool : GACHA_ISBNS;
+  const isbn = src[Math.floor(Math.random() * src.length)]; save(); return isbn;
+}
+export function keepWantBook(book) { if (!S.wantBooks.some((w) => w.isbn === book.isbn)) S.wantBooks.push({ isbn: book.isbn, title: book.title, author: book.author, publisher: book.publisher, cover: book.cover, at: todayISO() }); save(); emit('records'); }
+export function dropWantBook(isbn) { S.wantBooks = S.wantBooks.filter((w) => w.isbn !== isbn); save(); emit('records'); }
+export const inkState = () => ({ n: inkNow(), max: INK.max, nextMs: inkNextMs() });
+export function noteShare() { S.shareCount = (S.shareCount || 0) + 1; save(); checkRewards(); }

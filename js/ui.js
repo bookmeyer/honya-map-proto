@@ -1,0 +1,234 @@
+// 画面の部品：見出し帯・タブ・店のシート・モーダル・印の演出・カード・ガチャ・さがす・追加
+import { RANGE_M, SENSE_M, XP, levelOf, xpForLevel, INK } from './config.js';
+import { S, save, inkRefill } from './state.js';
+import { STORES, BYID, FEAT, isFeat, rarityOf, rarityText, stampSVG, search, addCustom, hideStore, lookupIsbn, GACHA_ISBNS } from './data.js';
+import * as G from './game.js';
+import * as MAP from './map.js';
+import { POS, setPos, startWatch, setTrial, setFollow, hasPos, jumped } from './position.js';
+import { sfx, haptic, unlock } from './audio.js';
+import { stampImage, cardImage, shareBlob } from './share.js';
+import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, on, emit, weekKey } from './util.js';
+
+export let currentView = 'map';
+export let currentSub = 'stamps';
+export const NEAR = { list: [], inRange: new Set() };
+let scanStopper = null, lastBuzz = 0, lastGlowTick = 0;
+
+// ---------- 小物 ----------
+export function toast(msg, kind = '') { const box = $('#toasts'); const t = document.createElement('div'); t.className = 'toast ' + kind; t.textContent = msg; box.appendChild(t); while (box.children.length > 3) box.firstChild.remove(); setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity .3s'; setTimeout(() => t.remove(), 300); }, 2600); }
+export function openModal(html) { $('#modal-box').innerHTML = html; $('#modal').hidden = false; $('#modal-box').scrollTop = 0; }
+export function closeModal() { if (scanStopper) { try { scanStopper(); } catch (e) {} scanStopper = null; } $('#modal').hidden = true; $('#modal-box').innerHTML = ''; }
+export function confirmBox(container, msg, onYes, yesLabel = '消す') { container.innerHTML = `<div class="status-card sumi">${esc(msg)}</div><div class="actions"><button class="btn danger" id="cf-yes">${esc(yesLabel)}</button><button class="btn ghost" id="cf-no">やめる</button></div>`; $('#cf-no', container).onclick = () => { container.innerHTML = ''; }; $('#cf-yes', container).onclick = () => { container.innerHTML = ''; onYes(); }; }
+export function switchView(v) {
+  currentView = v; if (v !== 'map') closeSheet();
+  $$('.view').forEach((el) => el.classList.toggle('active', el.id === 'view-' + v));
+  $$('#tabs button').forEach((b) => b.classList.toggle('active', b.dataset.view === v));
+  if (v === 'map') MAP.resize();
+  emit('view', v);
+}
+export function setSub(s) { currentSub = s; emit('view', currentView); }
+export function refreshHud() {
+  const lv = levelOf(S.xp), cur = xpForLevel(lv), next = xpForLevel(lv + 1);
+  $('#lv-label').textContent = `Lv.${lv}`; $('#xp-fill').style.width = `${Math.round(((S.xp - cur) / (next - cur)) * 100)}%`;
+  $('#brand-title').textContent = G.currentTitle() || '本屋あるき見習い';
+  const ink = G.inkState(); $('#ink-dots').innerHTML = Array.from({ length: ink.max }, (_, i) => `<i class="${i < ink.n ? '' : 'off'}"></i>`).join('');
+  const dm = G.dailyMissions().some((m) => m.cur < m.goal), wm = G.weeklyMissions().some((m) => m.cur < m.goal); $('#tab-dot').hidden = !(dm || wm) || !S.tickets;
+}
+
+// ---------- 現在地まわりの表示（レーダーの帯・最初のクエスト・縁の光） ----------
+function setGlow(d) {
+  const g = $('#glow'); if (d == null || d > SENSE_M || d <= RANGE_M) { g.className = 'glow'; g.style.opacity = '0'; return; }
+  const t = (d - RANGE_M) / (SENSE_M - RANGE_M);
+  g.className = 'glow beat'; g.style.setProperty('--beat', `${(0.35 + t * 1.3).toFixed(2)}s`); g.style.opacity = (0.25 + (1 - t) * 0.75).toFixed(2);
+  const gap = 350 + t * 1500; if (Date.now() - lastBuzz > gap) { lastBuzz = Date.now(); haptic(18); if (Date.now() - lastGlowTick > gap) { lastGlowTick = Date.now(); sfx.tick(1 - t); } }
+}
+export function updateNear() {
+  const strip = $('#radar-items'), quest = $('#first-quest');
+  if (!hasPos()) { NEAR.list = []; NEAR.inRange = new Set(); strip.innerHTML = ''; quest.hidden = true; setGlow(null); applyMapStates(); emit('near'); return; }
+  const cand = []; for (const s of STORES) { if (Math.abs(s.la - POS.lat) > 0.03 || Math.abs(s.lo - POS.lon) > 0.036) continue; cand.push({ s, d: dist(POS.lat, POS.lon, s.la, s.lo) }); }
+  cand.sort((a, b) => a.d - b.d); NEAR.list = cand.slice(0, 30);
+  const now = new Set(NEAR.list.filter((x) => x.d <= RANGE_M).map((x) => x.s.i));
+  const entered = [...now].filter((id) => !NEAR.inRange.has(id)); NEAR.inRange = now;
+  if (entered.length) { haptic([60, 40, 60, 40, 120]); sfx.enter(); const g = $('#glow'); g.className = 'glow gold'; g.style.opacity = '1'; setTimeout(() => { if (g.className === 'glow gold') { g.className = 'glow'; g.style.opacity = '0'; } }, 900); const first = BYID.get(entered[0]); toast(`📍 ${first.n}${entered.length > 1 ? ` ほか${entered.length - 1}店` : ''} が射程に入りました`, 'ok'); }
+  else { const nd = NEAR.list.find((x) => !G.hasStamp(x.s.i)); setGlow(nd ? nd.d : null); }
+  const target = NEAR.list.find((x) => !G.hasStamp(x.s.i));
+  if (target && !now.size) { quest.hidden = false; quest.innerHTML = `${icon('pin')}<span>いちばん近い本屋 <b>${esc(target.s.n)}</b> まで あと${fmtDist(Math.max(0, target.d - RANGE_M))} ${arrowOf(bearing(POS.lat, POS.lon, target.s.la, target.s.lo))}</span>`; quest.onclick = () => openSheet(target.s.i); } else quest.hidden = true;
+  strip.innerHTML = NEAR.list.slice(0, 8).map(({ s, d }) => `<div class="rchip ${d <= RANGE_M ? 'in' : ''}" data-id="${esc(s.i)}"><div class="n">${G.hasStamp(s.i) ? '🔴 ' : ''}${isFeat(s.i) ? '👑 ' : ''}${esc(s.n)}</div><div class="d"><span>${d <= RANGE_M ? '射程内！' : `あと${fmtDist(d - RANGE_M)} ${arrowOf(bearing(POS.lat, POS.lon, s.la, s.lo))}`}</span><span class="stars">${'★'.repeat(rarityOf(s))}</span></div></div>`).join('');
+  $$('#radar-items .rchip').forEach((el) => el.addEventListener('click', () => openSheet(el.dataset.id)));
+  applyMapStates(); emit('near');
+  const sheet = $('#sheet'); if (!sheet.hidden && sheet.dataset.id) openSheet(sheet.dataset.id, true);
+}
+export function applyMapStates() {
+  const states = new Map();
+  for (const s of STORES) states.set(s.i, { stamp: G.hasStamp(s.i) ? 1 : 0, near: NEAR.inRange.has(s.i) ? 1 : 0, feat: isFeat(s.i) ? 1 : 0, want: S.wants.includes(s.i) ? 1 : 0, st: G.stateOf(s.i) });
+  MAP.setStates(states);
+  MAP.setTerritory(Object.keys(S.stamps).map((id) => BYID.get(id)).filter(Boolean));
+}
+
+// ---------- 現在地・お試し ----------
+export function locate() {
+  unlock();
+  if (POS.fake) { setTrialUI(false); }
+  const ok = startWatch({ onFirst: (p) => { MAP.flyTo(p.lon, p.lat, 15); toast(`現在地（誤差 約${Math.round(p.acc)}m）`); }, onError: (err) => { $('#btn-locate').classList.remove('on'); toast(err && err.code === 1 ? '位置の許可がありません。ブラウザの設定で許可できます。「お試し歩き」でも試せます' : '位置が取れませんでした。「お試し歩き」でも試せます', 'warn'); } });
+  if (!ok) { toast('この端末では位置が使えません。「お試し歩き」で試せます', 'warn'); return; }
+  $('#btn-locate').classList.add('on'); if (hasPos()) MAP.flyTo(POS.lon, POS.lat, 15); else toast('現在地を確かめています…');
+}
+export function setTrialUI(onFlag) {
+  setTrial(onFlag);
+  $('#btn-trial').classList.toggle('on', onFlag); $('#btn-trial').classList.toggle('trial', onFlag); $('#trial-banner').hidden = !onFlag; $('#btn-warp').hidden = !onFlag; $('#btn-locate').classList.remove('on');
+  if (onFlag) toast('お試し歩き：地図を押すと、そこにいることになります'); else { MAP.setMe(POS); updateNear(); }
+}
+export function warp(target) {
+  let st = target; if (!st) { const pool = STORES.filter((s) => !s.demo && !G.hasStamp(s.i)); st = pool[Math.floor(Math.random() * pool.length)]; }
+  const lat = st.la + 0.0004, lon = st.lo + 0.0005; MAP.jumpTo(lon, lat, 16); setPos(lat, lon, 10, true); toast(`${st.n} の近くへワープしました`);
+}
+
+// ---------- 店のシート ----------
+export function openSheet(id, quiet) {
+  const st = BYID.get(id); if (!st) return;
+  const vs = G.visitsOf(id), cs = G.cardsOf(id), want = S.wants.includes(id), stamp = S.stamps[id], r = rarityOf(st), feat = isFeat(st.i);
+  const d = hasPos() ? dist(POS.lat, POS.lon, st.la, st.lo) : null; const near = d != null && d <= RANGE_M && !jumped();
+  const b = [];
+  if (st.demo) b.push('<span class="badge">見本（実在しません）</span>'); if (st.custom) b.push('<span class="badge">自分で追加</span>');
+  if (feat) b.push(`<span class="badge feat">${icon('crown')}今週の推し店</span>`); if (st.u) b.push('<span class="badge">古書店</span>');
+  b.push(stamp ? `<span class="badge shu">印あり ${fmtDate(stamp.d)}</span>${stamp.trial ? '<span class="badge trial">体験</span>' : ''}` : vs.length ? `<span class="badge sumi">墨印 ${vs.length}回</span>` : '<span class="badge">まだ</span>');
+  if (cs.length) b.push(`<span class="badge">カード${cs.length}枚</span>`); if (want) b.push(`<span class="badge gold">${icon('star')}行きたい</span>`); if (near) b.push('<span class="badge gold">射程内</span>');
+  const rec = st.rec ? `<div class="staff"><div class="who">${esc(st.rec.who)}の手放せない1冊</div><div class="title">${esc(st.rec.title)}</div><div>${esc(st.rec.say)}</div><div class="muted small">棚：${esc(st.rec.shelf)}</div></div>` : '';
+  const hist = vs.length ? `<div class="muted small" style="margin-top:8px">${vs.slice(-3).reverse().map((v) => `${fmtDate(v.d)}${v.near ? '（朱印）' : '（墨印）'}${v.memo ? '「' + esc(v.memo) + '」' : ''}`).join('<br>')}</div>` : '';
+  const distText = d == null ? '現在地なし' : jumped() ? '位置が大きく飛んだので、少し待ってから（1分）' : near ? `射程内（約${fmtDist(d)}）` : `ここから約${fmtDist(d)}（あと${fmtDist(d - RANGE_M)}で射程内）`;
+  $('#sheet-body').innerHTML = `
+    <div class="sheet-head"><div class="stamp-sm">${stampSVG(st, !!stamp, 72)}</div><div style="min-width:0"><h2>${esc(st.n)}</h2><div class="stars">${stars(r)} <span class="muted small">${esc(rarityText(st))}</span></div></div></div>
+    <div style="margin-top:8px">${b.join('')}</div>
+    <div class="muted small">${esc(st.a || (st.custom ? '' : '住所の情報なし（地図データより）'))}　${esc(prefOf(st))}</div>
+    <div class="muted small">${esc(distText)}</div>${rec}${hist}
+    <div class="actions">
+      <button class="btn primary wide" data-act="checkin">${near ? (stamp ? '朱印をもう一度' : `${icon('ink')}印をもらう${feat ? `（+${XP.feat}）` : ''}`) : 'ここに来た（墨印）'}</button>
+      <button class="btn" data-act="card">${icon('barcode')}本と出会った</button>
+      <button class="btn" data-act="want">${icon('star')}${want ? '行きたいを外す' : '行きたい'}</button>
+      ${stamp ? `<button class="btn" data-act="share">${icon('share')}印をシェア</button>` : ''}
+      ${POS.fake && !near ? `<button class="btn" data-act="warp">${icon('warp')}この店へワープ</button>` : ''}
+      ${st.demo || st.custom ? '' : '<button class="btn ghost wide" data-act="report">この店は本屋ではない／閉店している</button>'}
+    </div><div id="sheet-extra"></div>`;
+  $$('#sheet-body [data-act]').forEach((btn) => btn.addEventListener('click', () => { sfx.click(); const a = btn.dataset.act;
+    if (a === 'checkin') startCheckin(st, near); else if (a === 'card') startCard(st); else if (a === 'share') shareStampUI(st); else if (a === 'warp') warp(st);
+    else if (a === 'report') confirmBox($('#sheet-extra'), 'この店を地図から外しますか？（この端末だけ。設定から戻せます）', () => { hideStore(st); save(); MAP.setStores(STORES); applyMapStates(); updateNear(); closeSheet(); toast(`${st.n} を外しました`); }, '外す');
+    else { const r2 = G.toggleWant(id); applyMapStates(); refreshHud(); openSheet(id, true); r2.rewards.forEach((x) => toast(x, 'ok')); } }));
+  const sheet = $('#sheet'); sheet.dataset.id = id; sheet.hidden = false;
+  if (!quiet) { if (currentView !== 'map') switchView('map'); MAP.flyTo(st.lo, st.la, 14); }
+}
+export function closeSheet() { const s = $('#sheet'); s.hidden = true; s.dataset.id = ''; }
+
+// ---------- チェックイン → 印 ----------
+export function startCheckin(st, near) {
+  const stamped = G.hasStamp(st.i); const feat = isFeat(st.i); const featGot = (S.featDone[weekKey()] || []).includes(st.i); const ink = G.inkState();
+  if (near && !stamped && ink.n <= 0) { const m = Math.ceil(ink.nextMs / 60000); openModal(`<h2>印泥が切れています</h2><div class="status-card sumi">印を押すには印泥が要ります。あと${m}分で1つ回復します（最大${INK.max}、${INK.rechargeMs / 60000}分に1つ）。</div><div class="actions"><button class="btn ghost wide" id="ik-close">閉じる</button></div>`); $('#ik-close').onclick = closeModal; sfx.nope(); return; }
+  const note = near ? (stamped ? 'この店の印はもう持っています。もう一度押すと少し経験値が入ります。' : `射程内です。この店だけの印（${stars(rarityOf(st))}）を手に入れられます。印泥を1つ使います（残り${ink.n}）。${feat && !featGot ? ` 今週の推し店なので +${XP.feat} XP。` : ''}`) : '店から離れています（位置がないか、射程の外）。墨印＝自己申告として記録します。印は手に入りません。';
+  openModal(`<h2>${esc(st.n)}</h2><div class="status-card ${near ? 'shu' : 'sumi'}">${esc(note)}</div>
+    <div class="field"><label for="ci-memo">一言メモ（任意・100字まで）</label><textarea id="ci-memo" maxlength="100" placeholder="例：文庫の棚が広い。店員さんの手書きPOPがよかった"></textarea></div>
+    <div class="note">位置はこの画面の中で距離を出すためだけに使い、どこにも送りません。記録はこの端末の中だけに残ります。</div>
+    <div class="actions"><button class="btn primary" id="ci-save">${near ? '印を押す' : '墨印で記録する'}</button><button class="btn ghost" id="ci-cancel">やめる</button></div>`);
+  $('#ci-cancel').onclick = closeModal;
+  $('#ci-save').onclick = () => { const res = G.checkin(st, { near, memo: $('#ci-memo').value.trim(), trial: POS.fake }); if (res.inkEmpty) { closeModal(); startCheckin(st, near); return; } closeModal(); closeSheet(); applyMapStates(); refreshHud(); showCapture(st, res, near); };
+}
+export function showCapture(st, res, near) {
+  const { gain, isNew, ticket, lv, rewards, r } = res;
+  if (near) { sfx.stamp(); haptic([30, 30, 90]); if (isNew && r === 3) setTimeout(() => sfx.rare(), 250); } if (lv.after > lv.before) setTimeout(() => sfx.levelup(), 500);
+  $('#capture-box').innerHTML = `<div class="big">${stampSVG(st, near, 250)}</div>
+    <h2>${near ? (isNew ? `${esc(st.n)}の印を手に入れた！` : `${esc(st.n)}に、また来た`) : `${esc(st.n)}に来た（墨印）`}</h2>
+    <div class="stars">${near ? stars(r) + ' ' + esc(rarityText(st)) : ''}</div>
+    <div class="gain">+${gain} XP${ticket ? `　🎟 ガチャ券 +${ticket}` : ''}</div>
+    ${lv.after > lv.before ? `<div class="lvup">レベルアップ！ Lv.${lv.after}</div>` : ''}${rewards.map((x) => `<div class="lvup">${esc(x)}</div>`).join('')}
+    <div class="actions" style="margin-top:18px"><button class="btn primary wide" id="cp-card">${icon('barcode')}この店で本と出会った → カード（+${XP.card}〜）</button>${near ? `<button class="btn" id="cp-share">${icon('share')}印をシェア</button>` : ''}${ticket ? `<button class="btn gold" id="cp-gacha">${icon('ticket')}ガチャを引く</button>` : ''}<button class="btn ghost wide" id="cp-close">閉じる</button></div>`;
+  $('#capture').hidden = false;
+  $('#cp-close').onclick = () => { $('#capture').hidden = true; openSheet(st.i, true); };
+  $('#cp-card').onclick = () => { $('#capture').hidden = true; startCard(st); };
+  if ($('#cp-share')) $('#cp-share').onclick = () => shareStampUI(st);
+  if ($('#cp-gacha')) $('#cp-gacha').onclick = () => { $('#capture').hidden = true; startGacha(); };
+}
+export async function shareStampUI(st) { try { const blob = await stampImage(st); const r = await shareBlob(blob, `honya-${st.i}.png`, `${st.n}の印`, `${st.n}の印を手に入れた #本屋の地図`); if (r !== 'cancel') { G.noteShare(); toast(r === 'saved' ? '画像を保存しました' : 'シェアしました', 'ok'); } } catch (e) { toast('画像にできませんでした', 'warn'); } }
+
+// ---------- ガチャ ----------
+export function startGacha() {
+  if (!S.tickets) { toast('ガチャ券がありません。印を1つ手に入れると1枚もらえます', 'warn'); return; }
+  if (!GACHA_ISBNS.length) { toast('ガチャの本のデータがありません', 'warn'); return; }
+  const isbn = G.gachaPull(); refreshHud(); sfx.gacha(); haptic([20, 40, 20, 40, 20]);
+  openModal(`<h2>本のガチャ</h2><p class="hint">🎟 残り ${S.tickets}枚。出た本は「読みたい棚」に入り、本屋でその本と出会う（買ってバーコードを読む）と +${XP.cardWanted} XP。</p><div class="capsule"></div><div id="gc-out" class="muted small" style="text-align:center">カプセルを開けています…</div>`);
+  const t0 = Date.now();
+  lookupIsbn(isbn).then((b) => { setTimeout(() => { if (!$('#gc-out')) return; const book = b || { isbn, title: `ISBN ${isbn}`, author: '', publisher: '', cover: '' }; sfx.reveal(); haptic([30, 30, 80]);
+    $('#modal-box').innerHTML = `<h2>出た！</h2><div class="book-hit"><div class="cover">${book.cover ? `<img src="${esc(book.cover)}" alt="" referrerpolicy="no-referrer">` : '<div class="notitle">表紙なし</div>'}</div><div style="flex:1;min-width:0"><div><b>${esc(book.title)}</b></div><div class="muted small">${esc(book.author)}${book.publisher ? '／' + esc(book.publisher) : ''}</div></div></div>
+      <div class="actions"><button class="btn primary" id="gc-keep">読みたい棚に入れる</button>${S.tickets ? `<button class="btn" id="gc-again">もう1回（🎟 ${S.tickets}）</button>` : ''}<button class="btn ghost wide" id="gc-close">閉じる</button></div>`;
+    $('#gc-keep').onclick = () => { G.keepWantBook(book); closeModal(); toast('読みたい棚に入れました', 'ok'); setSub('want'); switchView('zukan'); G.checkRewards().forEach((x) => toast(x, 'ok')); refreshHud(); };
+    $('#gc-close').onclick = () => { G.keepWantBook(book); closeModal(); refreshHud(); }; if ($('#gc-again')) $('#gc-again').onclick = () => { G.keepWantBook(book); startGacha(); }; }, Math.max(0, 2200 - (Date.now() - t0))); });
+}
+
+// ---------- カード ----------
+export function startCard(st) {
+  openModal(`<h2>この店で本と出会った</h2><p class="hint">${esc(st.n)}</p>
+    <div class="note">カードは +${XP.card} XP。今日この店で印を押していれば「店で出会った」+${XP.cardInStore}、読みたい棚の本なら +${XP.cardWanted}。</div>
+    <div class="actions"><button class="btn primary wide" id="cd-scan">${icon('camera')}本の裏のバーコードを読む</button><button class="btn" id="cd-manual">ISBNを入力</button><button class="btn" id="cd-free">名前を自分で書く</button><button class="btn ghost wide" id="cd-cancel">やめる</button></div><div id="cd-area"></div>`);
+  $('#cd-cancel').onclick = closeModal; $('#cd-manual').onclick = () => manualIsbn(st); $('#cd-free').onclick = () => cardForm(st, null); $('#cd-scan').onclick = () => scanIsbn(st);
+}
+function manualIsbn(st) {
+  $('#cd-area').innerHTML = `<div class="field"><label for="cd-isbn">ISBN（978か979で始まる13桁。ハイフンは省いてよい）</label><input type="text" id="cd-isbn" inputmode="numeric" placeholder="9784..."></div><div class="actions"><button class="btn primary wide" id="cd-look">本をさがす</button></div><div id="cd-msg" class="muted small"></div>`;
+  $('#cd-isbn').focus();
+  const go = async () => { const isbn = $('#cd-isbn').value.replace(/[^0-9Xx]/g, ''); if (!/^97[89]\d{10}$/.test(isbn)) { $('#cd-msg').textContent = '13桁のISBNを入れてください'; return; } $('#cd-msg').textContent = 'openBDに問い合わせています…'; const b = await lookupIsbn(isbn); if (!b) { $('#cd-msg').textContent = 'この本の情報が見つかりませんでした。「名前を自分で書く」で続けられます。'; return; } cardForm(st, b); };
+  $('#cd-look').onclick = go; $('#cd-isbn').addEventListener('keydown', (e) => { if (e.key === 'Enter') go(); });
+}
+async function scanIsbn(st) {
+  const area = $('#cd-area'); area.innerHTML = `<video id="scanner" playsinline muted autoplay></video><div id="cd-msg" class="muted small">バーコード（978か979で始まる方）をカメラに向けてください</div><div class="actions"><button class="btn ghost wide" id="cd-stop">カメラを止める</button></div>`;
+  const video = $('#scanner'); const msg = $('#cd-msg'); let stopped = false, stream = null, reader = null;
+  const stop = () => { stopped = true; try { if (reader && reader.reset) reader.reset(); } catch (e) {} if (stream) stream.getTracks().forEach((t) => t.stop()); };
+  scanStopper = stop; $('#cd-stop').onclick = () => { stop(); area.innerHTML = ''; };
+  const onCode = async (code) => { code = String(code).replace(/[^0-9]/g, ''); if (!/^97[89]\d{10}$/.test(code)) return false; stop(); haptic(40); msg.textContent = `読み取り：${code}。openBDに問い合わせています…`; const b = await lookupIsbn(code); cardForm(st, b || { isbn: code, title: '', author: '', publisher: '', cover: '' }); return true; };
+  try { stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } }, audio: false }); video.srcObject = stream; await video.play(); }
+  catch (e) { msg.textContent = 'カメラが使えませんでした（https でないか、許可されていません）。ISBNの入力で続けられます。'; return; }
+  if ('BarcodeDetector' in window) { try { const det = new window.BarcodeDetector({ formats: ['ean_13'] }); const loop = async () => { if (stopped) return; try { const codes = await det.detect(video); for (const c of codes) { if (await onCode(c.rawValue)) return; } } catch (e) {} requestAnimationFrame(loop); }; loop(); return; } catch (e) {} }
+  try { if (!window.ZXing) await new Promise((res, rej) => { const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js'; s.onload = res; s.onerror = rej; document.head.appendChild(s); });
+    const hints = new Map(); hints.set(window.ZXing.DecodeHintType.POSSIBLE_FORMATS, [window.ZXing.BarcodeFormat.EAN_13]); reader = new window.ZXing.BrowserMultiFormatReader(hints, 300); reader.decodeFromStream(stream, video, (result) => { if (result && !stopped) onCode(result.getText()); });
+  } catch (e) { msg.textContent = '読み取りの部品を読み込めませんでした。ISBNの入力で続けられます。'; }
+}
+function cardForm(st, b) {
+  if (scanStopper) { try { scanStopper(); } catch (e) {} scanStopper = null; }
+  const has = !!b && !!b.title; const { inStore, wanted, total } = G.cardBonus(st, b);
+  openModal(`<h2>カードを作る</h2>
+    <div class="card-full"><div class="cover">${b && b.cover ? `<img src="${esc(b.cover)}" alt="" referrerpolicy="no-referrer">` : '<div class="notitle">表紙なし</div>'}</div>
+      <div style="flex:1;min-width:0">${has ? `<div><b>${esc(b.title)}</b></div><div class="muted small">${esc(b.author)}${b.publisher ? '／' + esc(b.publisher) : ''}</div>` : `<div class="field"><label for="cd-title">本の名前</label><input type="text" id="cd-title" placeholder="書名（わかれば著者も）"></div>`}
+      <div class="muted small" style="margin-top:6px">${esc(st.n)}　${fmtDate(todayISO())}</div><div class="muted small">${inStore ? '🏪 店で出会った +' + XP.cardInStore : ''} ${wanted ? '📚 読みたい棚の本 +' + XP.cardWanted : ''}</div></div></div>
+    <div class="field"><label for="cd-why">なぜ手に取ったか（任意・100字まで）</label><textarea id="cd-why" maxlength="100" placeholder="例：表紙の青に目がとまった。店員さんの手書きPOPに「泣いた」とあった"></textarea></div>
+    <label class="chk"><input type="checkbox" id="cd-pub"> このカードを公開する（本番では「みんなの出会い」に流れます。試作では印が付くだけ）</label>
+    <div class="note">表紙はopenBDから毎回表示するだけで、保存しません。記録はこの端末の中だけに残ります。</div>
+    <div class="actions"><button class="btn primary" id="cd-save">カードにする（+${total} XP）</button><button class="btn ghost" id="cd-cancel2">やめる</button></div>`);
+  $('#cd-cancel2').onclick = closeModal;
+  $('#cd-save').onclick = () => { const title = has ? b.title : ($('#cd-title') ? $('#cd-title').value.trim() : ''); if (!title) { toast('本の名前を入れてください', 'warn'); return; }
+    const book = Object.assign({ isbn: '', author: '', publisher: '', cover: '' }, b || {}, { title }); const res = G.makeCard(st, book, $('#cd-why').value.trim(), $('#cd-pub').checked);
+    closeModal(); applyMapStates(); refreshHud(); sfx.reveal(); haptic([30, 40, 30]); toast(`カードができました +${res.total} XP${res.lv.after > res.lv.before ? `　レベルアップ！ Lv.${res.lv.after}` : ''}`, 'ok'); res.rewards.forEach((x) => toast(x, 'ok')); setSub('cards'); switchView('zukan'); };
+}
+export function openCard(id) {
+  const c = S.cards.find((x) => x.id === id); if (!c) return;
+  openModal(`<h2>カード</h2><div class="card-full"><div class="cover">${c.cover ? `<img src="${esc(c.cover)}" alt="" referrerpolicy="no-referrer">` : '<div class="notitle">表紙なし</div>'}</div>
+      <div style="flex:1;min-width:0"><div><b>${esc(c.title)}</b></div><div class="muted small">${esc(c.author)}${c.publisher ? '／' + esc(c.publisher) : ''}</div><div style="margin-top:8px">${esc(c.sn)}</div><div class="muted small">${fmtDate(c.d)}${c.pub ? '・公開' : '・自分だけ'}</div>${c.why ? `<div class="why">${esc(c.why)}</div>` : ''}</div></div>
+    <div class="actions"><button class="btn primary" id="cv-img">${icon('share')}画像にする</button><button class="btn" id="cv-store">店を地図で見る</button><button class="btn danger" id="cv-del">${icon('trash')}消す</button><button class="btn ghost" id="cv-close">閉じる</button></div><div id="cv-out"></div>`);
+  $('#cv-close').onclick = closeModal; $('#cv-store').onclick = () => { closeModal(); openSheet(c.s); };
+  $('#cv-del').onclick = () => confirmBox($('#cv-out'), 'このカードを消しますか？ 戻せません。', () => { G.deleteCard(id); closeModal(); toast('消しました'); });
+  $('#cv-img').onclick = async () => { try { const blob = await cardImage(c); const r = await shareBlob(blob, `card-${c.d}.png`, c.title, `${c.sn}で『${c.title}』と出会った #本屋の地図`); if (r !== 'cancel') toast(r === 'saved' ? '画像を保存しました' : 'シェアしました', 'ok'); } catch (e) { $('#cv-out').innerHTML = '<p class="muted small">画像にできませんでした（表紙の画像が外部のため、ブラウザが書き出しを止めることがあります）。</p>'; } };
+}
+
+// ---------- さがす・追加 ----------
+export function setupSearch() {
+  const inp = $('#search'), res = $('#search-results');
+  inp.addEventListener('input', () => { if (!inp.value.trim()) { res.hidden = true; res.innerHTML = ''; return; } const hits = search(inp.value);
+    res.innerHTML = hits.map((s) => `<div class="item" data-id="${esc(s.i)}">${isFeat(s.i) ? '👑 ' : ''}${esc(s.n)} <span class="stars">${'★'.repeat(rarityOf(s))}</span><div class="muted small">${esc(s.a || prefOf(s))}</div></div>`).join('') || '<div class="item muted">見つかりません。＋ で地図に追加できます</div>'; res.hidden = false;
+    $$('#search-results .item[data-id]').forEach((el) => el.addEventListener('click', () => { res.hidden = true; inp.value = ''; const st = BYID.get(el.dataset.id); openSheet(st.i); MAP.flyTo(st.lo, st.la, 15); })); });
+  inp.addEventListener('blur', () => setTimeout(() => { res.hidden = true; }, 200));
+}
+export function startAdd() {
+  const c = MAP.center();
+  openModal(`<h2>地図にない本屋を追加</h2><p class="hint">追加した店はこの端末の記録にだけ使えます（本番では確認のあと地図に載ります。店名は文字だけ）。</p>
+    <div class="field"><label for="ad-name">店の名前</label><input type="text" id="ad-name" placeholder="例：○○書店 △△店"></div><label class="chk"><input type="checkbox" id="ad-used"> 古書店</label>
+    <div class="field"><label>場所</label><label class="chk"><input type="radio" name="ad-pos" value="center" checked> いま地図の真ん中（${c.lat.toFixed(4)}, ${c.lng.toFixed(4)}）</label><label class="chk"><input type="radio" name="ad-pos" value="here" ${hasPos() ? '' : 'disabled'}> いまいる場所</label></div>
+    <div class="actions"><button class="btn primary" id="ad-save">追加する</button><button class="btn ghost" id="ad-cancel">やめる</button></div>`);
+  $('#ad-cancel').onclick = closeModal; $('#ad-name').focus();
+  $('#ad-save').onclick = () => { const n = $('#ad-name').value.trim(); if (!n) { toast('店の名前を入れてください', 'warn'); return; } let la = c.lat, lo = c.lng; if ($('input[name=ad-pos]:checked').value === 'here' && hasPos()) { la = POS.lat; lo = POS.lon; }
+    const st = { i: 'u' + Date.now(), n, la: +la.toFixed(5), lo: +lo.toFixed(5), u: $('#ad-used').checked ? 1 : undefined }; addCustom(st); save(); MAP.setStores(STORES); applyMapStates(); updateNear(); closeModal(); toast('追加しました', 'ok'); openSheet(st.i); };
+}
+export function devRefillInk() { inkRefill(); refreshHud(); toast('印泥を満タンにしました（試作用）'); }
