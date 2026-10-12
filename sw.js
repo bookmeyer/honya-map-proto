@@ -1,5 +1,5 @@
 // 本屋の地図（試作）サービスワーカー：画面の部品だけを覚えておく。地図のタイルや本の情報は毎回ネットから取る。
-const VER = 'honya-map-0.2.0';
+const VER = 'honya-map-0.3.0';
 const SHELL = ['./', './index.html', './style.css', './app.js', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', (e) => {

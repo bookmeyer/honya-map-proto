@@ -13,17 +13,18 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" href="icon-192.png">
 <link href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=0.2.0">
+<link rel="stylesheet" href="style.css?v=0.3.0">
 </head>
 <body>
 <header id="top">
   <div class="brand">本屋の地図 <span class="tag">試作</span></div>
-  <div class="lv"><span id="lv-label">Lv.1</span><div class="xpbar"><i id="xp-fill"></i></div><span id="xp-text" class="xp-text">0 XP</span></div>
+  <div class="lv"><span id="lv-label">Lv.1</span><span id="lv-title" class="lv-title"></span><div class="xpbar"><i id="xp-fill"></i></div><span id="xp-text" class="xp-text">0 XP</span></div>
 </header>
 
 <main id="main">
   <section id="view-map" class="view active">
     <div id="map"></div>
+    <div id="glow" class="glow" aria-hidden="true"></div>
     <div id="search-box">
       <input id="search" type="search" placeholder="店の名前や住所でさがす" autocomplete="off">
       <div id="search-results" class="hidden"></div>
@@ -35,14 +36,14 @@
       <button id="btn-add" class="round" title="地図にない本屋を追加" aria-label="地図にない本屋を追加">✎</button>
     </div>
     <div id="trial-banner" class="banner hidden">お試し歩き：地図を押した場所に、自分がいることになります</div>
-    <div id="radar-strip"><div id="radar-items"></div></div>
+    <div id="radar-strip"><div id="first-quest" class="quest hidden"></div><div id="radar-items"></div></div>
   </section>
 
   <section id="view-radar" class="view">
     <div class="pane">
       <h2>レーダー</h2>
       <div id="radar-status" class="box muted">現在地がまだありません。地図の「◎」で追い始めるか、「👣」のお試し歩きで地図を押してください。</div>
-      <p class="muted small">店から <b>120m</b> 以内に入ると射程内。印を手に入れられます。位置はこの端末の中で距離を出すためだけに使い、どこにも送りません。</p>
+      <p class="muted small">店から <b>120m</b> 以内に入ると射程内。400mから、近づくほど画面の縁が赤く脈打ちます。位置はこの端末の中で距離を出すためだけに使い、どこにも送りません。</p>
       <div id="radar-list" class="list"></div>
     </div>
   </section>
@@ -54,15 +55,18 @@
       <div id="titles" class="titles"></div>
       <div class="subtabs">
         <button data-sub="stamps" class="active">集めた印</button>
+        <button data-sub="want">読みたい棚</button>
         <button data-sub="cards">カード</button>
         <button data-sub="log">帳</button>
         <button data-sub="prefs">都道府県</button>
       </div>
       <div id="sub-stamps" class="sub active"><div id="stamp-grid" class="stamp-grid"></div></div>
+      <div id="sub-want" class="sub"><p class="muted small">ガチャで出た本の棚。本屋でその本と出会う（買ってバーコードを読む）と、ボーナスが入ります。</p><div id="want-grid" class="card-grid"></div></div>
       <div id="sub-cards" class="sub"><p class="muted small">「この店で、この本と出会った」の記録。読んだかどうかは問いません。</p><div id="card-grid" class="card-grid"></div></div>
       <div id="sub-log" class="sub">
         <h3>○年前の今日</h3><div id="anniv" class="box muted">まだありません。来年のこの日に、今日の記録がここに出ます。</div>
         <h3>行った店</h3><div id="visit-list" class="list"></div>
+        <h3>非表示にした店</h3><div id="hidden-info" class="muted small"></div>
         <h3>バックアップ</h3>
         <p class="muted small">記録はこの端末の中だけにあります。機種を変えるときは書き出して、新しい端末で読み込んでください。</p>
         <div class="row wrap"><button id="btn-export">書き出す</button><label class="btn-like">読み込む<input type="file" id="file-import" accept="application/json" hidden></label><button id="btn-clear" class="danger">すべて消す</button></div>
@@ -76,8 +80,11 @@
   <section id="view-mission" class="view">
     <div class="pane">
       <h2>ミッション</h2>
+      <div id="gacha-box" class="gacha"></div>
       <h3>今週 <span id="week-label" class="muted small"></span></h3>
       <div id="mission-list" class="mlist"></div>
+      <h3>今週の推し店 <span class="muted small">（県ごとに1店。印をもらうと +500 XP）</span></h3>
+      <div id="feat-list" class="list"></div>
       <h3>ご当地ラリー</h3>
       <p class="muted small">決められた店の印をぜんぶ集めると称号。試作では、店のデータから自動で作った組です。</p>
       <div id="rally-list" class="mlist"></div>
@@ -101,6 +108,6 @@
 <div id="toast" class="toast hidden"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
-<script src="app.js?v=0.2.0"></script>
+<script src="app.js?v=0.3.0"></script>
 </body>
 </html>

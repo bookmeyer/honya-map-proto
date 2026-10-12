@@ -148,3 +148,28 @@ textarea{min-height:76px;resize:vertical}
   padding:10px 16px;border-radius:999px;font-size:14px;z-index:50;box-shadow:0 4px 14px rgba(0,0,0,.2);max-width:90vw}
 video#scanner{width:100%;border-radius:12px;background:#000;max-height:50vh}
 .maplibregl-ctrl-attrib{font-size:10px}
+
+/* ---- v0.3 追加 ---- */
+.glow{position:absolute;inset:0;pointer-events:none;z-index:4;opacity:0;box-shadow:inset 0 0 0 0 rgba(200,56,31,0);transition:opacity .3s}
+.glow.beat{animation:beat var(--beat,1s) ease-in-out infinite}
+.glow.gold{animation:goldflash .9s ease-out 1;opacity:1}
+@keyframes beat{0%,100%{box-shadow:inset 0 0 18px 6px rgba(200,56,31,.0)}50%{box-shadow:inset 0 0 40px 18px rgba(200,56,31,.55)}}
+@keyframes goldflash{0%{box-shadow:inset 0 0 60px 30px rgba(201,162,39,.8)}100%{box-shadow:inset 0 0 0 0 rgba(201,162,39,0)}}
+@media (prefers-reduced-motion:reduce){.glow.beat,.glow.gold{animation:none}}
+.lv-title{font-size:11px;color:var(--ink2);white-space:nowrap;max-width:28vw;overflow:hidden;text-overflow:ellipsis}
+.quest{background:var(--ink);color:#fff;border-radius:12px;padding:8px 12px;font-size:13px;margin-bottom:6px;pointer-events:auto;cursor:pointer}
+.gacha{background:#fff;border:1px solid var(--gold);border-radius:14px;padding:12px 14px;margin:6px 0 14px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.gacha .t{font-weight:700} .gacha .n{font-size:13px;color:var(--ink2)}
+.capsule{width:120px;height:120px;margin:10px auto;border-radius:50%;background:linear-gradient(180deg,var(--shu) 50%,#f3e9d8 50%);box-shadow:0 6px 16px rgba(0,0,0,.18);animation:shake 1.1s ease-in-out 2}
+@keyframes shake{0%,100%{transform:rotate(0)}20%{transform:rotate(-14deg) translateY(-4px)}40%{transform:rotate(12deg)}60%{transform:rotate(-10deg) translateY(-3px)}80%{transform:rotate(8deg)}}
+.book-hit{display:flex;gap:14px;align-items:flex-start;margin-top:10px}
+.book-hit .cover{width:110px;flex:none;aspect-ratio:3/4;background:var(--paper2);border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.book-hit .cover img{width:100%;height:100%;object-fit:cover}
+.crown{color:#7c3aed;font-weight:700}
+.badge.feat{background:#7c3aed;color:#fff}
+.badge.trial{background:var(--paper2);color:var(--ink2);border:1px dashed var(--ink2)}
+.stamp-grid .st.f3 svg{filter:drop-shadow(0 0 4px rgba(201,162,39,.9))}
+.stamp-grid .st.f2 svg{filter:drop-shadow(0 0 3px rgba(160,160,170,.9))}
+.stamp-grid .st.f1 svg{filter:drop-shadow(0 0 3px rgba(190,120,60,.8))}
+.frame-note{font-size:12px;color:var(--ink2);margin:4px 0 8px}
+.actions button.wide{flex:1 1 100%}
