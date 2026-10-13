@@ -1,7 +1,7 @@
 // 店・ラリーのデータ。印（その店だけの印）の見た目もここ
-import { DEMO_STORE } from './config.js';
-import { S } from './state.js';
-import { esc, hash32, prefOf, weekKey, sleep } from './util.js';
+import { DEMO_STORE } from './config.js?v=0.5.2';
+import { S } from './state.js?v=0.5.2';
+import { esc, hash32, prefOf, weekKey, sleep } from './util.js?v=0.5.2';
 
 export let STORES = [];
 export let RALLIES = [];

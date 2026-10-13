@@ -1,14 +1,14 @@
 // 画面：レーダー・図鑑・お題・設定・最初の案内
-import { APP_VER, RANGE_M, XP, levelOf, frameOf, PREFS, INK } from './config.js';
-import { S, save, exportJSON, parseImport, replace, reset } from './state.js';
-import { STORES, BYID, FEAT, RALLIES, isFeat, rarityOf, rarityText, stampSVG, unhideAll, rebuild, DATA_DATE } from './data.js';
-import * as G from './game.js';
-import * as MAP from './map.js';
-import { POS, hasPos } from './position.js';
-import { sfx, haptic } from './audio.js';
-import { profileImage, shareBlob } from './share.js';
-import { toast, openModal, closeModal, confirmBox, openSheet, openCard, switchView, setSub, refreshHud, applyMapStates, updateNear, locate, setTrialUI, warp, devRefillInk, NEAR, currentSub } from './ui.js';
-import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, weekKey } from './util.js';
+import { APP_VER, RANGE_M, XP, levelOf, frameOf, PREFS, INK } from './config.js?v=0.5.2';
+import { S, save, exportJSON, parseImport, replace, reset } from './state.js?v=0.5.2';
+import { STORES, BYID, FEAT, RALLIES, isFeat, rarityOf, rarityText, stampSVG, unhideAll, rebuild, DATA_DATE } from './data.js?v=0.5.2';
+import * as G from './game.js?v=0.5.2';
+import * as MAP from './map.js?v=0.5.2';
+import { POS, hasPos } from './position.js?v=0.5.2';
+import { sfx, haptic } from './audio.js?v=0.5.2';
+import { profileImage, shareBlob } from './share.js?v=0.5.2';
+import { toast, openModal, closeModal, confirmBox, openSheet, openCard, switchView, setSub, refreshHud, applyMapStates, updateNear, locate, setTrialUI, warp, devRefillInk, NEAR, currentSub } from './ui.js?v=0.5.2';
+import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, weekKey } from './util.js?v=0.5.2';
 
 const empty = (ic, text) => `<div class="empty">${icon(ic)}<div>${text}</div></div>`;
 

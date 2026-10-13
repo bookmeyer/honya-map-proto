@@ -1,8 +1,8 @@
 // 遊びの仕組み：経験値・称号・実績・印泥・ミッション・ラリー・カード
-import { XP, TITLES, ACHIEVEMENTS, levelOf, INK } from './config.js';
-import { S, save, inkUse, inkNow, inkNextMs } from './state.js';
-import { BYID, RALLIES, FEAT, isFeat, rarityOf } from './data.js';
-import { prefOf, todayISO, weekKey, weekStartISO, monthKey, emit } from './util.js';
+import { XP, TITLES, ACHIEVEMENTS, levelOf, INK } from './config.js?v=0.5.2';
+import { S, save, inkUse, inkNow, inkNextMs } from './state.js?v=0.5.2';
+import { BYID, RALLIES, FEAT, isFeat, rarityOf } from './data.js?v=0.5.2';
+import { prefOf, todayISO, weekKey, weekStartISO, monthKey, emit } from './util.js?v=0.5.2';
 
 export const visitsOf = (id) => S.visits.filter((v) => v.s === id);
 export const cardsOf = (id) => S.cards.filter((c) => c.s === id);

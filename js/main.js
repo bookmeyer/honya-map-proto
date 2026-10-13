@@ -1,13 +1,13 @@
 // 起動：記録を読み、データを取り、地図を出し、部品をつなぐ
-import { APP_VER } from './config.js';
-import { S, load, save } from './state.js';
-import { loadAll, STORES } from './data.js';
-import * as MAP from './map.js';
-import { POS, setPos, setFollow } from './position.js';
-import { unlock } from './audio.js';
-import * as UI from './ui.js';
-import { renderRadar, renderZukan, renderMissions, renderSettings, applyTheme, showOnboarding } from './screens.js';
-import { $, $$, on, emit } from './util.js';
+import { APP_VER } from './config.js?v=0.5.2';
+import { S, load, save } from './state.js?v=0.5.2';
+import { loadAll, STORES } from './data.js?v=0.5.2';
+import * as MAP from './map.js?v=0.5.2';
+import { POS, setPos, setFollow } from './position.js?v=0.5.2';
+import { unlock } from './audio.js?v=0.5.2';
+import * as UI from './ui.js?v=0.5.2';
+import { renderRadar, renderZukan, renderMissions, renderSettings, applyTheme, showOnboarding } from './screens.js?v=0.5.2';
+import { $, $$, on, emit } from './util.js?v=0.5.2';
 
 async function boot() {
   load(); applyThemeEarly();
@@ -38,7 +38,16 @@ async function boot() {
   let sy = null; const sheet = $('#sheet'); sheet.addEventListener('touchstart', (e) => { sy = e.touches[0].clientY; }, { passive: true }); sheet.addEventListener('touchmove', (e) => { if (sy != null && sheet.scrollTop === 0 && e.touches[0].clientY - sy > 70) { UI.closeSheet(); sy = null; } }, { passive: true });
   // 更新の案内（サービスワーカー）
   if ('serviceWorker' in navigator && location.protocol === 'https:') {
-    navigator.serviceWorker.register('sw.js').then((reg) => { reg.addEventListener('updatefound', () => { const w = reg.installing; w && w.addEventListener('statechange', () => { if (w.state === 'installed' && navigator.serviceWorker.controller) { $('#update').hidden = false; $('#btn-update').onclick = () => { w.postMessage('skip'); location.reload(); }; } }); }); }).catch(() => {});
+    // 更新の流れ：新しい sw.js が入った（待機中）→ 帯を出す → 「更新」で待機中のものを有効に → 入れ替わったら読み直す
+    const hadCtl = !!navigator.serviceWorker.controller; let wantReload = false, reloading = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => { if ((!hadCtl && !wantReload) || reloading) return; reloading = true; location.reload(); });
+    navigator.serviceWorker.register('sw.js').then((reg) => {
+      const offer = (w) => { if (!w || !navigator.serviceWorker.controller) return; $('#update').hidden = false; $('#btn-update').onclick = () => { $('#btn-update').disabled = true; wantReload = true; w.postMessage('skip'); }; };
+      if (reg.waiting) offer(reg.waiting); // 前に開いたときに入っていた更新
+      reg.addEventListener('updatefound', () => { const w = reg.installing; w && w.addEventListener('statechange', () => { if (w.state === 'installed') offer(w); }); });
+      const check = () => { reg.update().catch(() => {}); };
+      setTimeout(check, 3000); document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') check(); });
+    }).catch(() => {});
   }
   if (!S.seen) showOnboarding((mode) => { S.seen = 1; save(); UI.refreshHud(); if (mode === 'geo') UI.locate(); if (mode === 'trial') { UI.setTrialUI(true); UI.warp(); } });
   emit('view', 'map');

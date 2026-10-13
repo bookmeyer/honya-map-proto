@@ -1,5 +1,5 @@
 // 音（部品ファイルなしで、その場で合成）と振動
-import { S } from './state.js';
+import { S } from './state.js?v=0.5.2';
 
 let ctx = null;
 function ac() { if (!ctx) { try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { ctx = null; } } if (ctx && ctx.state === 'suspended') ctx.resume().catch(() => {}); return ctx; }

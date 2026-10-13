@@ -34,6 +34,7 @@ v0.5.1（10/13）：実機で試した声を受けて **ガチャと読みたい
 | `data/rallies.json` | ご当地ラリーの組（`tools/build_rallies.js` で作る） |
 | `data/overrides.json` | 店のデータの上書き表（屋号変更・閉店。`tools/build_data.js` が適用。出典を `why` に書く） |
 | `tools/overpass_query.txt` `tools/build_data.js` `tools/build_rallies.js` `tools/make_icons.js` | データとアイコンを作る道具 |
+| `tools/bump_version.js` | 版を上げる道具（`node tools/bump_version.js 0.5.3`）。config.js の APP_VER・js の import の `?v=`・index.html・sw.js を一度に直す。部品のURLに版が付くので、ブラウザに古い部品が混ざらない |
 
 店のデータを作り直すとき（curl と node）：
 ```

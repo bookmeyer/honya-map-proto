@@ -1,8 +1,8 @@
 // シェア用の画像（印・カード・プレイヤーカード）
-import { S } from './state.js';
-import { stampSVG, rarityOf, rarityText } from './data.js';
-import { snapshot } from './map.js';
-import { stars, prefOf, fmtDate, todayISO } from './util.js';
+import { S } from './state.js?v=0.5.2';
+import { stampSVG, rarityOf, rarityText } from './data.js?v=0.5.2';
+import { snapshot } from './map.js?v=0.5.2';
+import { stars, prefOf, fmtDate, todayISO } from './util.js?v=0.5.2';
 
 const PAPER = '#f6f1e8', INK = '#231f1c', INK2 = '#5f574f', SHU = '#c8381f', LINE = '#ddd4c6';
 function svgToImage(svg) { return new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg); }); }
