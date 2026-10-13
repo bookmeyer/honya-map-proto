@@ -1,11 +1,10 @@
-// 店・ラリー・ガチャのデータ。印（その店だけの印）の見た目もここ
+// 店・ラリーのデータ。印（その店だけの印）の見た目もここ
 import { DEMO_STORE } from './config.js';
 import { S } from './state.js';
 import { esc, hash32, prefOf, weekKey, sleep } from './util.js';
 
 export let STORES = [];
 export let RALLIES = [];
-export let GACHA_ISBNS = [];
 export const BYID = new Map();
 export const FEAT = new Map(); // 県 → 今週の推し店の id
 let baseLoaded = false;
@@ -18,17 +17,16 @@ async function fetchJSON(url, tries = 3) {
   return null;
 }
 export async function loadAll() {
-  const [base, rallies, gacha] = await Promise.all([fetchJSON('data/bookstores.json'), fetchJSON('data/rallies.json'), fetchJSON('data/gacha_books.json')]);
+  const [base, rallies] = await Promise.all([fetchJSON('data/bookstores.json'), fetchJSON('data/rallies.json')]);
   baseLoaded = Array.isArray(base) && base.length > 0;
   RALLIES = Array.isArray(rallies) ? rallies : [];
-  GACHA_ISBNS = (gacha && gacha.isbns) || [];
   rebuild(baseLoaded ? base : []);
   return { ok: baseLoaded, count: STORES.length };
 }
 let BASE = [];
 export function rebuild(base) {
   if (base) BASE = base;
-  STORES = [DEMO_STORE, ...BASE, ...S.custom.map((c) => Object.assign({}, c, { custom: 1 }))].filter((s) => !S.hidden[s.i]);
+  STORES = [DEMO_STORE, ...BASE, ...S.custom.map((c) => Object.assign({}, c, { custom: 1 }))].filter((s) => !S.hidden[s.i]).map((s) => (S.renames && S.renames[s.i] ? Object.assign({}, s, { n: S.renames[s.i].n, fix: 1 }) : s));
   BYID.clear(); STORES.forEach((s) => BYID.set(s.i, s));
   computeFeatured();
 }
@@ -45,7 +43,9 @@ export function search(q, limit = 20) {
 }
 export function addCustom(st) { S.custom.push(st); const full = Object.assign({}, st, { custom: 1 }); STORES.push(full); BYID.set(st.i, full); }
 export function hideStore(st) { S.hidden[st.i] = { d: new Date().toISOString().slice(0, 10), n: st.n }; STORES = STORES.filter((s) => s.i !== st.i); BYID.delete(st.i); computeFeatured(); }
-export function unhideAll() { S.hidden = {}; rebuild(); }
+export function unhideAll() { S.hidden = {}; S.renames = {}; rebuild(); }
+export function renameStore(st, name) { S.renames[st.i] = { n: name, old: st.n, d: new Date().toISOString().slice(0, 10) }; rebuild(); }
+export const DATA_DATE = '2026-10-12';
 
 // ---- 印 ----
 export function rarityOf(st) { if (st.demo) return 3; const k = st.k == null ? 3 : st.k; return k === 0 ? 3 : k <= 6 ? 2 : 1; }

@@ -1,7 +1,7 @@
-// 画面の部品：見出し帯・タブ・店のシート・モーダル・印の演出・カード・ガチャ・さがす・追加
+// 画面の部品：見出し帯・タブ・店のシート・モーダル・印の演出・カード・さがす・追加
 import { RANGE_M, SENSE_M, XP, levelOf, xpForLevel, INK } from './config.js';
 import { S, save, inkRefill } from './state.js';
-import { STORES, BYID, FEAT, isFeat, rarityOf, rarityText, stampSVG, search, addCustom, hideStore, lookupIsbn, GACHA_ISBNS } from './data.js';
+import { STORES, BYID, FEAT, isFeat, rarityOf, rarityText, stampSVG, search, addCustom, hideStore, renameStore, lookupIsbn, DATA_DATE } from './data.js';
 import * as G from './game.js';
 import * as MAP from './map.js';
 import { POS, setPos, startWatch, setTrial, setFollow, hasPos, jumped } from './position.js';
@@ -32,7 +32,7 @@ export function refreshHud() {
   $('#lv-label').textContent = `Lv.${lv}`; $('#xp-fill').style.width = `${Math.round(((S.xp - cur) / (next - cur)) * 100)}%`;
   $('#brand-title').textContent = G.currentTitle() || '本屋あるき見習い';
   const ink = G.inkState(); $('#ink-dots').innerHTML = Array.from({ length: ink.max }, (_, i) => `<i class="${i < ink.n ? '' : 'off'}"></i>`).join('');
-  const dm = G.dailyMissions().some((m) => m.cur < m.goal), wm = G.weeklyMissions().some((m) => m.cur < m.goal); $('#tab-dot').hidden = !(dm || wm) || !S.tickets;
+  $('#tab-dot').hidden = true; // お題は達成と同時に受け取るので、赤い点はいまは使わない
 }
 
 // ---------- 現在地まわりの表示（レーダーの帯・最初のクエスト・縁の光） ----------
@@ -89,7 +89,7 @@ export function openSheet(id, quiet) {
   const vs = G.visitsOf(id), cs = G.cardsOf(id), want = S.wants.includes(id), stamp = S.stamps[id], r = rarityOf(st), feat = isFeat(st.i);
   const d = hasPos() ? dist(POS.lat, POS.lon, st.la, st.lo) : null; const near = d != null && d <= RANGE_M && !jumped();
   const b = [];
-  if (st.demo) b.push('<span class="badge">見本（実在しません）</span>'); if (st.custom) b.push('<span class="badge">自分で追加</span>');
+  if (st.demo) b.push('<span class="badge">見本（実在しません）</span>'); if (st.custom) b.push('<span class="badge">自分で追加</span>'); if (st.fix) b.push('<span class="badge">名前を直した（この端末）</span>'); if (st.ov) b.push('<span class="badge">名前を確認ずみ</span>');
   if (feat) b.push(`<span class="badge feat">${icon('crown')}今週の推し店</span>`); if (st.u) b.push('<span class="badge">古書店</span>');
   b.push(stamp ? `<span class="badge shu">印あり ${fmtDate(stamp.d)}</span>${stamp.trial ? '<span class="badge trial">体験</span>' : ''}` : vs.length ? `<span class="badge sumi">墨印 ${vs.length}回</span>` : '<span class="badge">まだ</span>');
   if (cs.length) b.push(`<span class="badge">カード${cs.length}枚</span>`); if (want) b.push(`<span class="badge gold">${icon('star')}行きたい</span>`); if (near) b.push('<span class="badge gold">射程内</span>');
@@ -100,21 +100,22 @@ export function openSheet(id, quiet) {
     <div class="sheet-head"><div class="stamp-sm">${stampSVG(st, !!stamp, 72)}</div><div style="min-width:0"><h2>${esc(st.n)}</h2><div class="stars">${stars(r)} <span class="muted small">${esc(rarityText(st))}</span></div></div></div>
     <div style="margin-top:8px">${b.join('')}</div>
     <div class="muted small">${esc(st.a || (st.custom ? '' : '住所の情報なし（地図データより）'))}　${esc(prefOf(st))}</div>
-    <div class="muted small">${esc(distText)}</div>${rec}${hist}
+    <div class="muted small">${esc(distText)}</div>${st.demo || st.custom ? '' : `<div class="muted small">店の情報：OpenStreetMap（${DATA_DATE} 取得）。${st.c ? '最終確認 ' + st.c.slice(0, 4) + '年' + Number(st.c.slice(5)) + '月' : '確認日の記録なし'}。閉店や名前の変更が反映されていないことがあります</div>`}${rec}${hist}
     <div class="actions">
       <button class="btn primary wide" data-act="checkin">${near ? (stamp ? '朱印をもう一度' : `${icon('ink')}印をもらう${feat ? `（+${XP.feat}）` : ''}`) : 'ここに来た（墨印）'}</button>
       <button class="btn" data-act="card">${icon('barcode')}本と出会った</button>
       <button class="btn" data-act="want">${icon('star')}${want ? '行きたいを外す' : '行きたい'}</button>
       ${stamp ? `<button class="btn" data-act="share">${icon('share')}印をシェア</button>` : ''}
-      ${POS.fake && !near ? `<button class="btn" data-act="warp">${icon('warp')}この店へワープ</button>` : ''}
-      ${st.demo || st.custom ? '' : '<button class="btn ghost wide" data-act="report">この店は本屋ではない／閉店している</button>'}
+      ${POS.fake && !near ? `<button class="btn wide" data-act="warp">${icon('warp')}この店へワープ</button>` : ''}
+      ${st.demo || st.custom ? '' : '<button class="btn ghost" data-act="report">閉店している</button><button class="btn ghost" data-act="rename">名前が違う</button>'}
     </div><div id="sheet-extra"></div>`;
   $$('#sheet-body [data-act]').forEach((btn) => btn.addEventListener('click', () => { sfx.click(); const a = btn.dataset.act;
     if (a === 'checkin') startCheckin(st, near); else if (a === 'card') startCard(st); else if (a === 'share') shareStampUI(st); else if (a === 'warp') warp(st);
-    else if (a === 'report') confirmBox($('#sheet-extra'), 'この店を地図から外しますか？（この端末だけ。設定から戻せます）', () => { hideStore(st); save(); MAP.setStores(STORES); applyMapStates(); updateNear(); closeSheet(); toast(`${st.n} を外しました`); }, '外す');
+    else if (a === 'report') confirmBox($('#sheet-extra'), 'この店を地図から外しますか？（閉店した店・本屋ではない店。この端末だけ。記録の書き出しに含まれます。設定から戻せます）', () => { hideStore(st); save(); MAP.setStores(STORES); applyMapStates(); updateNear(); closeSheet(); toast(`${st.n} を外しました`); }, '外す');
+    else if (a === 'rename') { const x = $('#sheet-extra'); x.innerHTML = `<div class="field"><label for="rn-name">いまの正しい店名</label><input type="text" id="rn-name" value="${esc(st.n)}" maxlength="60"></div><div class="actions"><button class="btn primary" id="rn-ok">直す</button><button class="btn ghost" id="rn-no">やめる</button></div>`; $('#rn-name').focus(); $('#rn-no').onclick = () => { x.innerHTML = ''; }; $('#rn-ok').onclick = () => { const n = $('#rn-name').value.trim(); if (!n || n === st.n) { x.innerHTML = ''; return; } renameStore(st, n); save(); MAP.setStores(STORES); applyMapStates(); updateNear(); toast('名前を直しました（この端末だけ。記録の書き出しに含まれます）', 'ok'); openSheet(id, true); }; }
     else { const r2 = G.toggleWant(id); applyMapStates(); refreshHud(); openSheet(id, true); r2.rewards.forEach((x) => toast(x, 'ok')); } }));
   const sheet = $('#sheet'); sheet.dataset.id = id; sheet.hidden = false;
-  if (!quiet) { if (currentView !== 'map') switchView('map'); MAP.flyTo(st.lo, st.la, 14); }
+  if (!quiet) { if (currentView !== 'map') switchView('map'); MAP.flyTo(st.lo, st.la, 14); G.noteLook(id).forEach((x) => toast(x, 'ok')); refreshHud(); }
 }
 export function closeSheet() { const s = $('#sheet'); s.hidden = true; s.dataset.id = ''; }
 
@@ -131,40 +132,25 @@ export function startCheckin(st, near) {
   $('#ci-save').onclick = () => { const res = G.checkin(st, { near, memo: $('#ci-memo').value.trim(), trial: POS.fake }); if (res.inkEmpty) { closeModal(); startCheckin(st, near); return; } closeModal(); closeSheet(); applyMapStates(); refreshHud(); showCapture(st, res, near); };
 }
 export function showCapture(st, res, near) {
-  const { gain, isNew, ticket, lv, rewards, r } = res;
+  const { gain, isNew, lv, rewards, r } = res;
   if (near) { sfx.stamp(); haptic([30, 30, 90]); if (isNew && r === 3) setTimeout(() => sfx.rare(), 250); } if (lv.after > lv.before) setTimeout(() => sfx.levelup(), 500);
   $('#capture-box').innerHTML = `<div class="big">${stampSVG(st, near, 250)}</div>
     <h2>${near ? (isNew ? `${esc(st.n)}の印を手に入れた！` : `${esc(st.n)}に、また来た`) : `${esc(st.n)}に来た（墨印）`}</h2>
     <div class="stars">${near ? stars(r) + ' ' + esc(rarityText(st)) : ''}</div>
-    <div class="gain">+${gain} XP${ticket ? `　🎟 ガチャ券 +${ticket}` : ''}</div>
+    <div class="gain">+${gain} XP</div>
     ${lv.after > lv.before ? `<div class="lvup">レベルアップ！ Lv.${lv.after}</div>` : ''}${rewards.map((x) => `<div class="lvup">${esc(x)}</div>`).join('')}
-    <div class="actions" style="margin-top:18px"><button class="btn primary wide" id="cp-card">${icon('barcode')}この店で本と出会った → カード（+${XP.card}〜）</button>${near ? `<button class="btn" id="cp-share">${icon('share')}印をシェア</button>` : ''}${ticket ? `<button class="btn gold" id="cp-gacha">${icon('ticket')}ガチャを引く</button>` : ''}<button class="btn ghost wide" id="cp-close">閉じる</button></div>`;
+    <div class="actions" style="margin-top:18px"><button class="btn primary wide" id="cp-card">${icon('barcode')}この店で本と出会った → カード（+${XP.card}〜）</button>${near ? `<button class="btn wide" id="cp-share">${icon('share')}印をシェア</button>` : ''}<button class="btn ghost wide" id="cp-close">閉じる</button></div>`;
   $('#capture').hidden = false;
   $('#cp-close').onclick = () => { $('#capture').hidden = true; openSheet(st.i, true); };
   $('#cp-card').onclick = () => { $('#capture').hidden = true; startCard(st); };
   if ($('#cp-share')) $('#cp-share').onclick = () => shareStampUI(st);
-  if ($('#cp-gacha')) $('#cp-gacha').onclick = () => { $('#capture').hidden = true; startGacha(); };
 }
 export async function shareStampUI(st) { try { const blob = await stampImage(st); const r = await shareBlob(blob, `honya-${st.i}.png`, `${st.n}の印`, `${st.n}の印を手に入れた #本屋の地図`); if (r !== 'cancel') { G.noteShare(); toast(r === 'saved' ? '画像を保存しました' : 'シェアしました', 'ok'); } } catch (e) { toast('画像にできませんでした', 'warn'); } }
-
-// ---------- ガチャ ----------
-export function startGacha() {
-  if (!S.tickets) { toast('ガチャ券がありません。印を1つ手に入れると1枚もらえます', 'warn'); return; }
-  if (!GACHA_ISBNS.length) { toast('ガチャの本のデータがありません', 'warn'); return; }
-  const isbn = G.gachaPull(); refreshHud(); sfx.gacha(); haptic([20, 40, 20, 40, 20]);
-  openModal(`<h2>本のガチャ</h2><p class="hint">🎟 残り ${S.tickets}枚。出た本は「読みたい棚」に入り、本屋でその本と出会う（買ってバーコードを読む）と +${XP.cardWanted} XP。</p><div class="capsule"></div><div id="gc-out" class="muted small" style="text-align:center">カプセルを開けています…</div>`);
-  const t0 = Date.now();
-  lookupIsbn(isbn).then((b) => { setTimeout(() => { if (!$('#gc-out')) return; const book = b || { isbn, title: `ISBN ${isbn}`, author: '', publisher: '', cover: '' }; sfx.reveal(); haptic([30, 30, 80]);
-    $('#modal-box').innerHTML = `<h2>出た！</h2><div class="book-hit"><div class="cover">${book.cover ? `<img src="${esc(book.cover)}" alt="" referrerpolicy="no-referrer">` : '<div class="notitle">表紙なし</div>'}</div><div style="flex:1;min-width:0"><div><b>${esc(book.title)}</b></div><div class="muted small">${esc(book.author)}${book.publisher ? '／' + esc(book.publisher) : ''}</div></div></div>
-      <div class="actions"><button class="btn primary" id="gc-keep">読みたい棚に入れる</button>${S.tickets ? `<button class="btn" id="gc-again">もう1回（🎟 ${S.tickets}）</button>` : ''}<button class="btn ghost wide" id="gc-close">閉じる</button></div>`;
-    $('#gc-keep').onclick = () => { G.keepWantBook(book); closeModal(); toast('読みたい棚に入れました', 'ok'); setSub('want'); switchView('zukan'); G.checkRewards().forEach((x) => toast(x, 'ok')); refreshHud(); };
-    $('#gc-close').onclick = () => { G.keepWantBook(book); closeModal(); refreshHud(); }; if ($('#gc-again')) $('#gc-again').onclick = () => { G.keepWantBook(book); startGacha(); }; }, Math.max(0, 2200 - (Date.now() - t0))); });
-}
 
 // ---------- カード ----------
 export function startCard(st) {
   openModal(`<h2>この店で本と出会った</h2><p class="hint">${esc(st.n)}</p>
-    <div class="note">カードは +${XP.card} XP。今日この店で印を押していれば「店で出会った」+${XP.cardInStore}、読みたい棚の本なら +${XP.cardWanted}。</div>
+    <div class="note">カードは +${XP.card} XP。今日この店で印を押していれば「店で出会った」+${XP.cardInStore}。</div>
     <div class="actions"><button class="btn primary wide" id="cd-scan">${icon('camera')}本の裏のバーコードを読む</button><button class="btn" id="cd-manual">ISBNを入力</button><button class="btn" id="cd-free">名前を自分で書く</button><button class="btn ghost wide" id="cd-cancel">やめる</button></div><div id="cd-area"></div>`);
   $('#cd-cancel').onclick = closeModal; $('#cd-manual').onclick = () => manualIsbn(st); $('#cd-free').onclick = () => cardForm(st, null); $('#cd-scan').onclick = () => scanIsbn(st);
 }
@@ -189,11 +175,11 @@ async function scanIsbn(st) {
 }
 function cardForm(st, b) {
   if (scanStopper) { try { scanStopper(); } catch (e) {} scanStopper = null; }
-  const has = !!b && !!b.title; const { inStore, wanted, total } = G.cardBonus(st, b);
+  const has = !!b && !!b.title; const { inStore, total } = G.cardBonus(st);
   openModal(`<h2>カードを作る</h2>
     <div class="card-full"><div class="cover">${b && b.cover ? `<img src="${esc(b.cover)}" alt="" referrerpolicy="no-referrer">` : '<div class="notitle">表紙なし</div>'}</div>
       <div style="flex:1;min-width:0">${has ? `<div><b>${esc(b.title)}</b></div><div class="muted small">${esc(b.author)}${b.publisher ? '／' + esc(b.publisher) : ''}</div>` : `<div class="field"><label for="cd-title">本の名前</label><input type="text" id="cd-title" placeholder="書名（わかれば著者も）"></div>`}
-      <div class="muted small" style="margin-top:6px">${esc(st.n)}　${fmtDate(todayISO())}</div><div class="muted small">${inStore ? '🏪 店で出会った +' + XP.cardInStore : ''} ${wanted ? '📚 読みたい棚の本 +' + XP.cardWanted : ''}</div></div></div>
+      <div class="muted small" style="margin-top:6px">${esc(st.n)}　${fmtDate(todayISO())}</div><div class="muted small">${inStore ? '🏪 店で出会った +' + XP.cardInStore : ''}</div></div></div>
     <div class="field"><label for="cd-why">なぜ手に取ったか（任意・100字まで）</label><textarea id="cd-why" maxlength="100" placeholder="例：表紙の青に目がとまった。店員さんの手書きPOPに「泣いた」とあった"></textarea></div>
     <label class="chk"><input type="checkbox" id="cd-pub"> このカードを公開する（本番では「みんなの出会い」に流れます。試作では印が付くだけ）</label>
     <div class="note">表紙はopenBDから毎回表示するだけで、保存しません。記録はこの端末の中だけに残ります。</div>

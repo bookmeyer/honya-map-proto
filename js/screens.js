@@ -1,13 +1,13 @@
 // 画面：レーダー・図鑑・お題・設定・最初の案内
 import { APP_VER, RANGE_M, XP, levelOf, frameOf, PREFS, INK } from './config.js';
 import { S, save, exportJSON, parseImport, replace, reset } from './state.js';
-import { STORES, BYID, FEAT, RALLIES, isFeat, rarityOf, rarityText, stampSVG, unhideAll, rebuild } from './data.js';
+import { STORES, BYID, FEAT, RALLIES, isFeat, rarityOf, rarityText, stampSVG, unhideAll, rebuild, DATA_DATE } from './data.js';
 import * as G from './game.js';
 import * as MAP from './map.js';
 import { POS, hasPos } from './position.js';
 import { sfx, haptic } from './audio.js';
 import { profileImage, shareBlob } from './share.js';
-import { toast, openModal, closeModal, confirmBox, openSheet, openCard, startGacha, switchView, setSub, refreshHud, applyMapStates, updateNear, locate, setTrialUI, warp, devRefillInk, NEAR, currentSub } from './ui.js';
+import { toast, openModal, closeModal, confirmBox, openSheet, openCard, switchView, setSub, refreshHud, applyMapStates, updateNear, locate, setTrialUI, warp, devRefillInk, NEAR, currentSub } from './ui.js';
 import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, weekKey } from './util.js';
 
 const empty = (ic, text) => `<div class="empty">${icon(ic)}<div>${text}</div></div>`;
@@ -34,9 +34,6 @@ export function renderZukan() {
   const stamped = ids.map((id) => ({ st: BYID.get(id), d: S.stamps[id].d, trial: S.stamps[id].trial })).filter((x) => x.st).sort((a, b) => b.d.localeCompare(a.d));
   $('#stamp-grid').innerHTML = stamped.length ? `<div class="hint" style="grid-column:1/-1">${fr ? `Lv.${lv} の額縁：${['', '銅', '銀', '金'][fr]}` : 'Lv.3になると印に額縁が付きます'}　印は全部で ${STORES.length.toLocaleString()}種類</div>` + stamped.map(({ st, d, trial }) => `<div class="st f${fr}" data-id="${esc(st.i)}">${stampSVG(st, true, 76)}<div class="n">${esc(st.n)}</div><div class="n">${fmtDate(d)}${trial ? '・体験' : ''}</div></div>`).join('') : empty('ink', '店の射程内（120m）で「印をもらう」と、ここに並びます。家で試すなら お試し歩き → ワープ。');
   $$('#stamp-grid .st').forEach((el) => el.addEventListener('click', () => openSheet(el.dataset.id)));
-  // 読みたい棚
-  const wg = $('#want-grid'); wg.innerHTML = S.wantBooks.length ? S.wantBooks.slice().reverse().map((w) => `<div class="card" data-isbn="${esc(w.isbn)}"><div class="cover">${w.cover ? `<img src="${esc(w.cover)}" alt="" referrerpolicy="no-referrer" loading="lazy">` : `<div class="notitle">${esc(w.title)}</div>`}</div><div class="meta"><b>${esc(w.title)}</b>${esc(w.author)}<br>出会うと +${XP.cardWanted} XP</div></div>`).join('') : empty('ticket', '印を手に入れるとガチャ券がもらえ、「お題」の画面で引けます。');
-  $$('#want-grid .card').forEach((el) => el.addEventListener('click', () => { const w = S.wantBooks.find((x) => x.isbn === el.dataset.isbn); if (!w) return; openModal(`<h2>${esc(w.title)}</h2><p class="muted small">${esc(w.author)}${w.publisher ? '／' + esc(w.publisher) : ''}　ISBN ${esc(w.isbn)}</p><p class="hint">本屋でこの本を買って、店のページの「本と出会った」でバーコードを読むと +${XP.cardWanted} XP。</p><div class="actions"><button class="btn danger" id="wb-del">棚から外す</button><button class="btn ghost" id="wb-close">閉じる</button></div>`); $('#wb-close').onclick = closeModal; $('#wb-del').onclick = () => { G.dropWantBook(w.isbn); closeModal(); renderZukan(); }; }));
   // カード
   const g = $('#card-grid'); g.innerHTML = S.cards.length ? S.cards.slice().reverse().map((c) => `<div class="card" data-id="${esc(c.id)}"><div class="cover">${c.cover ? `<img src="${esc(c.cover)}" alt="" referrerpolicy="no-referrer" loading="lazy">` : `<div class="notitle">${esc(c.title)}</div>`}</div><div class="stampmark">出会</div><div class="meta"><b>${esc(c.title)}</b>${esc(c.sn)}<br>${fmtDate(c.d)}${c.pub ? '・公開' : ''}</div></div>`).join('') : empty('barcode', '店のページで「本と出会った」を押すと、ここに増えます。');
   $$('#card-grid .card').forEach((el) => el.addEventListener('click', () => openCard(el.dataset.id)));
@@ -56,8 +53,6 @@ export function renderZukan() {
 // ---------- お題 ----------
 export function renderMissions() {
   const wk = weekKey(), d = todayISO(); const cw = S.claimedW[wk] || [], cd = S.claimedD[d] || [];
-  $('#gacha-box').innerHTML = `<div><div class="t">${icon('ticket')}ガチャ券 ${S.tickets}枚</div><div class="n">印1つにつき1枚。本が1冊出て「読みたい棚」へ</div></div><button class="btn primary" id="btn-gacha" ${S.tickets ? '' : 'disabled'}>ガチャを引く</button>`;
-  $('#btn-gacha').onclick = startGacha;
   $('#day-label').textContent = `${fmtDate(d)}`; $('#week-label').textContent = `${wk}・月曜から`;
   const mrow = (m, claimed, xp) => { const done = m.cur >= m.goal; return `<div class="m ${done ? 'done' : ''}"><div class="h"><b>${done ? '✅ ' : ''}${esc(m.name)}</b><span class="muted small">${Math.min(m.cur, m.goal)}/${m.goal}${claimed.includes(m.id) ? `　+${xp}` : ''}</span></div><div class="bar"><i style="width:${Math.min(100, Math.round((m.cur / m.goal) * 100))}%"></i></div><div class="sub">${esc(m.sub)}</div></div>`; };
   $('#daily-list').innerHTML = G.dailyMissions().map((m) => mrow(m, cd, XP.daily)).join('');
@@ -83,7 +78,7 @@ export function renderSettings() {
     <h3>記録</h3>
     <div class="setting"><div><div class="l">書き出す</div><div class="s">印・カード・経験値をファイルに</div></div><button class="btn" id="st-export">書き出す</button></div>
     <div class="setting"><div><div class="l">読み込む</div><div class="s">書き出したファイルから置き換え</div></div><label class="btn">読み込む<input type="file" id="st-import" accept="application/json" hidden></label></div>
-    <div class="setting"><div><div class="l">非表示にした店</div><div class="s">${hid.length ? `${hid.length}件（${hid.slice(0, 3).map((id) => esc(S.hidden[id].n || id)).join('、')}${hid.length > 3 ? '…' : ''}）` : 'ありません'}</div></div><button class="btn" id="st-unhide" ${hid.length ? '' : 'disabled'}>戻す</button></div>
+    <div class="setting"><div><div class="l">店の情報の報告</div><div class="s">${hid.length || Object.keys(S.renames || {}).length ? `閉店 ${hid.length}件・名前の直し ${Object.keys(S.renames || {}).length}件（書き出しに含まれます）` : 'まだありません（店のページの「閉店している」「名前が違う」から）'}</div></div><button class="btn" id="st-unhide" ${hid.length || Object.keys(S.renames || {}).length ? '' : 'disabled'}>戻す</button></div>
     <div class="setting"><div><div class="l">すべて消す</div><div class="s">この端末の記録を消します。戻せません</div></div><button class="btn danger" id="st-clear">消す</button></div>
     <div id="st-area"></div>
     <h3>試作のための道具</h3>
@@ -93,7 +88,7 @@ export function renderSettings() {
     <h3>このアプリについて</h3>
     <div class="about">本屋の地図 v${APP_VER}（試作）。本屋をめぐる位置ゲーム。<br>位置はこの端末の中で距離を出すためだけに使い、どこにも送りません。記録はこの端末の中だけに残ります。<br><br>
       店の位置：© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors（ODbL）。地図：<a href="https://openfreemap.org/" target="_blank" rel="noopener">OpenFreeMap</a>・<a href="https://openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a>。本の情報と表紙：<a href="https://openbd.jp/" target="_blank" rel="noopener">openBD</a>（表紙は紹介のための参照表示で、保存しません）。地図の描画：MapLibre GL JS。文字：Google Fonts。<br>
-      本屋でない店・閉店した店が混ざっていることがあります。店のページの「本屋ではない／閉店」で外せます。</div>`;
+      店のデータは ${DATA_DATE} 時点の OpenStreetMap（有志が作る地図）で、閉店や名前の変更が反映されていない店があります。店のページの「閉店している」で外せ、「名前が違う」で直せます（この端末だけ。記録の書き出しに含まれます）。</div>`;
   $('#st-back').onclick = () => switchView('map');
   $$('#st-theme button').forEach((b) => b.addEventListener('click', () => { s.theme = b.dataset.t; save(); applyTheme(); renderSettings(); }));
   $('#st-sound').onclick = () => { s.sound = !s.sound; save(); renderSettings(); if (s.sound) sfx.click(); };
@@ -102,7 +97,7 @@ export function renderSettings() {
   $('#st-export').onclick = () => { const blob = new Blob([exportJSON()], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `honya-map-${todayISO()}.json`; document.body.appendChild(a); a.click(); a.remove(); toast('書き出しました', 'ok'); };
   $('#st-import').addEventListener('change', async (e) => { const f = e.target.files[0]; if (!f) return; try { const d = parseImport(await f.text()); confirmBox($('#st-area'), `読み込むと、いまの記録（印${Object.keys(S.stamps).length}・カード${S.cards.length}）は置き換わります。`, () => { replace(d); rebuild(); MAP.setStores(STORES); applyMapStates(); refreshHud(); toast('読み込みました', 'ok'); renderSettings(); }, '置き換える'); } catch (err) { toast('読み込めませんでした（このアプリで書き出したファイルを選んでください）', 'warn'); } e.target.value = ''; });
   $('#st-unhide').onclick = () => { unhideAll(); save(); MAP.setStores(STORES); applyMapStates(); updateNear(); toast('戻しました', 'ok'); renderSettings(); };
-  $('#st-clear').onclick = () => confirmBox($('#st-area'), 'この端末の記録（印・訪問・カード・行きたい・追加した店・経験値・ガチャ券）をすべて消します。戻せません。', () => { reset(); rebuild(); MAP.setStores(STORES); applyMapStates(); refreshHud(); toast('消しました'); renderSettings(); });
+  $('#st-clear').onclick = () => confirmBox($('#st-area'), 'この端末の記録（印・訪問・カード・行きたい・追加した店・経験値）をすべて消します。戻せません。', () => { reset(); rebuild(); MAP.setStores(STORES); applyMapStates(); refreshHud(); toast('消しました'); renderSettings(); });
   $('#st-ink').onclick = devRefillInk;
   $('#st-diag').onclick = async () => { const out = $('#st-diag-out'); const rows = []; rows.push(['位置', navigator.geolocation ? '使える' : '使えない']); rows.push(['カメラ', navigator.mediaDevices && navigator.mediaDevices.getUserMedia ? '使える' : '使えない']); rows.push(['バーコード読み取り（標準）', 'BarcodeDetector' in window ? 'あり' : 'なし（代わりの部品を使います）']); let storage = '?'; try { localStorage.setItem('__t', '1'); localStorage.removeItem('__t'); storage = '使える'; } catch (e) { storage = '使えない'; } rows.push(['保存', storage]); rows.push(['https', location.protocol === 'https:' ? 'はい' : 'いいえ（位置とカメラにはhttpsが要ります）']); rows.push(['ホーム画面に追加', window.matchMedia('(display-mode: standalone)').matches ? '追加ずみ' : '未追加']); rows.push(['振動', navigator.vibrate ? '使える' : '使えない（iPhoneは不可）']); rows.push(['共有', navigator.share ? '使える' : '使えない（画像は保存になります）']); out.innerHTML = `<div class="status-card">${rows.map(([k, v]) => `<div><b>${k}</b>：${v}</div>`).join('')}</div>`; };
 }
@@ -115,7 +110,7 @@ export function applyTheme() {
 export function showOnboarding(onDone) {
   const pages = [
     { art: `<svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="86" fill="#eee6d8"/><circle cx="100" cy="100" r="40" fill="none" stroke="#b8921f" stroke-width="3" stroke-dasharray="6 5"/><circle cx="100" cy="100" r="9" fill="#2b6cb0" stroke="#fff" stroke-width="4"/><circle cx="130" cy="78" r="9" fill="#c8381f"/><circle cx="60" cy="130" r="7" fill="#b8b0a3"/><circle cx="150" cy="140" r="7" fill="#b8b0a3"/><text x="130" y="60" font-size="12" text-anchor="middle" fill="#231f1c" font-family="sans-serif">射程内！</text></svg>`, h: '本屋に近づくと、光る', p: '地図に現在地が出ます。店から120m以内に入ると、ピンが金色に光って振動します。' },
-    { art: `<svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="86" fill="#eee6d8"/><g transform="rotate(-6 100 100)"><circle cx="100" cy="100" r="46" fill="none" stroke="#c8381f" stroke-width="5"/><circle cx="100" cy="100" r="36" fill="none" stroke="#e08a76" stroke-width="2"/><text x="100" y="100" font-size="30" text-anchor="middle" dominant-baseline="central" fill="#c8381f" font-family="serif" font-weight="700">印</text></g></svg>`, h: 'その店だけの印をもらう', p: `印は全国 ${STORES.length.toLocaleString()} 種類。周りに本屋が少ない「秘境」ほど珍しい印です。印1つでガチャ券1枚。` },
+    { art: `<svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="86" fill="#eee6d8"/><g transform="rotate(-6 100 100)"><circle cx="100" cy="100" r="46" fill="none" stroke="#c8381f" stroke-width="5"/><circle cx="100" cy="100" r="36" fill="none" stroke="#e08a76" stroke-width="2"/><text x="100" y="100" font-size="30" text-anchor="middle" dominant-baseline="central" fill="#c8381f" font-family="serif" font-weight="700">印</text></g></svg>`, h: 'その店だけの印をもらう', p: `印は全国 ${STORES.length.toLocaleString()} 種類。周りに本屋が少ない「秘境」ほど珍しい印です。印を押すと印泥（いんでい）を1つ使い、時間で回復します。` },
     { art: `<svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="86" fill="#eee6d8"/><rect x="62" y="52" width="76" height="100" rx="6" fill="#fffdf8" stroke="#ddd4c6" stroke-width="2"/><rect x="74" y="66" width="52" height="54" rx="3" fill="#c8381f" opacity=".85"/><rect x="74" y="128" width="52" height="5" rx="2" fill="#5f574f"/><rect x="74" y="138" width="34" height="5" rx="2" fill="#8a8178"/></svg>`, h: '本と出会ったら、カードに', p: '買った本の裏のバーコードを読むと、表紙と店と日付が1枚のカードになります。読んだかどうかは問いません。' },
   ];
   let i = 0; const box = $('#onboard-box');

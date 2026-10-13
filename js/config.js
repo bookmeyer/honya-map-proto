@@ -1,5 +1,5 @@
 // 設定値（数字はここだけで変える）
-export const APP_VER = '0.5.0';
+export const APP_VER = '0.5.1';
 export const STORAGE_KEY = 'honya_map_v3';
 export const LEGACY_KEYS = ['honya_map_v2'];
 
@@ -14,7 +14,7 @@ export const INK = { max: 5, rechargeMs: 90 * 60 * 1000 };
 
 export const XP = {
   shuFirst: 300, shuRepeat: 60, sumiFirst: 100, sumiRepeat: 20,
-  card: 400, cardInStore: 200, cardWanted: 300,
+  card: 400, cardInStore: 200,
   rare2: 100, rare3: 500, feat: 500,
   daily: 80, weekly: 200, rally: 1000, streak: 100,
 };
@@ -55,8 +55,8 @@ export const ACHIEVEMENTS = [
   { id: 'a_used', name: '古書の香り', desc: '古書店で印を1つ', kind: 'used', n: 1 },
   { id: 'a_rare', name: '秘境へ', desc: '★★★の印を1つ', kind: 'rare', n: 1 },
   { id: 'a_feat', name: '推し店めぐり', desc: '今週の推し店で印を3回', kind: 'feat', n: 3 },
-  { id: 'a_gacha', name: '本のガチャ', desc: 'ガチャを5回引く', kind: 'gacha', n: 5 },
-  { id: 'a_wanted', name: '棚の本と再会', desc: '読みたい棚の本と出会う', kind: 'met', n: 1 },
+  { id: 'a_repeat', name: '常連', desc: '同じ店で朱印を3回', kind: 'repeat', n: 3 },
+  { id: 'a_look', name: '下見', desc: '本屋のページを30店見る', kind: 'look', n: 30 },
   { id: 'a_streak4', name: '四週つづけて', desc: '4週連続で印を手に入れる', kind: 'streak', n: 4 },
   { id: 'a_pref5', name: '五つの県', desc: '5県で印を手に入れる', kind: 'prefs', n: 5 },
   { id: 'a_rally', name: 'ラリー制覇', desc: 'ご当地ラリーを1つ', kind: 'rally', n: 1 },

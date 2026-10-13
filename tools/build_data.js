@@ -27,8 +27,15 @@ for (const e of raw.elements || []) {
   if (t['addr:province'] && /[都道府県]$/.test(t['addr:province'])) rec.p = t['addr:province']; // 日本語の都道府県名だけ使う
   if (used) rec.u = 1;
   if (t.brand && t.brand !== name) rec.b = t.brand;
+  const cd = t.check_date || t['survey:date'] || t.last_checked; if (cd && /^\d{4}/.test(cd)) rec.c = cd.slice(0, 7); // 地図データの確認日（年-月）
   out.push(rec);
 }
+// 上書き表（閉店・屋号変更など、確かめた分）
+const ovPath = require('path').join(require('path').dirname(outFile), 'overrides.json');
+let ov = { renames: {}, closed: {} }; try { ov = JSON.parse(fs.readFileSync(ovPath, 'utf8')); } catch (e) {}
+let renamed = 0, closedN = 0;
+for (let i = out.length - 1; i >= 0; i--) { const r = out[i]; if (ov.closed && ov.closed[r.i]) { out.splice(i, 1); closedN++; continue; } if (ov.renames && ov.renames[r.i]) { r.n = ov.renames[r.i].n; r.ov = 1; renamed++; } }
+console.log('上書き：屋号変更', renamed, '閉店', closedN);
 out.sort((a, b) => a.la - b.la);
 // 秘境度：半径5kmにある他の本屋の数（k）。少ないほど珍しい印になる
 const R = 6371000, T = Math.PI / 180;

@@ -4,8 +4,8 @@ import { debounce, emit } from './util.js';
 
 export const empty = () => ({
   v: 3, visits: [], cards: [], wants: [], custom: [], stamps: {}, xp: 0,
-  claimedW: {}, claimedD: {}, rallyDone: {}, featDone: {}, tickets: 0, wantBooks: [], met: [],
-  hidden: {}, seen: 0, lastPos: null, ink: { n: INK.max, at: Date.now() }, gachaCount: 0, shareCount: 0,
+  claimedW: {}, claimedD: {}, rallyDone: {}, featDone: {}, looks: {},
+  hidden: {}, renames: {}, seen: 0, lastPos: null, ink: { n: INK.max, at: Date.now() }, shareCount: 0,
   settings: { theme: 'auto', sound: true, haptic: true }, createdAt: Date.now(),
 });
 export let S = empty();

@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Shippori+Mincho:wght@700&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
-<link rel="stylesheet" href="css/app.css?v=0.5.0">
+<link rel="stylesheet" href="css/app.css?v=0.5.1">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -88,10 +88,9 @@
     <div class="pane">
       <div class="profile" id="profile"></div>
       <div class="segmented" role="tablist">
-        <button data-sub="stamps" class="active" role="tab">印</button><button data-sub="want" role="tab">読みたい</button><button data-sub="cards" role="tab">カード</button><button data-sub="log" role="tab">帳</button><button data-sub="prefs" role="tab">県</button>
+        <button data-sub="stamps" class="active" role="tab">印</button><button data-sub="cards" role="tab">カード</button><button data-sub="log" role="tab">帳</button><button data-sub="prefs" role="tab">県</button>
       </div>
       <div id="sub-stamps" class="sub active"><div id="stamp-grid" class="stamp-grid"></div></div>
-      <div id="sub-want" class="sub"><p class="hint">ガチャで出た本の棚。本屋でその本と出会う（買ってバーコードを読む）とボーナス。</p><div id="want-grid" class="card-grid"></div></div>
       <div id="sub-cards" class="sub"><p class="hint">「この店で、この本と出会った」の記録。読んだかどうかは問いません。</p><div id="card-grid" class="card-grid"></div></div>
       <div id="sub-log" class="sub"><h3>○年前の今日</h3><div id="anniv" class="status-card"></div><h3>行った店</h3><div id="visit-list" class="list"></div></div>
       <div id="sub-prefs" class="sub"><p class="hint">印を手に入れた県が塗られます（住所の情報がない店は近い県に寄せた目安）。</p><div id="prefs" class="prefs"></div></div>
@@ -100,7 +99,6 @@
 
   <section id="view-mission" class="view" aria-label="お題">
     <div class="pane">
-      <div id="gacha-box" class="gacha-box"></div>
       <h3>今日のお題 <span class="muted" id="day-label"></span></h3>
       <div id="daily-list" class="mlist"></div>
       <h3>今週のお題 <span class="muted" id="week-label"></span></h3>
@@ -134,6 +132,6 @@
 <div id="toasts" aria-live="polite"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
-<script type="module" src="js/main.js?v=0.5.0"></script>
+<script type="module" src="js/main.js?v=0.5.1"></script>
 </body>
 </html>

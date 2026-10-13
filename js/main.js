@@ -40,7 +40,7 @@ async function boot() {
   if ('serviceWorker' in navigator && location.protocol === 'https:') {
     navigator.serviceWorker.register('sw.js').then((reg) => { reg.addEventListener('updatefound', () => { const w = reg.installing; w && w.addEventListener('statechange', () => { if (w.state === 'installed' && navigator.serviceWorker.controller) { $('#update').hidden = false; $('#btn-update').onclick = () => { w.postMessage('skip'); location.reload(); }; } }); }); }).catch(() => {});
   }
-  if (!S.seen) showOnboarding((mode) => { S.seen = 1; S.tickets += 1; save(); UI.refreshHud(); UI.toast('🎟 最初のガチャ券を1枚どうぞ（お題の画面で引けます）', 'ok'); if (mode === 'geo') UI.locate(); if (mode === 'trial') { UI.setTrialUI(true); UI.warp(); } });
+  if (!S.seen) showOnboarding((mode) => { S.seen = 1; save(); UI.refreshHud(); if (mode === 'geo') UI.locate(); if (mode === 'trial') { UI.setTrialUI(true); UI.warp(); } });
   emit('view', 'map');
   window.__honya = { S, POS, STORES, UI, MAP, ver: APP_VER };
 }

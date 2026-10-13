@@ -183,8 +183,6 @@ textarea{min-height:76px;resize:vertical}
 .prefs .p.v1{background:var(--shu-soft);color:var(--ink)} .prefs .p.v2{background:var(--shu);color:#fff;border-color:var(--shu)}
 
 /* ---- お題 ---- */
-.gacha-box{background:linear-gradient(135deg,var(--gold-soft),var(--card));border:1px solid var(--gold);border-radius:var(--r-l);padding:14px 16px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;box-shadow:var(--shadow-1)}
-.gacha-box .t{font-weight:700;display:flex;align-items:center;gap:6px} .gacha-box .n{font-size:13px;color:var(--ink-2)}
 .mlist .m{background:var(--card);border:1px solid var(--line);border-radius:var(--r-m);padding:12px 14px;margin:8px 0}
 .mlist .m .h{display:flex;justify-content:space-between;gap:8px;align-items:center}
 .mlist .m .h b{font-size:15px}
@@ -248,3 +246,4 @@ video#scanner{width:100%;border-radius:var(--r-m);background:#000;max-height:50v
 
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 @media (min-width:720px){.actions .btn{flex-basis:auto}}
+.setting>.btn,.setting>label.btn{flex:0 0 auto;white-space:nowrap}
