@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <title>本屋の地図</title>
-<meta name="description" content="本屋をめぐる位置ゲーム。店に近づくとピンが光り、その店だけの印が手に入る。買った本のバーコードでカードが1枚。">
+<meta name="description" content="本屋をめぐる位置ゲーム。店に近づくとピンが光り、その店だけのスタンプが押せる。買った本のバーコードでカードが1枚。">
 <meta name="color-scheme" content="light dark">
-<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f6f1e8">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#faf7f1">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1f1b18">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -15,9 +15,9 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Shippori+Mincho:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Zen+Maru+Gothic:wght@700;900&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
-<link rel="stylesheet" href="css/app.css?v=0.5.2">
+<link rel="stylesheet" href="css/app.css?v=0.6.0">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -46,13 +46,13 @@
   <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></symbol>
   <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 22s7-7.5 7-13a7 7 0 1 0-14 0c0 5.5 7 13 7 13z" fill="currentColor"/><circle cx="12" cy="9" r="2.6" fill="#fff"/></symbol>
-  <symbol id="i-seal" viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="none" stroke="currentColor" stroke-width="7"/><rect x="36" y="27" width="28" height="46" rx="3" fill="currentColor"/><path d="M50 30v40" stroke="#fff" stroke-width="4"/></symbol>
+  <symbol id="i-seal" viewBox="0 0 100 100"><path d="M50 95C50 95 18 62 18 38a32 32 0 0 1 64 0c0 24-32 57-32 57z" fill="currentColor"/><circle cx="50" cy="38" r="17" fill="#fff"/><path d="M39 31q5.5-2.5 11 0v15q-5.5-2.5-11 0zM50 31q5.5-2.5 11 0v15q-5.5-2.5-11 0z" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linejoin="round"/></symbol>
 </svg>
 
 <header id="top">
   <div class="brand"><svg class="seal" aria-hidden="true"><use href="#i-seal"></use></svg><div><div class="brand-name">本屋の地図</div><div id="brand-title" class="brand-sub"></div></div></div>
   <div class="hud">
-    <button id="ink-btn" class="ink" aria-label="印泥（印を押せる回数）"><svg class="ic"><use href="#i-ink"></use></svg><span id="ink-dots" class="dots"></span></button>
+    <button id="ink-btn" class="ink" aria-label="インク（スタンプを押せる回数）"><svg class="ic"><use href="#i-ink"></use></svg><span id="ink-dots" class="dots"></span></button>
     <button id="lv-btn" class="lv" aria-label="レベル"><span id="lv-label">Lv.1</span><i class="xpbar"><b id="xp-fill"></b></i></button>
     <button id="btn-settings" class="icon-btn" aria-label="設定"><svg class="ic"><use href="#i-gear"></use></svg></button>
   </div>
@@ -88,12 +88,12 @@
     <div class="pane">
       <div class="profile" id="profile"></div>
       <div class="segmented" role="tablist">
-        <button data-sub="stamps" class="active" role="tab">印</button><button data-sub="cards" role="tab">カード</button><button data-sub="log" role="tab">帳</button><button data-sub="prefs" role="tab">県</button>
+        <button data-sub="stamps" class="active" role="tab">スタンプ</button><button data-sub="cards" role="tab">カード</button><button data-sub="log" role="tab">帳</button><button data-sub="prefs" role="tab">県</button>
       </div>
       <div id="sub-stamps" class="sub active"><div id="stamp-grid" class="stamp-grid"></div></div>
       <div id="sub-cards" class="sub"><p class="hint">「この店で、この本と出会った」の記録。読んだかどうかは問いません。</p><div id="card-grid" class="card-grid"></div></div>
       <div id="sub-log" class="sub"><h3>○年前の今日</h3><div id="anniv" class="status-card"></div><h3>行った店</h3><div id="visit-list" class="list"></div></div>
-      <div id="sub-prefs" class="sub"><p class="hint">印を手に入れた県が塗られます（住所の情報がない店は近い県に寄せた目安）。</p><div id="prefs" class="prefs"></div></div>
+      <div id="sub-prefs" class="sub"><p class="hint">スタンプを押した県が塗られます（住所の情報がない店は近い県に寄せた目安）。</p><div id="prefs" class="prefs"></div></div>
     </div>
   </section>
 
@@ -132,6 +132,6 @@
 <div id="toasts" aria-live="polite"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
-<script type="module" src="js/main.js?v=0.5.2"></script>
+<script type="module" src="js/main.js?v=0.6.0"></script>
 </body>
 </html>

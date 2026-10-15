@@ -1,11 +1,11 @@
 /* 本屋の地図 — 見た目の決まり。色・文字・間隔はここの値だけを使う */
 :root{
-  --paper:#f6f1e8; --paper-2:#eee6d8; --paper-3:#e2d8c6; --card:#fffdf8; --card-2:#f9f4ea;
+  --paper:#faf7f1; --paper-2:#f0eadf; --paper-3:#e4dccd; --card:#ffffff; --card-2:#faf6ee;
   --ink:#231f1c; --ink-2:#5f574f; --ink-3:#8a8178; --line:#ddd4c6; --line-2:#cdc3b2;
-  --shu:#c8381f; --shu-2:#a52d18; --shu-soft:#f7ded7; --gold:#b8921f; --gold-soft:#f5e9c6; --murasaki:#6d4fc3; --murasaki-soft:#e9e2f8; --ao:#2b6cb0; --mori:#2f7a4f;
+  --shu:#d6452b; --shu-2:#b3321c; --shu-soft:#fbe3dc; --gold:#b8921f; --gold-soft:#f5e9c6; --murasaki:#6d4fc3; --murasaki-soft:#e9e2f8; --ao:#2b6cb0; --mori:#2f7a4f;
   --shadow-1:0 1px 2px rgba(35,31,28,.08),0 2px 8px rgba(35,31,28,.06); --shadow-2:0 6px 24px rgba(35,31,28,.16); --shadow-3:0 -8px 32px rgba(35,31,28,.18);
   --r-s:8px; --r-m:12px; --r-l:18px; --r-xl:24px;
-  --body:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",system-ui,sans-serif; --display:"Shippori Mincho","Hiragino Mincho ProN","Yu Mincho",serif;
+  --body:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",system-ui,sans-serif; --display:"Zen Maru Gothic","Zen Kaku Gothic New","Hiragino Sans",sans-serif;
   --top:56px; --tabs:60px; --sat:env(safe-area-inset-top,0px); --sab:env(safe-area-inset-bottom,0px);
   --ease:cubic-bezier(.2,.8,.2,1); --fast:160ms; --mid:240ms;
 }
@@ -32,8 +32,8 @@ h3 .muted{font-weight:500;letter-spacing:0}
 /* ---- ボタン ---- */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:10px 16px;border-radius:var(--r-m);border:1px solid var(--line-2);background:var(--card);color:var(--ink);font-weight:500;transition:transform var(--fast) var(--ease),background var(--fast),box-shadow var(--fast)}
 .btn:active{transform:scale(.98)}
-.btn.primary{background:var(--shu);border-color:var(--shu);color:#fff;box-shadow:var(--shadow-1)}
-.btn.primary:hover{background:var(--shu-2)}
+.btn.primary{background:linear-gradient(180deg,color-mix(in srgb,var(--shu) 82%,#fff),var(--shu) 55%,var(--shu-2));border-color:var(--shu-2);color:#fff;font-weight:700;text-shadow:0 1px 0 rgba(0,0,0,.14);box-shadow:0 2px 0 color-mix(in srgb,var(--shu-2) 75%,#000),0 4px 12px rgba(214,69,43,.26)}
+.btn.primary:hover{filter:brightness(1.05)}
 .btn.ghost{background:transparent;border-color:transparent;color:var(--ink-2)}
 .btn.danger{color:var(--shu-2);border-color:var(--shu-2);background:transparent}
 .btn.gold{background:var(--gold);border-color:var(--gold);color:#fff}
@@ -49,7 +49,7 @@ h3 .muted{font-weight:500;letter-spacing:0}
 #top{position:fixed;top:0;left:0;right:0;z-index:30;padding-top:var(--sat);background:color-mix(in srgb,var(--paper) 92%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 #top .brand{position:absolute;left:12px;top:calc(var(--sat) + 8px);height:40px;display:flex;align-items:center;gap:8px}
 #top .seal{width:30px;height:30px;color:var(--shu)}
-.brand-name{font-family:var(--display);font-weight:700;font-size:17px;line-height:1.1}
+.brand-name{font-family:var(--display);font-weight:900;font-size:17px;line-height:1.1;letter-spacing:.02em}
 .brand-sub{font-size:11px;color:var(--ink-2);line-height:1.2;max-width:34vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #top .hud{height:var(--top);display:flex;align-items:center;justify-content:flex-end;gap:6px;padding:0 6px 0 150px}
 .ink{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:4px 10px 4px 8px;color:var(--shu);height:34px}
@@ -207,7 +207,7 @@ textarea{min-height:76px;resize:vertical}
 .card-full .why{margin-top:8px;white-space:pre-wrap}
 video#scanner{width:100%;border-radius:var(--r-m);background:#000;max-height:50vh}
 
-/* ---- 印を手に入れたときの画面 ---- */
+/* ---- スタンプを押したときの画面 ---- */
 .capture{position:fixed;inset:0;background:radial-gradient(circle at 50% 38%,color-mix(in srgb,var(--card) 92%,transparent),var(--paper) 70%);z-index:55;display:flex;align-items:center;justify-content:center;padding:20px;animation:fade var(--fast)}
 .capture-box{text-align:center;max-width:420px;width:100%}
 .capture .big{width:min(62vw,250px);height:min(62vw,250px);margin:0 auto 14px;animation:stampIn .7s cubic-bezier(.2,1.4,.4,1) both}
@@ -247,3 +247,29 @@ video#scanner{width:100%;border-radius:var(--r-m);background:#000;max-height:50v
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 @media (min-width:720px){.actions .btn{flex-basis:auto}}
 .setting>.btn,.setting>label.btn{flex:0 0 auto;white-space:nowrap}
+
+/* ---- v0.6 仕上げ：紙の質感・常連度・押したときの演出 ---- */
+.pane,.sheet,.modal-box,.onboard-box{position:relative}
+.pane::before,.sheet::before,.modal-box::before,.onboard::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.07;border-radius:inherit;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .2 0 0 0 0 .15 0 0 0 0 .1 0 0 0 .9 0'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>")}
+:root[data-theme="dark"] .pane::before,:root[data-theme="dark"] .sheet::before,:root[data-theme="dark"] .modal-box::before,:root[data-theme="dark"] .onboard::before{opacity:.09}
+.reg{margin:8px 0 2px;display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px}
+.reg .badge{margin:0}
+.regbar{flex-basis:100%;height:6px;background:var(--paper-2);border-radius:999px;overflow:hidden}
+.regbar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--shu));transition:width .4s var(--ease)}
+.stamp-grid .st .n.reg{color:var(--shu);font-weight:700}
+.stamp-grid .st svg{filter:drop-shadow(0 3px 6px rgba(35,31,28,.16))}
+.sheet-head .stamp-sm{width:80px;height:80px;filter:drop-shadow(0 4px 8px rgba(35,31,28,.18))}
+.sheet-head .stamp-sm svg{width:80px;height:80px}
+.capture .burst{position:absolute;left:50%;top:40%;width:min(96vw,470px);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:repeating-conic-gradient(color-mix(in srgb,var(--gold) 28%,transparent) 0 14deg,transparent 14deg 30deg);-webkit-mask:radial-gradient(circle,#000 0,transparent 68%);mask:radial-gradient(circle,#000 0,transparent 68%);animation:spin 18s linear infinite;pointer-events:none}
+@keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+.capture-box{position:relative;z-index:1}
+.capture .big{position:relative;filter:drop-shadow(0 12px 20px rgba(35,31,28,.28))}
+.confetti{position:absolute;inset:0;pointer-events:none;z-index:2}
+.lv,.ink{background:linear-gradient(180deg,var(--card),var(--card-2))}
+.profile{background:linear-gradient(160deg,var(--card),var(--card-2))}
+.stats .n{font-weight:900}
+.profile .ph .lvbig{font-weight:900;font-size:34px}
+.capture .gain{font-weight:900;font-size:26px}
+.mlist .m.done{background:linear-gradient(135deg,var(--gold-soft),var(--card))}
+.titles .t{font-weight:700}
+.quest{background:linear-gradient(135deg,var(--ink),color-mix(in srgb,var(--ink) 80%,var(--shu)))}

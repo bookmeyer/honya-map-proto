@@ -1,7 +1,7 @@
-// 店・ラリーのデータ。印（その店だけの印）の見た目もここ
-import { DEMO_STORE } from './config.js?v=0.5.2';
-import { S } from './state.js?v=0.5.2';
-import { esc, hash32, prefOf, weekKey, sleep } from './util.js?v=0.5.2';
+// 店・ラリーのデータ。スタンプ（その店だけの絵柄）の見た目もここ
+import { DEMO_STORE } from './config.js?v=0.6.0';
+import { S } from './state.js?v=0.6.0';
+import { esc, hash32, prefOf, weekKey, sleep } from './util.js?v=0.6.0';
 
 export let STORES = [];
 export let RALLIES = [];
@@ -47,26 +47,46 @@ export function unhideAll() { S.hidden = {}; S.renames = {}; rebuild(); }
 export function renameStore(st, name) { S.renames[st.i] = { n: name, old: st.n, d: new Date().toISOString().slice(0, 10) }; rebuild(); }
 export const DATA_DATE = '2026-10-12';
 
-// ---- 印 ----
+// ---- レア度（秘境度） ----
 export function rarityOf(st) { if (st.demo) return 3; const k = st.k == null ? 3 : st.k; return k === 0 ? 3 : k <= 6 ? 2 : 1; }
-export function rarityText(st) { const r = rarityOf(st); if (st.demo) return 'めったにない印（見本）'; if (st.k == null) return 'この街の印'; return r === 3 ? '秘境の印（周り5kmに本屋なし）' : r === 2 ? `この街の印（周り5kmに本屋 ${st.k}店）` : `よくある印（周り5kmに本屋 ${st.k}店）`; }
+export function rarityText(st) { const r = rarityOf(st); if (st.demo) return 'めったにないスタンプ（見本）'; if (st.k == null) return '街のスタンプ'; return r === 3 ? '秘境スタンプ（周り5kmに本屋なし）' : r === 2 ? `街のスタンプ（周り5kmに本屋 ${st.k}店）` : `ふつうのスタンプ（周り5kmに本屋 ${st.k}店）`; }
 export const rarityName = (r) => (r === 3 ? '秘境' : r === 2 ? '街' : '並');
-function shortName(n) { const s = n.replace(/\s+/g, '').replace(/(株式会社|有限会社)/g, ''); return s.slice(0, 4) || '本'; }
-export function stampSVG(st, collected, size = 96) {
-  const h = hash32(st.i); const hue = h % 360; const shape = (h >>> 8) % 3; const pat = (h >>> 16) % 3; const r = rarityOf(st);
-  const col = collected ? `hsl(${hue} 58% 40%)` : '#c9c2b6'; const col2 = collected ? `hsl(${(hue + 40) % 360} 60% 55%)` : '#d9d3c8';
-  const gold = '#c9a227'; const dash = collected ? '' : ' stroke-dasharray="4 3"';
-  let outer = '';
-  if (shape === 0) outer = `<circle cx="50" cy="50" r="46" fill="none" stroke="${col}" stroke-width="4"${dash}/>`;
-  else if (shape === 1) outer = `<rect x="6" y="6" width="88" height="88" rx="14" fill="none" stroke="${col}" stroke-width="4"${dash}/>`;
-  else outer = `<polygon points="30,5 70,5 95,30 95,70 70,95 30,95 5,70 5,30" fill="none" stroke="${col}" stroke-width="4"${dash}/>`;
-  let inner = '';
-  if (pat === 0) inner = `<circle cx="50" cy="50" r="38" fill="none" stroke="${col2}" stroke-width="1.5"/>`;
-  else if (pat === 1) inner = `<circle cx="50" cy="50" r="40" fill="none" stroke="${col2}" stroke-width="1.5"/><circle cx="50" cy="50" r="36" fill="none" stroke="${col2}" stroke-width="1"/>`;
-  else inner = `<circle cx="50" cy="50" r="38" fill="none" stroke="${col2}" stroke-width="2" stroke-dasharray="2 5"/>`;
-  const rare = r === 3 ? `<circle cx="50" cy="50" r="49" fill="none" stroke="${collected ? gold : '#ddd5c3'}" stroke-width="2"/>` : r === 2 ? `<circle cx="50" cy="50" r="48.5" fill="none" stroke="${col2}" stroke-width="1"/>` : '';
-  const text = esc(shortName(st.n)); const fill = collected ? col : '#b5ada0';
-  return `<svg viewBox="0 0 100 100" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg" aria-label="${esc(st.n)}の印">${rare}${outer}${inner}<text x="50" y="50" text-anchor="middle" dominant-baseline="central" writing-mode="tb" font-size="${text.length > 3 ? 16 : text.length > 2 ? 19 : 24}" font-weight="700" font-family="'Shippori Mincho','Hiragino Mincho ProN','Yu Mincho',serif" fill="${fill}" style="letter-spacing:.05em">${text}</text></svg>`;
+
+// ---- スタンプの見た目 ----
+// 店ごとに、形（角丸・丸・六角）・インクの色・絵柄（本にまつわる12種）が決まる。スタンプラリーの「ご当地スタンプ」の雰囲気
+const INKS = [[222, 60, 46], [150, 45, 40], [26, 78, 52], [268, 46, 54], [348, 62, 54], [190, 55, 38]]; // 色相・彩度・明るさ
+const PICTS = [
+  '<path d="M4 8q8-4 16 0v24q-8-4-16 0z"/><path d="M20 8q8-4 16 0v24q-8-4-16 0z"/>', // 開いた本
+  '<rect x="6" y="25" width="28" height="8" rx="2"/><rect x="9" y="15" width="24" height="8" rx="2"/><rect x="12" y="5" width="20" height="8" rx="2"/>', // 積んだ本
+  '<rect x="4" y="4" width="32" height="32" rx="3"/><path d="M11 10v26M18 7v29M25 12v24M31 9v27"/>', // 本棚
+  '<path d="M11 4h18v32l-9-7-9 7z"/>', // しおり
+  '<circle cx="12" cy="25" r="7"/><circle cx="28" cy="25" r="7"/><path d="M19 25h2M5 24l-2-9M35 24l2-9"/>', // 眼鏡
+  '<path d="M14 5h12l5 15H9zM20 20v12M12 34h16"/>', // ランプ
+  '<path d="M8 15h22v11a8 8 0 0 1-8 8h-6a8 8 0 0 1-8-8z"/><path d="M30 18h3a4 4 0 0 1 0 8h-3M14 5q2 3 0 6M21 5q2 3 0 6"/>', // コーヒー
+  '<path d="M4 20 36 6 26 36l-6-12zM20 24 36 6"/>', // 紙ひこうき
+  '<path d="M8 32 30 10l4 4L12 36zM8 32l-1 5 5-1M26 14l4 4"/>', // 鉛筆
+  '<path d="M22 6a14 14 0 1 0 12 20A11 11 0 0 1 22 6z"/><path d="M31 7l1.4 3 3.2.4-2.3 2.2.6 3.2-2.9-1.6-2.9 1.6.6-3.2-2.3-2.2 3.2-.4z"/>', // 月と星
+  '<path d="M8 32C8 14 20 6 34 6c0 16-10 26-26 26z"/><path d="M8 32c8-8 14-14 22-22"/>', // 葉
+  '<path d="M4 22a16 16 0 0 1 32 0zM20 22v10a4 4 0 0 1-8 0M20 6v-2"/>', // 傘
+];
+function shortName(n) {
+  const s = String(n).replace(/(株式会社|有限会社|\(株\)|（株）)/g, '').trim().split(/[\s　]+/)[0] || '本';
+  let out = '', w = 0; for (const ch of s) { const cw = /[ -~]/.test(ch) ? 0.6 : 1; if (w + cw > 6.2) break; out += ch; w += cw; } return { text: out || '本', w };
+}
+const hsl = (h, s, l) => `hsl(${h} ${Math.max(0, Math.min(100, s))}% ${Math.max(0, Math.min(100, l))}%)`;
+export function stampInk(st) { const h = hash32(st.i); const [H, Sa, L] = INKS[(h >>> 16) % INKS.length]; return { main: hsl(H, Sa, L), dark: hsl(H, Sa, L - 14), light: hsl(H, Sa, L + 36) }; }
+export function stampSVG(st, collected, size = 96, opts = {}) {
+  const h = hash32(st.i); const shape = h % 3; const pict = PICTS[(h >>> 8) % PICTS.length]; const [H, Sa, L] = INKS[(h >>> 16) % INKS.length]; const r = rarityOf(st); const rank = opts.rank || 0;
+  const id = 'k' + h.toString(36) + (collected ? 'c' : 'u') + (opts.sfx || '');
+  const top = collected ? hsl(H, Sa, L + 12) : '#ece6da', bot = collected ? hsl(H, Sa, L - 8) : '#dcd4c5', edge = collected ? hsl(H, Sa, L - 20) : '#c8c0b1', pic = collected ? '#ffffff' : '#bdb5a8', band = collected ? 'rgba(255,255,255,.93)' : 'rgba(255,255,255,.55)', nameCol = collected ? hsl(H, Sa, L - 14) : '#a69e91';
+  const outer = shape === 0 ? '<rect x="6" y="6" width="88" height="88" rx="24"/>' : shape === 1 ? '<circle cx="50" cy="50" r="44"/>' : '<path d="M50 5L89 27v46L50 95 11 73V27z"/>';
+  const { text, w } = shortName(st.n); const fs = w <= 3 ? 15 : w <= 4 ? 13 : w <= 5 ? 11.5 : 10.5;
+  const big = size >= 64;
+  const ring = r === 3 ? `<g transform="translate(50 50) scale(1.08) translate(-50 -50)" fill="none" stroke="${collected ? '#d9a521' : '#ddd5c3'}" stroke-width="3">${outer}</g>` : r === 2 ? `<g transform="translate(50 50) scale(1.07) translate(-50 -50)" fill="none" stroke="${collected ? '#c6c3cc' : '#e2dccf'}" stroke-width="2">${outer}</g>` : '';
+  const star = (x, y, s, f) => `<path transform="translate(${x} ${y}) scale(${s})" fill="${f}" d="M0-9l2.6 5.4 6 .8-4.4 4.2 1.1 5.9L0 4.5l-5.3 2.8 1.1-5.9-4.4-4.2 6-.8z"/>`;
+  const crown = (x, y, s, f) => `<g transform="translate(${x} ${y}) scale(${s})"><path fill="${f}" stroke="${edge}" stroke-width="1.2" stroke-linejoin="round" d="M-9 6l-3-11 6 4 6-9 6 9 6-4-3 11z"/></g>`;
+  const marks = collected ? (r === 3 ? star(50, 10, 0.75, '#d9a521') : '') + (rank >= 4 ? crown(77, 12, 0.85, '#ffd54a') : rank >= 3 ? crown(78, 12, 0.72, '#ffffff') : rank >= 2 ? star(79, 12, 0.6, '#ffffff') : '') : '';
+  return `<svg viewBox="0 0 100 100" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg" aria-label="${esc(st.n)}のスタンプ"><defs><linearGradient id="g${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${top}"/><stop offset="1" stop-color="${bot}"/></linearGradient><clipPath id="c${id}">${outer}</clipPath>${big && collected ? `<filter id="t${id}"><feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="2" seed="${h % 97}"/><feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .22 0"/></filter>` : ''}</defs>${ring}<g fill="url(#g${id})" stroke="${edge}" stroke-width="2.5"${collected ? '' : ' stroke-dasharray="5 3"'}>${outer}</g>${big && collected ? `<rect width="100" height="100" clip-path="url(#c${id})" filter="url(#t${id})"/>` : ''}<ellipse cx="40" cy="20" rx="26" ry="11" fill="#fff" opacity="${collected ? '.16' : '.3'}" clip-path="url(#c${id})"/><g transform="translate(30 15)" fill="none" stroke="${pic}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">${pict}</g><g clip-path="url(#c${id})"><rect x="12" y="63" width="76" height="18" rx="9" fill="${band}"/><text x="50" y="72.5" text-anchor="middle" dominant-baseline="central" font-size="${fs}" font-weight="800" font-family="'Zen Maru Gothic','Zen Kaku Gothic New','Hiragino Sans',sans-serif" fill="${nameCol}">${esc(text)}</text></g>${marks}</svg>`;
 }
 
 // ---- 本（openBD） ----

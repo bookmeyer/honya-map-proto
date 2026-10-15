@@ -1,22 +1,25 @@
 // 設定値（数字はここだけで変える）
-export const APP_VER = '0.5.2';
+export const APP_VER = '0.6.0';
 export const STORAGE_KEY = 'honya_map_v3';
 export const LEGACY_KEYS = ['honya_map_v2'];
 
 export const RANGE_M = 120;        // 射程（m）
 export const SENSE_M = 400;        // 近づく演出が始まる距離（m）
-export const TERRITORY_M = 200;    // 印を持つ店のまわりを塗る半径（m）
+export const TERRITORY_M = 200;    // スタンプを押した店のまわりを塗る半径（m）
 export const JUMP_MPS = 60;        // これより速く位置が飛んだら「飛んだ」と見なす（m/秒）
 export const JUMP_COOLDOWN_MS = 60000;
 
-// 印泥（いんでい）：印を押すたびに1つ使う。時間で回復する
+// インク：スタンプを押すたびに1つ使う。時間で回復する
 export const INK = { max: 5, rechargeMs: 90 * 60 * 1000 };
+// 常連度：同じ店でスタンプを押した「日数」で上がる（たくさんの店に行けない人の楽しみ）
+export const REGULAR = [{ n: 1, name: 'はじめまして' }, { n: 3, name: '顔なじみ' }, { n: 5, name: '常連' }, { n: 10, name: 'ぬし' }, { n: 20, name: '名物客' }, { n: 50, name: '殿堂入り' }];
 
 export const XP = {
   shuFirst: 300, shuRepeat: 60, sumiFirst: 100, sumiRepeat: 20,
   card: 400, cardInStore: 200,
   rare2: 100, rare3: 500, feat: 500,
   daily: 80, weekly: 200, rally: 1000, streak: 100,
+  regular: [0, 150, 300, 600, 1000, 2000], // 常連度が上がったとき（段ごと）
 };
 export const levelOf = (xp) => Math.floor(Math.sqrt(Math.max(xp, 0) / 150)) + 1;
 export const xpForLevel = (lv) => (lv - 1) ** 2 * 150;
@@ -43,22 +46,25 @@ export const DEMO_STORE = { i: 'demo1', n: '【見本】架空の本屋', la: 35
 
 // 称号（ゆるやかに増える）と実績（細かく増える）
 export const TITLES = [
-  { id: 't_s1', name: 'はじめの一印', kind: 'stamps', n: 1 }, { id: 't_s3', name: '本屋あるき', kind: 'stamps', n: 3 }, { id: 't_s10', name: '本屋通', kind: 'stamps', n: 10 },
+  { id: 't_s1', name: 'はじめの一押し', kind: 'stamps', n: 1 }, { id: 't_s3', name: '本屋あるき', kind: 'stamps', n: 3 }, { id: 't_s10', name: '本屋通', kind: 'stamps', n: 10 },
   { id: 't_s20', name: '本屋巡礼者', kind: 'stamps', n: 20 }, { id: 't_s50', name: '本屋のぬし', kind: 'stamps', n: 50 }, { id: 't_s100', name: '全国行脚', kind: 'stamps', n: 100 },
   { id: 't_p2', name: '越境', kind: 'prefs', n: 2 }, { id: 't_p5', name: '五県の旅人', kind: 'prefs', n: 5 }, { id: 't_p10', name: '列島めぐり', kind: 'prefs', n: 10 },
   { id: 't_u3', name: '古書の目利き', kind: 'used', n: 3 }, { id: 't_r3', name: '秘境の本屋さがし', kind: 'rare', n: 3 },
+  { id: 't_g5', name: '行きつけがある', kind: 'regMax', n: 5 }, { id: 't_g20', name: '町の本屋の顔', kind: 'regMax', n: 20 },
 ];
 export const ACHIEVEMENTS = [
-  { id: 'a_first', name: '最初の一歩', desc: '印を1つ手に入れる', kind: 'stamps', n: 1 },
+  { id: 'a_first', name: '最初の一歩', desc: 'スタンプを1つ押す', kind: 'stamps', n: 1 },
   { id: 'a_card1', name: '本と出会った', desc: 'カードを1枚作る', kind: 'cards', n: 1 },
   { id: 'a_card10', name: '出会いの常連', desc: 'カードを10枚', kind: 'cards', n: 10 },
-  { id: 'a_used', name: '古書の香り', desc: '古書店で印を1つ', kind: 'used', n: 1 },
-  { id: 'a_rare', name: '秘境へ', desc: '★★★の印を1つ', kind: 'rare', n: 1 },
-  { id: 'a_feat', name: '推し店めぐり', desc: '今週の推し店で印を3回', kind: 'feat', n: 3 },
-  { id: 'a_repeat', name: '常連', desc: '同じ店で朱印を3回', kind: 'repeat', n: 3 },
+  { id: 'a_used', name: '古書の香り', desc: '古書店でスタンプを1つ', kind: 'used', n: 1 },
+  { id: 'a_rare', name: '秘境へ', desc: '★★★のスタンプを1つ', kind: 'rare', n: 1 },
+  { id: 'a_feat', name: '推し店めぐり', desc: '今週の推し店でスタンプを3回', kind: 'feat', n: 3 },
+  { id: 'a_regular', name: '常連', desc: '同じ店でスタンプを5日', kind: 'regMax', n: 5 },
+  { id: 'a_nushi', name: 'ぬし', desc: '同じ店でスタンプを10日', kind: 'regMax', n: 10 },
+  { id: 'a_reg3', name: '行きつけが三つ', desc: '常連の店を3つ', kind: 'regulars', n: 3 },
   { id: 'a_look', name: '下見', desc: '本屋のページを30店見る', kind: 'look', n: 30 },
-  { id: 'a_streak4', name: '四週つづけて', desc: '4週連続で印を手に入れる', kind: 'streak', n: 4 },
-  { id: 'a_pref5', name: '五つの県', desc: '5県で印を手に入れる', kind: 'prefs', n: 5 },
+  { id: 'a_streak4', name: '四週つづけて', desc: '4週連続でスタンプを押す', kind: 'streak', n: 4 },
+  { id: 'a_pref5', name: '五つの県', desc: '5県でスタンプを押す', kind: 'prefs', n: 5 },
   { id: 'a_rally', name: 'ラリー制覇', desc: 'ご当地ラリーを1つ', kind: 'rally', n: 1 },
-  { id: 'a_share', name: '見せびらかし', desc: '印をシェアする', kind: 'share', n: 1 },
+  { id: 'a_share', name: '見せびらかし', desc: 'スタンプをシェアする', kind: 'share', n: 1 },
 ];

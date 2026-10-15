@@ -1,4 +1,4 @@
-// アイコン（PNG）を外部ライブラリなしで作る：紙色の地に朱の印
+// アイコン（PNG）を外部ライブラリなしで作る：紙色の地に、朱のピン（中に本）
 const zlib = require('zlib');
 const fs = require('fs');
 const path = require('path');
@@ -32,22 +32,25 @@ function png(w, h, px) {
   ihdr.writeUInt32BE(w, 0); ihdr.writeUInt32BE(h, 4); ihdr[8] = 8; ihdr[9] = 6; ihdr[10] = 0; ihdr[11] = 0; ihdr[12] = 0;
   return Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), chunk('IHDR', ihdr), chunk('IDAT', zlib.deflateSync(raw)), chunk('IEND', Buffer.alloc(0))]);
 }
+// 4×4 の点で縁をなめらかに（アンチエイリアス）
 function icon(size) {
-  const c = size / 2;
+  const PAPER = [250, 247, 241], SHU = [214, 69, 43], SHU2 = [179, 50, 28], WHITE = [255, 255, 255];
+  const cx = 0.5, cy = 0.40, R = 0.26, TIP = 0.90;
+  const inPin = (x, y) => { const dx = x - cx, dy = y - cy; if (dx * dx + dy * dy <= R * R) return true; if (y > cy && y <= TIP) { const t = (y - cy) / (TIP - cy); return Math.abs(dx) <= R * Math.sqrt(Math.max(0, 1 - t * t)) * (1 - t * 0.15) + 0.0; } return false; };
+  const sample = (x, y) => {
+    if (!inPin(x, y)) return PAPER;
+    const dx = x - cx, dy = y - cy; const d = Math.sqrt(dx * dx + dy * dy);
+    if (d <= 0.145) { // 白い丸と、中の本
+      const bx = Math.abs(dx) <= 0.075, by = dy >= -0.085 && dy <= 0.075;
+      if (bx && by) { if (Math.abs(dx) <= 0.01) return WHITE; return SHU; }
+      return WHITE;
+    }
+    return y > 0.62 ? SHU2 : SHU;
+  };
   return png(size, size, (x, y) => {
-    const dx = x - c, dy = y - c;
-    const r = Math.sqrt(dx * dx + dy * dy) / size;
-    // 紙色の地
-    if (r > 0.36) return [246, 241, 232, 255];
-    // 朱の印（外の輪と、内の丸）
-    if (r > 0.33) return [200, 56, 31, 255];
-    if (r > 0.29) return [246, 241, 232, 255];
-    // 内側：朱に、白い小さな四角（本）
-    const inBook = Math.abs(dx) < size * 0.09 && Math.abs(dy) < size * 0.12;
-    const spine = Math.abs(dx) < size * 0.012 && Math.abs(dy) < size * 0.12;
-    if (spine) return [200, 56, 31, 255];
-    if (inBook) return [255, 255, 255, 255];
-    return [200, 56, 31, 255];
+    let r = 0, g = 0, b = 0; const n = 4;
+    for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) { const c = sample((x + (i + 0.5) / n) / size, (y + (j + 0.5) / n) / size); r += c[0]; g += c[1]; b += c[2]; }
+    return [Math.round(r / (n * n)), Math.round(g / (n * n)), Math.round(b / (n * n)), 255];
   });
 }
 const outDir = path.resolve(__dirname, '..');

@@ -1,13 +1,13 @@
-// 画面の部品：見出し帯・タブ・店のシート・モーダル・印の演出・カード・さがす・追加
-import { RANGE_M, SENSE_M, XP, levelOf, xpForLevel, INK } from './config.js?v=0.5.2';
-import { S, save, inkRefill } from './state.js?v=0.5.2';
-import { STORES, BYID, FEAT, isFeat, rarityOf, rarityText, stampSVG, search, addCustom, hideStore, renameStore, lookupIsbn, DATA_DATE } from './data.js?v=0.5.2';
-import * as G from './game.js?v=0.5.2';
-import * as MAP from './map.js?v=0.5.2';
-import { POS, setPos, startWatch, setTrial, setFollow, hasPos, jumped } from './position.js?v=0.5.2';
-import { sfx, haptic, unlock } from './audio.js?v=0.5.2';
-import { stampImage, cardImage, shareBlob } from './share.js?v=0.5.2';
-import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, on, emit, weekKey } from './util.js?v=0.5.2';
+// 画面の部品：見出し帯・タブ・店のシート・モーダル・スタンプの演出・カード・さがす・追加
+import { RANGE_M, SENSE_M, TERRITORY_M, XP, levelOf, xpForLevel, INK } from './config.js?v=0.6.0';
+import { S, save, inkRefill } from './state.js?v=0.6.0';
+import { STORES, BYID, FEAT, isFeat, rarityOf, rarityText, stampSVG, stampInk, search, addCustom, hideStore, renameStore, lookupIsbn, DATA_DATE } from './data.js?v=0.6.0';
+import * as G from './game.js?v=0.6.0';
+import * as MAP from './map.js?v=0.6.0';
+import { POS, setPos, startWatch, setTrial, setFollow, hasPos, jumped } from './position.js?v=0.6.0';
+import { sfx, haptic, unlock } from './audio.js?v=0.6.0';
+import { stampImage, cardImage, shareBlob } from './share.js?v=0.6.0';
+import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, on, emit, weekKey } from './util.js?v=0.6.0';
 
 export let currentView = 'map';
 export let currentSub = 'stamps';
@@ -62,7 +62,7 @@ export function applyMapStates() {
   const states = new Map();
   for (const s of STORES) states.set(s.i, { stamp: G.hasStamp(s.i) ? 1 : 0, near: NEAR.inRange.has(s.i) ? 1 : 0, feat: isFeat(s.i) ? 1 : 0, want: S.wants.includes(s.i) ? 1 : 0, st: G.stateOf(s.i) });
   MAP.setStates(states);
-  MAP.setTerritory(Object.keys(S.stamps).map((id) => BYID.get(id)).filter(Boolean));
+  MAP.setTerritory(Object.keys(S.stamps).map((id) => { const s = BYID.get(id); if (!s) return null; const rk = G.regularInfo(id).rank; return Object.assign({}, s, { rank: rk, rad: TERRITORY_M * (1 + 0.25 * Math.min(4, Math.max(0, rk - 1))) }); }).filter(Boolean));
 }
 
 // ---------- 現在地・お試し ----------
@@ -86,31 +86,31 @@ export function warp(target) {
 // ---------- 店のシート ----------
 export function openSheet(id, quiet) {
   const st = BYID.get(id); if (!st) return;
-  const vs = G.visitsOf(id), cs = G.cardsOf(id), want = S.wants.includes(id), stamp = S.stamps[id], r = rarityOf(st), feat = isFeat(st.i);
+  const vs = G.visitsOf(id), cs = G.cardsOf(id), want = S.wants.includes(id), stamp = S.stamps[id], r = rarityOf(st), feat = isFeat(st.i), reg = G.regularInfo(id);
   const d = hasPos() ? dist(POS.lat, POS.lon, st.la, st.lo) : null; const near = d != null && d <= RANGE_M && !jumped();
   const b = [];
   if (st.demo) b.push('<span class="badge">見本（実在しません）</span>'); if (st.custom) b.push('<span class="badge">自分で追加</span>'); if (st.fix) b.push('<span class="badge">名前を直した（この端末）</span>'); if (st.ov) b.push('<span class="badge">名前を確認ずみ</span>');
   if (feat) b.push(`<span class="badge feat">${icon('crown')}今週の推し店</span>`); if (st.u) b.push('<span class="badge">古書店</span>');
-  b.push(stamp ? `<span class="badge shu">印あり ${fmtDate(stamp.d)}</span>${stamp.trial ? '<span class="badge trial">体験</span>' : ''}` : vs.length ? `<span class="badge sumi">墨印 ${vs.length}回</span>` : '<span class="badge">まだ</span>');
+  b.push(stamp ? `<span class="badge shu">スタンプ ${fmtDate(stamp.d)}</span>${stamp.trial ? '<span class="badge trial">体験</span>' : ''}` : vs.length ? `<span class="badge sumi">記録 ${vs.length}回</span>` : '<span class="badge">まだ</span>');
   if (cs.length) b.push(`<span class="badge">カード${cs.length}枚</span>`); if (want) b.push(`<span class="badge gold">${icon('star')}行きたい</span>`); if (near) b.push('<span class="badge gold">射程内</span>');
   const rec = st.rec ? `<div class="staff"><div class="who">${esc(st.rec.who)}の手放せない1冊</div><div class="title">${esc(st.rec.title)}</div><div>${esc(st.rec.say)}</div><div class="muted small">棚：${esc(st.rec.shelf)}</div></div>` : '';
-  const hist = vs.length ? `<div class="muted small" style="margin-top:8px">${vs.slice(-3).reverse().map((v) => `${fmtDate(v.d)}${v.near ? '（朱印）' : '（墨印）'}${v.memo ? '「' + esc(v.memo) + '」' : ''}`).join('<br>')}</div>` : '';
+  const hist = vs.length ? `<div class="muted small" style="margin-top:8px">${vs.slice(-3).reverse().map((v) => `${fmtDate(v.d)}${v.near ? '（スタンプ）' : '（記録）'}${v.memo ? '「' + esc(v.memo) + '」' : ''}`).join('<br>')}</div>` : '';
   const distText = d == null ? '現在地なし' : jumped() ? '位置が大きく飛んだので、少し待ってから（1分）' : near ? `射程内（約${fmtDist(d)}）` : `ここから約${fmtDist(d)}（あと${fmtDist(d - RANGE_M)}で射程内）`;
   $('#sheet-body').innerHTML = `
-    <div class="sheet-head"><div class="stamp-sm">${stampSVG(st, !!stamp, 72)}</div><div style="min-width:0"><h2>${esc(st.n)}</h2><div class="stars">${stars(r)} <span class="muted small">${esc(rarityText(st))}</span></div></div></div>
+    <div class="sheet-head"><div class="stamp-sm">${stampSVG(st, !!stamp, 72, { rank: reg.rank })}</div><div style="min-width:0"><h2>${esc(st.n)}</h2><div class="stars">${stars(r)} <span class="muted small">${esc(rarityText(st))}</span></div></div></div>
     <div style="margin-top:8px">${b.join('')}</div>
     <div class="muted small">${esc(st.a || (st.custom ? '' : '住所の情報なし（地図データより）'))}　${esc(prefOf(st))}</div>
-    <div class="muted small">${esc(distText)}</div>${st.demo || st.custom ? '' : `<div class="muted small">店の情報：OpenStreetMap（${DATA_DATE} 取得）。${st.c ? '最終確認 ' + st.c.slice(0, 4) + '年' + Number(st.c.slice(5)) + '月' : '確認日の記録なし'}。閉店や名前の変更が反映されていないことがあります</div>`}${rec}${hist}
+    <div class="muted small">${esc(distText)}</div>${st.demo || st.custom ? '' : `<div class="muted small">店の情報：OpenStreetMap（${DATA_DATE} 取得）。${st.c ? '最終確認 ' + st.c.slice(0, 4) + '年' + Number(st.c.slice(5)) + '月' : '確認日の記録なし'}。閉店や名前の変更が反映されていないことがあります</div>`}${st.demo ? '' : `<div class="reg"><span class="badge ${reg.rank >= 3 ? 'shu' : reg.rank >= 2 ? 'gold' : ''}">常連度 ${reg.rank ? esc(reg.name) : 'まだ'}</span><span class="muted small">来店 ${reg.days}日${reg.next ? `・あと${reg.toNext}日で「${esc(reg.next.name)}」` : '・最高位'}</span><div class="regbar"><i style="width:${reg.pct}%"></i></div></div>`}${rec}${hist}
     <div class="actions">
-      <button class="btn primary wide" data-act="checkin">${near ? (stamp ? '朱印をもう一度' : `${icon('ink')}印をもらう${feat ? `（+${XP.feat}）` : ''}`) : 'ここに来た（墨印）'}</button>
+      <button class="btn primary wide" data-act="checkin">${near ? (stamp ? `${icon('ink')}もう一度押す（来店）` : `${icon('ink')}スタンプを押す${feat ? `（+${XP.feat}）` : ''}`) : '来た記録だけ（スタンプなし）'}</button>
       <button class="btn" data-act="card">${icon('barcode')}本と出会った</button>
       <button class="btn" data-act="want">${icon('star')}${want ? '行きたいを外す' : '行きたい'}</button>
-      ${stamp ? `<button class="btn" data-act="share">${icon('share')}印をシェア</button>` : ''}
+      ${stamp ? `<button class="btn" data-act="share">${icon('share')}シェア</button>` : ''}${reg.rank >= 2 ? `<button class="btn" data-act="regshare">${icon('crown')}常連度シェア</button>` : ''}
       ${POS.fake && !near ? `<button class="btn wide" data-act="warp">${icon('warp')}この店へワープ</button>` : ''}
       ${st.demo || st.custom ? '' : '<button class="btn ghost" data-act="report">閉店している</button><button class="btn ghost" data-act="rename">名前が違う</button>'}
     </div><div id="sheet-extra"></div>`;
   $$('#sheet-body [data-act]').forEach((btn) => btn.addEventListener('click', () => { sfx.click(); const a = btn.dataset.act;
-    if (a === 'checkin') startCheckin(st, near); else if (a === 'card') startCard(st); else if (a === 'share') shareStampUI(st); else if (a === 'warp') warp(st);
+    if (a === 'checkin') startCheckin(st, near); else if (a === 'card') startCard(st); else if (a === 'share') shareStampUI(st); else if (a === 'regshare') shareStampUI(st, { regular: true }); else if (a === 'warp') warp(st);
     else if (a === 'report') confirmBox($('#sheet-extra'), 'この店を地図から外しますか？（閉店した店・本屋ではない店。この端末だけ。記録の書き出しに含まれます。設定から戻せます）', () => { hideStore(st); save(); MAP.setStores(STORES); applyMapStates(); updateNear(); closeSheet(); toast(`${st.n} を外しました`); }, '外す');
     else if (a === 'rename') { const x = $('#sheet-extra'); x.innerHTML = `<div class="field"><label for="rn-name">いまの正しい店名</label><input type="text" id="rn-name" value="${esc(st.n)}" maxlength="60"></div><div class="actions"><button class="btn primary" id="rn-ok">直す</button><button class="btn ghost" id="rn-no">やめる</button></div>`; $('#rn-name').focus(); $('#rn-no').onclick = () => { x.innerHTML = ''; }; $('#rn-ok').onclick = () => { const n = $('#rn-name').value.trim(); if (!n || n === st.n) { x.innerHTML = ''; return; } renameStore(st, n); save(); MAP.setStores(STORES); applyMapStates(); updateNear(); toast('名前を直しました（この端末だけ。記録の書き出しに含まれます）', 'ok'); openSheet(id, true); }; }
     else { const r2 = G.toggleWant(id); applyMapStates(); refreshHud(); openSheet(id, true); r2.rewards.forEach((x) => toast(x, 'ok')); } }));
@@ -119,38 +119,39 @@ export function openSheet(id, quiet) {
 }
 export function closeSheet() { const s = $('#sheet'); s.hidden = true; s.dataset.id = ''; }
 
-// ---------- チェックイン → 印 ----------
+// ---------- チェックイン → スタンプ ----------
 export function startCheckin(st, near) {
   const stamped = G.hasStamp(st.i); const feat = isFeat(st.i); const featGot = (S.featDone[weekKey()] || []).includes(st.i); const ink = G.inkState();
-  if (near && !stamped && ink.n <= 0) { const m = Math.ceil(ink.nextMs / 60000); openModal(`<h2>印泥が切れています</h2><div class="status-card sumi">印を押すには印泥が要ります。あと${m}分で1つ回復します（最大${INK.max}、${INK.rechargeMs / 60000}分に1つ）。</div><div class="actions"><button class="btn ghost wide" id="ik-close">閉じる</button></div>`); $('#ik-close').onclick = closeModal; sfx.nope(); return; }
-  const note = near ? (stamped ? 'この店の印はもう持っています。もう一度押すと少し経験値が入ります。' : `射程内です。この店だけの印（${stars(rarityOf(st))}）を手に入れられます。印泥を1つ使います（残り${ink.n}）。${feat && !featGot ? ` 今週の推し店なので +${XP.feat} XP。` : ''}`) : '店から離れています（位置がないか、射程の外）。墨印＝自己申告として記録します。印は手に入りません。';
+  if (near && !stamped && ink.n <= 0) { const m = Math.ceil(ink.nextMs / 60000); openModal(`<h2>インクが切れています</h2><div class="status-card sumi">スタンプを押すにはインクが要ります。あと${m}分で1つ回復します（最大${INK.max}、${INK.rechargeMs / 60000}分に1つ）。</div><div class="actions"><button class="btn ghost wide" id="ik-close">閉じる</button></div>`); $('#ik-close').onclick = closeModal; sfx.nope(); return; }
+  const note = near ? (stamped ? 'この店のスタンプはもう持っています。もう一度押すと少し経験値が入り、常連度が上がります。' : `射程内です。この店だけのスタンプ（${stars(rarityOf(st))}）が押せます。インクを1つ使います（残り${ink.n}）。${feat && !featGot ? ` 今週の推し店なので +${XP.feat} XP。` : ''}`) : '店から離れています（位置がないか、射程の外）。「来た記録」として自己申告で残します。スタンプは押せません。';
   openModal(`<h2>${esc(st.n)}</h2><div class="status-card ${near ? 'shu' : 'sumi'}">${esc(note)}</div>
     <div class="field"><label for="ci-memo">一言メモ（任意・100字まで）</label><textarea id="ci-memo" maxlength="100" placeholder="例：文庫の棚が広い。店員さんの手書きPOPがよかった"></textarea></div>
     <div class="note">位置はこの画面の中で距離を出すためだけに使い、どこにも送りません。記録はこの端末の中だけに残ります。</div>
-    <div class="actions"><button class="btn primary" id="ci-save">${near ? '印を押す' : '墨印で記録する'}</button><button class="btn ghost" id="ci-cancel">やめる</button></div>`);
+    <div class="actions"><button class="btn primary" id="ci-save">${near ? 'スタンプを押す' : '記録だけ残す'}</button><button class="btn ghost" id="ci-cancel">やめる</button></div>`);
   $('#ci-cancel').onclick = closeModal;
   $('#ci-save').onclick = () => { const res = G.checkin(st, { near, memo: $('#ci-memo').value.trim(), trial: POS.fake }); if (res.inkEmpty) { closeModal(); startCheckin(st, near); return; } closeModal(); closeSheet(); applyMapStates(); refreshHud(); showCapture(st, res, near); };
 }
 export function showCapture(st, res, near) {
-  const { gain, isNew, lv, rewards, r } = res;
-  if (near) { sfx.stamp(); haptic([30, 30, 90]); if (isNew && r === 3) setTimeout(() => sfx.rare(), 250); } if (lv.after > lv.before) setTimeout(() => sfx.levelup(), 500);
-  $('#capture-box').innerHTML = `<div class="big">${stampSVG(st, near, 250)}</div>
-    <h2>${near ? (isNew ? `${esc(st.n)}の印を手に入れた！` : `${esc(st.n)}に、また来た`) : `${esc(st.n)}に来た（墨印）`}</h2>
+  const { gain, isNew, lv, rewards, r, regUp } = res;
+  if (near) { sfx.stamp(); haptic([30, 30, 90]); if (isNew && r === 3) setTimeout(() => sfx.rare(), 250); } if (lv.after > lv.before) setTimeout(() => sfx.levelup(), 500); if (regUp) setTimeout(() => sfx.regular(), lv.after > lv.before ? 1500 : 800);
+  $('#capture-box').innerHTML = `<div class="big">${stampSVG(st, near, 250, { rank: G.regularInfo(st.i).rank })}</div>
+    <h2>${near ? (isNew ? `${esc(st.n)}のスタンプを押した！` : `${esc(st.n)}に、また来た`) : `${esc(st.n)}に来た（記録だけ）`}</h2>
     <div class="stars">${near ? stars(r) + ' ' + esc(rarityText(st)) : ''}</div>
     <div class="gain">+${gain} XP</div>
     ${lv.after > lv.before ? `<div class="lvup">レベルアップ！ Lv.${lv.after}</div>` : ''}${rewards.map((x) => `<div class="lvup">${esc(x)}</div>`).join('')}
-    <div class="actions" style="margin-top:18px"><button class="btn primary wide" id="cp-card">${icon('barcode')}この店で本と出会った → カード（+${XP.card}〜）</button>${near ? `<button class="btn wide" id="cp-share">${icon('share')}印をシェア</button>` : ''}<button class="btn ghost wide" id="cp-close">閉じる</button></div>`;
-  $('#capture').hidden = false;
+    <div class="actions" style="margin-top:18px"><button class="btn primary wide" id="cp-card">${icon('barcode')}この店で本と出会った → カード（+${XP.card}〜）</button>${near ? `<button class="btn wide" id="cp-share">${icon('share')}スタンプをシェア</button>` : ''}<button class="btn ghost wide" id="cp-close">閉じる</button></div>`;
+  $('#capture').hidden = false; $$('#capture .burst, #capture .confetti').forEach((el) => el.remove());
+  if (near) { const bb = document.createElement('div'); bb.className = 'burst'; $('#capture').prepend(bb); if (isNew || regUp || lv.after > lv.before) confetti($('#capture'), [stampInk(st).main, '#d9a521', '#ffffff', '#6d4fc3', '#2e8b57']); }
   $('#cp-close').onclick = () => { $('#capture').hidden = true; openSheet(st.i, true); };
   $('#cp-card').onclick = () => { $('#capture').hidden = true; startCard(st); };
   if ($('#cp-share')) $('#cp-share').onclick = () => shareStampUI(st);
 }
-export async function shareStampUI(st) { try { const blob = await stampImage(st); const r = await shareBlob(blob, `honya-${st.i}.png`, `${st.n}の印`, `${st.n}の印を手に入れた #本屋の地図`); if (r !== 'cancel') { G.noteShare(); toast(r === 'saved' ? '画像を保存しました' : 'シェアしました', 'ok'); } } catch (e) { toast('画像にできませんでした', 'warn'); } }
+export async function shareStampUI(st, opts = {}) { try { const blob = await stampImage(st, opts); const reg = G.regularInfo(st.i); const text = opts.regular ? `${st.n}の常連度は「${reg.name}」（来店${reg.days}日） #本屋の地図` : `${st.n}のスタンプを押した #本屋の地図`; const r = await shareBlob(blob, `honya-${st.i}.png`, `${st.n}のスタンプ`, text); if (r !== 'cancel') { G.noteShare(); toast(r === 'saved' ? '画像を保存しました' : 'シェアしました', 'ok'); } } catch (e) { toast('画像にできませんでした', 'warn'); } }
 
 // ---------- カード ----------
 export function startCard(st) {
   openModal(`<h2>この店で本と出会った</h2><p class="hint">${esc(st.n)}</p>
-    <div class="note">カードは +${XP.card} XP。今日この店で印を押していれば「店で出会った」+${XP.cardInStore}。</div>
+    <div class="note">カードは +${XP.card} XP。今日この店でスタンプを押していれば「店で出会った」+${XP.cardInStore}。</div>
     <div class="actions"><button class="btn primary wide" id="cd-scan">${icon('camera')}本の裏のバーコードを読む</button><button class="btn" id="cd-manual">ISBNを入力</button><button class="btn" id="cd-free">名前を自分で書く</button><button class="btn ghost wide" id="cd-cancel">やめる</button></div><div id="cd-area"></div>`);
   $('#cd-cancel').onclick = closeModal; $('#cd-manual').onclick = () => manualIsbn(st); $('#cd-free').onclick = () => cardForm(st, null); $('#cd-scan').onclick = () => scanIsbn(st);
 }
@@ -181,7 +182,7 @@ function cardForm(st, b) {
       <div style="flex:1;min-width:0">${has ? `<div><b>${esc(b.title)}</b></div><div class="muted small">${esc(b.author)}${b.publisher ? '／' + esc(b.publisher) : ''}</div>` : `<div class="field"><label for="cd-title">本の名前</label><input type="text" id="cd-title" placeholder="書名（わかれば著者も）"></div>`}
       <div class="muted small" style="margin-top:6px">${esc(st.n)}　${fmtDate(todayISO())}</div><div class="muted small">${inStore ? '🏪 店で出会った +' + XP.cardInStore : ''}</div></div></div>
     <div class="field"><label for="cd-why">なぜ手に取ったか（任意・100字まで）</label><textarea id="cd-why" maxlength="100" placeholder="例：表紙の青に目がとまった。店員さんの手書きPOPに「泣いた」とあった"></textarea></div>
-    <label class="chk"><input type="checkbox" id="cd-pub"> このカードを公開する（本番では「みんなの出会い」に流れます。試作では印が付くだけ）</label>
+    <label class="chk"><input type="checkbox" id="cd-pub"> このカードを公開する（本番では「みんなの出会い」に流れます。試作では「公開」の札が付くだけ）</label>
     <div class="note">表紙はopenBDから毎回表示するだけで、保存しません。記録はこの端末の中だけに残ります。</div>
     <div class="actions"><button class="btn primary" id="cd-save">カードにする（+${total} XP）</button><button class="btn ghost" id="cd-cancel2">やめる</button></div>`);
   $('#cd-cancel2').onclick = closeModal;
@@ -217,4 +218,14 @@ export function startAdd() {
   $('#ad-save').onclick = () => { const n = $('#ad-name').value.trim(); if (!n) { toast('店の名前を入れてください', 'warn'); return; } let la = c.lat, lo = c.lng; if ($('input[name=ad-pos]:checked').value === 'here' && hasPos()) { la = POS.lat; lo = POS.lon; }
     const st = { i: 'u' + Date.now(), n, la: +la.toFixed(5), lo: +lo.toFixed(5), u: $('#ad-used').checked ? 1 : undefined }; addCustom(st); save(); MAP.setStores(STORES); applyMapStates(); updateNear(); closeModal(); toast('追加しました', 'ok'); openSheet(st.i); };
 }
-export function devRefillInk() { inkRefill(); refreshHud(); toast('印泥を満タンにしました（試作用）'); }
+export function devRefillInk() { inkRefill(); refreshHud(); toast('インクを満タンにしました（試作用）'); }
+
+// ---------- 紙ふぶき（スタンプを押したときの演出） ----------
+function confetti(host, colors) {
+  const cv = document.createElement('canvas'); cv.className = 'confetti'; host.appendChild(cv);
+  const dpr = Math.min(2, window.devicePixelRatio || 1); const W = host.clientWidth, H = host.clientHeight; cv.width = W * dpr; cv.height = H * dpr; cv.style.width = W + 'px'; cv.style.height = H + 'px'; const g = cv.getContext('2d'); g.scale(dpr, dpr);
+  const P = []; for (let i = 0; i < 110; i++) { const a = -Math.PI / 2 + (Math.random() - 0.5) * 2.6, sp = 5 + Math.random() * 9; P.push({ x: W / 2 + (Math.random() - 0.5) * 60, y: H * 0.4, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, s: 5 + Math.random() * 6, c: colors[i % colors.length], r: Math.random() * Math.PI, vr: (Math.random() - 0.5) * 0.35, k: Math.random() < 0.4 ? 1 : 0 }); }
+  let t0 = null;
+  const loop = (t) => { if (t0 == null) t0 = t; const dt = (t - t0) / 1000; g.clearRect(0, 0, W, H); for (const p of P) { p.vy += 0.22; p.vx *= 0.985; p.x += p.vx; p.y += p.vy; p.r += p.vr; g.save(); g.translate(p.x, p.y); g.rotate(p.r); g.fillStyle = p.c; g.globalAlpha = Math.max(0, Math.min(1, 2.2 - dt)); if (p.k) { g.beginPath(); g.arc(0, 0, p.s / 2, 0, Math.PI * 2); g.fill(); } else g.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); g.restore(); } if (dt < 2.3 && cv.isConnected) requestAnimationFrame(loop); else cv.remove(); };
+  requestAnimationFrame(loop);
+}

@@ -1,6 +1,6 @@
 // 記録（この端末の中だけ）。版の違いを吸収して読み込み、まとめて書き込む
-import { STORAGE_KEY, LEGACY_KEYS, INK, APP_VER } from './config.js?v=0.5.2';
-import { debounce, emit } from './util.js?v=0.5.2';
+import { STORAGE_KEY, LEGACY_KEYS, INK, APP_VER } from './config.js?v=0.6.0';
+import { debounce, emit } from './util.js?v=0.6.0';
 
 export const empty = () => ({
   v: 3, visits: [], cards: [], wants: [], custom: [], stamps: {}, xp: 0,
@@ -32,7 +32,7 @@ export function reset() { const seen = S.seen, settings = S.settings; S = empty(
 export function exportJSON() { return JSON.stringify({ app: 'honya-map', ver: APP_VER, at: new Date().toISOString(), data: S }, null, 1); }
 export function parseImport(text) { const j = JSON.parse(text); const d = j.data || j; if (!d || !Array.isArray(d.visits)) throw new Error('bad'); return d; }
 
-// 印泥（いんでい）：時間で回復する
+// インク：時間で回復する
 export function inkNow() { const elapsed = Date.now() - (S.ink.at || Date.now()); const gained = Math.floor(elapsed / INK.rechargeMs); const n = Math.min(INK.max, (S.ink.n || 0) + gained); if (gained > 0) { S.ink.n = n; S.ink.at = (S.ink.at || Date.now()) + gained * INK.rechargeMs; if (n >= INK.max) S.ink.at = Date.now(); save(); } return n; }
 export function inkUse() { const n = inkNow(); if (n <= 0) return false; if (n === INK.max) S.ink.at = Date.now(); S.ink.n = n - 1; save(); return true; }
 export function inkRefill() { S.ink.n = INK.max; S.ink.at = Date.now(); save(); }

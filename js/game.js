@@ -1,13 +1,17 @@
-// 遊びの仕組み：経験値・称号・実績・印泥・ミッション・ラリー・カード
-import { XP, TITLES, ACHIEVEMENTS, levelOf, INK } from './config.js?v=0.5.2';
-import { S, save, inkUse, inkNow, inkNextMs } from './state.js?v=0.5.2';
-import { BYID, RALLIES, FEAT, isFeat, rarityOf } from './data.js?v=0.5.2';
-import { prefOf, todayISO, weekKey, weekStartISO, monthKey, emit } from './util.js?v=0.5.2';
+// 遊びの仕組み：経験値・称号・実績・インク・ミッション・ラリー・カード
+import { XP, TITLES, ACHIEVEMENTS, REGULAR, levelOf, INK } from './config.js?v=0.6.0';
+import { S, save, inkUse, inkNow, inkNextMs } from './state.js?v=0.6.0';
+import { BYID, RALLIES, FEAT, isFeat, rarityOf } from './data.js?v=0.6.0';
+import { prefOf, todayISO, weekKey, weekStartISO, monthKey, emit } from './util.js?v=0.6.0';
 
 export const visitsOf = (id) => S.visits.filter((v) => v.s === id);
 export const cardsOf = (id) => S.cards.filter((c) => c.s === id);
 export const hasStamp = (id) => !!S.stamps[id];
 export function stateOf(id) { const n = visitsOf(id).length + cardsOf(id).length; return n === 0 ? 0 : n >= 3 ? 2 : 1; }
+// 常連度：その店で射程内スタンプを押した日数 → 段（0=まだ、1=はじめまして … 6=殿堂入り）
+export const regularDays = (id) => new Set(S.visits.filter((v) => v.s === id && v.near).map((v) => v.d)).size;
+export function regularRank(days) { let r = 0; REGULAR.forEach((x, i) => { if (days >= x.n) r = i + 1; }); return r; }
+export function regularInfo(id) { const days = regularDays(id); const rank = regularRank(days); const next = REGULAR[rank] || null; const base = rank ? REGULAR[rank - 1].n : 0; return { days, rank, name: rank ? REGULAR[rank - 1].name : '', next, toNext: next ? next.n - days : 0, pct: next ? Math.round(((days - base) / (next.n - base)) * 100) : 100 }; }
 export function addXP(n) { const before = levelOf(S.xp); S.xp += n; const after = levelOf(S.xp); save(); emit('xp', { n, before, after }); return { before, after }; }
 function bump(kind, n = 1) { const d = todayISO(); S.daily = S.daily || {}; S.daily[d] = S.daily[d] || {}; S.daily[d][kind] = (S.daily[d][kind] || 0) + n; }
 const dailyCount = (kind) => ((S.daily || {})[todayISO()] || {})[kind] || 0;
@@ -18,9 +22,9 @@ export function stats() {
   const prefs = new Set(sts.map(prefOf)); const used = sts.filter((s) => s.u).length; const rare = sts.filter((s) => rarityOf(s) === 3).length;
   const visited = new Set([...S.visits.map((v) => v.s), ...S.cards.map((c) => c.s)]);
   const featTotal = Object.values(S.featDone).reduce((a, b) => a + b.length, 0);
-  const per = {}; S.visits.filter((v) => v.near).forEach((v) => { per[v.s] = (per[v.s] || 0) + 1; }); const repeat = Math.max(0, ...Object.values(per));
+  const days = {}; S.visits.filter((v) => v.near).forEach((v) => { (days[v.s] = days[v.s] || new Set()).add(v.d); }); const regMax = Math.max(0, ...Object.values(days).map((x) => x.size)); const regulars = Object.values(days).filter((x) => regularRank(x.size) >= 3).length;
   const look = Object.keys(S.looks || {}).length;
-  return { stamps: ids.length, stores: visited.size, cards: S.cards.length, prefs: prefs.size, used, rare, featTotal, feat: featTotal, repeat, look, rally: Object.keys(S.rallyDone).length, share: S.shareCount || 0, streak: streakWeeks() };
+  return { stamps: ids.length, stores: visited.size, cards: S.cards.length, prefs: prefs.size, used, rare, featTotal, feat: featTotal, regMax, regulars, look, rally: Object.keys(S.rallyDone).length, share: S.shareCount || 0, streak: streakWeeks() };
 }
 export function streakWeeks() {
   const weeks = new Set(Object.values(S.stamps).map((v) => weekKey(new Date(v.d)))); if (!weeks.size) return 0;
@@ -28,14 +32,14 @@ export function streakWeeks() {
   for (let i = 0; i < 200; i++) { if (!weeks.has(weekKey(d))) break; n++; d.setDate(d.getDate() - 7); }
   return n;
 }
-export function titles() { const st = stats(); return TITLES.map((t) => ({ ...t, ok: (t.kind === 'stamps' ? st.stamps : t.kind === 'prefs' ? st.prefs : t.kind === 'used' ? st.used : st.rare) >= t.n, need: `${{ stamps: '印', prefs: '県', used: '古書店', rare: '秘境の印' }[t.kind]}${t.n}` })).concat(RALLIES.map((r) => ({ id: 'r_' + r.id, name: r.title, ok: !!S.rallyDone[r.id], need: r.name }))); }
+export function titles() { const st = stats(); const LBL = { stamps: 'スタンプ', prefs: '県', used: '古書店', rare: '秘境スタンプ' }; return TITLES.map((t) => ({ ...t, ok: (st[t.kind] ?? 0) >= t.n, need: t.kind === 'regMax' ? `同じ店に${t.n}日` : `${LBL[t.kind] || ''}${t.n}` })).concat(RALLIES.map((r) => ({ id: 'r_' + r.id, name: r.title, ok: !!S.rallyDone[r.id], need: r.name }))); }
 export function currentTitle() { const t = titles().filter((x) => x.ok); return t.length ? t[t.length - 1].name : ''; }
 export function achievements() { const st = stats(); return ACHIEVEMENTS.map((a) => { const cur = st[a.kind] ?? 0; return { ...a, cur: Math.min(cur, a.n), ok: cur >= a.n }; }); }
 
 // ---- ミッション ----
 export function dailyMissions() {
   return [
-    { id: 'd1', name: '今日、印を1つ', sub: '店の射程内で印をもらう', cur: dailyCount('stamp'), goal: 1 },
+    { id: 'd1', name: '今日、スタンプを1つ', sub: '店の射程内でスタンプを押す', cur: dailyCount('stamp'), goal: 1 },
     { id: 'd2', name: '本屋のページを3つ見る', sub: '地図やさがすから、店のページを開く', cur: ((S.daily || {})[todayISO()] || {}).lookIds ? S.daily[todayISO()].lookIds.length : 0, goal: 3 },
     { id: 'd3', name: '行きたい店を1つ', sub: '店のページで☆を付ける', cur: dailyCount('want'), goal: 1 },
   ];
@@ -45,12 +49,14 @@ export function weeklyMissions() {
   const weekStamps = Object.entries(S.stamps).filter(([, v]) => v.d >= ws).map(([id]) => BYID.get(id)).filter(Boolean);
   const prefsBefore = new Set(Object.entries(S.stamps).filter(([, v]) => v.d < ws).map(([id]) => BYID.get(id)).filter(Boolean).map(prefOf));
   const newPrefs = new Set(weekStamps.map(prefOf).filter((p) => !prefsBefore.has(p)));
+  const wd = {}; S.visits.filter((v) => v.near && v.d >= ws).forEach((v) => { (wd[v.s] = wd[v.s] || new Set()).add(v.d); }); const weekSameStore = Math.max(0, ...Object.values(wd).map((x) => x.size));
   return [
-    { id: 'w1', name: '印を3つ集める', sub: '今週、射程内で押した印の数', cur: weekStamps.length, goal: 3 },
-    { id: 'w2', name: '古書店で印を1つ', sub: '古書店のピンは灰色がかった色', cur: weekStamps.filter((s) => s.u).length, goal: 1 },
-    { id: 'w3', name: '初めての県で印を1つ', sub: 'まだ印のない県の本屋へ', cur: newPrefs.size, goal: 1 },
+    { id: 'w1', name: 'スタンプを3つ集める', sub: '今週、射程内で押したスタンプの数', cur: weekStamps.length, goal: 3 },
+    { id: 'w2', name: '古書店でスタンプを1つ', sub: '古書店のピンは灰色がかった色', cur: weekStamps.filter((s) => s.u).length, goal: 1 },
+    { id: 'w3', name: '初めての県でスタンプを1つ', sub: 'まだスタンプのない県の本屋へ', cur: newPrefs.size, goal: 1 },
     { id: 'w4', name: '本と出会う', sub: '今週、カードを1枚', cur: S.cards.filter((c) => c.d >= ws).length, goal: 1 },
-    { id: 'w5', name: '今週の推し店で印を1つ', sub: '紫の輪の店（県ごとに1店）', cur: (S.featDone[wk] || []).length, goal: 1 },
+    { id: 'w5', name: '今週の推し店でスタンプを1つ', sub: '紫の輪の店（県ごとに1店）', cur: (S.featDone[wk] || []).length, goal: 1 },
+    { id: 'w6', name: '同じ店にもう一度', sub: '今週、同じ店で2日スタンプを押す（通う人の味方）', cur: weekSameStore, goal: 2 },
   ];
 }
 export function checkRewards() {
@@ -66,21 +72,23 @@ export function checkRewards() {
 }
 export function rallyProgress() { return RALLIES.map((r) => ({ ...r, got: r.stores.filter((id) => hasStamp(id)).length, done: !!S.rallyDone[r.id] })); }
 
-// ---- チェックイン（印） ----
+// ---- チェックイン（スタンプ） ----
 export function checkin(st, { near, memo, trial }) {
   const today = todayISO(); const stampedBefore = hasStamp(st.i); const visitedToday = visitsOf(st.i).some((v) => v.d === today);
   const feat = isFeat(st.i); const wk = weekKey(); const featGot = (S.featDone[wk] || []).includes(st.i);
   if (near && !stampedBefore && !inkUse()) return { inkEmpty: true, nextMs: inkNextMs() };
+  const regBefore = regularRank(regularDays(st.i)); let regUp = 0;
   S.visits.push({ s: st.i, n: st.n, d: today, t: Date.now(), near, memo, trial: trial ? 1 : 0 });
   let gain = 0, isNew = false; const r = rarityOf(st); const extras = [];
   if (near) {
     if (!stampedBefore) { S.stamps[st.i] = { d: today, r, trial: trial ? 1 : 0 }; isNew = true; gain += XP.shuFirst + (r === 3 ? XP.rare3 : r === 2 ? XP.rare2 : 0); bump('stamp'); }
     else gain += visitedToday ? 0 : XP.shuRepeat;
     if (feat && !featGot) { S.featDone[wk] = S.featDone[wk] || []; S.featDone[wk].push(st.i); gain += XP.feat; extras.push(`👑 今週の推し店 +${XP.feat} XP`); }
+    const regAfter = regularRank(regularDays(st.i)); if (regAfter > regBefore && regAfter >= 2) { regUp = regAfter; const x = XP.regular[regAfter - 1] || 0; gain += x; extras.push(`🏮 この店の常連度が「${REGULAR[regAfter - 1].name}」に（来店${regularDays(st.i)}日） +${x} XP`); }
   } else gain += visitsOf(st.i).length <= 1 ? XP.sumiFirst : (visitedToday ? 0 : XP.sumiRepeat);
   const lv = addXP(gain); save();
   const rewards = [...extras, ...checkRewards()];
-  emit('records'); return { gain, isNew, lv, rewards, r, ink: inkNow() };
+  emit('records'); return { gain, isNew, lv, rewards, r, regUp, ink: inkNow() };
 }
 export function toggleWant(id) { const i = S.wants.indexOf(id); if (i >= 0) S.wants.splice(i, 1); else { S.wants.push(id); bump('want'); } save(); const rewards = checkRewards(); emit('records'); return { on: i < 0, rewards }; }
 

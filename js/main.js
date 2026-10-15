@@ -1,13 +1,13 @@
 // 起動：記録を読み、データを取り、地図を出し、部品をつなぐ
-import { APP_VER } from './config.js?v=0.5.2';
-import { S, load, save } from './state.js?v=0.5.2';
-import { loadAll, STORES } from './data.js?v=0.5.2';
-import * as MAP from './map.js?v=0.5.2';
-import { POS, setPos, setFollow } from './position.js?v=0.5.2';
-import { unlock } from './audio.js?v=0.5.2';
-import * as UI from './ui.js?v=0.5.2';
-import { renderRadar, renderZukan, renderMissions, renderSettings, applyTheme, showOnboarding } from './screens.js?v=0.5.2';
-import { $, $$, on, emit } from './util.js?v=0.5.2';
+import { APP_VER } from './config.js?v=0.6.0';
+import { S, load, save } from './state.js?v=0.6.0';
+import { loadAll, STORES } from './data.js?v=0.6.0';
+import * as MAP from './map.js?v=0.6.0';
+import { POS, setPos, setFollow } from './position.js?v=0.6.0';
+import * as AUDIO from './audio.js?v=0.6.0';
+import * as UI from './ui.js?v=0.6.0';
+import { renderRadar, renderZukan, renderMissions, renderSettings, applyTheme, showOnboarding } from './screens.js?v=0.6.0';
+import { $, $$, on, emit } from './util.js?v=0.6.0';
 
 async function boot() {
   load(); applyThemeEarly();
@@ -24,13 +24,13 @@ async function boot() {
   on('near', () => { if (UI.currentView === 'radar') renderRadar(); });
   on('save-error', () => UI.toast('保存できませんでした（端末の空きを確かめてください）', 'warn'));
   UI.setupSearch(); UI.refreshHud();
-  $$('#tabs button').forEach((b) => b.addEventListener('click', () => { unlock(); UI.switchView(b.dataset.view); }));
+  $$('#tabs button').forEach((b) => b.addEventListener('click', () => { AUDIO.unlock(); UI.switchView(b.dataset.view); }));
   $$('.segmented button').forEach((b) => b.addEventListener('click', () => UI.setSub(b.dataset.sub)));
   $('#sheet-close').onclick = UI.closeSheet;
   $('#modal').addEventListener('click', (e) => { if (e.target.id === 'modal') UI.closeModal(); });
-  $('#btn-add').onclick = UI.startAdd; $('#btn-locate').onclick = UI.locate; $('#btn-trial').onclick = () => { unlock(); UI.setTrialUI(!POS.fake); }; $('#btn-warp').onclick = () => UI.warp();
-  $('#btn-settings').onclick = () => UI.switchView('settings'); $('#ink-btn').onclick = () => UI.toast(`印泥：印を押すたびに1つ使い、90分に1つ回復します`); $('#lv-btn').onclick = () => UI.switchView('zukan');
-  document.addEventListener('pointerdown', unlock, { once: true });
+  $('#btn-add').onclick = UI.startAdd; $('#btn-locate').onclick = UI.locate; $('#btn-trial').onclick = () => { AUDIO.unlock(); UI.setTrialUI(!POS.fake); }; $('#btn-warp').onclick = () => UI.warp();
+  $('#btn-settings').onclick = () => UI.switchView('settings'); $('#ink-btn').onclick = () => UI.toast(`インク：スタンプを押すたびに1つ使い、90分に1つ回復します`); $('#lv-btn').onclick = () => UI.switchView('zukan');
+  document.addEventListener('pointerdown', AUDIO.unlock, { once: true });
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
   window.addEventListener('online', () => { $('#offline').hidden = true; }); window.addEventListener('offline', () => { $('#offline').hidden = false; }); if (!navigator.onLine) $('#offline').hidden = false;
   if (!res.ok) UI.toast('店のデータが読み込めませんでした。つながったら、もう一度開いてください', 'warn');
@@ -51,7 +51,7 @@ async function boot() {
   }
   if (!S.seen) showOnboarding((mode) => { S.seen = 1; save(); UI.refreshHud(); if (mode === 'geo') UI.locate(); if (mode === 'trial') { UI.setTrialUI(true); UI.warp(); } });
   emit('view', 'map');
-  window.__honya = { S, POS, STORES, UI, MAP, ver: APP_VER };
+  window.__honya = { S, POS, STORES, UI, MAP, audio: AUDIO, ver: APP_VER };
 }
 function applyThemeEarly() { const t = S.settings.theme; const dark = t === 'dark' || (t === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches); document.documentElement.dataset.theme = dark ? 'dark' : 'light'; }
 window.addEventListener('error', (e) => { console.error(e.error || e.message); });
