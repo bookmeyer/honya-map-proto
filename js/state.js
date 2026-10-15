@@ -1,12 +1,12 @@
 // 記録（この端末の中だけ）。版の違いを吸収して読み込み、まとめて書き込む
-import { STORAGE_KEY, LEGACY_KEYS, INK, APP_VER } from './config.js?v=0.6.0';
-import { debounce, emit } from './util.js?v=0.6.0';
+import { STORAGE_KEY, LEGACY_KEYS, INK, APP_VER } from './config.js?v=0.6.1';
+import { debounce, emit } from './util.js?v=0.6.1';
 
 export const empty = () => ({
   v: 3, visits: [], cards: [], wants: [], custom: [], stamps: {}, xp: 0,
   claimedW: {}, claimedD: {}, rallyDone: {}, featDone: {}, looks: {},
   hidden: {}, renames: {}, seen: 0, lastPos: null, ink: { n: INK.max, at: Date.now() }, shareCount: 0,
-  settings: { theme: 'auto', sound: true, haptic: true }, createdAt: Date.now(),
+  settings: { theme: 'auto', sound: true, haptic: true, avatar: '' }, createdAt: Date.now(),
 });
 export let S = empty();
 

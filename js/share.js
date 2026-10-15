@@ -1,9 +1,9 @@
 // シェア用の画像（スタンプ・常連度・カード・プレイヤーカード）
-import { S } from './state.js?v=0.6.0';
-import { stampSVG, stampInk, rarityOf, rarityText } from './data.js?v=0.6.0';
-import { snapshot } from './map.js?v=0.6.0';
-import { regularInfo } from './game.js?v=0.6.0';
-import { stars, prefOf, fmtDate, todayISO } from './util.js?v=0.6.0';
+import { S } from './state.js?v=0.6.1';
+import { stampSVG, stampInk, rarityOf, rarityText } from './data.js?v=0.6.1';
+import { snapshot } from './map.js?v=0.6.1';
+import { regularInfo } from './game.js?v=0.6.1';
+import { stars, prefOf, fmtDate, todayISO } from './util.js?v=0.6.1';
 
 const PAPER = '#faf7f1', INK = '#231f1c', INK2 = '#5f574f', SHU = '#d6452b', LINE = '#e3dbcd';
 const DISP = '"Zen Maru Gothic","Zen Kaku Gothic New","Hiragino Sans",sans-serif', BODY = '"Zen Kaku Gothic New","Hiragino Sans",sans-serif';
@@ -47,9 +47,10 @@ export async function cardImage(c) {
   return await new Promise((res) => cv.toBlob(res, 'image/png'));
 }
 // プレイヤーカード
-export async function profileImage({ level, title, st, topStamps }) {
+export async function profileImage({ level, title, st, topStamps, avatar }) {
   const W = 1080, H = 1080, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
   g.fillStyle = PAPER; g.fillRect(0, 0, W, H); g.strokeStyle = LINE; g.lineWidth = 6; rrect(g, 40, 40, W - 80, H - 80, 40); g.stroke();
+  if (avatar) { try { const im = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = avatar; }); g.save(); g.beginPath(); g.arc(W - 180, 190, 96, 0, Math.PI * 2); g.clip(); g.drawImage(im, W - 276, 94, 192, 192); g.restore(); g.lineWidth = 10; g.strokeStyle = '#fff'; g.beginPath(); g.arc(W - 180, 190, 98, 0, Math.PI * 2); g.stroke(); g.lineWidth = 6; g.strokeStyle = SHU; g.beginPath(); g.arc(W - 180, 190, 104, 0, Math.PI * 2); g.stroke(); } catch (e) {} }
   g.fillStyle = SHU; g.font = `900 110px ${DISP}`; g.textAlign = 'left'; g.fillText(`Lv.${level}`, 80, 190);
   g.fillStyle = INK; g.font = `bold 44px ${DISP}`; g.fillText(title || '本屋あるき見習い', 80, 260);
   const rows = [['スタンプ', st.stamps], ['行きつけ', st.regulars || 0], ['カード', st.cards], ['県', st.prefs]];

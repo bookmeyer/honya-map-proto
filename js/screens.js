@@ -1,14 +1,14 @@
 // 画面：レーダー・図鑑・お題・設定・最初の案内
-import { APP_VER, RANGE_M, XP, levelOf, frameOf, PREFS, INK } from './config.js?v=0.6.0';
-import { S, save, exportJSON, parseImport, replace, reset } from './state.js?v=0.6.0';
-import { STORES, BYID, FEAT, RALLIES, isFeat, rarityOf, rarityText, stampSVG, unhideAll, rebuild, DATA_DATE } from './data.js?v=0.6.0';
-import * as G from './game.js?v=0.6.0';
-import * as MAP from './map.js?v=0.6.0';
-import { POS, hasPos } from './position.js?v=0.6.0';
-import { sfx, haptic } from './audio.js?v=0.6.0';
-import { profileImage, shareBlob } from './share.js?v=0.6.0';
-import { toast, openModal, closeModal, confirmBox, openSheet, openCard, switchView, setSub, refreshHud, applyMapStates, updateNear, locate, setTrialUI, warp, devRefillInk, NEAR, currentSub } from './ui.js?v=0.6.0';
-import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, weekKey } from './util.js?v=0.6.0';
+import { APP_VER, RANGE_M, XP, levelOf, frameOf, PREFS, INK } from './config.js?v=0.6.1';
+import { S, save, exportJSON, parseImport, replace, reset } from './state.js?v=0.6.1';
+import { STORES, BYID, FEAT, RALLIES, isFeat, rarityOf, rarityText, stampSVG, unhideAll, rebuild, DATA_DATE } from './data.js?v=0.6.1';
+import * as G from './game.js?v=0.6.1';
+import * as MAP from './map.js?v=0.6.1';
+import { POS, hasPos } from './position.js?v=0.6.1';
+import { sfx, haptic } from './audio.js?v=0.6.1';
+import { profileImage, shareBlob } from './share.js?v=0.6.1';
+import { toast, openModal, closeModal, confirmBox, openSheet, openCard, switchView, setSub, refreshHud, applyMapStates, updateNear, locate, setTrialUI, warp, devRefillInk, makeAvatar, NEAR, currentSub } from './ui.js?v=0.6.1';
+import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, weekKey } from './util.js?v=0.6.1';
 
 const empty = (ic, text) => `<div class="empty">${icon(ic)}<div>${text}</div></div>`;
 
@@ -24,10 +24,10 @@ export function renderRadar() {
 // ---------- 図鑑 ----------
 export function renderZukan() {
   const st = G.stats(); const lv = levelOf(S.xp); const title = G.currentTitle();
-  $('#profile').innerHTML = `<div class="ph"><div class="lvbig">Lv.${lv}</div><div><div class="tt">${esc(title || '本屋あるき見習い')}</div><div class="t">${S.xp} XP　${st.streak ? `🔥 ${st.streak}週連続` : ''}</div></div><button class="btn" id="pf-share" style="margin-left:auto">${icon('share')}</button></div>
+  $('#profile').innerHTML = `<div class="ph">${S.settings.avatar ? `<img class="avatar big" src="${S.settings.avatar}" alt="">` : ''}<div class="lvbig">Lv.${lv}</div><div><div class="tt">${esc(title || '本屋あるき見習い')}</div><div class="t">${S.xp} XP　${st.streak ? `🔥 ${st.streak}週連続` : ''}</div></div><button class="btn" id="pf-share" style="margin-left:auto">${icon('share')}</button></div>
     <div class="stats">${[['スタンプ', st.stamps], ['行きつけ', st.regulars], ['カード', st.cards], ['県', `${st.prefs}/47`]].map(([l, n]) => `<div class="s"><div class="n">${n}</div><div class="l">${l}</div></div>`).join('')}</div>
     <div class="titles">${(() => { const all = G.titles(); const got = all.filter((t) => t.ok); const next = all.filter((t) => !t.ok).slice(0, 3); const rest = all.length - got.length - next.length; return got.map((t) => `<span class="t">🏅 ${esc(t.name)}</span>`).join('') + next.map((t) => `<span class="t off" title="${esc(t.need)}">${esc(t.name)}（${esc(t.need)}）</span>`).join('') + (rest > 0 ? `<span class="t off">ほか${rest}</span>` : ''); })()}</div>`;
-  $('#pf-share').onclick = async () => { try { const ids = Object.keys(S.stamps); const top = ids.map((id) => BYID.get(id)).filter(Boolean).sort((a, b) => rarityOf(b) - rarityOf(a)); const blob = await profileImage({ level: lv, title, st, topStamps: top }); const r = await shareBlob(blob, 'honya-profile.png', '本屋の地図', `Lv.${lv} ${title} スタンプ${st.stamps} #本屋の地図`); if (r !== 'cancel') toast(r === 'saved' ? '画像を保存しました' : 'シェアしました', 'ok'); } catch (e) { toast('画像にできませんでした', 'warn'); } };
+  $('#pf-share').onclick = async () => { try { const ids = Object.keys(S.stamps); const top = ids.map((id) => BYID.get(id)).filter(Boolean).sort((a, b) => rarityOf(b) - rarityOf(a)); const blob = await profileImage({ level: lv, title, st, topStamps: top, avatar: S.settings.avatar }); const r = await shareBlob(blob, 'honya-profile.png', '本屋の地図', `Lv.${lv} ${title} スタンプ${st.stamps} #本屋の地図`); if (r !== 'cancel') toast(r === 'saved' ? '画像を保存しました' : 'シェアしました', 'ok'); } catch (e) { toast('画像にできませんでした', 'warn'); } };
   $$('.segmented button').forEach((b) => b.classList.toggle('active', b.dataset.sub === currentSub));
   $$('.sub').forEach((el) => el.classList.toggle('active', el.id === 'sub-' + currentSub));
   const fr = frameOf(lv); const ids = Object.keys(S.stamps);
@@ -72,6 +72,7 @@ export function renderSettings() {
   $('#settings-pane').innerHTML = `
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><button class="icon-btn" id="st-back" aria-label="戻る" style="transform:rotate(180deg)">${icon('chevron')}</button><h2 style="margin:0">設定</h2></div>
     <div class="setting"><div><div class="l">見た目</div><div class="s">自動は端末の設定に合わせます</div></div><div class="seg3" id="st-theme">${['auto', 'light', 'dark'].map((t) => `<button data-t="${t}" class="${s.theme === t ? 'active' : ''}">${{ auto: '自動', light: '明', dark: '暗' }[t]}</button>`).join('')}</div></div>
+    <div class="setting"><div><div class="l">自分のアイコン</div><div class="s">地図の現在地に出ます。写真はこの端末の中だけに置き、どこにも送りません</div></div><div class="avatar-ctl">${s.avatar ? `<img class="avatar" src="${s.avatar}" alt="">` : ''}<label class="btn">${s.avatar ? '替える' : '選ぶ'}<input type="file" id="st-avatar" accept="image/*" hidden></label>${s.avatar ? '<button class="btn ghost" id="st-avatar-del">外す</button>' : ''}</div></div>
     <div class="setting"><div><div class="l">音</div><div class="s">射程に入ったとき・スタンプを押したとき</div></div><button class="switch ${s.sound ? 'on' : ''}" id="st-sound" role="switch" aria-checked="${s.sound}" aria-label="音"></button></div>
     <div class="setting"><div><div class="l">振動</div><div class="s">近づくほど速くなります</div></div><button class="switch ${s.haptic ? 'on' : ''}" id="st-haptic" role="switch" aria-checked="${s.haptic}" aria-label="振動"></button></div>
     <div class="setting"><div><div class="l">お試し歩き</div><div class="s">地図を押した場所に自分がいることにする（家で試す用）</div></div><button class="switch ${POS.fake ? 'on' : ''}" id="st-trial" role="switch" aria-checked="${POS.fake}" aria-label="お試し歩き"></button></div>
@@ -91,6 +92,8 @@ export function renderSettings() {
       店のデータは ${DATA_DATE} 時点の OpenStreetMap（有志が作る地図）で、閉店や名前の変更が反映されていない店があります。店のページの「閉店している」で外せ、「名前が違う」で直せます（この端末だけ。記録の書き出しに含まれます）。</div>`;
   $('#st-back').onclick = () => switchView('map');
   $$('#st-theme button').forEach((b) => b.addEventListener('click', () => { s.theme = b.dataset.t; save(); applyTheme(); renderSettings(); }));
+  $('#st-avatar').addEventListener('change', async (e) => { const f = e.target.files[0]; if (!f) return; try { const url = await makeAvatar(f); s.avatar = url; save(); await MAP.setAvatar(url); toast('アイコンを設定しました。地図の現在地に出ます', 'ok'); } catch (err) { toast('この画像は使えませんでした（別の写真でお試しください）', 'warn'); } e.target.value = ''; renderSettings(); });
+  if ($('#st-avatar-del')) $('#st-avatar-del').onclick = () => { s.avatar = ''; save(); MAP.setAvatar(null); renderSettings(); toast('アイコンを外しました'); };
   $('#st-sound').onclick = () => { s.sound = !s.sound; save(); renderSettings(); if (s.sound) sfx.click(); };
   $('#st-haptic').onclick = () => { s.haptic = !s.haptic; save(); renderSettings(); if (s.haptic) haptic(30); };
   $('#st-trial').onclick = () => { setTrialUI(!POS.fake); renderSettings(); };

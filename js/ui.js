@@ -1,13 +1,13 @@
 // 画面の部品：見出し帯・タブ・店のシート・モーダル・スタンプの演出・カード・さがす・追加
-import { RANGE_M, SENSE_M, TERRITORY_M, XP, levelOf, xpForLevel, INK } from './config.js?v=0.6.0';
-import { S, save, inkRefill } from './state.js?v=0.6.0';
-import { STORES, BYID, FEAT, isFeat, rarityOf, rarityText, stampSVG, stampInk, search, addCustom, hideStore, renameStore, lookupIsbn, DATA_DATE } from './data.js?v=0.6.0';
-import * as G from './game.js?v=0.6.0';
-import * as MAP from './map.js?v=0.6.0';
-import { POS, setPos, startWatch, setTrial, setFollow, hasPos, jumped } from './position.js?v=0.6.0';
-import { sfx, haptic, unlock } from './audio.js?v=0.6.0';
-import { stampImage, cardImage, shareBlob } from './share.js?v=0.6.0';
-import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, on, emit, weekKey } from './util.js?v=0.6.0';
+import { RANGE_M, SENSE_M, TERRITORY_M, XP, levelOf, xpForLevel, INK } from './config.js?v=0.6.1';
+import { S, save, inkRefill } from './state.js?v=0.6.1';
+import { STORES, BYID, FEAT, isFeat, rarityOf, rarityText, stampSVG, stampInk, search, addCustom, hideStore, renameStore, lookupIsbn, DATA_DATE } from './data.js?v=0.6.1';
+import * as G from './game.js?v=0.6.1';
+import * as MAP from './map.js?v=0.6.1';
+import { POS, setPos, startWatch, setTrial, setFollow, hasPos, jumped } from './position.js?v=0.6.1';
+import { sfx, haptic, unlock } from './audio.js?v=0.6.1';
+import { stampImage, cardImage, shareBlob } from './share.js?v=0.6.1';
+import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, on, emit, weekKey } from './util.js?v=0.6.1';
 
 export let currentView = 'map';
 export let currentSub = 'stamps';
@@ -217,6 +217,19 @@ export function startAdd() {
   $('#ad-cancel').onclick = closeModal; $('#ad-name').focus();
   $('#ad-save').onclick = () => { const n = $('#ad-name').value.trim(); if (!n) { toast('店の名前を入れてください', 'warn'); return; } let la = c.lat, lo = c.lng; if ($('input[name=ad-pos]:checked').value === 'here' && hasPos()) { la = POS.lat; lo = POS.lon; }
     const st = { i: 'u' + Date.now(), n, la: +la.toFixed(5), lo: +lo.toFixed(5), u: $('#ad-used').checked ? 1 : undefined }; addCustom(st); save(); MAP.setStores(STORES); applyMapStates(); updateNear(); closeModal(); toast('追加しました', 'ok'); openSheet(st.i); };
+}
+// ---------- 自分のアイコン：選んだ画像を丸く小さく切り抜く（端末の中だけ。どこにも送らない） ----------
+export async function makeAvatar(file) {
+  const url = URL.createObjectURL(file);
+  try {
+    let im; try { im = await createImageBitmap(file, { imageOrientation: 'from-image' }); } catch (e) { im = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = url; }); }
+    const w = im.width || im.naturalWidth, h = im.height || im.naturalHeight; if (!w || !h) throw new Error('bad image');
+    const N = 160; const cv = document.createElement('canvas'); cv.width = N; cv.height = N; const g = cv.getContext('2d');
+    g.fillStyle = '#ffffff'; g.fillRect(0, 0, N, N); g.beginPath(); g.arc(N / 2, N / 2, N / 2, 0, Math.PI * 2); g.clip();
+    const side = Math.min(w, h); g.drawImage(im, (w - side) / 2, (h - side) / 2, side, side, 0, 0, N, N);
+    let q = 0.86, out = cv.toDataURL('image/jpeg', q); while (out.length > 120000 && q > 0.4) { q -= 0.12; out = cv.toDataURL('image/jpeg', q); }
+    return out;
+  } finally { URL.revokeObjectURL(url); }
 }
 export function devRefillInk() { inkRefill(); refreshHud(); toast('インクを満タンにしました（試作用）'); }
 

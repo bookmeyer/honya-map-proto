@@ -1,6 +1,6 @@
 // 地図（MapLibre）。店はピンの絵で表示し、固まり（クラスタ）でまとめ、状態は feature-state で軽く更新する
-import { STYLE_LIGHT, STYLE_DARK, TERRITORY_M, RANGE_M } from './config.js?v=0.6.0';
-import { circlePoly, emit } from './util.js?v=0.6.0';
+import { STYLE_LIGHT, STYLE_DARK, TERRITORY_M, RANGE_M } from './config.js?v=0.6.1';
+import { circlePoly, emit } from './util.js?v=0.6.1';
 
 export const M = { map: null, ready: false, theme: 'light' };
 let storesGeo = { type: 'FeatureCollection', features: [] };
@@ -35,6 +35,28 @@ function markImage() { // 行きたい☆
 }
 const fs = (k, def = 0) => ['coalesce', ['feature-state', k], def];
 
+// ---- 自分のアイコン（現在地に出す。写真は端末の中だけ） ----
+let avatar = null; // { blue: ImageData, purple: ImageData }
+const loadImg = (src) => new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = src; });
+function ringImage(im, color) {
+  const W = 60, s = 2; const c = document.createElement('canvas'); c.width = W * s; c.height = W * s; const g = c.getContext('2d'); g.scale(s, s);
+  g.save(); g.shadowColor = 'rgba(0,0,0,.3)'; g.shadowBlur = 6; g.shadowOffsetY = 2; g.beginPath(); g.arc(30, 30, 25, 0, Math.PI * 2); g.fillStyle = '#fff'; g.fill(); g.restore();
+  g.save(); g.beginPath(); g.arc(30, 30, 22, 0, Math.PI * 2); g.clip(); g.drawImage(im, 8, 8, 44, 44); g.restore();
+  g.lineWidth = 3.5; g.strokeStyle = color; g.beginPath(); g.arc(30, 30, 24, 0, Math.PI * 2); g.stroke();
+  return g.getImageData(0, 0, W * s, W * s);
+}
+function avatarLayer(map) {
+  if (!avatar) return;
+  for (const k of ['blue', 'purple']) { const name = 'me-avatar-' + k; if (map.hasImage(name)) map.updateImage(name, avatar[k]); else map.addImage(name, avatar[k], { pixelRatio: 2 }); }
+  if (!map.getLayer('me-avatar')) map.addLayer({ id: 'me-avatar', type: 'symbol', source: 'me', filter: ['==', ['get', 'k'], 'me'], layout: { 'icon-image': ['case', ['==', ['get', 'fake'], 1], 'me-avatar-purple', 'me-avatar-blue'], 'icon-size': 1, 'icon-allow-overlap': true, 'icon-ignore-placement': true } });
+  else map.setLayoutProperty('me-avatar', 'visibility', 'visible');
+}
+export async function setAvatar(dataUrl) {
+  if (!dataUrl) { avatar = null; if (M.ready && M.map.getLayer('me-avatar')) M.map.setLayoutProperty('me-avatar', 'visibility', 'none'); return; }
+  try { const im = await loadImg(dataUrl); avatar = { blue: ringImage(im, '#2b6cb0'), purple: ringImage(im, '#6d4fc3') }; } catch (e) { avatar = null; return; }
+  if (M.ready) avatarLayer(M.map);
+}
+
 function addLayers() {
   const map = M.map;
   for (const k of Object.keys(PIN)) if (!map.hasImage('pin-' + k)) map.addImage('pin-' + k, pinImage(k), { pixelRatio: 2 });
@@ -63,6 +85,7 @@ function addLayers() {
   map.addLayer({ id: 'stores-near', type: 'symbol', source: 'stores', filter: unc, layout: sym('pin-near', ['interpolate', ['linear'], ['zoom'], 8, 0.6, 12, 0.8, 15, 1.05]), paint: { 'icon-opacity': fs('near') } });
   map.addLayer({ id: 'stores-want', type: 'symbol', source: 'stores', filter: unc, layout: { 'icon-image': 'mark-want', 'icon-size': ['interpolate', ['linear'], ['zoom'], 8, 0.5, 15, 0.8], 'icon-anchor': 'bottom-left', 'icon-offset': [10, -34], 'icon-allow-overlap': true, 'icon-ignore-placement': true }, paint: { 'icon-opacity': fs('want') } });
   map.addLayer({ id: 'me-dot', type: 'circle', source: 'me', filter: ['==', ['get', 'k'], 'me'], paint: { 'circle-radius': 9, 'circle-color': ['case', ['==', ['get', 'fake'], 1], '#6d4fc3', '#2b6cb0'], 'circle-stroke-width': 3, 'circle-stroke-color': '#ffffff' } });
+  avatarLayer(map); // 自分のアイコンがあれば、現在地の点の上に
   for (const id of ['stores', 'stores-stamped', 'stores-near']) {
     map.on('click', id, (e) => { if (e.originalEvent._hit) return; const f = e.features && e.features[0]; if (f) { e.originalEvent._hit = true; handlers.onStoreClick && handlers.onStoreClick(f.properties.id); } });
     map.on('mouseenter', id, () => { map.getCanvas().style.cursor = 'pointer'; }); map.on('mouseleave', id, () => { map.getCanvas().style.cursor = ''; });

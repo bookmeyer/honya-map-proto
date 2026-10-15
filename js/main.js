@@ -1,13 +1,13 @@
 // 起動：記録を読み、データを取り、地図を出し、部品をつなぐ
-import { APP_VER } from './config.js?v=0.6.0';
-import { S, load, save } from './state.js?v=0.6.0';
-import { loadAll, STORES } from './data.js?v=0.6.0';
-import * as MAP from './map.js?v=0.6.0';
-import { POS, setPos, setFollow } from './position.js?v=0.6.0';
-import * as AUDIO from './audio.js?v=0.6.0';
-import * as UI from './ui.js?v=0.6.0';
-import { renderRadar, renderZukan, renderMissions, renderSettings, applyTheme, showOnboarding } from './screens.js?v=0.6.0';
-import { $, $$, on, emit } from './util.js?v=0.6.0';
+import { APP_VER } from './config.js?v=0.6.1';
+import { S, load, save } from './state.js?v=0.6.1';
+import { loadAll, STORES } from './data.js?v=0.6.1';
+import * as MAP from './map.js?v=0.6.1';
+import { POS, setPos, setFollow } from './position.js?v=0.6.1';
+import * as AUDIO from './audio.js?v=0.6.1';
+import * as UI from './ui.js?v=0.6.1';
+import { renderRadar, renderZukan, renderMissions, renderSettings, applyTheme, showOnboarding } from './screens.js?v=0.6.1';
+import { $, $$, on, emit } from './util.js?v=0.6.1';
 
 async function boot() {
   load(); applyThemeEarly();
@@ -17,7 +17,7 @@ async function boot() {
     onStoreClick: (id) => UI.openSheet(id),
     onMapClick: (lngLat) => { if (POS.fake) { setPos(lngLat.lat, lngLat.lng, 15, true); UI.toast('ここにいることにしました'); } else UI.closeSheet(); },
     onDrag: () => { setFollow(false); $('#btn-locate').classList.remove('on'); } });
-  on('map-ready', () => { MAP.setStores(STORES); UI.applyMapStates(); MAP.setMe(POS); });
+  on('map-ready', () => { MAP.setStores(STORES); UI.applyMapStates(); MAP.setMe(POS); if (S.settings.avatar) MAP.setAvatar(S.settings.avatar); });
   on('pos', () => { MAP.setMe(POS); if (POS.follow && !POS.fake) MAP.easeTo(POS.lon, POS.lat); UI.updateNear(); });
   on('records', () => { UI.refreshHud(); if (UI.currentView === 'zukan') renderZukan(); if (UI.currentView === 'mission') renderMissions(); });
   on('view', (v) => { if (v === 'radar') renderRadar(); if (v === 'zukan') renderZukan(); if (v === 'mission') renderMissions(); if (v === 'settings') renderSettings(); });

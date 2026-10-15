@@ -273,3 +273,7 @@ video#scanner{width:100%;border-radius:var(--r-m);background:#000;max-height:50v
 .mlist .m.done{background:linear-gradient(135deg,var(--gold-soft),var(--card))}
 .titles .t{font-weight:700}
 .quest{background:linear-gradient(135deg,var(--ink),color-mix(in srgb,var(--ink) 80%,var(--shu)))}
+.avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid var(--ao);background:#fff;flex:none}
+.avatar.big{width:52px;height:52px;border:3px solid var(--card);box-shadow:0 0 0 2px var(--shu)}
+.avatar-ctl{display:flex;align-items:center;gap:8px;flex:none}
+.stamp-grid .empty,.card-grid .empty{grid-column:1/-1}
