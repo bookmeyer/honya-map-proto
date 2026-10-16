@@ -1,5 +1,5 @@
 {
- "fetchedAt": "2026-10-16T01:50:59.892Z",
+ "fetchedAt": "2026-10-16T01:57:33.628Z",
  "list": [
   {
    "name": "TSUTAYA あいの里店",
@@ -157,11 +157,6 @@
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=0532"
   },
   {
-   "name": "BOOK COMPASS 仙台北口店",
-   "address": "宮城県仙台市青葉区中央1‐1‐1 JR仙台駅構内2階(改札外)",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=0534"
-  },
-  {
    "name": "ヤマト屋書店 TSUTAYA中里店",
    "address": "宮城県石巻市南中里2-9-36",
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=0608"
@@ -220,11 +215,6 @@
    "name": "TSUTAYA 桑野店",
    "address": "福島県郡山市下亀田16-16",
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=0908"
-  },
-  {
-   "name": "BOOKACE 植田店",
-   "address": "福島県いわき市東田町2-10-6",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=0911"
   },
   {
    "name": "TSUTAYA 須賀川東店",
@@ -287,34 +277,14 @@
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=0946"
   },
   {
-   "name": "ブックエース イオンモールいわき小名浜店",
-   "address": "福島県いわき市小名浜字辰巳町79番地 イオンモールいわき小名浜 4Ｆ",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=0948"
-  },
-  {
    "name": "TSUTAYA BOOKSTORE AIZU",
    "address": "福島県会津若松市門田町大字黒岩大坪21番地",
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=0949"
   },
   {
-   "name": "BOOKACE 茨大前店",
-   "address": "茨城県水戸市堀町1094-7",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=1002"
-  },
-  {
-   "name": "BOOKACE 東海店",
-   "address": "茨城県那珂郡東海村舟石川駅西3-14-14",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=1012"
-  },
-  {
    "name": "TSUTAYA 下館店",
    "address": "茨城県筑西市市野辺223-1",
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=1014"
-  },
-  {
-   "name": "BOOKACE 下妻店",
-   "address": "茨城県下妻市下妻戊115-1",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=1017"
   },
   {
    "name": "TSUTAYA 神栖店",
@@ -377,16 +347,6 @@
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=1073"
   },
   {
-   "name": "川又書店 エクセル店",
-   "address": "茨城県水戸市宮町１－１－１ 水戸ステーションビル エクセル５F",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=1075"
-  },
-  {
-   "name": "川又書店 県庁店",
-   "address": "茨城県水戸市笠原町９７８‐２５ 茨城県開発公社ビル１Ｆ",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=1076"
-  },
-  {
    "name": "蔦屋書店 龍ケ崎店",
    "address": "茨城県龍ケ崎市中里2-1-2",
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=1081"
@@ -395,11 +355,6 @@
    "name": "TSUTAYA BOOKSTORE 常総インターチェンジ",
    "address": "茨城県常総市むすびまち3番地",
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=1082"
-  },
-  {
-   "name": "BIG ONE BOOK STORE 古河店",
-   "address": "茨城県古河市本町1丁目1‐15 VAL古河1階",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=1083"
   },
   {
    "name": "TSUTAYA BOOKSTORE 常陸太田",
@@ -587,16 +542,6 @@
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=1339"
   },
   {
-   "name": "ブックマルシェ 上尾店",
-   "address": "埼玉県上尾市谷津2-1-1 ショーサンプラザ4F",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=1342"
-  },
-  {
-   "name": "ブックマルシェ アリオ深谷店",
-   "address": "埼玉県深谷市上柴町西4-2-14 アリオ深谷2F",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=1343"
-  },
-  {
    "name": "蔦屋書店 本庄早稲田店",
    "address": "埼玉県本庄市早稲田の杜2丁目1番46号",
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=1344"
@@ -620,11 +565,6 @@
    "name": "TSUTAYA BOOKSTORE グランエミオ所沢",
    "address": "埼玉県所沢市くすのき台1丁目14番地5 グランエミオ所沢 3F",
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=1380"
-  },
-  {
-   "name": "よむよむ 坂戸入西店",
-   "address": "埼玉県坂戸市にっさい花みず木２‐１４‐１ モアショッピングプラザ内",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=1388"
   },
   {
    "name": "TSUTAYA みはら店",
@@ -727,11 +667,6 @@
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=1554"
   },
   {
-   "name": "BOOK EXPRESS ペリエ西船橋店",
-   "address": "千葉県船橋市西船4‐27‐7JR西船橋駅 ペリエ西船橋3階 改札内",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=1555"
-  },
-  {
    "name": "TSUTAYA BOOKSTORE そよら成田ニュータウン",
    "address": "千葉県成田市赤坂2丁目1‐10 そよら成田ニュータウン 本館4階",
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=1600"
@@ -750,11 +685,6 @@
    "name": "TSUTAYA 佐倉店",
    "address": "千葉県佐倉市寺崎北6丁目1番地2",
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=1624"
-  },
-  {
-   "name": "多田屋 佐原店",
-   "address": "千葉県香取市佐原イ4187",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=1629"
   },
   {
    "name": "TSUTAYA 館山店",
@@ -795,11 +725,6 @@
    "name": "TSUTAYA 鴨川店",
    "address": "千葉県鴨川市貝渚中川間300",
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=1678"
-  },
-  {
-   "name": "ブックマルシェ 我孫子店",
-   "address": "千葉県我孫子市我孫子4-11-1 あびこショッピングプラザ3階",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=1681"
   },
   {
    "name": "蔦屋書店 茂原店",
@@ -877,11 +802,6 @@
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=1982"
   },
   {
-   "name": "BOOK COMPASS リエール藤沢店",
-   "address": "神奈川県藤沢市南藤沢1-2 リエール藤沢 3階(改札外)",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=1984"
-  },
-  {
    "name": "TSUTAYA BOOKSTORE 海老名店",
    "address": "神奈川県海老名市めぐみ町3-1 ViNA GARDENS PERCH 4F",
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=1985"
@@ -897,29 +817,9 @@
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=2033"
   },
   {
-   "name": "BOOK COMPASS エキュート上野店",
-   "address": "東京都台東区上野７‐１‐１ＪＲ東日本 上野駅構内３階 エキュート上野内",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=2040"
-  },
-  {
-   "name": "BOOK COMPASS 東京中央店",
-   "address": "東京都千代田区丸の内１‐９‐１ ＪＲ東京駅構内 新幹線南乗り換え改札前",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=2042"
-  },
-  {
-   "name": "BOOK COMPASS エキュート品川店",
-   "address": "東京都港区高輪3-26-27 JR東日本 品川駅構内 エキュート品川内",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=2043"
-  },
-  {
    "name": "TSUTAYA BOOKSTORE MARUNOUCHI",
    "address": "東京都千代田区丸の内2丁目4-1 丸の内ビルディング 3・4F",
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=2046"
-  },
-  {
-   "name": "リブロ 汐留シオサイト店",
-   "address": "東京都港区東新橋１‐５‐２ 汐留シティセンターＢ２Ｆ",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=2054"
   },
   {
    "name": "中目黒 蔦屋書店",
@@ -930,11 +830,6 @@
    "name": "TSUTAYA BOOKSTORE APIT東雲店",
    "address": "東京都江東区東雲2‐7‐20",
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=2134"
-  },
-  {
-   "name": "BOOK EXPRESS 大崎店",
-   "address": "東京都品川区大崎1‐21‐4 JR大崎駅構内(北改札口内)",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=2136"
   },
   {
    "name": "TSUTAYA BOOKSTORE 亀戸",
@@ -982,11 +877,6 @@
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=2330"
   },
   {
-   "name": "BOOK COMPASS ニュウマン新宿店",
-   "address": "東京都渋谷区千駄ヶ谷5‐24‐55 NEWoManエキナカ 2F",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=2331"
-  },
-  {
    "name": "TSUTAYA BOOKSTORE 恵比寿ガーデンプレイス店",
    "address": "東京都渋谷区恵比寿4丁目20番7号 恵比寿ガーデンプレイスセンタープラザ B1F",
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=2332"
@@ -1002,16 +892,6 @@
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=2426"
   },
   {
-   "name": "BOOK EXPRESS エキュート赤羽店",
-   "address": "東京都北区赤羽1-1-1 JR東日本 赤羽駅北改札口内",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=2434"
-  },
-  {
-   "name": "あゆみＢＯＯＫＳ 瑞江店",
-   "address": "東京都江戸川区瑞江２‐５‐１ドーミー瑞江１Ｆ",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=2620"
-  },
-  {
    "name": "蔦屋書店 八王子みなみ野店",
    "address": "東京都八王子市みなみ野1-7-7",
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=2720"
@@ -1022,16 +902,6 @@
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=2733"
   },
   {
-   "name": "オリオン書房 ノルテ店",
-   "address": "東京都立川市曙町2‐42‐1 パークアベニュー 3F",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=2736"
-  },
-  {
-   "name": "オリオン書房 サザン店",
-   "address": "東京都立川市柴崎町３‐２‐１ サザン２Ｆ",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=2738"
-  },
-  {
    "name": "TSUTAYA 調布駅南口店",
    "address": "東京都調布市小島町2-51-3 ロイヤルプラザ2Ｆ",
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=2811"
@@ -1040,11 +910,6 @@
    "name": "TSUTAYA 町田木曽店",
    "address": "東京都町田市木曽西1-17-13",
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=2812"
-  },
-  {
-   "name": "リブロ 花小金井店",
-   "address": "東京都小平市花小金井１‐８‐３ いなげや花小金井駅前店２Ｆ",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=2832"
   },
   {
    "name": "TSUTAYA 福生店",
@@ -1182,19 +1047,9 @@
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=3161"
   },
   {
-   "name": "明文堂書店 新入善店",
-   "address": "富山県下新川郡入善町椚山1178",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=3208"
-  },
-  {
    "name": "TSUTAYA BOOKSTORE 藤の木店",
    "address": "富山県富山市開1325",
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=3215"
-  },
-  {
-   "name": "明文堂書店 黒部店",
-   "address": "富山県黒部市荻生7419",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=3216"
   },
   {
    "name": "文苑堂 TSUTAYA 清水町店",
@@ -1202,24 +1057,9 @@
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=3218"
   },
   {
-   "name": "明文堂書店 滑川店",
-   "address": "富山県滑川市上小泉2829番地",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=3221"
-  },
-  {
    "name": "TSUTAYA BOOKSTORE 小杉町店",
    "address": "富山県射水市一条6番地13",
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=3226"
-  },
-  {
-   "name": "明文堂書店 氷見店",
-   "address": "富山県氷見市窪344-1",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=3227"
-  },
-  {
-   "name": "明文堂書店 高岡射水店",
-   "address": "富山県射水市坂東127-1",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=3228"
   },
   {
    "name": "TSUTAYA 富山豊田店",
@@ -1240,21 +1080,6 @@
    "name": "TSUTAYA BOOKSTORE 金沢エムザ",
    "address": "石川県金沢市武蔵町１５番１号金沢エムザ３Ｆ",
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=3312"
-  },
-  {
-   "name": "明文堂書店 小松ツリーズ",
-   "address": "石川県小松市沖町451番地",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=3403"
-  },
-  {
-   "name": "明文堂書店 金沢野々市店",
-   "address": "石川県野々市市粟田5丁目461",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=3405"
-  },
-  {
-   "name": "金澤文苑堂 羽咋店",
-   "address": "石川県羽咋市石野町ホ90",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=3408"
   },
   {
    "name": "TSUTAYA BOOKSTORE イオンモール白山",
@@ -1285,16 +1110,6 @@
    "name": "TSUTAYA 南アルプスガーデン店",
    "address": "山梨県南アルプス市十五所685-3",
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=3600"
-  },
-  {
-   "name": "よむよむ プラザパークス甲府東店",
-   "address": "山梨県甲府市和戸町８８０",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=3618"
-  },
-  {
-   "name": "よむよむ 新敷島店",
-   "address": "山梨県甲斐市中下条１０８０‐１",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=3619"
   },
   {
    "name": "蔦屋書店 諏訪中洲店",
@@ -1352,16 +1167,6 @@
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=3726"
   },
   {
-   "name": "軽井沢書店",
-   "address": "長野県北佐久郡軽井沢町軽井沢大字1323",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=3736"
-  },
-  {
-   "name": "軽井沢書店 中軽井沢店",
-   "address": "長野県北佐久郡軽井沢町長倉鳥井原１６９０‐４",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=3737"
-  },
-  {
    "name": "TSUTAYA BOOKSTORE カラフルタウン岐阜",
    "address": "岐阜県岐阜市柳津町丸野3丁目3-6",
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=3806"
@@ -1372,19 +1177,9 @@
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=3904"
   },
   {
-   "name": "コスモブックセンター",
-   "address": "岐阜県恵那市長島町中野2-1-15",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=3921"
-  },
-  {
    "name": "TSUTAYA いまじん白揚大垣店",
    "address": "岐阜県大垣市本今町字西ノ側1639-1",
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=3922"
-  },
-  {
-   "name": "草叢BOOKS 各務原店",
-   "address": "岐阜県各務原市鵜沼各務原町8丁目7番地 アピタ各務原店1階",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=3925"
   },
   {
    "name": "TSUTAYA BOOKSTORE 中部国際医療センター",
@@ -1405,41 +1200,6 @@
    "name": "TSUTAYA BOOKSTORE 静岡",
    "address": "静岡県静岡市葵区呉服町1丁目20番",
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=4025"
-  },
-  {
-   "name": "谷島屋 三方原店",
-   "address": "静岡県浜松市中央区三方原町759-1",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=4028"
-  },
-  {
-   "name": "谷島屋 サンストリート浜北店",
-   "address": "静岡県浜松市浜名区平口2861 サンストリート浜北SC 1階",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=4029"
-  },
-  {
-   "name": "谷島屋 浜松本店",
-   "address": "静岡県浜松市中央区砂山町6-1 メイワン 8F",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=4031"
-  },
-  {
-   "name": "谷島屋 イオンモール浜松志都呂店",
-   "address": "静岡県浜松市中央区志都呂町2丁目37-1 イオンモール浜松志都呂 3F",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=4034"
-  },
-  {
-   "name": "谷島屋 流通通り店",
-   "address": "静岡県静岡市葵区千代田7-10-33",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=4035"
-  },
-  {
-   "name": "谷島屋 マークイズ静岡店",
-   "address": "静岡県静岡市葵区柚木1026 MARK IS 静岡 2階",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=4036"
-  },
-  {
-   "name": "谷島屋 パルシェ店",
-   "address": "静岡県静岡市葵区黒金町49番地 静岡駅ビルPARCHE 5F",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=4043"
   },
   {
    "name": "TSUTAYA 豊田町店",
@@ -1482,44 +1242,9 @@
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=4129"
   },
   {
-   "name": "谷島屋 ららぽーと磐田店",
-   "address": "静岡県磐田市高見丘1200 ららぽーと磐田 1F",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=4152"
-  },
-  {
-   "name": "谷島屋 磐田店",
-   "address": "静岡県磐田市国府台58-2",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=4153"
-  },
-  {
-   "name": "谷島屋 アピタ磐田店",
-   "address": "静岡県磐田市今之浦3丁目1-11 アピタ磐田 1F",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=4154"
-  },
-  {
-   "name": "谷島屋 富士宮店",
-   "address": "静岡県富士宮市宮北町71",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=4156"
-  },
-  {
-   "name": "谷島屋 富士店",
-   "address": "静岡県富士市柚木404-1",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=4161"
-  },
-  {
    "name": "TSUTAYA BOOKSTORE サントムーン柿田川店",
    "address": "静岡県駿東郡清水町伏見52-7 1F",
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=4162"
-  },
-  {
-   "name": "谷島屋 ららぽーと沼津店",
-   "address": "静岡県沼津市東椎路字東荒301番他3 ららぽーと沼津 3F",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=4163"
-  },
-  {
-   "name": "ＢＯＯＫＳえみたす 焼津店",
-   "address": "静岡県焼津市小土５６７‐３",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=4164"
   },
   {
    "name": "TSUTAYA 中島新町店",
@@ -1535,11 +1260,6 @@
    "name": "TSUTAYA BOOKSTORE 本山店",
    "address": "愛知県名古屋市千種区末盛通5丁目12 服部本山ビルディング",
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=4247"
-  },
-  {
-   "name": "草叢BOOKS 新守山店",
-   "address": "愛知県名古屋市守山区新守山2830 アピタパワー新守山店2階",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=4251"
   },
   {
    "name": "TSUTAYA 大曽根店",
@@ -1680,11 +1400,6 @@
    "name": "京都 蔦屋書店",
    "address": "京都府京都市下京区四条通寺町東入二丁目御旅町35京都高島屋S.C.［T8］5階・6階",
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=4828"
-  },
-  {
-   "name": "京都 IP書店",
-   "address": "京都府京都市下京区四条通寺町東入二丁目御旅町３５ 京都高島屋Ｓ．Ｃ．［Ｔ８］６階",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=4829"
   },
   {
    "name": "TSUTAYA EBISUBASHI",
@@ -2097,11 +1812,6 @@
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=7436"
   },
   {
-   "name": "積文館書店 小田部店",
-   "address": "福岡県福岡市早良区小田部４‐５‐５０",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=7438"
-  },
-  {
    "name": "TSUTAYA サンリブきふね店",
    "address": "福岡県北九州市小倉北区貴船町1-14",
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=7518"
@@ -2147,11 +1857,6 @@
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=7648"
   },
   {
-   "name": "積文館書店 前原店",
-   "address": "福岡県糸島市前原東１－７－３５",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=7658"
-  },
-  {
    "name": "TSUTAYA 唐津店",
    "address": "佐賀県唐津市船宮町2587-9",
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=7704"
@@ -2195,11 +1900,6 @@
    "name": "TSUTAYA 遊ING城山店",
    "address": "長崎県長崎市城山町5番地23",
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=7810"
-  },
-  {
-   "name": "遊ＩＮＧ浜町店",
-   "address": "長崎県長崎市浜町2-33",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=7811"
   },
   {
    "name": "TSUTAYA BOOKSTORE MIRAI NAGASAKI COCOWALK",
@@ -2267,11 +1967,6 @@
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=8102"
   },
   {
-   "name": "Books Misumi 人吉店",
-   "address": "熊本県人吉市鬼木町640-3",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=8105"
-  },
-  {
    "name": "TSUTAYA BOOKSTORE 菊陽",
    "address": "熊本県菊池郡菊陽町津久礼2746",
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=8107"
@@ -2337,11 +2032,6 @@
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=8308"
   },
   {
-   "name": "Books Misumi 日向店",
-   "address": "宮崎県日向市大字財光寺字桃ノ木 493-1",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=8311"
-  },
-  {
    "name": "TSUTAYA BOOKSTORE 宮交シティ",
    "address": "宮崎県宮崎市大淀4丁目7‐30 イオン南宮崎店 2F",
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=8314"
@@ -2380,11 +2070,6 @@
    "name": "TSUTAYA 加世田店",
    "address": "鹿児島県南さつま市加世田地頭所1-6",
    "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=8506"
-  },
-  {
-   "name": "Books Misumi 鹿屋店",
-   "address": "鹿児島県鹿屋市寿7-12-1",
-   "url": "https://store-tsutaya.tsite.jp/store/detail?storeId=8507"
   },
   {
    "name": "TSUTAYA 川内中央店",

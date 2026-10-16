@@ -45,6 +45,7 @@ module.exports = {
         }
       }
     }
+    this.excluded = [...new Set(this.excluded)]; // 2つの条件の両方に出る店がある
     if (list.length < 250) throw new Error(`店舗が少なすぎる（${list.length}件）。ページの作りが変わったかもしれない`);
     return lib.uniq(list);
   },
