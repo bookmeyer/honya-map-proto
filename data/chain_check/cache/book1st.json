@@ -1,0 +1,369 @@
+{
+ "fetchedAt": "2026-10-16T01:39:37.837Z",
+ "list": [
+  {
+   "name": "ブックファースト 新宿店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/shinjuku.html",
+   "lon": 139.69437257622477,
+   "lat": 35.6916685293998
+  },
+  {
+   "name": "ブックファースト 中野店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/nakano.html",
+   "lon": 139.66202597622546,
+   "lat": 35.70881442845759
+  },
+  {
+   "name": "ブックファースト 五反田店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/gotanda.html",
+   "lon": 139.7220030762225,
+   "lat": 35.625589333027875
+  },
+  {
+   "name": "ブックファースト アトレ吉祥寺店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/kichijoji.html",
+   "lon": 139.57356558799168,
+   "lat": 35.703195258079454
+  },
+  {
+   "name": "ブックファースト アトレ大森店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/omori.html",
+   "lon": 139.72566577622115,
+   "lat": 35.58828573507343
+  },
+  {
+   "name": "ブックファースト ルミネ町田店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/machida.html",
+   "lon": 139.44352781151946,
+   "lat": 35.542051837492465
+  },
+  {
+   "name": "ブックファースト ルミネ北千住店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/kitasenju.html",
+   "lon": 139.80239647622673,
+   "lat": 35.75004502619001
+  },
+  {
+   "name": "ブックファースト 自由が丘店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/jyg.html",
+   "lon": 139.66839666139396,
+   "lat": 35.60726714414987
+  },
+  {
+   "name": "ブックファースト 練馬店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/nerima.html",
+   "lon": 139.65031747622626,
+   "lat": 35.7374683268819
+  },
+  {
+   "name": "ブックファースト 青葉台店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/aobadai.html",
+   "lon": 139.5132934762198,
+   "lat": 35.542659337572935
+  },
+  {
+   "name": "ブックファースト モザイクモール港北店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/kouhoku.html",
+   "lon": 139.57273928795522,
+   "lat": 35.55539486631233
+  },
+  {
+   "name": "ブックファースト ルミネ川越店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/kawagoe.html",
+   "lon": 139.47776318804208,
+   "lat": 35.907176146673855
+  },
+  {
+   "name": "ブックファースト ルミネ大宮店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/omiya.html",
+   "lon": 139.619919288042,
+   "lat": 35.90706804668
+  },
+  {
+   "name": "ブックファースト 新所沢店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/stz.html",
+   "lon": 139.4534308762287,
+   "lat": 35.805393923142546
+  },
+  {
+   "name": "ブックファースト シャポー市川店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/ichikawa.html",
+   "lon": 139.90451047622605,
+   "lat": 35.729640427312425
+  },
+  {
+   "name": "ブックファースト 梅田2階店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/umeda2.html",
+   "lon": 135.4955982760837,
+   "lat": 34.704599683002996
+  },
+  {
+   "name": "ブックファースト クリスタ長堀店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/ngh.html",
+   "lon": 135.50184061141138,
+   "lat": 34.67519948446767
+  },
+  {
+   "name": "ブックファースト 三国店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/mikuni.html",
+   "lon": 135.4803290760851,
+   "lat": 34.73779338122106
+  },
+  {
+   "name": "ブックファースト 曽根店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/sone.html",
+   "lon": 135.465077976086,
+   "lat": 34.77139707941555
+  },
+  {
+   "name": "ブックファースト 豊中店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/tynk.html",
+   "lon": 135.42577385902402,
+   "lat": 34.78729427854113
+  },
+  {
+   "name": "ブックファースト 蛍池店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/htr.html",
+   "lon": 135.44627071164902,
+   "lat": 34.79427237807281
+  },
+  {
+   "name": "ブックファースト 池田店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/ikeda.html",
+   "lon": 135.42344177619572,
+   "lat": 34.82143497672445
+  },
+  {
+   "name": "ブックファースト デュー阪急山田店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/yamada.html",
+   "lon": 135.51253461164953,
+   "lat": 34.805285277480344
+  },
+  {
+   "name": "ブックファースト 野田アプラ店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/noda.html",
+   "lon": 135.47312164068921,
+   "lat": 34.69441388366198
+  },
+  {
+   "name": "ブックファースト エミル高槻店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/takatsuki.html",
+   "lon": 135.61982157619653,
+   "lat": 34.849396275219114
+  },
+  {
+   "name": "ブックファースト 新石切店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/sik.html",
+   "lon": 135.6390375388549,
+   "lat": 34.678389198971296
+  },
+  {
+   "name": "ブックファースト 阪急西宮ガーデンズ店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/gerdens.html",
+   "lon": 135.3584421406909,
+   "lat": 34.74355138102437
+  },
+  {
+   "name": "ブックファースト 西宮店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/nsnmy.html",
+   "lon": 135.3540026760853,
+   "lat": 34.74566148079842
+  },
+  {
+   "name": "ブックファースト エビスタ西宮店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/ebista.html",
+   "lon": 135.33555427619282,
+   "lat": 34.736886781269654
+  },
+  {
+   "name": "ブックファースト 阪神尼崎店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/amg.html",
+   "lon": 135.4135100761922,
+   "lat": 34.71907838222575
+  },
+  {
+   "name": "ブックファースト 六甲店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/rokko.html",
+   "lon": 135.2330328453425,
+   "lat": 34.71947389091826
+  },
+  {
+   "name": "ブックファースト 宝塚店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/tkz.html",
+   "lon": 135.33860311164966,
+   "lat": 34.81037457720657
+  },
+  {
+   "name": "ブックファースト 阪神御影店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/mikage.html",
+   "lon": 135.2529034757451,
+   "lat": 34.715561972914415
+  },
+  {
+   "name": "アバンティ ブックセンター 三田駅前店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/sanda.html",
+   "lon": 135.22613907623185,
+   "lat": 34.888074373135225
+  },
+  {
+   "name": "アバンティブックセンター 宝塚中山店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/tzny.html",
+   "lon": 135.36478637622983,
+   "lat": 34.81713897695554
+  },
+  {
+   "name": "アバンティ ブックセンター 舞多聞店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/maitamon.html",
+   "lon": 135.0517289762246,
+   "lat": 34.663782285191964
+  },
+  {
+   "name": "アバンティ ブックセンター HAT神戸店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/hatkobe.html",
+   "lon": 135.2117905762258,
+   "lat": 34.69927938328834
+  },
+  {
+   "name": "アバンティ ブックセンター 長岡店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/nagaoka.html",
+   "lon": 135.68996057623306,
+   "lat": 34.92268587126883
+  },
+  {
+   "name": "アバンティ ブックセンター 洛北店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/rakuhoku.html",
+   "lon": 135.77629127623703,
+   "lat": 35.04038666491018
+  },
+  {
+   "name": "アバンティ ブックセンター 白梅町店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/hakubai.html",
+   "lon": 135.72717397070375,
+   "lat": 35.02652191451078
+  },
+  {
+   "name": "アバンティ ブックセンター ラパーク岸和田店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/kishiwada.html",
+   "lon": 135.39002037621862,
+   "lat": 34.47945159505144
+  },
+  {
+   "name": "アバンティ ブックセンター 藤井寺店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/fujiidera.html",
+   "lon": 135.59206483647048,
+   "lat": 34.57358609002198
+  },
+  {
+   "name": "アバンティブックセンター 寝屋川店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/neyagawa.html",
+   "lon": 135.61918287622814,
+   "lat": 34.76412877980612
+  },
+  {
+   "name": "アミーゴ書店 多田店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/tada.html",
+   "lon": 135.4147268762311,
+   "lat": 34.85853517472701
+  },
+  {
+   "name": "アミーゴ書店 六甲道店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/rokkomichi.html",
+   "lon": 135.23572107622633,
+   "lat": 34.71574938240446
+  },
+  {
+   "name": "アミーゴ書店 垂水店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/tarumi.html",
+   "lon": 135.04962507622372,
+   "lat": 34.630167386993314
+  },
+  {
+   "name": "アミーゴ書店 横尾店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/yokoo.html",
+   "lon": 135.1072883762251,
+   "lat": 34.674481984618524
+  },
+  {
+   "name": "アミーゴ書店 西神戸店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/nishikobe.html",
+   "lon": 134.9378260762261,
+   "lat": 34.7108310826684
+  },
+  {
+   "name": "アミーゴ書店 西神南店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/ssm.html",
+   "lon": 135.02756067622568,
+   "lat": 34.699419583280644
+  },
+  {
+   "name": "アミーゴ書店 千里丘店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/senrioka.html",
+   "lon": 135.5364810762286,
+   "lat": 34.789206578457915
+  },
+  {
+   "name": "アミーゴ書店 大和田店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/owada.html",
+   "lon": 135.44413487622612,
+   "lat": 34.70522918296905
+  },
+  {
+   "name": "アミーゴ書店 都島店",
+   "address": "",
+   "url": "https://www.book1st.net/shop/miyakojima.html",
+   "lon": 135.52768777622646,
+   "lat": 34.71548308241876
+  }
+ ]
+}

@@ -1,0 +1,125 @@
+{
+ "fetchedAt": "2026-10-16T01:41:39.941Z",
+ "list": [
+  {
+   "name": "谷島屋 浜松本店",
+   "address": "静岡県浜松市中央区砂山町6-1メイワン8階",
+   "url": "https://www.yajimaya.co.jp/shop/main.php?mode=detail&article=1",
+   "area": "浜松エリア"
+  },
+  {
+   "name": "谷島屋 ららぽーと磐田店",
+   "address": "静岡県磐田市高見丘1200 ららぽーと磐田1階",
+   "url": "https://www.yajimaya.co.jp/shop/main.php?mode=detail&article=11",
+   "area": "磐田エリア"
+  },
+  {
+   "name": "谷島屋 イオンモール浜松志都呂店",
+   "address": "静岡県浜松市中央区志都呂2-37-1 イオンモール浜松志都呂3階",
+   "url": "https://www.yajimaya.co.jp/shop/main.php?mode=detail&article=4",
+   "area": "浜松エリア"
+  },
+  {
+   "name": "谷島屋 パルシェ店",
+   "address": "静岡県静岡市葵区黒金町49 静岡駅ビルPARCHE 5F",
+   "url": "https://www.yajimaya.co.jp/shop/main.php?mode=detail&article=14",
+   "area": "静岡エリア"
+  },
+  {
+   "name": "谷島屋 富士店",
+   "address": "静岡県富士市柚木404-1",
+   "url": "https://www.yajimaya.co.jp/shop/main.php?mode=detail&article=20",
+   "area": "富士エリア"
+  },
+  {
+   "name": "谷島屋 マークイズ静岡店",
+   "address": "静岡県静岡市葵区柚木1026 MARK IS 静岡2F",
+   "url": "https://www.yajimaya.co.jp/shop/main.php?mode=detail&article=15",
+   "area": "静岡エリア"
+  },
+  {
+   "name": "谷島屋 ららぽーと沼津店",
+   "address": "静岡県沼津市東椎路字東荒301-3 ららぽーと沼津 3F",
+   "url": "https://www.yajimaya.co.jp/shop/main.php?mode=detail&article=21",
+   "area": "沼津エリア"
+  },
+  {
+   "name": "谷島屋 サンストリート浜北店",
+   "address": "静岡県浜松市浜名区平口2861 サンストリート浜北1階",
+   "url": "https://www.yajimaya.co.jp/shop/main.php?mode=detail&article=6",
+   "area": "浜松エリア"
+  },
+  {
+   "name": "谷島屋 流通通り店",
+   "address": "静岡県静岡市葵区千代田7-10-33",
+   "url": "https://www.yajimaya.co.jp/shop/main.php?mode=detail&article=17",
+   "area": "静岡エリア"
+  },
+  {
+   "name": "谷島屋 富士宮店",
+   "address": "静岡県富士宮市宮北町71",
+   "url": "https://www.yajimaya.co.jp/shop/main.php?mode=detail&article=19",
+   "area": "富士宮エリア"
+  },
+  {
+   "name": "谷島屋 アピタ磐田店",
+   "address": "静岡県磐田市今之浦三丁目1-11 アピタ磐田1階",
+   "url": "https://www.yajimaya.co.jp/shop/main.php?mode=detail&article=13",
+   "area": "磐田エリア"
+  },
+  {
+   "name": "谷島屋 磐田店",
+   "address": "静岡県磐田市国府台58-2",
+   "url": "https://www.yajimaya.co.jp/shop/main.php?mode=detail&article=12",
+   "area": "磐田エリア"
+  },
+  {
+   "name": "谷島屋 三方原店",
+   "address": "静岡県浜松市中央区三方原町759-1",
+   "url": "https://www.yajimaya.co.jp/shop/main.php?mode=detail&article=5",
+   "area": "浜松エリア"
+  },
+  {
+   "name": "谷島屋 聖隷浜松病院売店",
+   "address": "静岡県浜松市中央区住吉2-12-12 聖隷浜松病院内",
+   "url": "https://www.yajimaya.co.jp/shop/main.php?mode=detail&article=9",
+   "area": "浜松エリア"
+  },
+  {
+   "name": "谷島屋 聖隷三方原病院売店",
+   "address": "静岡県浜松市中央区三方原町3453 聖隷三方原病院内",
+   "url": "https://www.yajimaya.co.jp/shop/main.php?mode=detail&article=10",
+   "area": "浜松エリア"
+  },
+  {
+   "name": "谷島屋 浜松医大福利棟売店",
+   "address": "静岡県浜松市中央区半田山1丁目20番1号 浜松医科大学内",
+   "url": "https://www.yajimaya.co.jp/shop/main.php?mode=detail&article=8",
+   "area": "浜松エリア"
+  },
+  {
+   "name": "焼津谷島屋 登呂田店",
+   "address": "静岡県焼津市西小川2-1-8",
+   "url": "https://www.yajimaya.co.jp/shop/main.php?mode=detail&article=23",
+   "area": "焼津エリア"
+  },
+  {
+   "name": "焼津谷島屋 吉田店",
+   "address": "静岡県榛原郡吉田町住吉1277-4",
+   "url": "https://www.yajimaya.co.jp/shop/main.php?mode=detail&article=24",
+   "area": "吉田エリア"
+  },
+  {
+   "name": "焼津谷島屋 アピタ島田店",
+   "address": "静岡県島田市宝来町8-2",
+   "url": "https://www.yajimaya.co.jp/shop/main.php?mode=detail&article=25",
+   "area": "島田エリア"
+  },
+  {
+   "name": "焼津谷島屋 アピタ大仁店",
+   "address": "静岡県伊豆の国市吉田字九十分153-1",
+   "url": "https://www.yajimaya.co.jp/shop/main.php?mode=detail&article=26",
+   "area": "伊豆の国エリア"
+  }
+ ]
+}

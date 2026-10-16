@@ -1,0 +1,935 @@
+{
+ "fetchedAt": "2026-10-15T07:53:39.236Z",
+ "list": [
+  {
+   "name": "宮脇書店 札幌平岡店",
+   "address": "北海道札幌市清田区平岡3条5-3-1イオン札幌平岡店2F",
+   "url": "https://www.miyawakishoten.com/store/hokkaido_tohoku/hokkaido/0100408730.html"
+  },
+  {
+   "name": "宮脇書店 札幌元町店",
+   "address": "北海道札幌市東区北31条東15丁目1-1イオン札幌元町店3F",
+   "url": "https://www.miyawakishoten.com/store/hokkaido_tohoku/hokkaido/0106500310.html"
+  },
+  {
+   "name": "宮脇書店 帯広店",
+   "address": "北海道帯広市稲田町南8線西10-1 フレスポスズランプラザ2階",
+   "url": "https://www.miyawakishoten.com/store/hokkaido_tohoku/hokkaido/0108000180.html"
+  },
+  {
+   "name": "宮脇書店 青森店",
+   "address": "青森県青森市小柳5-19-15",
+   "url": "https://www.miyawakishoten.com/store/hokkaido_tohoku/aomori/0203009150.html"
+  },
+  {
+   "name": "宮脇書店 さくら野弘前店",
+   "address": "青森県弘前市城東北3-10-1さくら野百貨店3F",
+   "url": "https://www.miyawakishoten.com/store/hokkaido_tohoku/aomori/0203680920.html"
+  },
+  {
+   "name": "宮脇書店 久慈店",
+   "address": "岩手県久慈市長内町27-31-1",
+   "url": "https://www.miyawakishoten.com/store/hokkaido_tohoku/iwate/0302800410.html"
+  },
+  {
+   "name": "宮脇書店 一関店",
+   "address": "岩手県一関市狐禅寺石ノ瀬11-1イオンSC内",
+   "url": "https://www.miyawakishoten.com/store/hokkaido_tohoku/iwate/0302901310.html"
+  },
+  {
+   "name": "宮脇書店 仙台鈎取店",
+   "address": "宮城県仙台市太白区鈎取本町1-21-1",
+   "url": "https://www.miyawakishoten.com/store/hokkaido_tohoku/miyagi/0498208050.html"
+  },
+  {
+   "name": "宮脇書店 佐沼店",
+   "address": "宮城県登米市南方町新島前46-1",
+   "url": "https://www.miyawakishoten.com/store/hokkaido_tohoku/miyagi/0498705000.html"
+  },
+  {
+   "name": "宮脇書店 気仙沼店",
+   "address": "宮城県気仙沼市仲町2-1-30-1",
+   "url": "https://www.miyawakishoten.com/store/hokkaido_tohoku/miyagi/0498800420.html"
+  },
+  {
+   "name": "宮脇書店 鹿島台店",
+   "address": "宮城県大崎市鹿島台町木間塚小谷地515-2",
+   "url": "https://www.miyawakishoten.com/store/hokkaido_tohoku/miyagi/0498941020.html"
+  },
+  {
+   "name": "宮脇書店 秋田本店",
+   "address": "秋田県秋田市中通2-8-1フォンテAKITA5F",
+   "url": "https://www.miyawakishoten.com/store/hokkaido_tohoku/akita/0501000010.html"
+  },
+  {
+   "name": "宮脇書店 イオン秋田中央店",
+   "address": "秋田県秋田市楢山川口境5-11イオン秋田中央店3F",
+   "url": "https://www.miyawakishoten.com/store/hokkaido_tohoku/akita/0501000290.html"
+  },
+  {
+   "name": "宮脇書店 成沢店",
+   "address": "山形県山形市成沢西1-6-4",
+   "url": "https://www.miyawakishoten.com/store/hokkaido_tohoku/yamagata/0699023390.html"
+  },
+  {
+   "name": "宮脇書店 イオン米沢店",
+   "address": "山形県米沢市春日2-13-4",
+   "url": "https://www.miyawakishoten.com/store/hokkaido_tohoku/yamagata/0699200440.html"
+  },
+  {
+   "name": "宮脇書店 須賀川店",
+   "address": "福島県須賀川市岡東町129",
+   "url": "https://www.miyawakishoten.com/store/hokkaido_tohoku/fukushima/0796200130.html"
+  },
+  {
+   "name": "宮脇書店 会津ブックセンター",
+   "address": "福島県会津若松市天神町1-32尾崎ビル",
+   "url": "https://www.miyawakishoten.com/store/hokkaido_tohoku/fukushima/0796508320.html"
+  },
+  {
+   "name": "宮脇書店 喜多方店",
+   "address": "福島県喜多方市西四ツ谷180",
+   "url": "https://www.miyawakishoten.com/store/hokkaido_tohoku/fukushima/0796600860.html"
+  },
+  {
+   "name": "宮脇書店 大玉店",
+   "address": "福島県安達郡大玉村大山仲江271PLANT-5大玉店内",
+   "url": "https://www.miyawakishoten.com/store/hokkaido_tohoku/fukushima/0796913010.html"
+  },
+  {
+   "name": "宮脇書店 仙台卸町店",
+   "address": "宮城県仙台市若林区卸町1-1-1イオンスタイル仙台卸町店３Ｆ",
+   "url": "https://www.miyawakishoten.com/store/hokkaido_tohoku/miyagi/entry-1965.html"
+  },
+  {
+   "name": "宮脇書店 柴田店",
+   "address": "宮城県柴田郡柴田町上名生字新大原194-1 イオンタウン柴田内",
+   "url": "https://www.miyawakishoten.com/store/hokkaido_tohoku/miyagi/entry-3000.html"
+  },
+  {
+   "name": "宮脇書店 小山店",
+   "address": "栃木県小山市西城南4-3-3",
+   "url": "https://www.miyawakishoten.com/store/kanto/tochigi/0932308200.html"
+  },
+  {
+   "name": "宮脇書店 イオンタウン佐野店",
+   "address": "栃木県佐野市浅沼町742",
+   "url": "https://www.miyawakishoten.com/store/kanto/tochigi/0932708310.html"
+  },
+  {
+   "name": "宮脇書店 ヨーカドー三郷店",
+   "address": "埼玉県三郷市ピアラシティ1-1-1 イトーヨーカドー三郷店２階",
+   "url": "https://www.miyawakishoten.com/store/kanto/saitama/1134100240.html"
+  },
+  {
+   "name": "宮脇書店 越谷店",
+   "address": "埼玉県越谷市東大沢5-5-8",
+   "url": "https://www.miyawakishoten.com/store/kanto/saitama/1134300220.html"
+  },
+  {
+   "name": "宮脇書店 朝霞店",
+   "address": "埼玉県朝霞市本町1-38-43",
+   "url": "https://www.miyawakishoten.com/store/kanto/saitama/1135100110.html"
+  },
+  {
+   "name": "宮脇書店 行田店",
+   "address": "埼玉県行田市持田964-1",
+   "url": "https://www.miyawakishoten.com/store/kanto/saitama/1136100560.html"
+  },
+  {
+   "name": "宮脇書店 北本店",
+   "address": "埼玉県北本市本宿1-84",
+   "url": "https://www.miyawakishoten.com/store/kanto/saitama/1136400050.html"
+  },
+  {
+   "name": "宮脇書店 鴻巣店",
+   "address": "埼玉県鴻巣市北新宿225-1",
+   "url": "https://www.miyawakishoten.com/store/kanto/saitama/1136901160.html"
+  },
+  {
+   "name": "宮脇書店 イオン稲毛店",
+   "address": "千葉県千葉市稲毛区小仲台1-4-20",
+   "url": "https://www.miyawakishoten.com/store/kanto/chiba/1226300430.html"
+  },
+  {
+   "name": "宮脇書店 東久留米店",
+   "address": "東京都東久留米市本町3-8-1 イトーヨーカドー東久留米店3階",
+   "url": "https://www.miyawakishoten.com/store/kanto/tokyo/1320300530.html"
+  },
+  {
+   "name": "宮脇書店 イオンスタイル板橋前野町店",
+   "address": "東京都板橋前野町4丁目21-22 イオンスタイル板橋前野町3階",
+   "url": "https://www.miyawakishoten.com/store/kanto/tokyo/entry-1129.html"
+  },
+  {
+   "name": "宮脇書店 金沢文庫店",
+   "address": "神奈川県横浜市金沢区釜利谷東2-1-1 アピタ金沢文庫店2F",
+   "url": "https://www.miyawakishoten.com/store/kanto/kanagawa/entry-1482.html"
+  },
+  {
+   "name": "宮脇書店 アゼリア店",
+   "address": "群馬県館林市楠木町3648番地1アゼリアモール２階",
+   "url": "https://www.miyawakishoten.com/store/kanto/gunma/entry-1772.html"
+  },
+  {
+   "name": "宮脇書店 検見川浜店",
+   "address": "千葉県千葉市美浜区真砂4-2-6 イオンスタイル検見川浜店４F",
+   "url": "https://www.miyawakishoten.com/store/kanto/chiba/entry-1793.html"
+  },
+  {
+   "name": "宮脇書店 笠間店",
+   "address": "茨城県笠間市赤坂８番地笠間ショッピングセンター２階",
+   "url": "https://www.miyawakishoten.com/store/kanto/ibaraki/entry-1960.html"
+  },
+  {
+   "name": "宮脇書店 ユーカリが丘店",
+   "address": "千葉県佐倉市ユーカリが丘4-1-4 ユーカリプラザ４F",
+   "url": "https://www.miyawakishoten.com/store/kanto/chiba/entry-3016.html"
+  },
+  {
+   "name": "宮脇書店 千代田店",
+   "address": "群馬県邑楽郡千代田町萱野８１３－１ ジョイフル本田千代田店１階",
+   "url": "https://www.miyawakishoten.com/store/kanto/gunma/entry-3200.html"
+  },
+  {
+   "name": "宮脇書店 江戸崎店",
+   "address": "茨城県稲敷市江戸崎甲4836",
+   "url": "https://www.miyawakishoten.com/store/kanto/ibaraki/entry-3253.html"
+  },
+  {
+   "name": "宮脇書店 ヨーカドー久喜店",
+   "address": "埼玉県久喜市久喜中央4-9-11 イトーヨーカドー久喜店4階",
+   "url": "https://www.miyawakishoten.com/store/kanto/saitama/entry-3333.html"
+  },
+  {
+   "name": "宮脇書店 長岡店",
+   "address": "新潟県長岡市台町2-4-56",
+   "url": "https://www.miyawakishoten.com/store/shinetsu_tokai/nigata/1594000480.html"
+  },
+  {
+   "name": "宮脇書店 小千谷店",
+   "address": "新潟県小千谷市平沢新田荒田339イオン小千谷店内",
+   "url": "https://www.miyawakishoten.com/store/shinetsu_tokai/nigata/1594700420.html"
+  },
+  {
+   "name": "宮脇書店 横越店",
+   "address": "新潟県新潟市江南区横越中央8-2-2PLANT-5横越店内",
+   "url": "https://www.miyawakishoten.com/store/shinetsu_tokai/nigata/1595002080.html"
+  },
+  {
+   "name": "宮脇書店 新潟東店",
+   "address": "新潟県新潟市東区大形本町3-1-2イオン新潟東店内",
+   "url": "https://www.miyawakishoten.com/store/shinetsu_tokai/nigata/1595008130.html"
+  },
+  {
+   "name": "宮脇書店 見附店",
+   "address": "新潟県見附市上新田町725-1PLANT-5見附店内",
+   "url": "https://www.miyawakishoten.com/store/shinetsu_tokai/nigata/1595401120.html"
+  },
+  {
+   "name": "宮脇書店 聖籠店",
+   "address": "新潟県北蒲原郡聖籠町蓮野708PLANT-4聖籠店内",
+   "url": "https://www.miyawakishoten.com/store/shinetsu_tokai/nigata/1595701240.html"
+  },
+  {
+   "name": "宮脇書店 津幡店",
+   "address": "石川県河北郡津幡町庄又3PLANT-3店内",
+   "url": "https://www.miyawakishoten.com/store/shinetsu_tokai/ishikawa/1792903270.html"
+  },
+  {
+   "name": "宮脇書店 清水店",
+   "address": "福井県福井市三留町21-4PLANT-3清水店内",
+   "url": "https://www.miyawakishoten.com/store/shinetsu_tokai/fukui/1891036080.html"
+  },
+  {
+   "name": "宮脇書店 春江店",
+   "address": "福井県坂井市春江町江留下高道141",
+   "url": "https://www.miyawakishoten.com/store/shinetsu_tokai/fukui/1891904180.html"
+  },
+  {
+   "name": "宮脇書店 韮崎店",
+   "address": "山梨県韮崎市若宮2-2-23ライフガーデンにらさきB棟2F",
+   "url": "https://www.miyawakishoten.com/store/shinetsu_tokai/yamanashi/1940700150.html"
+  },
+  {
+   "name": "宮脇書店 松本店",
+   "address": "長野県松本市出川2-3-1",
+   "url": "https://www.miyawakishoten.com/store/shinetsu_tokai/nagano/2039008270.html"
+  },
+  {
+   "name": "宮脇書店 安曇野店",
+   "address": "長野県安曇野市三郷温2716-1",
+   "url": "https://www.miyawakishoten.com/store/shinetsu_tokai/nagano/2039981020.html"
+  },
+  {
+   "name": "宮脇書店 掛川店",
+   "address": "静岡県掛川市仁藤48-2",
+   "url": "https://www.miyawakishoten.com/store/shinetsu_tokai/shizuoka/2243600710.html"
+  },
+  {
+   "name": "宮脇書店 磐田浅羽店",
+   "address": "静岡県袋井市湊951",
+   "url": "https://www.miyawakishoten.com/store/shinetsu_tokai/shizuoka/2243711150.html"
+  },
+  {
+   "name": "宮脇書店 久居店",
+   "address": "三重県津市久居明神町風早2534-1",
+   "url": "https://www.miyawakishoten.com/store/shinetsu_tokai/mie/2451411010.html"
+  },
+  {
+   "name": "宮脇書店 明和店",
+   "address": "三重県多気郡明和町中村1223イオンモール明和店内",
+   "url": "https://www.miyawakishoten.com/store/shinetsu_tokai/mie/2451503480.html"
+  },
+  {
+   "name": "宮脇書店 伊勢ララパーク店",
+   "address": "三重県伊勢市小木町字曽祢538イオンタウン伊勢ララパーク2階",
+   "url": "https://www.miyawakishoten.com/store/shinetsu_tokai/mie/entry-3794.html"
+  },
+  {
+   "name": "宮脇書店 イオン四日市尾平店",
+   "address": "三重県四日市市尾平町字天王川原1805イオン四日市尾平2F",
+   "url": "https://www.miyawakishoten.com/store/shinetsu_tokai/mie/entry-4783.html"
+  },
+  {
+   "name": "宮脇書店 木津川店",
+   "address": "京都府木津川市州見台1-1-1",
+   "url": "https://www.miyawakishoten.com/store/kinki/kyoto/2661902160.html"
+  },
+  {
+   "name": "宮脇書店 福知山店",
+   "address": "京都府福知山市多保市小手次114-13PLANT-3福知山店内",
+   "url": "https://www.miyawakishoten.com/store/kinki/kyoto/2662008440.html"
+  },
+  {
+   "name": "宮脇書店 亀岡店",
+   "address": "京都府亀岡市安町小屋場81",
+   "url": "https://www.miyawakishoten.com/store/kinki/kyoto/2662108050.html"
+  },
+  {
+   "name": "宮脇書店 綾部店",
+   "address": "京都府綾部市宮代町宮ノ下12-1",
+   "url": "https://www.miyawakishoten.com/store/kinki/kyoto/2662300530.html"
+  },
+  {
+   "name": "宮脇書店 舞鶴店",
+   "address": "京都府舞鶴市森町28-18",
+   "url": "https://www.miyawakishoten.com/store/kinki/kyoto/2662500610.html"
+  },
+  {
+   "name": "宮脇書店 コムボックス光明池店",
+   "address": "大阪府和泉市室堂824-36-2F",
+   "url": "https://www.miyawakishoten.com/store/kinki/osaka/2759411010.html"
+  },
+  {
+   "name": "宮脇書店 泉佐野店",
+   "address": "大阪府泉佐野市下瓦屋2-2-77いこらも~る泉佐野2F",
+   "url": "https://www.miyawakishoten.com/store/kinki/osaka/2759800620.html"
+  },
+  {
+   "name": "宮脇書店 神戸北店",
+   "address": "兵庫県神戸市北区有野中町3-13-31",
+   "url": "https://www.miyawakishoten.com/store/kinki/hyogo/2865113120.html"
+  },
+  {
+   "name": "宮脇書店 洲本店",
+   "address": "兵庫県洲本市塩屋1-1-8イオン洲本店内",
+   "url": "https://www.miyawakishoten.com/store/kinki/hyogo/2865600210.html"
+  },
+  {
+   "name": "宮脇書店 広田店",
+   "address": "兵庫県南あわじ市山添260",
+   "url": "https://www.miyawakishoten.com/store/kinki/hyogo/2865601210.html"
+  },
+  {
+   "name": "宮脇書店 そよら西宮今津店",
+   "address": "兵庫県西宮市浜松原町21-1そよら西宮今津1F",
+   "url": "https://www.miyawakishoten.com/store/kinki/hyogo/2866209230.html"
+  },
+  {
+   "name": "宮脇書店 加古川店",
+   "address": "兵庫県加古川市東神吉町出河原862",
+   "url": "https://www.miyawakishoten.com/store/kinki/hyogo/2867500520.html"
+  },
+  {
+   "name": "宮脇書店 和歌山店",
+   "address": "和歌山県和歌山市広瀬中ノ丁2-97",
+   "url": "https://www.miyawakishoten.com/store/kinki/wakayama/3064081280.html"
+  },
+  {
+   "name": "宮脇書店 PLANT木津川店",
+   "address": "京都府木津川市城山台2-1",
+   "url": "https://www.miyawakishoten.com/store/kinki/kyoto/entry-2957.html"
+  },
+  {
+   "name": "宮脇書店 ピエリ守山店",
+   "address": "滋賀県守山市今浜町2620-5 ピエリ守山店1階",
+   "url": "https://www.miyawakishoten.com/store/kinki/shiga/entry-928.html"
+  },
+  {
+   "name": "宮脇書店 鳥取店",
+   "address": "鳥取県鳥取市晩稲348イオンモール鳥取北ＳＣ内",
+   "url": "https://www.miyawakishoten.com/store/chugoku/tottori/3168009040.html"
+  },
+  {
+   "name": "宮脇書店 境港店",
+   "address": "鳥取県境港市竹内団地276PLANT-5境港店内",
+   "url": "https://www.miyawakishoten.com/store/chugoku/tottori/3168400460.html"
+  },
+  {
+   "name": "宮脇書店 ゆめタウン益田店",
+   "address": "島根県益田市高津7-21-12 ゆめタウン益田店内",
+   "url": "https://www.miyawakishoten.com/store/chugoku/shimane/3269800410.html"
+  },
+  {
+   "name": "宮脇書店 ゆめタウン斐川店",
+   "address": "島根県出雲市斐川町上直江1301-1ゆめタウン斐川店内",
+   "url": "https://www.miyawakishoten.com/store/chugoku/shimane/3269906240.html"
+  },
+  {
+   "name": "宮脇書店 岡山本店",
+   "address": "岡山県岡山市北区今3-23-103",
+   "url": "https://www.miyawakishoten.com/store/chugoku/okayama/3370009750.html"
+  },
+  {
+   "name": "宮脇書店 倉敷店",
+   "address": "岡山県倉敷市下庄646-1",
+   "url": "https://www.miyawakishoten.com/store/chugoku/okayama/3370101120.html"
+  },
+  {
+   "name": "宮脇書店 倉敷マスカット店",
+   "address": "岡山県倉敷市松島1154-2",
+   "url": "https://www.miyawakishoten.com/store/chugoku/okayama/3370101140.html"
+  },
+  {
+   "name": "宮脇書店 Ｐモール藤田店",
+   "address": "岡山県岡山市南区藤田560-209",
+   "url": "https://www.miyawakishoten.com/store/chugoku/okayama/3370102210.html"
+  },
+  {
+   "name": "宮脇書店 邑久店",
+   "address": "岡山県瀬戸内市邑久町尾張268ゆめタウン邑久2F",
+   "url": "https://www.miyawakishoten.com/store/chugoku/okayama/3370142210.html"
+  },
+  {
+   "name": "宮脇書店 東岡山店",
+   "address": "岡山県岡山市中区乙多見95-1",
+   "url": "https://www.miyawakishoten.com/store/chugoku/okayama/3370382280.html"
+  },
+  {
+   "name": "宮脇書店 原尾島店",
+   "address": "岡山県岡山市中区原尾島1-6-20天満屋ハピータウン原尾島店3F",
+   "url": "https://www.miyawakishoten.com/store/chugoku/okayama/3370382350.html"
+  },
+  {
+   "name": "宮脇書店 備前店",
+   "address": "岡山県備前市伊部2392",
+   "url": "https://www.miyawakishoten.com/store/chugoku/okayama/3370500011.html"
+  },
+  {
+   "name": "宮脇書店 平島店",
+   "address": "岡山県岡山市東区東平島1001-1 （ザ・ビッグ平島店となり）",
+   "url": "https://www.miyawakishoten.com/store/chugoku/okayama/3370906310.html"
+  },
+  {
+   "name": "宮脇書店 ゆめタウン平島店",
+   "address": "岡山県岡山市東区東平島163ゆめタウン平島店内",
+   "url": "https://www.miyawakishoten.com/store/chugoku/okayama/3370906311.html"
+  },
+  {
+   "name": "宮脇書店 笹沖店",
+   "address": "岡山県倉敷市笹沖4-1",
+   "url": "https://www.miyawakishoten.com/store/chugoku/okayama/3371008340.html"
+  },
+  {
+   "name": "宮脇書店 ゆめタウン倉敷店",
+   "address": "岡山県倉敷市笹沖1274-1ゆめタウン倉敷3F",
+   "url": "https://www.miyawakishoten.com/store/chugoku/okayama/3371008341.html"
+  },
+  {
+   "name": "宮脇書店 マルナカ新倉敷店",
+   "address": "岡山県倉敷市玉島爪崎981-1マルナカ新倉敷店内",
+   "url": "https://www.miyawakishoten.com/store/chugoku/okayama/3371025220.html"
+  },
+  {
+   "name": "宮脇書店 児島店",
+   "address": "岡山県倉敷市児島駅前2-35 天満屋ハピータウン児島２F",
+   "url": "https://www.miyawakishoten.com/store/chugoku/okayama/3371109120.html"
+  },
+  {
+   "name": "宮脇書店 連島店",
+   "address": "岡山県倉敷市連島町連島452-1Ｐモール東連島内",
+   "url": "https://www.miyawakishoten.com/store/chugoku/okayama/3371280110.html"
+  },
+  {
+   "name": "宮脇書店 鴨方店",
+   "address": "岡山県浅口市鴨方町鴨方950-2",
+   "url": "https://www.miyawakishoten.com/store/chugoku/okayama/3371902430.html"
+  },
+  {
+   "name": "宮脇書店 総社店",
+   "address": "岡山県総社市井手1049-1",
+   "url": "https://www.miyawakishoten.com/store/chugoku/okayama/3371911250.html"
+  },
+  {
+   "name": "宮脇書店 ゆめタウン蔵王店",
+   "address": "広島県福山市南蔵王町5-9-18ゆめタウン蔵王店内",
+   "url": "https://www.miyawakishoten.com/store/chugoku/hiroshima/3472109730.html"
+  },
+  {
+   "name": "宮脇書店 ゆめタウン安古市店",
+   "address": "広島県広島市安佐南区高取北1-6-11ゆめタウン安古市店内",
+   "url": "https://www.miyawakishoten.com/store/chugoku/hiroshima/3473101440.html"
+  },
+  {
+   "name": "宮脇書店 ゆめタウン吉田店",
+   "address": "広島県安芸高田市吉田町吉田594-1ゆめタウン吉田店内",
+   "url": "https://www.miyawakishoten.com/store/chugoku/hiroshima/3473105010.html"
+  },
+  {
+   "name": "宮脇書店 ゆめタウン江田島店",
+   "address": "広島県江田島市大柿町飛渡瀬180ゆめタウン江田島店内",
+   "url": "https://www.miyawakishoten.com/store/chugoku/hiroshima/3473721010.html"
+  },
+  {
+   "name": "宮脇書店 徳山店",
+   "address": "山口県周南市周陽1-2-23",
+   "url": "https://www.miyawakishoten.com/store/chugoku/yamaguchi/3574508230.html"
+  },
+  {
+   "name": "宮脇書店 ゆめタウン防府店",
+   "address": "山口県防府市八王子2-8-8 ゆめタウン防府店３階",
+   "url": "https://www.miyawakishoten.com/store/chugoku/yamaguchi/3574700370.html"
+  },
+  {
+   "name": "宮脇書店 ゆめモール下関店",
+   "address": "山口県下関市新椋野1-2-25ゆめモール下関店",
+   "url": "https://www.miyawakishoten.com/store/chugoku/yamaguchi/3575108200.html"
+  },
+  {
+   "name": "宮脇書店 ゆめシティ店",
+   "address": "山口県下関市伊倉新町3-1-1",
+   "url": "https://www.miyawakishoten.com/store/chugoku/yamaguchi/3575108690.html"
+  },
+  {
+   "name": "宮脇書店 宇部店",
+   "address": "山口県宇部市東梶返3-17-7",
+   "url": "https://www.miyawakishoten.com/store/chugoku/yamaguchi/3575500390.html"
+  },
+  {
+   "name": "宮脇書店 イオン鳥取店",
+   "address": "鳥取県鳥取市天神町１ イオン鳥取店２階",
+   "url": "https://www.miyawakishoten.com/store/chugoku/tottori/entry-1633.html"
+  },
+  {
+   "name": "宮脇書店 ゆめタウン江津店",
+   "address": "島根県江津市嘉久志町2306-30 ゆめタウン江津店２階",
+   "url": "https://www.miyawakishoten.com/store/chugoku/shimane/entry-1660.html"
+  },
+  {
+   "name": "宮脇書店 岡北店",
+   "address": "岡山県岡山市北区中井町2-2-7天満屋ハピータウン岡北店３階",
+   "url": "https://www.miyawakishoten.com/store/chugoku/okayama/entry-1876.html"
+  },
+  {
+   "name": "宮脇書店 神辺店",
+   "address": "広島県福山市神辺町新道上字2-10-26 フジグラン神辺店２階",
+   "url": "https://www.miyawakishoten.com/store/chugoku/hiroshima/entry-2930.html"
+  },
+  {
+   "name": "宮脇書店 アリオ倉敷店",
+   "address": "岡山県倉敷市寿町12-2 アリオ倉敷２階",
+   "url": "https://www.miyawakishoten.com/store/chugoku/okayama/entry-2979.html"
+  },
+  {
+   "name": "宮脇書店 サンパーク新見店",
+   "address": "岡山県新見市正田字橋ノ本433-6",
+   "url": "https://www.miyawakishoten.com/store/chugoku/okayama/entry-3112.html"
+  },
+  {
+   "name": "宮脇書店 ゆめタウン黒瀬店",
+   "address": "広島県東広島市黒瀬町楢原100番地の１ ゆめタウン黒瀬２階",
+   "url": "https://www.miyawakishoten.com/store/chugoku/hiroshima/entry-3155.html"
+  },
+  {
+   "name": "宮脇書店 イオン出雲店",
+   "address": "島根県出雲市渡橋町1066 イオンモール出雲 ３階",
+   "url": "https://www.miyawakishoten.com/store/chugoku/shimane/entry-3320.html"
+  },
+  {
+   "name": "宮脇書店 イオン松江店",
+   "address": "島根県松江市東朝日町151 イオン松江ショッピングセンター２階",
+   "url": "https://www.miyawakishoten.com/store/chugoku/shimane/entry-3323.html"
+  },
+  {
+   "name": "宮脇書店 イオンモール日吉津店",
+   "address": "鳥取県西伯郡日吉津村日吉津１１６０－１イオンモール日吉津内",
+   "url": "https://www.miyawakishoten.com/store/chugoku/tottori/entry-3461.html"
+  },
+  {
+   "name": "宮脇書店 ゆめタウン浜田店",
+   "address": "島根県浜田市港町227-1 ゆめタウン浜田店３階",
+   "url": "https://www.miyawakishoten.com/store/chugoku/shimane/entry-3633.html"
+  },
+  {
+   "name": "宮脇書店 ゆめタウン学園店",
+   "address": "広島県東広島市西条下見6丁目2-32 ゆめタウン学園店2F",
+   "url": "https://www.miyawakishoten.com/store/chugoku/hiroshima/entry-4307.html"
+  },
+  {
+   "name": "宮脇書店 徳島本店",
+   "address": "徳島県徳島市西新浜町1-6-1",
+   "url": "https://www.miyawakishoten.com/store/shikoku/tokushima/3670000000.html"
+  },
+  {
+   "name": "宮脇書店 鴨島店",
+   "address": "徳島県吉野川市鴨島町鴨島318-7",
+   "url": "https://www.miyawakishoten.com/store/shikoku/tokushima/3677600100.html"
+  },
+  {
+   "name": "宮脇書店 マルナカ脇町店",
+   "address": "徳島県美馬市脇町拝原1711-1",
+   "url": "https://www.miyawakishoten.com/store/shikoku/tokushima/3677936010.html"
+  },
+  {
+   "name": "宮脇書店 イオンスタイル松山店",
+   "address": "愛媛県松山市天山1-13-5 イオンスタイル松山店３F",
+   "url": "https://www.miyawakishoten.com/store/shikoku/ehime/3879102160.html"
+  },
+  {
+   "name": "宮脇書店 新居浜本店",
+   "address": "愛媛県新居浜市前田町8-8イオンモール新居浜",
+   "url": "https://www.miyawakishoten.com/store/shikoku/ehime/3879200070.html"
+  },
+  {
+   "name": "宮脇書店 フジグラン西条店",
+   "address": "愛媛県西条市新田235 フジグラン西条１階",
+   "url": "https://www.miyawakishoten.com/store/shikoku/ehime/3879300280.html"
+  },
+  {
+   "name": "宮脇書店 今治本店",
+   "address": "愛媛県今治市阿方甲371-2イオンタウン今治阿方SC内",
+   "url": "https://www.miyawakishoten.com/store/shikoku/ehime/3879400810.html"
+  },
+  {
+   "name": "宮脇書店 高須店",
+   "address": "高知県高知市高須857-11",
+   "url": "https://www.miyawakishoten.com/store/shikoku/kochi/3978081230.html"
+  },
+  {
+   "name": "宮脇書店 中土佐店",
+   "address": "高知県高岡郡中土佐町久礼2058-1",
+   "url": "https://www.miyawakishoten.com/store/shikoku/kochi/3978913010.html"
+  },
+  {
+   "name": "宮脇書店 イオンモール今治新都市店",
+   "address": "愛媛県今治市にぎわい広場1-1イオンモール今治新都市2階",
+   "url": "https://www.miyawakishoten.com/store/shikoku/ehime/entry-1303.html"
+  },
+  {
+   "name": "宮脇書店 フジグラン北宇和島店",
+   "address": "愛媛県宇和島市伊吹町北宇和島912-2 フジグラン北宇和島内",
+   "url": "https://www.miyawakishoten.com/store/shikoku/ehime/entry-2987.html"
+  },
+  {
+   "name": "宮脇書店 フジ垣生店",
+   "address": "愛媛県松山市西垣生町207-2 パルティ・フジ垣生内",
+   "url": "https://www.miyawakishoten.com/store/shikoku/ehime/entry-3010.html"
+  },
+  {
+   "name": "宮脇書店 フジグラン北浜店",
+   "address": "愛媛県八幡浜市北浜1-4-33 フジグラン北浜２階",
+   "url": "https://www.miyawakishoten.com/store/shikoku/ehime/entry-3027.html"
+  },
+  {
+   "name": "宮脇書店 フジグラン葛島店",
+   "address": "高知県高知市小倉町3-30 フジグラン葛島店１階",
+   "url": "https://www.miyawakishoten.com/store/shikoku/kochi/entry-3031.html"
+  },
+  {
+   "name": "宮脇書店 フジグラン高知店",
+   "address": "高知県高知市朝倉東町52-15 フジグラン高知３階",
+   "url": "https://www.miyawakishoten.com/store/shikoku/kochi/entry-3035.html"
+  },
+  {
+   "name": "宮脇書店 フジグラン野市店",
+   "address": "高知県香南市野市町西野2007-1 フジグラン野市内",
+   "url": "https://www.miyawakishoten.com/store/shikoku/kochi/entry-3048.html"
+  },
+  {
+   "name": "宮脇書店 フジグラン四万十店",
+   "address": "高知県四万十市具同2222 フジグラン四万十内",
+   "url": "https://www.miyawakishoten.com/store/shikoku/kochi/entry-3051.html"
+  },
+  {
+   "name": "宮脇書店 フジグラン北島店",
+   "address": "徳島県板野郡北島町鯛浜西ノ洲174 フジグラン北島２階",
+   "url": "https://www.miyawakishoten.com/store/shikoku/tokushima/entry-3059.html"
+  },
+  {
+   "name": "宮脇書店 フジ砥部店",
+   "address": "愛媛県伊予郡砥部町重光239番地 フジ砥部１階",
+   "url": "https://www.miyawakishoten.com/store/shikoku/ehime/entry-3159.html"
+  },
+  {
+   "name": "宮脇書店 フジ東予店",
+   "address": "愛媛県西条市周布715-1 フジ東予内",
+   "url": "https://www.miyawakishoten.com/store/shikoku/ehime/entry-3285.html"
+  },
+  {
+   "name": "宮脇書店 そよら今治店",
+   "address": "愛媛県今治市馬越町４－８－１ そよら今治馬越店 ２階",
+   "url": "https://www.miyawakishoten.com/store/shikoku/ehime/entry-4415.html"
+  },
+  {
+   "name": "宮脇書店 新鳴門店",
+   "address": "徳島県鳴門市撫養町大桑島濘岩浜4-1 パワーシティ鳴門店２階",
+   "url": "https://www.miyawakishoten.com/store/shikoku/tokushima/entry-730.html"
+  },
+  {
+   "name": "宮脇書店 総本店(M.C.S.)",
+   "address": "香川県高松市朝日新町3-4",
+   "url": "https://www.miyawakishoten.com/store/kagawa/takamatsu/3776000000.html"
+  },
+  {
+   "name": "宮脇書店 本店",
+   "address": "香川県高松市丸亀町4-8",
+   "url": "https://www.miyawakishoten.com/store/kagawa/takamatsu/3776000002.html"
+  },
+  {
+   "name": "宮脇書店 南本店",
+   "address": "香川県高松市伏石町2139-11",
+   "url": "https://www.miyawakishoten.com/store/kagawa/takamatsu/3776000005.html"
+  },
+  {
+   "name": "宮脇書店 イオン高松東店",
+   "address": "香川県高松市福岡町3-8-5",
+   "url": "https://www.miyawakishoten.com/store/kagawa/takamatsu/3776000660.html"
+  },
+  {
+   "name": "宮脇書店 新屋島店",
+   "address": "香川県高松市屋島西町1912-1パワーシティ屋島2F",
+   "url": "https://www.miyawakishoten.com/store/kagawa/takamatsu/3776101131.html"
+  },
+  {
+   "name": "宮脇書店 フレスポ高松店",
+   "address": "香川県高松市東山崎町668-1",
+   "url": "https://www.miyawakishoten.com/store/kagawa/takamatsu/3776103120.html"
+  },
+  {
+   "name": "宮脇書店 医学部店",
+   "address": "香川県木田郡三木町池戸1750-1",
+   "url": "https://www.miyawakishoten.com/store/kagawa/outside_takamatsu/3776107010.html"
+  },
+  {
+   "name": "宮脇書店 土庄マルナカ店",
+   "address": "香川県小豆郡土庄町甲1360-71",
+   "url": "https://www.miyawakishoten.com/store/kagawa/outside_takamatsu/3776141000.html"
+  },
+  {
+   "name": "宮脇書店 イオン高松店",
+   "address": "香川県高松市香西本町1-1",
+   "url": "https://www.miyawakishoten.com/store/kagawa/takamatsu/3776180120.html"
+  },
+  {
+   "name": "宮脇書店 太田店",
+   "address": "香川県高松市太田上町982-1",
+   "url": "https://www.miyawakishoten.com/store/kagawa/takamatsu/3776180740.html"
+  },
+  {
+   "name": "宮脇書店 坂出白金店",
+   "address": "香川県坂出市白金町3-8-29",
+   "url": "https://www.miyawakishoten.com/store/kagawa/outside_takamatsu/3776200420.html"
+  },
+  {
+   "name": "宮脇書店 丸亀バサラ店",
+   "address": "香川県丸亀市山北町50-1",
+   "url": "https://www.miyawakishoten.com/store/kagawa/outside_takamatsu/3776300720.html"
+  },
+  {
+   "name": "宮脇書店 フジ丸亀店",
+   "address": "香川県丸亀市川西町南1280-1フジグラン丸亀2F",
+   "url": "https://www.miyawakishoten.com/store/kagawa/outside_takamatsu/3776300920.html"
+  },
+  {
+   "name": "宮脇書店 多度津店",
+   "address": "香川県仲多度郡多度津町北鴨2-10-1",
+   "url": "https://www.miyawakishoten.com/store/kagawa/outside_takamatsu/3776400220.html"
+  },
+  {
+   "name": "宮脇書店 善通寺店",
+   "address": "香川県善通寺市上吉田町4-9-54",
+   "url": "https://www.miyawakishoten.com/store/kagawa/outside_takamatsu/3776500110.html"
+  },
+  {
+   "name": "宮脇書店 琴平店",
+   "address": "香川県仲多度郡琴平町五條624-1",
+   "url": "https://www.miyawakishoten.com/store/kagawa/outside_takamatsu/3776600030.html"
+  },
+  {
+   "name": "宮脇書店 観音寺店",
+   "address": "香川県観音寺市坂本町6-2-20-101",
+   "url": "https://www.miyawakishoten.com/store/kagawa/outside_takamatsu/3776800670.html"
+  },
+  {
+   "name": "宮脇書店 新国分寺店",
+   "address": "香川県高松市国分寺町新名644-1",
+   "url": "https://www.miyawakishoten.com/store/kagawa/takamatsu/3776901040.html"
+  },
+  {
+   "name": "宮脇書店 宇多津店",
+   "address": "香川県綾歌郡宇多津町浜8番丁122-1",
+   "url": "https://www.miyawakishoten.com/store/kagawa/outside_takamatsu/3776902080.html"
+  },
+  {
+   "name": "宮脇書店 三豊店",
+   "address": "香川県三豊市豊中町本山甲22ゆめタウン三豊2F",
+   "url": "https://www.miyawakishoten.com/store/kagawa/outside_takamatsu/3776915060.html"
+  },
+  {
+   "name": "宮脇書店 志度店",
+   "address": "香川県さぬき市志度757-2",
+   "url": "https://www.miyawakishoten.com/store/kagawa/outside_takamatsu/3776921010.html"
+  },
+  {
+   "name": "宮脇書店 寒川店",
+   "address": "香川県さぬき市寒川町石田東甲1375",
+   "url": "https://www.miyawakishoten.com/store/kagawa/outside_takamatsu/3776923210.html"
+  },
+  {
+   "name": "宮脇書店 東かがわ店",
+   "address": "香川県東かがわ市三本松1727-1",
+   "url": "https://www.miyawakishoten.com/store/kagawa/outside_takamatsu/3776926010.html"
+  },
+  {
+   "name": "宮脇書店 十川店",
+   "address": "香川県高松市十川東町55番地1 フジグラン十川内",
+   "url": "https://www.miyawakishoten.com/store/kagawa/takamatsu/entry-2917.html"
+  },
+  {
+   "name": "宮脇書店 那覇空港店",
+   "address": "沖縄県那覇市鏡水150-1",
+   "url": "https://www.miyawakishoten.com/store/kyushu_okinawa/okinawa/4790101420.html"
+  },
+  {
+   "name": "宮脇書店 豊見城店",
+   "address": "沖縄県豊見城市高安261-2",
+   "url": "https://www.miyawakishoten.com/store/kyushu_okinawa/okinawa/4790102420.html"
+  },
+  {
+   "name": "宮脇書店 糸満店",
+   "address": "沖縄県糸満市潮崎町2-2",
+   "url": "https://www.miyawakishoten.com/store/kyushu_okinawa/okinawa/4790103640.html"
+  },
+  {
+   "name": "宮脇書店 南風原店",
+   "address": "沖縄県島尻郡南風原町宮平264",
+   "url": "https://www.miyawakishoten.com/store/kyushu_okinawa/okinawa/4790111040.html"
+  },
+  {
+   "name": "宮脇書店 あがり浜店",
+   "address": "沖縄県島尻郡与那原町東浜68-1-2マリンプラザあがり浜",
+   "url": "https://www.miyawakishoten.com/store/kyushu_okinawa/okinawa/4790113040.html"
+  },
+  {
+   "name": "宮脇書店 経塚シティ店",
+   "address": "沖縄県浦添市経塚652",
+   "url": "https://www.miyawakishoten.com/store/kyushu_okinawa/okinawa/4790121110.html"
+  },
+  {
+   "name": "宮脇書店 宜野湾店",
+   "address": "沖縄県宜野湾市上原1-6-5",
+   "url": "https://www.miyawakishoten.com/store/kyushu_okinawa/okinawa/4790122040.html"
+  },
+  {
+   "name": "宮脇書店 コンベンションシティ店",
+   "address": "沖縄県宜野湾市宇地泊3-6-1 サンエー宜野湾コンベンションシティ2F",
+   "url": "https://www.miyawakishoten.com/store/kyushu_okinawa/okinawa/4790122270.html"
+  },
+  {
+   "name": "宮脇書店 中の町店",
+   "address": "沖縄県沖縄市胡屋2-1-56",
+   "url": "https://www.miyawakishoten.com/store/kyushu_okinawa/okinawa/4790400210.html"
+  },
+  {
+   "name": "宮脇書店 美里店",
+   "address": "沖縄県沖縄市美原2-28-1",
+   "url": "https://www.miyawakishoten.com/store/kyushu_okinawa/okinawa/4790400215.html"
+  },
+  {
+   "name": "宮脇書店 北谷店",
+   "address": "沖縄県中頭郡北谷町北前1-2-3",
+   "url": "https://www.miyawakishoten.com/store/kyushu_okinawa/okinawa/4790401170.html"
+  },
+  {
+   "name": "宮脇書店 具志川店",
+   "address": "沖縄県うるま市前原幸崎原303イオン具志川店2F",
+   "url": "https://www.miyawakishoten.com/store/kyushu_okinawa/okinawa/4790422350.html"
+  },
+  {
+   "name": "宮脇書店 うるま店",
+   "address": "沖縄県うるま市江洲507",
+   "url": "https://www.miyawakishoten.com/store/kyushu_okinawa/okinawa/4790422440.html"
+  },
+  {
+   "name": "宮脇書店 名護店",
+   "address": "沖縄県名護市宮里7-2-61",
+   "url": "https://www.miyawakishoten.com/store/kyushu_okinawa/okinawa/4790500110.html"
+  },
+  {
+   "name": "宮脇書店 イオン名護店",
+   "address": "沖縄県名護市名護4472 イオン名護1階",
+   "url": "https://www.miyawakishoten.com/store/kyushu_okinawa/okinawa/4790500120.html"
+  },
+  {
+   "name": "宮脇書店 黒木室見店",
+   "address": "福岡県福岡市早良区南庄1-2-20",
+   "url": "https://www.miyawakishoten.com/store/kyushu_okinawa/fukuoka/entry-1105.html"
+  },
+  {
+   "name": "宮脇書店 黒木若久店",
+   "address": "福岡県福岡市南区若久1-511-1",
+   "url": "https://www.miyawakishoten.com/store/kyushu_okinawa/fukuoka/entry-1107.html"
+  },
+  {
+   "name": "宮脇書店 アイランドアイ店",
+   "address": "福岡県福岡市東区香椎照葉6-6-6",
+   "url": "https://www.miyawakishoten.com/store/kyushu_okinawa/fukuoka/entry-3180.html"
+  },
+  {
+   "name": "宮脇書店 石川シティ店",
+   "address": "沖縄県うるま市石川２５２１－１サンエー石川シティ店内",
+   "url": "https://www.miyawakishoten.com/store/kyushu_okinawa/okinawa/entry-3275.html"
+  },
+  {
+   "name": "宮脇書店 イオン北谷店",
+   "address": "沖縄県中頭郡北谷町字美浜8-3 イオン北谷１階",
+   "url": "https://www.miyawakishoten.com/store/kyushu_okinawa/okinawa/entry-3766.html"
+  },
+  {
+   "name": "宮脇書店 ゆめタウン飯塚店",
+   "address": "福岡県飯塚市菰田西三丁目6-1ゆめタウン飯塚 2階",
+   "url": "https://www.miyawakishoten.com/store/kyushu_okinawa/fukuoka/entry-4020.html"
+  },
+  {
+   "name": "宮脇書店 木の葉モール橋本店",
+   "address": "福岡県福岡市西区橋本2-27-2木の葉モール橋本 2階",
+   "url": "https://www.miyawakishoten.com/store/kyushu_okinawa/fukuoka/entry-4021.html"
+  },
+  {
+   "name": "宮脇書店 ゆめタウン大川店",
+   "address": "福岡県大川市上巻字野口430-1ゆめタウン大川 ２階",
+   "url": "https://www.miyawakishoten.com/store/kyushu_okinawa/fukuoka/entry-4061.html"
+  },
+  {
+   "name": "宮脇書店 ゆめタウン大牟田店",
+   "address": "福岡県大牟田市旭町2丁目28-1ゆめタウン大牟田 2階",
+   "url": "https://www.miyawakishoten.com/store/kyushu_okinawa/fukuoka/entry-4121.html"
+  },
+  {
+   "name": "宮脇書店 ゆめタウン行橋店",
+   "address": "福岡県行橋市西宮市3丁目8-1 ゆめタウン行橋店２F",
+   "url": "https://www.miyawakishoten.com/store/kyushu_okinawa/fukuoka/entry-4826.html"
+  }
+ ]
+}

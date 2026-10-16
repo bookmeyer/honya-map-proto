@@ -45,6 +45,21 @@ node tools/build_data.js data/bookstores_raw.json data/bookstores.json
 node tools/build_rallies.js data/bookstores.json data/rallies.json
 ```
 
+## 店の情報を新しく保つ（月1の突き合わせ）
+大手チェーンの公式店舗一覧と地図データを突き合わせて、閉店・名前の変更・地図にない店を見つけます。
+
+```
+node tools/chain_check.js                      # 取得 → 位置（国土地理院の住所検索）→ 突き合わせ → data/chain_check/report_日付.md と candidates.json
+node tools/apply_candidates.js --closed high --renames all --confirmed --add precise   # 確かめた候補を overrides.json / confirmed.json / additions.json に写す
+node tools/build_data.js data/bookstores_raw.json data/bookstores.json                 # 地図データを作り直す
+node tools/bump_version.js 0.6.3 && git commit -am "..." && git push
+```
+
+- チェーンごとの読み取り部品は `tools/chains/*.js`（作り方は `tools/chains/README.md`）。
+- 閉店候補には確からしさ（高＝支店名があり近くに公式店なし／中＝支店名なし／要確認＝1.5km以内に公式店／学内・施設内＝候補にしない）が付きます。`--closed high` から始めるのが安全です。
+- 公式一覧で「ある」と確かめられた店は、店のページの「最終確認」がその月になり、「公式一覧で確認」の札が付きます。
+- GitHub Actions（`.github/workflows/chain-check.yml`）が毎月2日の朝に自動で動き、報告を Issue にします（手で動かすときは Actions → Run workflow）。
+
 ## 使っている外部のもの（すべて無料・鍵なし）
 - 地図：MapLibre GL JS（jsDelivr）＋ OpenFreeMap のタイル
 - 本の情報：openBD。書影は参照表示だけで、保存しません

@@ -1,0 +1,530 @@
+{
+ "fetchedAt": "2026-10-15T07:44:20.525Z",
+ "list": [
+  {
+   "name": "紀伊國屋書店 札幌本店",
+   "address": "",
+   "lat": 43.06753409046631,
+   "lon": 141.34570637717843,
+   "url": "https://store.kinokuniya.co.jp/store/sapporo-main-store/"
+  },
+  {
+   "name": "紀伊國屋書店 厚別店",
+   "address": "",
+   "lat": 43.03794036512164,
+   "lon": 141.4726209640503,
+   "url": "https://store.kinokuniya.co.jp/store/atsubetsu-store/"
+  },
+  {
+   "name": "紀伊國屋書店 小樽店",
+   "address": "",
+   "lat": 43.19750751019056,
+   "lon": 140.9952414035797,
+   "url": "https://store.kinokuniya.co.jp/store/otaru-store/"
+  },
+  {
+   "name": "紀伊國屋書店 千歳店",
+   "address": "",
+   "lat": 42.7871140051099,
+   "lon": 141.67970223037426,
+   "url": "https://store.kinokuniya.co.jp/store/chitose-store/"
+  },
+  {
+   "name": "紀伊國屋書店 仙台店",
+   "address": "",
+   "lat": 38.22564401565501,
+   "lon": 140.8768755197525,
+   "url": "https://store.kinokuniya.co.jp/store/sendai-store/"
+  },
+  {
+   "name": "紀伊國屋書店 前橋店",
+   "address": "",
+   "lat": 36.379166874945035,
+   "lon": 139.0780520439148,
+   "url": "https://store.kinokuniya.co.jp/store/maebashi-store/"
+  },
+  {
+   "name": "紀伊國屋書店 さいたま新都心店",
+   "address": "",
+   "lat": 35.89506906480489,
+   "lon": 139.636772274971,
+   "url": "https://store.kinokuniya.co.jp/store/saitama-shin-toshin-store/"
+  },
+  {
+   "name": "紀伊國屋書店 浦和パルコ店",
+   "address": "",
+   "lat": 35.85856333028897,
+   "lon": 139.65947712232318,
+   "url": "https://store.kinokuniya.co.jp/store/urawa-parco-store/"
+  },
+  {
+   "name": "紀伊國屋書店 イオンモール川口前川店",
+   "address": "",
+   "lat": 35.83347998676188,
+   "lon": 139.70736265182495,
+   "url": "https://store.kinokuniya.co.jp/store/aeonmall-kawaguchi-maekawa-store/"
+  },
+  {
+   "name": "紀伊國屋書店 川越店",
+   "address": "",
+   "lat": 35.91182854980799,
+   "lon": 139.48259621858597,
+   "url": "https://store.kinokuniya.co.jp/store/kawagoe-store/"
+  },
+  {
+   "name": "紀伊國屋書店 入間丸広店",
+   "address": "",
+   "lat": 35.83778108162605,
+   "lon": 139.38749849796295,
+   "url": "https://store.kinokuniya.co.jp/store/iruma-maruhiro-store/"
+  },
+  {
+   "name": "紀伊國屋書店 流山おおたかの森店",
+   "address": "",
+   "lat": 35.87026877349456,
+   "lon": 139.92573738098145,
+   "url": "https://store.kinokuniya.co.jp/store/nagareyama-otakanomori-store/"
+  },
+  {
+   "name": "紀伊國屋書店 セブンパークアリオ柏店",
+   "address": "",
+   "lat": 35.83226779211014,
+   "lon": 140.01343349629516,
+   "url": "https://store.kinokuniya.co.jp/store/sevenpark-ario-kashiwa-store/"
+  },
+  {
+   "name": "紀伊國屋書店 新宿本店",
+   "address": "",
+   "lat": 35.69222784248618,
+   "lon": 139.7029960155487,
+   "url": "https://store.kinokuniya.co.jp/store/shinjuku-main-store/"
+  },
+  {
+   "name": "紀伊國屋書店 紀伊國屋ホール",
+   "address": "",
+   "lat": 35.692297550937404,
+   "lon": 139.70307111740112,
+   "url": "https://store.kinokuniya.co.jp/store/kinokuniya-hall/"
+  },
+  {
+   "name": "紀伊國屋書店 紀伊國屋サザンシアター TAKASHIMAYA",
+   "address": "",
+   "lat": 35.68597235016382,
+   "lon": 139.7023992240429,
+   "url": "https://store.kinokuniya.co.jp/store/kinokuniya-southern-theatre-takashimaya/"
+  },
+  {
+   "name": "紀伊國屋書店 Books Kinokuniya Tokyo （洋書専門店）",
+   "address": "",
+   "lat": 35.68597997512659,
+   "lon": 139.70239520072937,
+   "url": "https://store.kinokuniya.co.jp/store/books-kinokuniya-tokyo/"
+  },
+  {
+   "name": "紀伊國屋書店 西武渋谷店",
+   "address": "",
+   "lat": 35.660229590859466,
+   "lon": 139.7003298997879,
+   "url": "https://store.kinokuniya.co.jp/store/seibu-shibuya-store/"
+  },
+  {
+   "name": "紀伊國屋書店 玉川高島屋店",
+   "address": "",
+   "lat": 35.6144432201365,
+   "lon": 139.6267569065094,
+   "url": "https://store.kinokuniya.co.jp/store/tamagawa-takashimaya-store/"
+  },
+  {
+   "name": "紀伊國屋書店 笹塚店",
+   "address": "",
+   "lat": 35.67354378161694,
+   "lon": 139.66871738433838,
+   "url": "https://store.kinokuniya.co.jp/store/sasazuka-store/"
+  },
+  {
+   "name": "紀伊國屋書店 大手町ビル店",
+   "address": "",
+   "lat": 35.68642875736517,
+   "lon": 139.76423621177673,
+   "url": "https://store.kinokuniya.co.jp/store/otemachi-building-store/"
+  },
+  {
+   "name": "紀伊國屋書店 Otemachi One店",
+   "address": "",
+   "lat": 35.68770537652939,
+   "lon": 139.76283609867096,
+   "url": "https://store.kinokuniya.co.jp/store/otemachi-one-store/"
+  },
+  {
+   "name": "紀伊國屋書店 イトーヨーカドー木場店",
+   "address": "",
+   "lat": 35.66615260980111,
+   "lon": 139.80419039726257,
+   "url": "https://store.kinokuniya.co.jp/store/ito-yokado-kiba-store/"
+  },
+  {
+   "name": "紀伊國屋書店 吉祥寺東急店",
+   "address": "",
+   "lat": 35.70470992554379,
+   "lon": 139.57700410857797,
+   "url": "https://store.kinokuniya.co.jp/store/kichijoji-tokyu-store/"
+  },
+  {
+   "name": "紀伊國屋書店 国分寺店",
+   "address": "",
+   "lat": 35.69984313051328,
+   "lon": 139.48059797286987,
+   "url": "https://store.kinokuniya.co.jp/store/kokubunji-store/"
+  },
+  {
+   "name": "紀伊國屋書店 小田急町田店",
+   "address": "",
+   "lat": 35.54399039605038,
+   "lon": 139.44510161876678,
+   "url": "https://store.kinokuniya.co.jp/store/odakyu-machida-store/"
+  },
+  {
+   "name": "紀伊國屋書店 アリオ亀有店",
+   "address": "",
+   "lat": 35.76445665335794,
+   "lon": 139.8525881767273,
+   "url": "https://store.kinokuniya.co.jp/store/ario-kameari-store/"
+  },
+  {
+   "name": "紀伊國屋書店 横浜店",
+   "address": "",
+   "lat": 35.46544992572184,
+   "lon": 139.62505102157593,
+   "url": "https://store.kinokuniya.co.jp/store/yokohama-store/"
+  },
+  {
+   "name": "紀伊國屋書店 ららぽーと横浜店",
+   "address": "",
+   "lat": 35.517469470260245,
+   "lon": 139.56654131412506,
+   "url": "https://store.kinokuniya.co.jp/store/lalaport-yokohama-store/"
+  },
+  {
+   "name": "紀伊國屋書店 西武東戸塚S.C.店",
+   "address": "",
+   "lat": 35.43027945282513,
+   "lon": 139.558607339859,
+   "url": "https://store.kinokuniya.co.jp/store/seibu-higashitotsuka-sc-store/"
+  },
+  {
+   "name": "紀伊國屋書店 イトーヨーカドー立場店",
+   "address": "",
+   "lat": 35.41334425057964,
+   "lon": 139.50063943862915,
+   "url": "https://store.kinokuniya.co.jp/store/ito-yokado-tateba-store/"
+  },
+  {
+   "name": "紀伊國屋書店 武蔵小杉店",
+   "address": "",
+   "lat": 35.57382741082069,
+   "lon": 139.66035157442093,
+   "url": "https://store.kinokuniya.co.jp/store/musashikosugi-store/"
+  },
+  {
+   "name": "紀伊國屋書店 イトーヨーカドー川崎店",
+   "address": "",
+   "lat": 35.5141878513652,
+   "lon": 139.70717757940292,
+   "url": "https://store.kinokuniya.co.jp/store/ito-yokado-kawasaki-store/"
+  },
+  {
+   "name": "紀伊國屋書店 イオンモール座間店",
+   "address": "",
+   "lat": 35.50060065842335,
+   "lon": 139.4253122806549,
+   "url": "https://store.kinokuniya.co.jp/store/aeonmall-zama-store/"
+  },
+  {
+   "name": "紀伊國屋書店 新潟店",
+   "address": "",
+   "lat": 37.91738664596684,
+   "lon": 139.0563829287836,
+   "url": "https://store.kinokuniya.co.jp/store/niigata-store/"
+  },
+  {
+   "name": "紀伊國屋書店 富山店",
+   "address": "",
+   "lat": 36.68940343712453,
+   "lon": 137.21348945281335,
+   "url": "https://store.kinokuniya.co.jp/store/toyama-store/"
+  },
+  {
+   "name": "紀伊國屋書店 金沢大和店",
+   "address": "",
+   "lat": 36.56347923870949,
+   "lon": 136.6540340147152,
+   "url": "https://store.kinokuniya.co.jp/store/kanazawa-daiwa-store/"
+  },
+  {
+   "name": "紀伊國屋書店 福井店",
+   "address": "",
+   "lat": 36.06180343708959,
+   "lon": 136.2190463638423,
+   "url": "https://store.kinokuniya.co.jp/store/fukui-store/"
+  },
+  {
+   "name": "紀伊國屋書店 mozoワンダーシティ店",
+   "address": "",
+   "lat": 35.22447747414347,
+   "lon": 136.8817761540413,
+   "url": "https://store.kinokuniya.co.jp/store/mozo-wondercity-store/"
+  },
+  {
+   "name": "紀伊國屋書店 名古屋空港店",
+   "address": "",
+   "lat": 35.24561956221052,
+   "lon": 136.92542526939255,
+   "url": "https://store.kinokuniya.co.jp/store/nagoya-airport-store/"
+  },
+  {
+   "name": "紀伊國屋書店 プライムツリー赤池店",
+   "address": "",
+   "lat": 35.11794828657773,
+   "lon": 137.02273294329643,
+   "url": "https://store.kinokuniya.co.jp/store/primetree-akaike-store/"
+  },
+  {
+   "name": "紀伊國屋書店 梅田本店",
+   "address": "",
+   "lat": 34.705001690252,
+   "lon": 135.49860924482346,
+   "url": "https://store.kinokuniya.co.jp/store/umeda-main-store/"
+  },
+  {
+   "name": "紀伊國屋書店 グランドビル店",
+   "address": "",
+   "lat": 34.70294990348145,
+   "lon": 135.49918669325413,
+   "url": "https://store.kinokuniya.co.jp/store/grand-building-store/"
+  },
+  {
+   "name": "紀伊國屋書店 グランフロント大阪店",
+   "address": "",
+   "lat": 34.70485665450459,
+   "lon": 135.4919560989891,
+   "url": "https://store.kinokuniya.co.jp/store/grand-front-osaka-store/"
+  },
+  {
+   "name": "紀伊國屋書店 本町店",
+   "address": "",
+   "lat": 34.683775565470505,
+   "lon": 135.50524771213531,
+   "url": "https://store.kinokuniya.co.jp/store/honmachi-store/"
+  },
+  {
+   "name": "紀伊國屋書店 京橋店",
+   "address": "",
+   "lat": 34.69692346153037,
+   "lon": 135.5316596827339,
+   "url": "https://store.kinokuniya.co.jp/store/kyobashi-store/"
+  },
+  {
+   "name": "紀伊國屋書店 天王寺ミオ店",
+   "address": "",
+   "lat": 34.64686472510751,
+   "lon": 135.5143425649429,
+   "url": "https://store.kinokuniya.co.jp/store/tennoji-mio-store/"
+  },
+  {
+   "name": "紀伊國屋書店 高槻阪急スクエア店",
+   "address": "",
+   "lat": 34.85373935383317,
+   "lon": 135.61833561104507,
+   "url": "https://store.kinokuniya.co.jp/store/takatsuki-hankyu-store/"
+  },
+  {
+   "name": "紀伊國屋書店 堺北花田店",
+   "address": "",
+   "lat": 34.58520472897398,
+   "lon": 135.5149707198143,
+   "url": "https://store.kinokuniya.co.jp/store/sakai-kita-hanada-store/"
+  },
+  {
+   "name": "紀伊國屋書店 泉北店",
+   "address": "",
+   "lat": 34.495643286983146,
+   "lon": 135.51598191261292,
+   "url": "https://store.kinokuniya.co.jp/store/senboku-store/"
+  },
+  {
+   "name": "紀伊國屋書店 アリオ鳳店",
+   "address": "",
+   "lat": 34.52473218612825,
+   "lon": 135.4592800140381,
+   "url": "https://store.kinokuniya.co.jp/store/ario-otori-store/"
+  },
+  {
+   "name": "紀伊國屋書店 加古川店",
+   "address": "",
+   "lat": 34.766375725285286,
+   "lon": 134.83893603086472,
+   "url": "https://store.kinokuniya.co.jp/store/kakogawa-store/"
+  },
+  {
+   "name": "紀伊國屋書店 川西店",
+   "address": "",
+   "lat": 34.82861262424513,
+   "lon": 135.41320000356254,
+   "url": "https://store.kinokuniya.co.jp/store/kawanishi-store/"
+  },
+  {
+   "name": "紀伊國屋書店 岡山店",
+   "address": "",
+   "lat": 34.66275097933995,
+   "lon": 133.92664164304733,
+   "url": "https://store.kinokuniya.co.jp/store/cred-okayama-store/"
+  },
+  {
+   "name": "紀伊國屋書店 エブリイ津高店",
+   "address": "",
+   "lat": 34.69998950784534,
+   "lon": 133.90203773975372,
+   "url": "https://store.kinokuniya.co.jp/store/every-tsudaka-store/"
+  },
+  {
+   "name": "紀伊國屋書店 広島店",
+   "address": "",
+   "lat": 34.396202747914266,
+   "lon": 132.4572229385376,
+   "url": "https://store.kinokuniya.co.jp/store/hiroshima-store/"
+  },
+  {
+   "name": "紀伊國屋書店 ゆめタウン広島店",
+   "address": "",
+   "lat": 34.375509204880544,
+   "lon": 132.46339778947984,
+   "url": "https://store.kinokuniya.co.jp/store/youmetown-hiroshima-store/"
+  },
+  {
+   "name": "紀伊國屋書店 ゆめタウン廿日市店",
+   "address": "",
+   "lat": 34.34719800609427,
+   "lon": 132.33502288525005,
+   "url": "https://store.kinokuniya.co.jp/store/youmetown-hatsukaichi-store/"
+  },
+  {
+   "name": "紀伊國屋書店 ゆめタウン出雲店",
+   "address": "",
+   "lat": 35.37765676783934,
+   "lon": 132.75485694408417,
+   "url": "https://store.kinokuniya.co.jp/store/youmetown-izumo-store/"
+  },
+  {
+   "name": "紀伊國屋書店 ゆめタウン下松店",
+   "address": "",
+   "lat": 34.01860737000969,
+   "lon": 131.86285078525543,
+   "url": "https://store.kinokuniya.co.jp/store/youmetown-kudamatsu-store/"
+  },
+  {
+   "name": "紀伊國屋書店 徳島店",
+   "address": "",
+   "lat": 34.07367105312573,
+   "lon": 134.54983240059434,
+   "url": "https://store.kinokuniya.co.jp/store/tokushima-store/"
+  },
+  {
+   "name": "紀伊國屋書店 ゆめタウン徳島店",
+   "address": "",
+   "lat": 34.11945416141984,
+   "lon": 134.5013687607986,
+   "url": "https://store.kinokuniya.co.jp/store/youmetown-tokushima-store/"
+  },
+  {
+   "name": "紀伊國屋書店 丸亀店",
+   "address": "",
+   "lat": 34.27303472238709,
+   "lon": 133.78109924837952,
+   "url": "https://store.kinokuniya.co.jp/store/marugame-store/"
+  },
+  {
+   "name": "紀伊國屋書店 いよてつ髙島屋店",
+   "address": "",
+   "lat": 33.835740982335615,
+   "lon": 132.76279428035656,
+   "url": "https://store.kinokuniya.co.jp/store/iyotetsu-takashimaya-store/"
+  },
+  {
+   "name": "紀伊國屋書店 福岡本店",
+   "address": "",
+   "lat": 33.59155289037049,
+   "lon": 130.41996503466933,
+   "url": "https://store.kinokuniya.co.jp/store/fukuoka-main-store/"
+  },
+  {
+   "name": "紀伊國屋書店 ゆめタウン博多店",
+   "address": "",
+   "lat": 33.612162198247276,
+   "lon": 130.41197955608368,
+   "url": "https://store.kinokuniya.co.jp/store/youmetown-hakata-store/"
+  },
+  {
+   "name": "紀伊國屋書店 久留米店",
+   "address": "",
+   "lat": 33.32157713504059,
+   "lon": 130.538472533226,
+   "url": "https://store.kinokuniya.co.jp/store/kurume-store/"
+  },
+  {
+   "name": "紀伊國屋書店 佐賀店",
+   "address": "",
+   "lat": 33.27566862655315,
+   "lon": 130.3078454732895,
+   "url": "https://store.kinokuniya.co.jp/store/saga-store/"
+  },
+  {
+   "name": "紀伊國屋書店 長崎店",
+   "address": "",
+   "lat": 32.746248477984594,
+   "lon": 129.87020552158356,
+   "url": "https://store.kinokuniya.co.jp/store/nagasaki-store/"
+  },
+  {
+   "name": "紀伊國屋書店 熊本はません店",
+   "address": "",
+   "lat": 32.77109077977324,
+   "lon": 130.72715386748314,
+   "url": "https://store.kinokuniya.co.jp/store/kumamoto-hamasen-store/"
+  },
+  {
+   "name": "紀伊國屋書店 熊本光の森店",
+   "address": "",
+   "lat": 32.86031672445564,
+   "lon": 130.7841145992279,
+   "url": "https://store.kinokuniya.co.jp/store/kumamoto-hikari-no-mori-store/"
+  },
+  {
+   "name": "紀伊國屋書店 あらおシティモール店",
+   "address": "",
+   "lat": 32.98281673458363,
+   "lon": 130.47088623046875,
+   "url": "https://store.kinokuniya.co.jp/store/arao-citymall-store/"
+  },
+  {
+   "name": "紀伊國屋書店 アミュプラザおおいた店",
+   "address": "",
+   "lat": 33.23312375678569,
+   "lon": 131.60642623901367,
+   "url": "https://store.kinokuniya.co.jp/store/amuplaza-oita-store/"
+  },
+  {
+   "name": "紀伊國屋書店 アミュプラザみやざき店",
+   "address": "",
+   "lat": 31.914811722843993,
+   "lon": 131.43003277480602,
+   "url": "https://store.kinokuniya.co.jp/store/amuplaza-miyazaki-store/"
+  },
+  {
+   "name": "紀伊國屋書店 鹿児島店",
+   "address": "",
+   "lat": 31.58432095809989,
+   "lon": 130.54278552532196,
+   "url": "https://store.kinokuniya.co.jp/store/kagoshima-store/"
+  }
+ ]
+}

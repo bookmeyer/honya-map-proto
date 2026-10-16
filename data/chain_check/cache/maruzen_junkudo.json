@@ -1,0 +1,558 @@
+{
+ "fetchedAt": "2026-10-16T01:48:00.672Z",
+ "list": [
+  {
+   "name": "MARUZEN＆ジュンク堂書店 新静岡店",
+   "address": "静岡県静岡市葵区鷹匠1-1-1 新静岡セノバ5階",
+   "lat": 34.975738,
+   "lon": 138.387027,
+   "url": "https://honto.jp/store/detail_1570070_14HB320.html"
+  },
+  {
+   "name": "MARUZEN＆ジュンク堂書店 札幌店",
+   "address": "北海道札幌市中央区南1条西1-8-2 高桑ビル 地下2階～4階",
+   "lat": 43.059154,
+   "lon": 141.356035,
+   "url": "https://honto.jp/store/detail_1570046_14HB320.html"
+  },
+  {
+   "name": "MARUZEN＆ジュンク堂書店 梅田店",
+   "address": "大阪府大阪市北区茶屋町7-20 チャスカ茶屋町 地下1階～4階",
+   "lat": 34.707433,
+   "lon": 135.499954,
+   "url": "https://honto.jp/store/detail_1570065_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 イオンモール旭川駅前店",
+   "address": "北海道旭川市宮下通7丁目2番5号 イオンモール旭川駅前 3階",
+   "lat": 43.765657,
+   "lon": 142.359797,
+   "url": "https://honto.jp/store/detail_1570068_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 エミテラス所沢店",
+   "address": "埼玉県所沢市東住吉10番1号 エミテラス所沢3階（316区画）",
+   "lat": 35.785213,
+   "lon": 139.46957,
+   "url": "https://honto.jp/store/detail_1570261_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 プレスセンター店",
+   "address": "東京都千代田区内幸町2-2-1 日本プレスセンタービル1階",
+   "lat": 35.670914,
+   "lon": 139.754207,
+   "url": "https://honto.jp/store/detail_1570029_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 三宮店",
+   "address": "兵庫県神戸市中央区三宮町1-6-18",
+   "lat": 34.691233,
+   "lon": 135.1925,
+   "url": "https://honto.jp/store/detail_1570001_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 三宮駅前店",
+   "address": "兵庫県神戸市中央区雲井通6-1-15 サンシティビル7階",
+   "lat": 34.695066,
+   "lon": 135.196525,
+   "url": "https://honto.jp/store/detail_1570002_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 上本町店",
+   "address": "大阪府大阪市天王寺区上本町6-1-55 近鉄百貨店上本町店11階",
+   "lat": 34.665458,
+   "lon": 135.519662,
+   "url": "https://honto.jp/store/detail_1570103_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 吉祥寺店",
+   "address": "東京都武蔵野市吉祥寺本町1-11-5 コピス吉祥寺B館 6階・7階",
+   "lat": 35.705061,
+   "lon": 139.579657,
+   "url": "https://honto.jp/store/detail_1570063_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 名古屋店",
+   "address": "愛知県名古屋市中村区名駅3-25-9 堀内ビル1階",
+   "lat": 35.172058,
+   "lon": 136.886167,
+   "url": "https://honto.jp/store/detail_1570031_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 名古屋栄店",
+   "address": "愛知県名古屋市中区新栄町1-1 明治安田生命名古屋ビル 地下2階～地下1階",
+   "lat": 35.169493,
+   "lon": 136.909735,
+   "url": "https://honto.jp/store/detail_1570153_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 大宮高島屋店",
+   "address": "埼玉県さいたま市大宮区大門町1-32 大宮高島屋7階",
+   "lat": 35.906306,
+   "lon": 139.626081,
+   "url": "https://honto.jp/store/detail_1570024_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 大泉学園店",
+   "address": "東京都練馬区東大泉1-28-1 グランエミオ大泉学園3階",
+   "lat": 35.74951,
+   "lon": 139.587354,
+   "url": "https://honto.jp/store/detail_1570139_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 大阪本店",
+   "address": "大阪府大阪市北区堂島1-6-20 堂島アバンザ2階・3階",
+   "lat": 34.696987,
+   "lon": 135.496388,
+   "url": "https://honto.jp/store/detail_1570022_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 天満橋店",
+   "address": "大阪府大阪市中央区天満橋京町1-1 京阪シティモール7階",
+   "lat": 34.690186,
+   "lon": 135.516464,
+   "url": "https://honto.jp/store/detail_1570021_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 奈良店",
+   "address": "奈良県奈良市西大寺東町2-4-1 ならファミリー4階",
+   "lat": 34.695107,
+   "lon": 135.785329,
+   "url": "https://honto.jp/store/detail_1570160_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 姫路店",
+   "address": "兵庫県姫路市豆腐町222 ピオレ姫路2 2階",
+   "lat": 34.826442,
+   "lon": 134.689405,
+   "url": "https://honto.jp/store/detail_1570026_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 広島駅前店",
+   "address": "広島県広島市南区松原町9-1 エールエールA館6階",
+   "lat": 34.39651,
+   "lon": 132.473646,
+   "url": "https://honto.jp/store/detail_1570023_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 新潟店",
+   "address": "新潟県新潟市中央区笹口1-1 プラーカ1 地下1階～1階",
+   "lat": 37.910964,
+   "lon": 139.063718,
+   "url": "https://honto.jp/store/detail_1570038_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 旭川医科大学店",
+   "address": "北海道旭川市緑が丘東2条1-1-1 旭川医科大学内 厚友会書籍部",
+   "lat": 43.728476,
+   "lon": 142.385795,
+   "url": "https://honto.jp/store/detail_1570200_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 明石店",
+   "address": "兵庫県明石市大明石町1-6-1 パピオスあかし2階",
+   "lat": 34.648106,
+   "lon": 134.99244,
+   "url": "https://honto.jp/store/detail_1570165_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 松坂屋高槻店",
+   "address": "大阪府高槻市紺屋町2-1 松坂屋高槻店4階",
+   "lat": 34.850546,
+   "lon": 135.61839,
+   "url": "https://honto.jp/store/detail_1570134_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 松山三越店",
+   "address": "愛媛県松山市一番町3-1-1 松山三越5階",
+   "lat": 33.840652,
+   "lon": 132.769398,
+   "url": "https://honto.jp/store/detail_1570054_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 橿原店",
+   "address": "奈良県橿原市北八木町3-65-11 近鉄百貨店橿原店6階",
+   "lat": 34.513369,
+   "lon": 135.793973,
+   "url": "https://honto.jp/store/detail_1570106_14HB482.html"
+  },
+  {
+   "name": "ジュンク堂書店 池袋本店",
+   "address": "東京都豊島区南池袋2-15-5",
+   "lat": 35.726837,
+   "lon": 139.712389,
+   "url": "https://honto.jp/store/detail_1570019_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 滋賀草津店",
+   "address": "滋賀県草津市大路1-1-1 ガーデンシティ草津 地下1階",
+   "lat": 35.021244,
+   "lon": 135.961488,
+   "url": "https://honto.jp/store/detail_1570133_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 盛岡店",
+   "address": "岩手県盛岡市盛岡市大通2-8-14 MOSSビル3階",
+   "lat": 39.70253,
+   "lon": 141.144818,
+   "url": "https://honto.jp/store/detail_1570037_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 神戸住吉店",
+   "address": "兵庫県神戸市東灘区住吉本町1-2-1 住吉ターミナルビル4階",
+   "lat": 34.71988,
+   "lon": 135.262141,
+   "url": "https://honto.jp/store/detail_1570008_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 福岡店",
+   "address": "福岡県福岡市中央区天神一丁目10番10号 天神ビジネスセンターⅡ（2階・3階",
+   "lat": 33.5871,
+   "lon": 130.397099,
+   "url": "https://honto.jp/store/detail_1570028_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 秋田店",
+   "address": "秋田県秋田市千秋久保田町4-2 秋田オーパ6階",
+   "lat": 39.718309,
+   "lon": 140.128145,
+   "url": "https://honto.jp/store/detail_1570039_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 立川高島屋店",
+   "address": "東京都立川市曙町2-39-3 立川高島屋S.C. 6階",
+   "lat": 35.700899,
+   "lon": 139.413291,
+   "url": "https://honto.jp/store/detail_1570155_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 舞子店",
+   "address": "兵庫県神戸市垂水区東舞子町10-1-301 Tio舞子3階",
+   "lat": 34.633792,
+   "lon": 135.034259,
+   "url": "https://honto.jp/store/detail_1570036_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 芦屋店",
+   "address": "兵庫県芦屋市大原町9-1-304 ラポルテ東館3階",
+   "lat": 34.735382,
+   "lon": 135.307573,
+   "url": "https://honto.jp/store/detail_1570010_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 藤沢店",
+   "address": "神奈川県藤沢市藤沢559 ビックカメラ藤沢店7階・8階",
+   "lat": 35.339502,
+   "lon": 139.488215,
+   "url": "https://honto.jp/store/detail_1570045_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 西宮店",
+   "address": "兵庫県西宮市北口町1-1 アクタ西宮西館4階",
+   "lat": 34.74734,
+   "lon": 135.357257,
+   "url": "https://honto.jp/store/detail_1570027_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 近鉄あべのハルカス店",
+   "address": "大阪府大阪市阿倍野区阿倍野筋1-1-43 あべのハルカス近鉄本店ウイング館5階・7階",
+   "lat": 34.645946,
+   "lon": 135.514268,
+   "url": "https://honto.jp/store/detail_1570127_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 那覇店",
+   "address": "沖縄県那覇市牧志1-19-29 D-naha 1階～3階",
+   "lat": 26.218687,
+   "lon": 127.685795,
+   "url": "https://honto.jp/store/detail_1570050_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 郡山店",
+   "address": "福島県郡山市中町13-1 うすい百貨店8階・9階",
+   "lat": 37.396547,
+   "lon": 140.384395,
+   "url": "https://honto.jp/store/detail_1570064_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 難波店",
+   "address": "大阪府大阪市浪速区湊町1-2-3 マルイト難波ビル3階",
+   "lat": 34.666768,
+   "lon": 135.496252,
+   "url": "https://honto.jp/store/detail_1570052_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 高松店",
+   "address": "香川県高松市常磐町1-3-1 瓦町FLAG 3階",
+   "lat": 34.338994,
+   "lon": 134.052641,
+   "url": "https://honto.jp/store/detail_1570148_14HB320.html"
+  },
+  {
+   "name": "ジュンク堂書店 鹿児島店",
+   "address": "鹿児島県鹿児島市呉服町6-5 マルヤガーデンズ6階",
+   "lat": 31.590907,
+   "lon": 130.55698,
+   "url": "https://honto.jp/store/detail_1570058_14HB320.html"
+  },
+  {
+   "name": "丸善 お茶の水店",
+   "address": "東京都千代田区神田駿河台2-8 瀬川ビル1階・2階",
+   "lat": 35.6993,
+   "lon": 139.7643,
+   "url": "https://honto.jp/store/detail_1571100_14HB310.html"
+  },
+  {
+   "name": "丸善 さんすて岡山店",
+   "address": "岡山県岡山市北区駅元町1-1 さんすて岡山北館2階",
+   "lat": 34.666743,
+   "lon": 133.918608,
+   "url": "https://honto.jp/store/detail_1570224_14HB310.html"
+  },
+  {
+   "name": "丸善 アスナル金山店",
+   "address": "愛知県名古屋市中区金山1-17-1 アスナル金山3階",
+   "lat": 35.143637,
+   "lon": 136.90112,
+   "url": "https://honto.jp/store/detail_1570225_14HB310.html"
+  },
+  {
+   "name": "丸善 アピタ知立店",
+   "address": "愛知県知立市長篠町大山18-1 ギャラリエアピタ知立店2階",
+   "lat": 34.99877,
+   "lon": 137.05364,
+   "url": "https://honto.jp/store/detail_1570222_14HB310.html"
+  },
+  {
+   "name": "丸善 イオンタウン千種店",
+   "address": "愛知県名古屋市千種区千種2-16-13 イオンタウン千種2階",
+   "lat": 35.161927,
+   "lon": 136.923338,
+   "url": "https://honto.jp/store/detail_1570220_14HB310.html"
+  },
+  {
+   "name": "丸善 ジョイホンパーク吉岡店",
+   "address": "群馬県北群馬郡吉岡町大久保 364-1 ジョイホンパーク吉岡2階",
+   "lat": 36.431042,
+   "lon": 139.01887,
+   "url": "https://honto.jp/store/detail_1570242_14HB310.html"
+  },
+  {
+   "name": "丸善 スマーク伊勢崎店",
+   "address": "群馬県伊勢崎市西小保方町368 スマーク伊勢崎2階",
+   "lat": 36.33873,
+   "lon": 139.233377,
+   "url": "https://honto.jp/store/detail_1570247_14HB310.html"
+  },
+  {
+   "name": "丸善 セブンパーク天美店",
+   "address": "大阪府松原市天美東3-500 セブンパーク天美3階",
+   "lat": 34.593554,
+   "lon": 135.54147,
+   "url": "https://honto.jp/store/detail_1570231_14HB310.html"
+  },
+  {
+   "name": "丸善 ヒルズウォーク徳重店",
+   "address": "愛知県名古屋市緑区元徳重1-505 ヒルズウォーク徳重ガーデンズ地下1階",
+   "lat": 35.09431,
+   "lon": 136.999413,
+   "url": "https://honto.jp/store/detail_1570221_14HB310.html"
+  },
+  {
+   "name": "丸善 メトロ・エム後楽園店",
+   "address": "東京都文京区春日1-2-3 メトロ・エム後楽園3階",
+   "lat": 35.707545,
+   "lon": 139.751124,
+   "url": "https://honto.jp/store/detail_1572650_14HB310.html"
+  },
+  {
+   "name": "丸善 ユニモちはら台店",
+   "address": "千葉県市原市ちはら台西3-4 ユニモちはら台2階",
+   "lat": 35.528282,
+   "lon": 140.17147,
+   "url": "https://honto.jp/store/detail_1570241_14HB310.html"
+  },
+  {
+   "name": "丸善 リバーウォーク北九州店",
+   "address": "福岡県北九州市小倉北区室町1丁目1番地1号40番 リバーウォーク北九州3階",
+   "lat": 33.886129,
+   "lon": 130.87554,
+   "url": "https://honto.jp/store/detail_1570265_14HB310.html"
+  },
+  {
+   "name": "丸善 丸の内本店",
+   "address": "東京都千代田区丸の内1-6-4 丸の内オアゾ1階～4階",
+   "lat": 35.683449,
+   "lon": 139.766753,
+   "url": "https://honto.jp/store/detail_1572000_14HB310.html"
+  },
+  {
+   "name": "丸善 丸広百貨店飯能店",
+   "address": "埼玉県飯能市栄町24-4 丸広百貨店飯能店6階",
+   "lat": 35.853122,
+   "lon": 139.326387,
+   "url": "https://honto.jp/store/detail_1570125_14HB310.html"
+  },
+  {
+   "name": "丸善 京都本店",
+   "address": "京都府京都市中京区河原町通三条下ル山崎町251 京都BAL 地下1階～地下2階",
+   "lat": 35.006971,
+   "lon": 135.769457,
+   "url": "https://honto.jp/store/detail_1570144_14HB310.html"
+  },
+  {
+   "name": "丸善 仙台アエル店",
+   "address": "宮城県仙台市青葉区中央1-3-1 AER1階",
+   "lat": 38.262608,
+   "lon": 140.881402,
+   "url": "https://honto.jp/store/detail_1577780_14HB310.html"
+  },
+  {
+   "name": "丸善 八尾アリオ店",
+   "address": "大阪府八尾市光町2-3 アリオ八尾3階",
+   "lat": 34.632513,
+   "lon": 135.605746,
+   "url": "https://honto.jp/store/detail_1576383_14HB310.html"
+  },
+  {
+   "name": "丸善 博多店",
+   "address": "福岡県福岡市博多区博多駅中央街1-1 JR博多シティ8階",
+   "lat": 33.5905,
+   "lon": 130.4198,
+   "url": "https://honto.jp/store/detail_1577305_14HB310.html"
+  },
+  {
+   "name": "丸善 名古屋本店",
+   "address": "愛知県名古屋市中区栄3-8-14 地下1階～7階",
+   "lat": 35.1672,
+   "lon": 136.90529,
+   "url": "https://honto.jp/store/detail_1570138_14HB310.html"
+  },
+  {
+   "name": "丸善 四日市店",
+   "address": "三重県四日市市諏訪栄町7-34 近鉄百貨店四日市店 地下1階",
+   "lat": 34.967137,
+   "lon": 136.618985,
+   "url": "https://honto.jp/store/detail_1570117_14HB310.html"
+  },
+  {
+   "name": "丸善 多摩センター店",
+   "address": "東京都多摩市落合1-46-1 ココリア多摩センター5階",
+   "lat": 35.622494,
+   "lon": 139.424823,
+   "url": "https://honto.jp/store/detail_1570067_14HB310.html"
+  },
+  {
+   "name": "丸善 岐阜店",
+   "address": "岐阜県岐阜市正木中1-2-1 マーサ21 3階",
+   "lat": 35.44804,
+   "lon": 136.745,
+   "url": "https://honto.jp/store/detail_1570143_14HB310.html"
+  },
+  {
+   "name": "丸善 岡山シンフォニービル店",
+   "address": "岡山県岡山市北区表町1-5-1 岡山シンフォニービル 地下1階～1階",
+   "lat": 34.66515,
+   "lon": 133.929928,
+   "url": "https://honto.jp/store/detail_1576960_14HB310.html"
+  },
+  {
+   "name": "丸善 広島店",
+   "address": "広島県広島市中区胡町5-22 天満屋八丁堀ビル7階・8階",
+   "lat": 34.393219,
+   "lon": 132.463764,
+   "url": "https://honto.jp/store/detail_1570062_14HB310.html"
+  },
+  {
+   "name": "丸善 日本橋店",
+   "address": "東京都中央区日本橋2-3-10",
+   "lat": 35.681166,
+   "lon": 139.772506,
+   "url": "https://honto.jp/store/detail_1575100_14HB310.html"
+  },
+  {
+   "name": "丸善 日立店",
+   "address": "茨城県日立市幸町1-16-1 ヒタチエ4階",
+   "lat": 36.591702,
+   "lon": 140.659673,
+   "url": "https://honto.jp/store/detail_1570217_14HB310.html"
+  },
+  {
+   "name": "丸善 有明ガーデン店",
+   "address": "東京都江東区有明2-1-8 有明ガーデン4階",
+   "lat": 35.638253,
+   "lon": 139.791002,
+   "url": "https://honto.jp/store/detail_1570218_14HB310.html"
+  },
+  {
+   "name": "丸善 有明ワンザ店",
+   "address": "東京都江東区有明3-6-11 東京ファッションタウンビル東館2階",
+   "lat": 35.631314,
+   "lon": 139.790465,
+   "url": "https://honto.jp/store/detail_1572660_14HB310.html"
+  },
+  {
+   "name": "丸善 東急百貨店日吉店",
+   "address": "神奈川県横浜市港北区日吉2-1-1 東急百貨店日吉店南館3階",
+   "lat": 35.55355,
+   "lon": 139.64695,
+   "url": "https://honto.jp/store/detail_1570240_14HB310.html"
+  },
+  {
+   "name": "丸善 松本店",
+   "address": "長野県松本市深志1-3-11 コングロM 地下1階～2階",
+   "lat": 36.22985,
+   "lon": 137.967468,
+   "url": "https://honto.jp/store/detail_1570074_14HB310.html"
+  },
+  {
+   "name": "丸善 桶川店",
+   "address": "埼玉県桶川市若宮1-5-2 桶川マイン3階",
+   "lat": 35.998249,
+   "lon": 139.562673,
+   "url": "https://honto.jp/store/detail_1570147_14HB310.html"
+  },
+  {
+   "name": "丸善 横浜みなとみらい店",
+   "address": "神奈川県横浜市西区みなとみらい2-3-2 みなとみらい東急スクエア1 3階",
+   "lat": 35.456339,
+   "lon": 139.632288,
+   "url": "https://honto.jp/store/detail_1570191_14HB310.html"
+  },
+  {
+   "name": "丸善 水戸京成店",
+   "address": "茨城県水戸市泉町1-6-1 京成百貨店8階",
+   "lat": 36.378018,
+   "lon": 140.464286,
+   "url": "https://honto.jp/store/detail_1572680_14HB310.html"
+  },
+  {
+   "name": "丸善 津田沼店",
+   "address": "千葉県習志野市谷津7-7-1 Loharu津田沼B棟2階・3階",
+   "lat": 35.690773,
+   "lon": 140.01861,
+   "url": "https://honto.jp/store/detail_1574700_14HB310.html"
+  },
+  {
+   "name": "丸善 舞浜イクスピアリ店",
+   "address": "千葉県浦安市舞浜1-4 イクスピアリ内101",
+   "lat": 35.634543,
+   "lon": 139.885742,
+   "url": "https://honto.jp/store/detail_1572400_14HB310.html"
+  },
+  {
+   "name": "丸善 豊田T-FACE店",
+   "address": "愛知県豊田市若宮町1-57-1 T-FACE A館6階",
+   "lat": 35.087161,
+   "lon": 137.15403,
+   "url": "https://honto.jp/store/detail_1570234_14HB310.html"
+  },
+  {
+   "name": "丸善 高島屋大阪店",
+   "address": "大阪府大阪市中央区難波5-1-5 高島屋大阪店西ゾーン 地下1階",
+   "lat": 34.6645,
+   "lon": 135.50114,
+   "url": "https://honto.jp/store/detail_1570141_14HB310.html"
+  }
+ ]
+}

@@ -1,0 +1,85 @@
+{
+ "fetchedAt": "2026-10-16T01:41:38.819Z",
+ "list": [
+  {
+   "name": "八重洲ブックセンター グランスタ八重洲店",
+   "address": "東京都千代田区丸の内1-9-1 JR東日本 東京駅 グランスタ八重洲Ｂ１Ｆ",
+   "note": "JR東日本 東京駅 グランスタ八重洲Ｂ１Ｆ",
+   "url": "https://www.yaesu-book.co.jp/access/gransta-yaesu/",
+   "lat": 35.6798702,
+   "lon": 139.7675145
+  },
+  {
+   "name": "八重洲ブックセンター ルミネ荻窪店",
+   "address": "東京都杉並区上荻1-7-1 ルミネ荻窪4F",
+   "note": "ルミネ荻窪4F",
+   "url": "https://www.yaesu-book.co.jp/access/lumine-ogikubo/",
+   "lat": 35.704626,
+   "lon": 139.619783
+  },
+  {
+   "name": "八重洲ブックセンター アリオ葛西店",
+   "address": "東京都江戸川区東葛西9-3-3 アリオ葛西３F",
+   "note": "アリオ葛西３F",
+   "url": "https://www.yaesu-book.co.jp/access/itoyokado-kasai/",
+   "lat": 35.652693,
+   "lon": 139.881921
+  },
+  {
+   "name": "八重洲ブックセンター 石神井公園店",
+   "address": "東京都練馬区石神井町2-14-1 石神井公園ピアレス１F",
+   "note": "石神井公園ピアレス１F",
+   "url": "https://www.yaesu-book.co.jp/access/syakuziikoen/",
+   "lat": 35.7443,
+   "lon": 139.607263
+  },
+  {
+   "name": "八重洲ブックセンター イトーヨーカドー武蔵境店",
+   "address": "東京都武蔵野市境南町2-3-6 イトーヨーカドー武蔵境店西館５F",
+   "note": "イトーヨーカドー武蔵境店西館５F",
+   "url": "https://www.yaesu-book.co.jp/access/itoyokado-musashisakai/",
+   "lat": 35.70122,
+   "lon": 139.544832
+  },
+  {
+   "name": "八重洲ブックセンター 阿佐ヶ谷店",
+   "address": "東京都杉並区阿佐谷南3-37-13 大同ビル1F 阿佐ヶ谷駅南口",
+   "note": "阿佐ヶ谷駅南口",
+   "url": "https://www.yaesu-book.co.jp/access/asagaya/",
+   "lat": 35.7044555,
+   "lon": 139.6357553
+  },
+  {
+   "name": "八重洲ブックセンター 京急百貨店上大岡店",
+   "address": "神奈川県横浜市港南区上大岡西1-6-1 京急百貨店６F",
+   "note": "京急百貨店６F",
+   "url": "https://www.yaesu-book.co.jp/access/keikyu-depart-kamiooka/",
+   "lat": 35.409147,
+   "lon": 139.596748
+  },
+  {
+   "name": "八重洲ブックセンター イトーヨーカドー上永谷店",
+   "address": "神奈川県横浜市港南区丸山台1-12 イトーヨーカドー上永谷店3F",
+   "note": "イトーヨーカドー上永谷店3F",
+   "url": "https://www.yaesu-book.co.jp/access/itoyokado-kaminagaya/",
+   "lat": 35.4003656,
+   "lon": 139.5720995
+  },
+  {
+   "name": "八重洲ブックセンター フルルガーデン八千代店",
+   "address": "千葉県八千代市村上南1-3-1 フルルガーデン八千代3F",
+   "note": "フルルガーデン八千代3F",
+   "url": "https://www.yaesu-book.co.jp/access/yachiyo-sale/",
+   "lat": 35.722598,
+   "lon": 140.117784
+  },
+  {
+   "name": "八重洲ブックセンター 宇都宮パセオ店",
+   "address": "栃木県宇都宮市川向町1-23 宇都宮PASEO２F",
+   "note": "宇都宮PASEO２F",
+   "url": "https://www.yaesu-book.co.jp/access/utsunomiya-paseo/",
+   "lat": 36.560777,
+   "lon": 139.898336
+  }
+ ]
+}

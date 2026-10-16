@@ -1,0 +1,60 @@
+{
+ "fetchedAt": "2026-10-16T01:38:57.039Z",
+ "list": [
+  {
+   "name": "旭屋書店 梅田地下街店",
+   "address": "大阪府大阪市北区曽根崎２丁目 梅田地下街５－２",
+   "url": "https://www.asahiya.com/shop/umeda-tikagai/"
+  },
+  {
+   "name": "旭屋書店 なんばCITY店",
+   "address": "大阪府大阪市中央区難波５－１－６０ なんばＣＩＴＹ Ｂ２",
+   "url": "https://www.asahiya.com/shop/namba-city/"
+  },
+  {
+   "name": "旭屋書店 イオンモール奈良登美ヶ丘店",
+   "address": "奈良県生駒市鹿畑町３０２７番地 イオンモール奈良登美ヶ丘３Ｆ",
+   "url": "https://www.asahiya.com/shop/nara_tomigaoka/"
+  },
+  {
+   "name": "紀伊國屋書店 ららぽーと甲子園店",
+   "address": "兵庫県西宮市甲子園八番町１－１００ ららぽーと甲子園２F",
+   "url": "https://www.asahiya.com/shop/koshien/"
+  },
+  {
+   "name": "紀伊國屋書店 池袋店",
+   "address": "東京都豊島区西池袋１－１－２５ 東武百貨店池袋店７Ｆ",
+   "url": "https://www.asahiya.com/shop/ikebukuro/"
+  },
+  {
+   "name": "旭屋書店 アトレヴィ大塚店",
+   "address": "東京都豊島区南大塚３－３３－１ＪＲ大塚南口ビル アトレヴィ大塚４Ｆ",
+   "url": "https://www.asahiya.com/shop/otsuka/"
+  },
+  {
+   "name": "旭屋書店 船橋店",
+   "address": "千葉県船橋市本町７－１－１ 東武百貨店船橋店6Ｆ",
+   "url": "https://www.asahiya.com/shop/funabashi/"
+  },
+  {
+   "name": "旭屋書店 新越谷店",
+   "address": "埼玉県越谷市南越谷１－１１－４ ヴァリエ３Ｆ",
+   "url": "https://www.asahiya.com/shop/shinkoshigaya/"
+  },
+  {
+   "name": "旭屋書店 志木店",
+   "address": "埼玉県新座市東北２－３８－１０ エキア志木３Ｆ",
+   "url": "https://www.asahiya.com/shop/shiki/"
+  },
+  {
+   "name": "旭屋書店 イオンモール浦和美園店",
+   "address": "埼玉県さいたま市緑区美園5丁目50番地1 イオンモール浦和美園３Ｆ",
+   "url": "https://www.asahiya.com/shop/urawa_misono/"
+  },
+  {
+   "name": "旭屋書店 アリオ上尾店",
+   "address": "埼玉県上尾市壱丁目北29番地14 アリオ上尾１Ｆ",
+   "url": "https://www.asahiya.com/shop/ageo/"
+  }
+ ]
+}

@@ -1,0 +1,305 @@
+{
+ "fetchedAt": "2026-10-15T07:53:05.537Z",
+ "list": [
+  {
+   "name": "三洋堂書店 豊川店",
+   "address": "愛知県豊川市馬場町宮脇166",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=24"
+  },
+  {
+   "name": "三洋堂書店 高浜Ｔぽーと店",
+   "address": "愛知県高浜市神明町8丁目20番地1（Tぽーと2階）",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=69"
+  },
+  {
+   "name": "三洋堂書店 西尾店",
+   "address": "愛知県西尾市今川町字馬捨場31番地",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=102"
+  },
+  {
+   "name": "三洋堂書店 碧南店",
+   "address": "愛知県碧南市作塚町3丁目74番地",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=159"
+  },
+  {
+   "name": "三洋堂書店 清洲店",
+   "address": "愛知県清須市西市場5丁目5番地1",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=75"
+  },
+  {
+   "name": "三洋堂書店 当知店",
+   "address": "愛知県名古屋市港区当知1丁目301番地",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=150"
+  },
+  {
+   "name": "三洋堂書店 志段味店",
+   "address": "愛知県名古屋市守山区大字上志段味羽根前67-1",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=143"
+  },
+  {
+   "name": "三洋堂書店 よもぎ店",
+   "address": "愛知県名古屋市名東区よもぎ台1-703",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=158"
+  },
+  {
+   "name": "三洋堂書店 いりなか店",
+   "address": "愛知県名古屋市昭和区隼人町7-7",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=91"
+  },
+  {
+   "name": "三洋堂書店 新開橋店",
+   "address": "愛知県名古屋市瑞穂区新開町18番地22",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=121"
+  },
+  {
+   "name": "三洋堂書店 香久山店",
+   "address": "愛知県日進市香久山4丁目201番3",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=164"
+  },
+  {
+   "name": "三洋堂書店 本新店",
+   "address": "愛知県豊田市本新町8-56-2",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=34"
+  },
+  {
+   "name": "三洋堂書店 梅坪店",
+   "address": "愛知県豊田市東梅坪町1-60",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=23"
+  },
+  {
+   "name": "三洋堂書店 知立店",
+   "address": "愛知県知立市東上重原6丁目2番地1",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=38"
+  },
+  {
+   "name": "三洋堂書店 乙川店",
+   "address": "愛知県半田市乙川内山町31番地",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=88"
+  },
+  {
+   "name": "三洋堂書店 半田店",
+   "address": "愛知県半田市宮本町6丁目202番地11",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=39"
+  },
+  {
+   "name": "三洋堂書店 大田川店",
+   "address": "愛知県東海市大田町畑間7番1",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=81"
+  },
+  {
+   "name": "三洋堂書店 江南店",
+   "address": "愛知県江南市古知野町宮前194",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=149"
+  },
+  {
+   "name": "三洋堂書店 鳥居松店",
+   "address": "愛知県春日井市鳥居松町3丁目79番地",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=41"
+  },
+  {
+   "name": "三洋堂書店 城山店",
+   "address": "愛知県尾張旭市新居町諏訪南1305",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=140"
+  },
+  {
+   "name": "三洋堂書店 ひしの店",
+   "address": "愛知県瀬戸市東赤重町１丁目107番地",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=80"
+  },
+  {
+   "name": "三洋堂書店 市橋店",
+   "address": "岐阜県岐阜市市橋2丁目7番1号",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=146"
+  },
+  {
+   "name": "三洋堂書店 穂積店",
+   "address": "岐阜県瑞穂市馬場上光町3丁目1",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=70"
+  },
+  {
+   "name": "三洋堂書店 本巣店",
+   "address": "岐阜県本巣市文殊字天辺1006-1",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=123"
+  },
+  {
+   "name": "三洋堂書店 高富店",
+   "address": "岐阜県山県市高富2405",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=74"
+  },
+  {
+   "name": "三洋堂書店 新関店",
+   "address": "岐阜県関市小瀬字東長池2660",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=76"
+  },
+  {
+   "name": "三洋堂書店 せき東店",
+   "address": "岐阜県関市東新町6丁目328－1",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=125"
+  },
+  {
+   "name": "三洋堂書店 大和店",
+   "address": "岐阜県郡上市大和町徳永828番地の１",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=82"
+  },
+  {
+   "name": "三洋堂書店 長良店",
+   "address": "岐阜県岐阜市福光西2丁目5番16号",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=53"
+  },
+  {
+   "name": "三洋堂書店 養老店",
+   "address": "岐阜県養老郡養老町高田2217-1",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=141"
+  },
+  {
+   "name": "三洋堂書店 垂井店",
+   "address": "岐阜県不破郡垂井町綾戸483番地",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=127"
+  },
+  {
+   "name": "三洋堂書店 各務原店",
+   "address": "岐阜県各務原市蘇原花園町3丁目52番地",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=104"
+  },
+  {
+   "name": "三洋堂書店 みのかも店",
+   "address": "岐阜県美濃加茂市山手町1丁目91",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=72"
+  },
+  {
+   "name": "三洋堂書店 ルビットタウン高山店",
+   "address": "岐阜県高山市岡本町3丁目18番地2ルビットタウン高山2階",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=65"
+  },
+  {
+   "name": "三洋堂書店 たじみ店",
+   "address": "岐阜県多治見市若松町2丁目36番地１",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=108"
+  },
+  {
+   "name": "三洋堂書店 ルビットタウン中津川店",
+   "address": "岐阜県中津川市淀川町3番8号ルビットタウン中津川内",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=163"
+  },
+  {
+   "name": "三洋堂書店 中津川店",
+   "address": "岐阜県中津川市西宮町5番23号",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=148"
+  },
+  {
+   "name": "三洋堂書店 下恵土店",
+   "address": "岐阜県可児市下恵土広瀬5896",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=130"
+  },
+  {
+   "name": "三洋堂書店 こくふ店",
+   "address": "岐阜県高山市国府町広瀬町1577",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=134"
+  },
+  {
+   "name": "三洋堂書店 土岐店",
+   "address": "岐阜県土岐市肥田浅野梅ノ木町１丁目40番地",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=64"
+  },
+  {
+   "name": "三洋堂書店 瑞浪中央店",
+   "address": "岐阜県瑞浪市益見町3丁目107番地",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=142"
+  },
+  {
+   "name": "三洋堂書店 アクロスプラザ恵那店",
+   "address": "岐阜県恵那市長島町正家3丁目8-97-4",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=84"
+  },
+  {
+   "name": "三洋堂書店 菰野店",
+   "address": "三重県三重郡菰野町宿野357番地（イオンタウン菰野内）",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=167"
+  },
+  {
+   "name": "三洋堂書店 富田店",
+   "address": "三重県四日市市茂福680番地",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=59"
+  },
+  {
+   "name": "三洋堂書店 北勢店",
+   "address": "三重県いなべ市北勢町阿下喜3326",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=85"
+  },
+  {
+   "name": "三洋堂書店 桑名店",
+   "address": "三重県桑名市大字東方字福島前764番地",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=83"
+  },
+  {
+   "name": "三洋堂書店 星川店",
+   "address": "三重県桑名市大字星川字十二899番地",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=117"
+  },
+  {
+   "name": "三洋堂書店 生桑店",
+   "address": "三重県四日市市生桑町字榎下201-2",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=137"
+  },
+  {
+   "name": "三洋堂書店 白塚店",
+   "address": "三重県津市白塚町字鎌田3925-1",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=129"
+  },
+  {
+   "name": "三洋堂書店 名張店",
+   "address": "三重県名張市蔵持町原出1764番地",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=136"
+  },
+  {
+   "name": "三洋堂書店 近江八幡店",
+   "address": "滋賀県近江八幡市鷹飼町北2丁目3番4",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=73"
+  },
+  {
+   "name": "三洋堂書店 長浜店",
+   "address": "滋賀県長浜市小堀町424番地",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=101"
+  },
+  {
+   "name": "三洋堂書店 豊郷店",
+   "address": "滋賀県犬上郡豊郷町沢250-１アストパワーセンター内",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=147"
+  },
+  {
+   "name": "三洋堂書店 大安寺店",
+   "address": "奈良県奈良市南京終町2丁目285番地",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=126"
+  },
+  {
+   "name": "三洋堂書店 桜井店",
+   "address": "奈良県桜井市上之庄315番地",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=103"
+  },
+  {
+   "name": "三洋堂書店 橿原神宮店",
+   "address": "奈良県橿原市石川町3番地2",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=54"
+  },
+  {
+   "name": "三洋堂書店 香芝店",
+   "address": "奈良県香芝市別所123－1",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=132"
+  },
+  {
+   "name": "三洋堂書店 駒ヶ根店",
+   "address": "長野県駒ヶ根市赤穂14642番地1",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=106"
+  },
+  {
+   "name": "三洋堂書店 小浜店",
+   "address": "福井県小浜市駅前町13番20号",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=144"
+  },
+  {
+   "name": "三洋堂書店 石岡店",
+   "address": "茨城県石岡市東光台3丁目1－8",
+   "url": "https://www.sanyodo.co.jp/shop-detail?store_id=131"
+  }
+ ]
+}

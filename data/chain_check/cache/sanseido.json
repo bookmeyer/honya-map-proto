@@ -1,0 +1,90 @@
+{
+ "fetchedAt": "2026-10-16T01:38:09.989Z",
+ "list": [
+  {
+   "name": "三省堂書店 神田神保町本店",
+   "address": "東京都千代田区神田神保町1-1",
+   "url": "https://www.books-sanseido.co.jp/shop/kanda/"
+  },
+  {
+   "name": "三省堂書店 アトレ秋葉原1",
+   "address": "東京都千代田区外神田1-17-6 アトレ秋葉原1 2階",
+   "url": "https://www.books-sanseido.co.jp/shop/atre_akihabara1/"
+  },
+  {
+   "name": "三省堂書店 有楽町店",
+   "address": "東京都千代田区有楽町2-10-1 東京交通会館 1・2F",
+   "url": "https://www.books-sanseido.co.jp/shop/yurakucho/"
+  },
+  {
+   "name": "三省堂書店 アトレ上野店",
+   "address": "東京都台東区上野7-1-1 アトレ上野WEST1F",
+   "url": "https://www.books-sanseido.co.jp/shop/atre_ueno/"
+  },
+  {
+   "name": "三省堂書店 東京ソラマチ店",
+   "address": "東京都墨田区押上1-1-2 東京スカイツリータウン・ソラマチ2階",
+   "url": "https://www.books-sanseido.co.jp/shop/tokyosoramachi/"
+  },
+  {
+   "name": "三省堂書店 成城店",
+   "address": "東京都世田谷区成城6-5-34 成城コルティ2F",
+   "url": "https://www.books-sanseido.co.jp/shop/seijo/"
+  },
+  {
+   "name": "三省堂書店 経堂店",
+   "address": "東京都世田谷区経堂2-1-33 経堂コルティ2階",
+   "url": "https://www.books-sanseido.co.jp/shop/kyodo/"
+  },
+  {
+   "name": "三省堂書店 海老名店",
+   "address": "神奈川県海老名市中央1-1-1 ViNAWALK1番館 4F",
+   "url": "https://www.books-sanseido.co.jp/shop/ebina/"
+  },
+  {
+   "name": "三省堂書店 大宮店",
+   "address": "埼玉県さいたま市大宮区桜木町1-6-2 そごう大宮店 8F",
+   "url": "https://www.books-sanseido.co.jp/shop/omiya/"
+  },
+  {
+   "name": "三省堂書店 そごう千葉店",
+   "address": "千葉県千葉市中央区新町1000番 そごう千葉店9F",
+   "url": "https://www.books-sanseido.co.jp/shop/sogochiba/"
+  },
+  {
+   "name": "三省堂書店 カルチャーステーション千葉",
+   "address": "千葉県千葉市中央区富士見2-3-1 塚本大千葉ビル 4F",
+   "url": "https://www.books-sanseido.co.jp/shop/beeone/"
+  },
+  {
+   "name": "三省堂書店 イコアス千城台店",
+   "address": "千葉県千葉市若葉区千城台北3-21-1 イコアス千城台1階",
+   "url": "https://www.books-sanseido.co.jp/shop/icoas/"
+  },
+  {
+   "name": "三省堂書店 札幌店",
+   "address": "北海道札幌市中央区北五条西2-5 JRタワー札幌ステラプレイス5F",
+   "url": "https://www.books-sanseido.co.jp/shop/sapporo2/"
+  },
+  {
+   "name": "三省堂書店 留萌ブックセンター",
+   "address": "北海道留萌市南町4丁目73-1",
+   "url": "https://www.books-sanseido.co.jp/shop/rumoi/"
+  },
+  {
+   "name": "三省堂書店 名古屋本店",
+   "address": "愛知県名古屋市中村区名駅1-1-3 タカシマヤ ゲートタワーモール8F",
+   "url": "https://www.books-sanseido.co.jp/shop/nagoya/"
+  },
+  {
+   "name": "三省堂書店 一宮店",
+   "address": "愛知県一宮市栄3-1-2 アスティ一宮 1F",
+   "url": "https://www.books-sanseido.co.jp/shop/ichinomiya/"
+  },
+  {
+   "name": "三省堂書店 岐阜店",
+   "address": "岐阜県岐阜市橋本町1-10 アスティ岐阜 3F",
+   "url": "https://www.books-sanseido.co.jp/shop/gifu/"
+  }
+ ]
+}

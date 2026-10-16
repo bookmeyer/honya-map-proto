@@ -1,0 +1,200 @@
+{
+ "fetchedAt": "2026-10-16T01:40:41.933Z",
+ "list": [
+  {
+   "name": "精文館書店 豊橋本店",
+   "address": "愛知県豊橋市広小路1-6",
+   "url": "https://www.seibunkan.co.jp/shop/honten/"
+  },
+  {
+   "name": "精文館書店 汐田橋店",
+   "address": "愛知県豊橋市牟呂町字扇田85",
+   "url": "https://www.seibunkan.co.jp/shop/shiotabashi/"
+  },
+  {
+   "name": "精文館書店 三ノ輪店",
+   "address": "愛知県豊橋市三ノ輪町字本興寺16-1",
+   "url": "https://www.seibunkan.co.jp/shop/minowa/"
+  },
+  {
+   "name": "精文館書店 豊橋東店",
+   "address": "愛知県豊橋市上地町140",
+   "url": "https://www.seibunkan.co.jp/shop/toyohashihigashi/"
+  },
+  {
+   "name": "精文館書店 新豊田店",
+   "address": "愛知県豊田市広路町1-15",
+   "url": "https://www.seibunkan.co.jp/shop/shintoyota/"
+  },
+  {
+   "name": "精文館書店 イオンスタイル豊田店",
+   "address": "愛知県豊田市広路町1-1 イオンスタイル豊田3F",
+   "url": "https://www.seibunkan.co.jp/shop/aeontoyota/"
+  },
+  {
+   "name": "精文館書店 豊川店",
+   "address": "愛知県豊川市市田町大道下8",
+   "url": "https://www.seibunkan.co.jp/shop/toyokawa/"
+  },
+  {
+   "name": "精文館書店 新城店",
+   "address": "愛知県新城市片山605-2",
+   "url": "https://www.seibunkan.co.jp/shop/shinjo/"
+  },
+  {
+   "name": "精文館書店 新田原店",
+   "address": "愛知県田原市田原町晩田55-1",
+   "url": "https://www.seibunkan.co.jp/shop/shintahara/"
+  },
+  {
+   "name": "精文館書店 蒲郡店",
+   "address": "愛知県蒲郡市旭町20-15",
+   "url": "https://www.seibunkan.co.jp/shop/gamagoori/"
+  },
+  {
+   "name": "精文館書店 蒲郡三谷店",
+   "address": "愛知県蒲郡市三谷北通6-228",
+   "url": "https://www.seibunkan.co.jp/shop/gamagoorimiya/"
+  },
+  {
+   "name": "精文館書店 幸田店",
+   "address": "愛知県額田郡幸田町大字大草字下六條53-1",
+   "url": "https://www.seibunkan.co.jp/shop/kouda/"
+  },
+  {
+   "name": "精文館書店 西尾店",
+   "address": "愛知県西尾市花ノ木町4-55",
+   "url": "https://www.seibunkan.co.jp/shop/nishio/"
+  },
+  {
+   "name": "精文館書店 安城店",
+   "address": "愛知県安城市里町大道寺2番地1",
+   "url": "https://www.seibunkan.co.jp/shop/anjo/"
+  },
+  {
+   "name": "精文館書店 新高浜店",
+   "address": "愛知県高浜市湯山町2-3-2",
+   "url": "https://www.seibunkan.co.jp/shop/shintakahama/"
+  },
+  {
+   "name": "TSUTAYA BOOKSTORE ららぽーと愛知東郷",
+   "address": "愛知県愛知郡東郷町東郷中央土地区画整理事業62街区1・32階 23600",
+   "url": "https://www.seibunkan.co.jp/shop/togo/"
+  },
+  {
+   "name": "精文館書店 豊明店",
+   "address": "愛知県豊明市前後町宮前1500-1",
+   "url": "https://www.seibunkan.co.jp/shop/toyoake/"
+  },
+  {
+   "name": "精文館書店 中島新町店",
+   "address": "愛知県名古屋市中川区中島新町3-604-1",
+   "url": "https://www.seibunkan.co.jp/shop/nakajimashinmachi/"
+  },
+  {
+   "name": "精文館書店 荒尾店",
+   "address": "愛知県東海市荒尾町別出シ1-3",
+   "url": "https://www.seibunkan.co.jp/shop/arao/"
+  },
+  {
+   "name": "精文館書店 尾張一宮店",
+   "address": "愛知県一宮市大和町宮地花池出町裏64",
+   "url": "https://www.seibunkan.co.jp/shop/owariichinomiya/"
+  },
+  {
+   "name": "精文館書店 津島店",
+   "address": "愛知県津島市今市場町4-52",
+   "url": "https://www.seibunkan.co.jp/shop/tsushima/"
+  },
+  {
+   "name": "精文館書店 新津島店",
+   "address": "愛知県津島市片岡町60",
+   "url": "https://www.seibunkan.co.jp/shop/shintsushima/"
+  },
+  {
+   "name": "TSUTAYA BOOKSTORE モレラ岐阜",
+   "address": "岐阜県本巣市三橋1100 モレラ岐阜２F",
+   "url": "https://www.seibunkan.co.jp/shop/morera/"
+  },
+  {
+   "name": "TSUTAYA BOOKSTORE ららぽーと堺",
+   "address": "大阪府堺市美原区黒山22番1 1階",
+   "url": "https://www.seibunkan.co.jp/shop/sakai/"
+  },
+  {
+   "name": "TSUTAYA BOOKSTORE エキソアレ西神中央",
+   "address": "兵庫県神戸市西区糀台5-9-4 エキソアレ西神中央4F",
+   "url": "https://www.seibunkan.co.jp/shop/seishinchuo/"
+  },
+  {
+   "name": "精文館書店 領家店",
+   "address": "静岡県浜松市中央区領家3-14-1",
+   "url": "https://www.seibunkan.co.jp/shop/ryouke/"
+  },
+  {
+   "name": "精文館書店 豊田町店",
+   "address": "静岡県磐田市小立野1-1",
+   "url": "https://www.seibunkan.co.jp/shop/toyotacho/"
+  },
+  {
+   "name": "TSUTAYA御殿場店",
+   "address": "静岡県御殿場市茱萸沢95-5",
+   "url": "https://www.seibunkan.co.jp/shop/gotenba/"
+  },
+  {
+   "name": "TSUTAYA佐鳴台店",
+   "address": "静岡県浜松市中央区入野町621-1",
+   "url": "https://www.seibunkan.co.jp/shop/sanarudai/"
+  },
+  {
+   "name": "精文館書店 下瀬谷店",
+   "address": "神奈川県横浜市瀬谷区下瀬谷2-18-13",
+   "url": "https://www.seibunkan.co.jp/shop/shimoseya/"
+  },
+  {
+   "name": "TSUTAYA BOOKSTORE 相鉄ライフ三ツ境",
+   "address": "神奈川県横浜市瀬谷区三ツ境2-19 相鉄ライフ三ツ境 3F",
+   "url": "https://www.seibunkan.co.jp/shop/mitsukyo/"
+  },
+  {
+   "name": "TSUTAYA BOOKSTORE ゆめが丘ソラトス",
+   "address": "神奈川県横浜市泉区ゆめが丘31番地 2階",
+   "url": "https://www.seibunkan.co.jp/shop/yumegaoka/"
+  },
+  {
+   "name": "精文館書店 イオンおゆみ野店",
+   "address": "千葉県千葉市緑区おゆみ野南5-37-1 イオンタウンおゆみ野内",
+   "url": "https://www.seibunkan.co.jp/shop/aeonoyumino/"
+  },
+  {
+   "name": "精文館書店 花見川店",
+   "address": "千葉県千葉市花見川区作新台6-19-28",
+   "url": "https://www.seibunkan.co.jp/shop/hanamigawa/"
+  },
+  {
+   "name": "精文館書店 市原五井店",
+   "address": "千葉県市原市更級4-1-24",
+   "url": "https://www.seibunkan.co.jp/shop/ichiharagoi/"
+  },
+  {
+   "name": "TSUTAYA BOOKSTORE テラスモール松戸",
+   "address": "千葉県松戸市八ヶ崎二丁目8番地の1 2F",
+   "url": "https://www.seibunkan.co.jp/shop/matsudo/"
+  },
+  {
+   "name": "精文館書店 木更津店",
+   "address": "千葉県木更津市太田2-5-1",
+   "url": "https://www.seibunkan.co.jp/shop/kisarazu/"
+  },
+  {
+   "name": "TSUTAYAハレノテラス東大宮店",
+   "address": "埼玉県さいたま市見沼区島町393 ハレノテラスD棟",
+   "url": "https://www.seibunkan.co.jp/shop/higashioomiya/"
+  },
+  {
+   "name": "TSUTAYA BOOKSTORE グランエミオ所沢",
+   "address": "埼玉県所沢市くすのき台1-14-5 グランエミオ所沢 3F",
+   "url": "https://www.seibunkan.co.jp/shop/tokorozawa/"
+  }
+ ]
+}

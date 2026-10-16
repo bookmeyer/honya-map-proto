@@ -1,0 +1,260 @@
+{
+ "fetchedAt": "2026-10-16T01:40:39.645Z",
+ "list": [
+  {
+   "name": "大垣書店 そよら入曽店",
+   "address": "埼玉県狭山市南入曽540-1 そよら入曽駅前 2F",
+   "url": "https://www.books-ogaki.co.jp/stores/soyora-iriso"
+  },
+  {
+   "name": "大垣書店 堀川新文化ビルヂング店",
+   "address": "京都府京都市上京区皀莢町287",
+   "lat": 35.0239104,
+   "lon": 135.7515522,
+   "url": "https://www.books-ogaki.co.jp/stores/horikawa-bld"
+  },
+  {
+   "name": "大垣書店 麻布台ヒルズ店",
+   "address": "東京都港区麻布台1-3-1 麻布台ヒルズ タワープラザ4F",
+   "url": "https://www.books-ogaki.co.jp/stores/azabudai"
+  },
+  {
+   "name": "大垣書店 プリコ神戸店",
+   "address": "兵庫県神戸市中央区相生町3-1-1 PLICO神戸内",
+   "lat": 34.6802365,
+   "lon": 135.1784189,
+   "url": "https://www.books-ogaki.co.jp/stores/plico-kobe"
+  },
+  {
+   "name": "大垣書店 Kotochika御池店",
+   "address": "京都府京都市中京区虎屋町地先 烏丸御池駅構内",
+   "lat": 35.009992,
+   "lon": 135.7596091,
+   "url": "https://www.books-ogaki.co.jp/stores/kotochika-oike"
+  },
+  {
+   "name": "大垣書店 フォレオ大津一里山店",
+   "address": "滋賀県大津市一里山7-1-1 フォレオ大津一里山 1F",
+   "lat": 34.974207,
+   "lon": 135.9332414,
+   "url": "https://www.books-ogaki.co.jp/stores/ogaki-foleo"
+  },
+  {
+   "name": "大垣書店 神戸ハーバーランドumie店",
+   "address": "兵庫県神戸市中央区東川崎町1-7-2 神戸ハーバランド umie NORTH MALL 5F",
+   "lat": 34.6798403,
+   "lon": 135.1821356,
+   "url": "https://www.books-ogaki.co.jp/stores/ogaki-umie"
+  },
+  {
+   "name": "大垣書店 ブックパル桂南店",
+   "address": "京都府京都市西京区川島松ノ木本町6-1",
+   "lat": 34.973335,
+   "lon": 135.7048651,
+   "url": "https://www.books-ogaki.co.jp/stores/pal-katsura"
+  },
+  {
+   "name": "大垣書店 高槻店",
+   "address": "大阪府高槻市芥川町1-2 C-115号 アクトアモーレ1Ｆ",
+   "lat": 34.8522578,
+   "lon": 135.6171531,
+   "url": "https://www.books-ogaki.co.jp/stores/ogaki-takatsuki"
+  },
+  {
+   "name": "大垣書店 イオン洛南店",
+   "address": "京都府京都市南区吉祥院御池町31 イオン洛南ショッピングセンター2F",
+   "lat": 34.9752076,
+   "lon": 135.7364051,
+   "url": "https://www.books-ogaki.co.jp/stores/aeon-rakunan"
+  },
+  {
+   "name": "大垣書店 ブックパル山科店",
+   "address": "京都府京都市山科区音羽野田町1 西友山科店 3F",
+   "lat": 34.9847532,
+   "lon": 135.8165548,
+   "url": "https://www.books-ogaki.co.jp/stores/pal-yamashina"
+  },
+  {
+   "name": "大垣書店 京都ポルタ店",
+   "address": "京都府京都市下京区烏丸通塩小路下ル東塩小路町901 京都駅ビルB1F",
+   "lat": 34.9860358,
+   "lon": 135.7589981,
+   "url": "https://www.books-ogaki.co.jp/stores/the-cube"
+  },
+  {
+   "name": "大垣書店 イオンモールKYOTO店",
+   "address": "京都府京都市南区八条通西洞院下ル西九条鳥居口町1 イオンモールKYOTO Ｋａｅｄｅ館 2F",
+   "lat": 34.982747,
+   "lon": 135.7545979,
+   "url": "https://www.books-ogaki.co.jp/stores/ogaki-aeon_kyoto"
+  },
+  {
+   "name": "大垣書店 ブックパル五条店",
+   "address": "京都府京都市西京区上桂前田町22-3",
+   "lat": 34.987358,
+   "lon": 135.6986262,
+   "url": "https://www.books-ogaki.co.jp/stores/pal-gojo"
+  },
+  {
+   "name": "大垣書店 京都ファミリー店",
+   "address": "京都府京都市右京区山ノ内池尻町1-1 京都ファミリー 3F",
+   "lat": 35.0047626,
+   "lon": 135.7204906,
+   "url": "https://www.books-ogaki.co.jp/stores/ogaki-family"
+  },
+  {
+   "name": "大垣書店 イオンモール京都五条店",
+   "address": "京都府京都市右京区西院追分町25-1 イオンモール京都五条 2F",
+   "lat": 34.997204,
+   "lon": 135.7270583,
+   "url": "https://www.books-ogaki.co.jp/stores/aeon-gojo"
+  },
+  {
+   "name": "大垣書店 京都ヨドバシ店",
+   "address": "京都府京都市下京区烏丸通七条下ル塩小路町590-2 京都ヨドバシ 5F",
+   "lat": 34.988134376687114,
+   "lon": 135.75944331883164,
+   "url": "https://www.books-ogaki.co.jp/stores/ogaki-yodobashi"
+  },
+  {
+   "name": "大垣書店 髙島屋店",
+   "address": "京都府京都市下京区四条通河原町西入真町52 高島屋京都店 6F",
+   "lat": 35.0035638,
+   "lon": 135.7690695,
+   "url": "https://www.books-ogaki.co.jp/stores/ogaki-takashimaya"
+  },
+  {
+   "name": "大垣書店 高野店",
+   "address": "京都府京都市左京区高野東開町20",
+   "lat": 35.0412509,
+   "lon": 135.7821699,
+   "url": "https://www.books-ogaki.co.jp/stores/ogaki-takano"
+  },
+  {
+   "name": "大垣書店 イオンモール京都桂川店",
+   "address": "京都府京都市南区久世高田町376 イオンモール京都桂川 1F",
+   "lat": 34.9635188,
+   "lon": 135.7069934,
+   "url": "https://www.books-ogaki.co.jp/stores/aeonkatsuragawa"
+  },
+  {
+   "name": "大垣書店 亀岡店",
+   "address": "京都府亀岡市篠町野条上又11-1 アルプラザ亀岡 3F",
+   "lat": 35.001422,
+   "lon": 135.6025995,
+   "url": "https://www.books-ogaki.co.jp/stores/ogaki-kameoka-2"
+  },
+  {
+   "name": "大垣書店 醍醐店",
+   "address": "京都府京都市伏見区醍醐高畑町30-1 パセオ・ダイゴロー西館 3F",
+   "lat": 34.9509796,
+   "lon": 135.8104439,
+   "url": "https://www.books-ogaki.co.jp/stores/ogaki-daigo"
+  },
+  {
+   "name": "大垣書店 佛教大学二条キャンパス店",
+   "address": "京都府京都市中京区西ノ京栂尾町7 佛教大学二条キャンパス 1F",
+   "lat": 35.0100065,
+   "lon": 135.7424854,
+   "url": "https://www.books-ogaki.co.jp/stores/butsudai-nijo"
+  },
+  {
+   "name": "大垣書店 イオンモール富士宮店",
+   "address": "静岡県富士宮市浅間町 1-8 イオンモール富士宮 2F",
+   "lat": 35.2205657,
+   "lon": 138.6120372,
+   "url": "https://www.books-ogaki.co.jp/stores/aeon-fujinomiya"
+  },
+  {
+   "name": "大垣書店 イオンモール堺鉄砲町店",
+   "address": "大阪府堺市堺区鉄砲町1 イオンモール堺鉄砲町3F",
+   "lat": 34.5946073,
+   "lon": 135.4816946,
+   "url": "https://www.books-ogaki.co.jp/stores/ogaki-aeon_sakai"
+  },
+  {
+   "name": "大垣書店 マルヤマクラス店",
+   "address": "北海道札幌市中央区南1条西27丁目1-1 マルヤマクラス2F",
+   "lat": 43.0550249,
+   "lon": 141.3179115,
+   "url": "https://www.books-ogaki.co.jp/stores/maruyama-class"
+  },
+  {
+   "name": "大垣書店 ジ アウトレット広島店",
+   "address": "広島県広島市佐伯区石内東4-1-1 THE OUTLETS HIROSIMA 1F",
+   "lat": 34.4098818,
+   "lon": 132.3978328,
+   "url": "https://www.books-ogaki.co.jp/stores/the-outlet-hiroshima"
+  },
+  {
+   "name": "大垣書店 伏見店",
+   "address": "京都府京都市伏見区羽束師菱川町334-1",
+   "lat": 34.9305721,
+   "lon": 135.7225891,
+   "url": "https://www.books-ogaki.co.jp/stores/ogaki-fushimi"
+  },
+  {
+   "name": "大垣書店 東光ストア円山店",
+   "address": "北海道札幌市中央区北1条西24丁目4-1 東光ストア円山店2F",
+   "lat": 43.05861700000001,
+   "lon": 141.3204735,
+   "url": "https://www.books-ogaki.co.jp/stores/toko-maruyama"
+  },
+  {
+   "name": "大垣書店 東光ストア行啓通店",
+   "address": "北海道札幌市中央区南14条西9丁目1-15 東光ストア行啓通店",
+   "lat": 43.0413742,
+   "lon": 141.3465712,
+   "url": "https://www.books-ogaki.co.jp/stores/toko-gyokei"
+  },
+  {
+   "name": "大垣書店 佛教大学店",
+   "address": "京都府京都市北区紫野北花ノ坊町96",
+   "lat": 35.0431933,
+   "lon": 135.7372577,
+   "url": "https://www.books-ogaki.co.jp/stores/ogaki-butsu"
+  },
+  {
+   "name": "大垣書店 イオンモール北大路店",
+   "address": "京都府京都市北区小山北上総町49-1",
+   "lat": 35.044975,
+   "lon": 135.7582331,
+   "url": "https://www.books-ogaki.co.jp/stores/aeon-kitaooji"
+  },
+  {
+   "name": "大垣書店 SLowPage イオンモールKYOTO店",
+   "address": "京都府京都市南区西九条鳥居口町1 イオンモールKYOTO Sakura 館1F",
+   "lat": 34.9829188,
+   "lon": 135.7524553,
+   "url": "https://www.books-ogaki.co.jp/stores/slowpagekyoto"
+  },
+  {
+   "name": "大垣書店 二条駅店",
+   "address": "京都府京都市中京区西ノ京栂尾町1-6 BiVi二条 1F",
+   "lat": 35.0102553,
+   "lon": 135.7412162,
+   "url": "https://www.books-ogaki.co.jp/stores/ogaki-nijo"
+  },
+  {
+   "name": "大垣書店 豊中緑丘店",
+   "address": "大阪府豊中市緑丘４-1 イオンタウン豊中緑丘 2F",
+   "lat": 34.8120925,
+   "lon": 135.4785034,
+   "url": "https://www.books-ogaki.co.jp/stores/ogaki-toyonaka"
+  },
+  {
+   "name": "大垣書店 京都本店",
+   "address": "京都府京都市下京区四条通室町東入函谷鉾町78 SUINA室町1F",
+   "lat": 35.0030247,
+   "lon": 135.7585576,
+   "url": "https://www.books-ogaki.co.jp/stores/kyoto-honten"
+  },
+  {
+   "name": "大垣書店 烏丸三条店",
+   "address": "京都府京都市中京区烏丸通三条上ル御倉町85-1 KDX烏丸ビル 1Ｆ",
+   "lat": 35.0087073,
+   "lon": 135.7592879,
+   "url": "https://www.books-ogaki.co.jp/stores/ogaki-karasuma3"
+  }
+ ]
+}

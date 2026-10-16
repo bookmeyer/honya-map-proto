@@ -1,0 +1,1045 @@
+{
+ "fetchedAt": "2026-10-15T07:53:03.456Z",
+ "list": [
+  {
+   "name": "くまざわ書店 アリオ札幌店",
+   "address": "北海道札幌市東区北7条東9-2-20",
+   "url": "https://www.kumabook.com/shop/ario-sapporo/"
+  },
+  {
+   "name": "くまざわ書店 手稲店",
+   "address": "北海道札幌市手稲区前田1条11",
+   "url": "https://www.kumabook.com/shop/teine/"
+  },
+  {
+   "name": "くまざわ書店 函館ポールスター店",
+   "address": "北海道函館市港町1-1-2",
+   "url": "https://www.kumabook.com/shop/hakodate-polestar/"
+  },
+  {
+   "name": "くまざわ書店 帯広店",
+   "address": "北海道帯広市西四条南20-1",
+   "url": "https://www.kumabook.com/shop/obihiro/"
+  },
+  {
+   "name": "くまざわ書店 苫小牧店",
+   "address": "北海道苫小牧市木場町1-6-1",
+   "url": "https://www.kumabook.com/shop/tomakomai/"
+  },
+  {
+   "name": "いけだ書店 士別店",
+   "address": "北海道士別市大通東16丁目3143",
+   "url": "https://www.kumabook.com/shop/shibetsu/"
+  },
+  {
+   "name": "くまざわ書店 東神楽店",
+   "address": "北海道上川郡東神楽町ひじり野南1条6-1-1",
+   "url": "https://www.kumabook.com/shop/higashikagura/"
+  },
+  {
+   "name": "くまざわ書店 釧路店",
+   "address": "北海道釧路郡釧路町桂木1丁目１番地７号",
+   "url": "https://www.kumabook.com/shop/kushiro/"
+  },
+  {
+   "name": "くまざわ書店 中標津店",
+   "address": "北海道標津郡中標津町南町3-10",
+   "url": "https://www.kumabook.com/shop/nakashibetsu/"
+  },
+  {
+   "name": "くまざわ書店 シーナシーナ青森店",
+   "address": "青森県青森市浜田1-14-1",
+   "url": "https://www.kumabook.com/shop/iy-aomori/"
+  },
+  {
+   "name": "くまざわ書店 シーナシーナ弘前店",
+   "address": "青森県弘前市大字駅前3-2-1",
+   "url": "https://www.kumabook.com/shop/hirosaki/"
+  },
+  {
+   "name": "くまざわ書店 五所川原店",
+   "address": "青森県五所川原市大字唐笠柳字藤巻517-1",
+   "url": "https://www.kumabook.com/shop/goshogawara/"
+  },
+  {
+   "name": "くまざわ書店 エスパル仙台店",
+   "address": "宮城県仙台市青葉区中央1-1-1",
+   "url": "https://www.kumabook.com/shop/spal-sendai/"
+  },
+  {
+   "name": "くまざわ書店 山形店",
+   "address": "山形県山形市香澄町1-1-1",
+   "url": "https://www.kumabook.com/shop/yamagata/"
+  },
+  {
+   "name": "くまざわ書店 鶴岡店",
+   "address": "山形県鶴岡市錦町2-21",
+   "url": "https://www.kumabook.com/shop/tsuruoka/"
+  },
+  {
+   "name": "くまざわ書店 福島店",
+   "address": "福島県福島市南矢野目字西荒田50-17",
+   "url": "https://www.kumabook.com/shop/fukushima/"
+  },
+  {
+   "name": "くまざわ書店 エスパル福島店",
+   "address": "福島県福島市栄町1-1",
+   "url": "https://www.kumabook.com/shop/spal-fukushima/"
+  },
+  {
+   "name": "くまざわ書店 会津若松店",
+   "address": "福島県会津若松市幕内南町９番１０号",
+   "url": "https://www.kumabook.com/shop/aizuwakamatsu/"
+  },
+  {
+   "name": "くまざわ書店 郡山店",
+   "address": "福島県郡山市燧田195",
+   "url": "https://www.kumabook.com/shop/koriyama/"
+  },
+  {
+   "name": "くまざわ書店 須賀川店",
+   "address": "福島県須賀川市高久田境96-1",
+   "url": "https://www.kumabook.com/shop/sukagawa/"
+  },
+  {
+   "name": "くまざわ書店 取手店",
+   "address": "茨城県取手市中央町2-5",
+   "url": "https://www.kumabook.com/shop/toride/"
+  },
+  {
+   "name": "ACADEMIA イーアスつくば店",
+   "address": "茨城県つくば市研究学園5-19",
+   "url": "https://www.kumabook.com/shop/iias-tsukuba/"
+  },
+  {
+   "name": "くまざわ書店 宇都宮店",
+   "address": "栃木県宇都宮市今泉町237",
+   "url": "https://www.kumabook.com/shop/utsunomiya/"
+  },
+  {
+   "name": "くまざわ書店 宇都宮インターパーク店",
+   "address": "栃木県宇都宮市インターパーク6-1-1",
+   "url": "https://www.kumabook.com/shop/utsunomiya-interpark/"
+  },
+  {
+   "name": "くまざわ書店 アピタ宇都宮店",
+   "address": "栃木県宇都宮市江曽島本町22-7",
+   "url": "https://www.kumabook.com/shop/apita-utsunomiya/"
+  },
+  {
+   "name": "くまざわ書店 アシコタウン店",
+   "address": "栃木県足利市大月町3-2",
+   "url": "https://www.kumabook.com/shop/ashico-town/"
+  },
+  {
+   "name": "くまざわ書店 鹿沼店",
+   "address": "栃木県鹿沼市東末広町1073",
+   "url": "https://www.kumabook.com/shop/kanuma/"
+  },
+  {
+   "name": "くまざわ書店 高崎店",
+   "address": "群馬県高崎市八島町222",
+   "url": "https://www.kumabook.com/shop/takasaki/"
+  },
+  {
+   "name": "くまざわ書店 大間々店",
+   "address": "群馬県みどり市大間々町大間々40",
+   "url": "https://www.kumabook.com/shop/ooma/"
+  },
+  {
+   "name": "くまざわ書店 宮原店",
+   "address": "埼玉県さいたま市北区宮原町1-854-1",
+   "url": "https://www.kumabook.com/shop/miyahara/"
+  },
+  {
+   "name": "くまざわ書店 浦和美園店",
+   "address": "埼玉県さいたま市岩槻区美園東2-7-13",
+   "url": "https://www.kumabook.com/shop/urawa-misono/"
+  },
+  {
+   "name": "くまざわ書店 的場店",
+   "address": "埼玉県川越市的場新町21-10",
+   "url": "https://www.kumabook.com/shop/matoba/"
+  },
+  {
+   "name": "くまざわ書店 アズセカンド店",
+   "address": "埼玉県熊谷市筑波2-115",
+   "url": "https://www.kumabook.com/shop/az-second/"
+  },
+  {
+   "name": "くまざわ書店 ララガーデン川口店",
+   "address": "埼玉県川口市宮町18-9",
+   "url": "https://www.kumabook.com/shop/lalag-kawaguchi/"
+  },
+  {
+   "name": "くまざわ書店 秩父店",
+   "address": "埼玉県秩父市上野町805-14",
+   "url": "https://www.kumabook.com/shop/chichibu/"
+  },
+  {
+   "name": "くまざわ書店 飯能店",
+   "address": "埼玉県飯能市仲町11-21",
+   "url": "https://www.kumabook.com/shop/hannou/"
+  },
+  {
+   "name": "くまざわ書店 上尾店",
+   "address": "埼玉県上尾市宮本町1-1",
+   "url": "https://www.kumabook.com/shop/ageo/"
+  },
+  {
+   "name": "くまざわ書店 草加ヴァリエ店",
+   "address": "埼玉県草加市氷川町1970",
+   "url": "https://www.kumabook.com/shop/souka-varie/"
+  },
+  {
+   "name": "くまざわ書店 蕨錦町店",
+   "address": "埼玉県蕨市錦町1-12-1",
+   "url": "https://www.kumabook.com/shop/warabi-nishikicho/"
+  },
+  {
+   "name": "くまざわ書店 入間店",
+   "address": "埼玉県入間市河原町2-1",
+   "url": "https://www.kumabook.com/shop/iruma/"
+  },
+  {
+   "name": "くまざわ書店 和光店",
+   "address": "埼玉県和光市丸山台1-9-3",
+   "url": "https://www.kumabook.com/shop/wako/"
+  },
+  {
+   "name": "ACADEMIA 菖蒲店",
+   "address": "埼玉県久喜市菖蒲町菖蒲6005番地",
+   "url": "https://www.kumabook.com/shop/shobu/"
+  },
+  {
+   "name": "くまざわ書店 久喜店",
+   "address": "埼玉県久喜市久喜中央1-1-20",
+   "url": "https://www.kumabook.com/shop/kuki/"
+  },
+  {
+   "name": "くまざわ書店 鷲宮店",
+   "address": "埼玉県久喜市久本寺谷田7-1",
+   "url": "https://www.kumabook.com/shop/washinomiya/"
+  },
+  {
+   "name": "くまざわ書店 ふじみ野店",
+   "address": "埼玉県ふじみ野市福岡2-1-6",
+   "url": "https://www.kumabook.com/shop/fujimino/"
+  },
+  {
+   "name": "くまざわ書店 伊奈店",
+   "address": "埼玉県北足立郡伊奈町学園2丁目188-1",
+   "url": "https://www.kumabook.com/shop/unicus-ina/"
+  },
+  {
+   "name": "くまざわ書店 上里店",
+   "address": "埼玉県児玉郡上里町大字七本木2272-1",
+   "url": "https://www.kumabook.com/shop/kamisato/"
+  },
+  {
+   "name": "くまざわ書店 ペリエ千葉本店",
+   "address": "千葉県千葉市中央区新千葉１－１－１",
+   "url": "https://www.kumabook.com/shop/perie-chiba/"
+  },
+  {
+   "name": "くまざわ書店 ペリエ千葉エキナカ店",
+   "address": "千葉県千葉市中央区新千葉1-1-1",
+   "url": "https://www.kumabook.com/shop/perie-chiba-ekinaka/"
+  },
+  {
+   "name": "くまざわ書店 ペリエ西千葉店",
+   "address": "千葉県千葉市中央区春日２丁目２４−４",
+   "url": "https://www.kumabook.com/shop/perie-nishichiba/"
+  },
+  {
+   "name": "くまざわ書店 蘇我店",
+   "address": "千葉県千葉市中央区川崎町52-7",
+   "url": "https://www.kumabook.com/shop/soga/"
+  },
+  {
+   "name": "くまざわ書店 幕張店",
+   "address": "千葉県千葉市花見川区幕張町4-417-25",
+   "url": "https://www.kumabook.com/shop/makuhari/"
+  },
+  {
+   "name": "くまざわ書店 稲毛店",
+   "address": "千葉県千葉市稲毛区稲毛東3-19-11",
+   "url": "https://www.kumabook.com/shop/inage/"
+  },
+  {
+   "name": "くまざわ書店 ペリエ海浜幕張店",
+   "address": "千葉県千葉市美浜区ひび野2-110",
+   "url": "https://www.kumabook.com/shop/kaihinmakuhari/"
+  },
+  {
+   "name": "くまざわ書店 本八幡店",
+   "address": "千葉県市川市八幡2-17-1",
+   "url": "https://www.kumabook.com/shop/motoyamata/"
+  },
+  {
+   "name": "くまざわ書店 シャポー船橋店",
+   "address": "千葉県船橋市本町7-1-1",
+   "url": "https://www.kumabook.com/shop/funabashi/"
+  },
+  {
+   "name": "くまざわ書店 ららぽーとTOKYO-BAY店",
+   "address": "千葉県船橋市浜町2-1-1",
+   "url": "https://www.kumabook.com/shop/raraport-funabashi/"
+  },
+  {
+   "name": "くまざわ書店 ららテラスTOKYO-BAY店",
+   "address": "千葉県船橋市若松2丁目2－１",
+   "url": "https://www.kumabook.com/shop/rarat-tokyobay/"
+  },
+  {
+   "name": "くまざわ書店 木更津店",
+   "address": "千葉県木更津市ほたる野4-2-48",
+   "url": "https://www.kumabook.com/shop/kisarazu/"
+  },
+  {
+   "name": "くまざわ書店 松戸店",
+   "address": "千葉県松戸市松戸1181",
+   "url": "https://www.kumabook.com/shop/matsudo/"
+  },
+  {
+   "name": "くまざわ書店 公津店",
+   "address": "千葉県成田市公津の杜4-5-3",
+   "url": "https://www.kumabook.com/shop/kozu/"
+  },
+  {
+   "name": "くまざわ書店 ユーカリが丘店",
+   "address": "千葉県佐倉市西ユーカリが丘６丁目１２−３",
+   "url": "https://www.kumabook.com/shop/yukarigaoka/"
+  },
+  {
+   "name": "くまざわ書店 柏高島屋ステーションモール店",
+   "address": "千葉県柏市末広町1-1",
+   "url": "https://www.kumabook.com/shop/kashiwa-takashimaya/"
+  },
+  {
+   "name": "くまざわ書店 モラージュ柏店",
+   "address": "千葉県柏市大山台2-3-1",
+   "url": "https://www.kumabook.com/shop/mallage-kashiwa/"
+  },
+  {
+   "name": "くまざわ書店 八千代台店",
+   "address": "千葉県八千代市八千代台東1-1-10",
+   "url": "https://www.kumabook.com/shop/yachiyodai/"
+  },
+  {
+   "name": "くまざわ書店 勝田台店",
+   "address": "千葉県八千代市勝田台1-10",
+   "url": "https://www.kumabook.com/shop/katsutadai/"
+  },
+  {
+   "name": "くまざわ書店 新鎌ヶ谷店",
+   "address": "千葉県鎌ヶ谷市新鎌ヶ谷2-12-1",
+   "url": "https://www.kumabook.com/shop/shin-kamagaya/"
+  },
+  {
+   "name": "くまざわ書店 四街道店",
+   "address": "千葉県四街道市中央5番地",
+   "url": "https://www.kumabook.com/shop/yotsukaidou/"
+  },
+  {
+   "name": "くまざわ書店 鶴見店",
+   "address": "神奈川県横浜市鶴見区鶴見中央1-1-1",
+   "url": "https://www.kumabook.com/shop/tsurumi/"
+  },
+  {
+   "name": "くまざわ書店 ランドマーク店",
+   "address": "神奈川県横浜市西区みなとみらい2-2-1",
+   "url": "https://www.kumabook.com/shop/landmark/"
+  },
+  {
+   "name": "くまざわ書店 みなとみらい店",
+   "address": "神奈川県横浜市西区みなとみらい3-5-1",
+   "url": "https://www.kumabook.com/shop/minato-mirai/"
+  },
+  {
+   "name": "くまざわ書店 能見台店",
+   "address": "神奈川県横浜市金沢区能見台東3-1",
+   "url": "https://www.kumabook.com/shop/noukendai/"
+  },
+  {
+   "name": "くまざわ書店 アピタテラス横浜綱島店",
+   "address": "神奈川県横浜市港北区綱島東4-3-17",
+   "url": "https://www.kumabook.com/shop/apita-tsunashima/"
+  },
+  {
+   "name": "くまざわ書店 新横浜店",
+   "address": "神奈川県横浜市港北区新横浜3-4",
+   "url": "https://www.kumabook.com/shop/shinyokohama/"
+  },
+  {
+   "name": "浜書房 港南台バーズ店",
+   "address": "神奈川県横浜市港南区港南台3-1-3",
+   "url": "https://www.kumabook.com/shop/hamashobo-kounandai/"
+  },
+  {
+   "name": "くまざわ書店 ジョイナステラス二俣川店",
+   "address": "神奈川県横浜市旭区二俣川2-50-14",
+   "url": "https://www.kumabook.com/shop/futamatagawa/"
+  },
+  {
+   "name": "くまざわ書店 長津田店",
+   "address": "神奈川県横浜市緑区長津田みなみ台4-7-1",
+   "url": "https://www.kumabook.com/shop/nagatsuda/"
+  },
+  {
+   "name": "ACADEMIA 港北店",
+   "address": "神奈川県横浜市都筑区中川中央1-25-1",
+   "url": "https://www.kumabook.com/shop/kouhoku/"
+  },
+  {
+   "name": "くまざわ書店 さぎ沼店",
+   "address": "神奈川県川崎市宮前区鷺沼３丁目１－４０",
+   "url": "https://www.kumabook.com/shop/saginuma/"
+  },
+  {
+   "name": "ACADEMIAくまざわ書店 橋本店",
+   "address": "神奈川県相模原市緑区大山町1-22",
+   "url": "https://www.kumabook.com/shop/hashimoto/"
+  },
+  {
+   "name": "くまざわ書店 相模原店",
+   "address": "神奈川県相模原市中央区相模原1-1-19",
+   "url": "https://www.kumabook.com/shop/sagamihara/"
+  },
+  {
+   "name": "くまざわ書店 相模大野店",
+   "address": "神奈川県相模原市南区相模大野3-8-1",
+   "url": "https://www.kumabook.com/shop/sagami-oono/"
+  },
+  {
+   "name": "くまざわ書店 横須賀店",
+   "address": "神奈川県横須賀市本町2-1-12",
+   "url": "https://www.kumabook.com/shop/yokosuka/"
+  },
+  {
+   "name": "くまざわ書店 久里浜店",
+   "address": "神奈川県横須賀市久里浜4-4-10",
+   "url": "https://www.kumabook.com/shop/kurihama/"
+  },
+  {
+   "name": "くまざわ書店 大船店",
+   "address": "神奈川県鎌倉市大船1-25-30",
+   "url": "https://www.kumabook.com/shop/oofuna/"
+  },
+  {
+   "name": "くまざわ書店 湘南台店",
+   "address": "神奈川県藤沢市石川6-2-1",
+   "url": "https://www.kumabook.com/shop/syonandai/"
+  },
+  {
+   "name": "くまざわ書店 辻堂湘南モール店",
+   "address": "神奈川県藤沢市辻堂新町4-1-1",
+   "url": "https://www.kumabook.com/shop/tsujido-shonanmoll/"
+  },
+  {
+   "name": "くまざわ書店 新逗子店",
+   "address": "神奈川県逗子市逗子5-1-6",
+   "url": "https://www.kumabook.com/shop/shinzushi/"
+  },
+  {
+   "name": "くまざわ書店 本厚木店",
+   "address": "神奈川県厚木市中町2-2-1",
+   "url": "https://www.kumabook.com/shop/honatsugi/"
+  },
+  {
+   "name": "くまざわ書店 大和店",
+   "address": "神奈川県大和市大和東1-1-1",
+   "url": "https://www.kumabook.com/shop/yamato/"
+  },
+  {
+   "name": "くまざわ書店 大和鶴間店",
+   "address": "神奈川県大和市下鶴間1-3-1",
+   "url": "https://www.kumabook.com/shop/yamato-tsuruma/"
+  },
+  {
+   "name": "くまざわ書店 さがみ野店",
+   "address": "神奈川県海老名市東柏ヶ谷3-3-15",
+   "url": "https://www.kumabook.com/shop/sagamino/"
+  },
+  {
+   "name": "くまざわ書店 晴海トリトン店",
+   "address": "東京都中央区晴海1-8-16",
+   "url": "https://www.kumabook.com/shop/harumi-triton/"
+  },
+  {
+   "name": "くまざわ書店 田町店",
+   "address": "東京都港区芝浦3-1-21",
+   "url": "https://www.kumabook.com/shop/msb-tamachi/"
+  },
+  {
+   "name": "くまざわ書店 品川店",
+   "address": "東京都港区港南2-15-2",
+   "url": "https://www.kumabook.com/shop/shinagawa/"
+  },
+  {
+   "name": "くまざわ書店 東京オペラシティ店",
+   "address": "東京都新宿区西新宿3-20-2",
+   "url": "https://www.kumabook.com/shop/tokyo-operacity/"
+  },
+  {
+   "name": "くまざわ書店 都庁店",
+   "address": "東京都新宿区西新宿2-8-1",
+   "url": "https://www.kumabook.com/shop/tocho/"
+  },
+  {
+   "name": "くまざわ書店 浅草店",
+   "address": "東京都台東区花川戸1-4-1",
+   "url": "https://www.kumabook.com/shop/asakusa/"
+  },
+  {
+   "name": "くまざわ書店 錦糸町店",
+   "address": "東京都墨田区錦糸2-2-1",
+   "url": "https://www.kumabook.com/shop/kinshicho/"
+  },
+  {
+   "name": "くまざわ書店 豊洲店",
+   "address": "東京都江東区豊洲3-4-8",
+   "url": "https://www.kumabook.com/shop/toyosu/"
+  },
+  {
+   "name": "くまざわ書店アリオ北砂",
+   "address": "東京都江東区北砂2-17-1",
+   "url": "https://www.kumabook.com/shop/ario-kitasuna/"
+  },
+  {
+   "name": "くまざわ書店 グランデュオ蒲田店",
+   "address": "東京都大田区蒲田5-13-1",
+   "url": "https://www.kumabook.com/shop/granduo-kamata/"
+  },
+  {
+   "name": "くまざわ書店 イトーヨーカドー大森店",
+   "address": "東京都大田区大森北2-13-1",
+   "url": "https://www.kumabook.com/shop/iy-oomori/"
+  },
+  {
+   "name": "くまざわ書店 田園調布店",
+   "address": "東京都大田区田園調布2-62-4",
+   "url": "https://www.kumabook.com/shop/denen-chofu/"
+  },
+  {
+   "name": "くまざわ書店 池袋店",
+   "address": "東京都豊島区西池袋1-11-1",
+   "url": "https://www.kumabook.com/shop/ikebukuro/"
+  },
+  {
+   "name": "くまざわ書店 サンシャインシティアルパ店",
+   "address": "東京都豊島区東池袋3-1-2",
+   "url": "https://www.kumabook.com/shop/sunshinevity-alpa/"
+  },
+  {
+   "name": "くまざわ書店 南千住店",
+   "address": "東京都荒川区南千住4-7-2",
+   "url": "https://www.kumabook.com/shop/minami-senjyu/"
+  },
+  {
+   "name": "くまざわ書店 大泉学園店",
+   "address": "東京都練馬区東大泉5-43-1",
+   "url": "https://www.kumabook.com/shop/ooizumi-gakuen/"
+  },
+  {
+   "name": "くまざわ書店エキア北千住",
+   "address": "東京都足立区千住旭町42-1",
+   "url": "https://www.kumabook.com/shop/ekia-kitasenjyu/"
+  },
+  {
+   "name": "くまざわ書店 千住大橋店",
+   "address": "東京都足立区千住橋戸町1-13",
+   "url": "https://www.kumabook.com/shop/senju-oohashi/"
+  },
+  {
+   "name": "くまざわ書店 ららテラス北綾瀬店",
+   "address": "東京都足立区谷中四丁目8番1号",
+   "url": "https://www.kumabook.com/shop/lalakitaayase/"
+  },
+  {
+   "name": "くまざわ書店 イトーヨーカドー綾瀬店",
+   "address": "東京都足立区綾瀬3-4-25",
+   "url": "https://www.kumabook.com/shop/iy-ayase/"
+  },
+  {
+   "name": "くまざわ書店 西新井店",
+   "address": "東京都足立区西新井栄町1-20-1",
+   "url": "https://www.kumabook.com/shop/nishi-arai/"
+  },
+  {
+   "name": "くまざわ書店 船堀店",
+   "address": "東京都江戸川区船堀4-1-1",
+   "url": "https://www.kumabook.com/shop/hunabori/"
+  },
+  {
+   "name": "くまざわ書店 八王子店",
+   "address": "東京都八王子市旭町2-11",
+   "url": "https://www.kumabook.com/shop/hachiouji/"
+  },
+  {
+   "name": "くまざわ書店 八王子オクトーレ店",
+   "address": "東京都八王子市旭町9-1",
+   "url": "https://www.kumabook.com/shop/octore/"
+  },
+  {
+   "name": "くまざわ書店 八王子南口店",
+   "address": "東京都八王子市子安4-7-1",
+   "url": "https://www.kumabook.com/shop/hachiouji-minamiguchi/"
+  },
+  {
+   "name": "くまざわ書店 西八王子店",
+   "address": "東京都八王子市千人町2-20-3",
+   "url": "https://www.kumabook.com/shop/nishi-hachiouji/"
+  },
+  {
+   "name": "くまざわ書店 イーアス高尾店",
+   "address": "東京都八王子市東浅川町550-1",
+   "url": "https://www.kumabook.com/shop/iias-takao/"
+  },
+  {
+   "name": "くまざわ書店 八王子みなみ野店",
+   "address": "東京都八王子市みなみ野1-2-1",
+   "url": "https://www.kumabook.com/shop/hachiouji-minamino/"
+  },
+  {
+   "name": "くまざわ書店 昭島店",
+   "address": "東京都昭島市代官山２丁目３番１号",
+   "url": "https://www.kumabook.com/shop/akishima/"
+  },
+  {
+   "name": "くまざわ書店 調布店",
+   "address": "東京都調布市布田4-4-22",
+   "url": "https://www.kumabook.com/shop/chofu/"
+  },
+  {
+   "name": "くまざわ書店 国領店",
+   "address": "東京都調布市国領町8-2-64",
+   "url": "https://www.kumabook.com/shop/kokuryo/"
+  },
+  {
+   "name": "くまざわ書店 町田根岸店",
+   "address": "東京都町田市根岸2-18-1",
+   "url": "https://www.kumabook.com/shop/machida-negishi/"
+  },
+  {
+   "name": "くまざわ書店 武蔵小金井北口店",
+   "address": "東京都小金井市本町5-11-2",
+   "url": "https://www.kumabook.com/shop/musashikoganei-kitaguchi/"
+  },
+  {
+   "name": "くまざわ書店 イトーヨーカドー武蔵小金井店",
+   "address": "東京都小金井市本町6-14-9",
+   "url": "https://www.kumabook.com/shop/iy-musashikoganei/"
+  },
+  {
+   "name": "くまざわ書店 リコパ東大和店",
+   "address": "東京都東大和市桜ヶ丘2-142-1",
+   "url": "https://www.kumabook.com/shop/licopa-higashi-yamato/"
+  },
+  {
+   "name": "くまざわ書店 桜ヶ丘店",
+   "address": "東京都多摩市関戸1-11-1",
+   "url": "https://www.kumabook.com/shop/sakuragaoka/"
+  },
+  {
+   "name": "くまざわ書店 永山店",
+   "address": "東京都多摩市永山1-4",
+   "url": "https://www.kumabook.com/shop/nagayama/"
+  },
+  {
+   "name": "くまざわ書店 稲城店",
+   "address": "東京都稲城市矢野口2284-1",
+   "url": "https://www.kumabook.com/shop/inagi/"
+  },
+  {
+   "name": "くまざわ書店 CoCoLo新潟店",
+   "address": "新潟県新潟市中央区花園1丁目1-1",
+   "url": "https://www.kumabook.com/shop/cocolo-niigata/"
+  },
+  {
+   "name": "くまざわ書店 新潟デッキィ店",
+   "address": "新潟県新潟市中央区上近江4-12-20",
+   "url": "https://www.kumabook.com/shop/niigata-dekky/"
+  },
+  {
+   "name": "くまざわ書店 新潟亀田店",
+   "address": "新潟県新潟市江南区鵜ノ子4-466",
+   "url": "https://www.kumabook.com/shop/niigata-kameda/"
+  },
+  {
+   "name": "くまざわ書店 新潟西店",
+   "address": "新潟県新潟市西区小新5-7-21",
+   "url": "https://www.kumabook.com/shop/niigata-nishi/"
+  },
+  {
+   "name": "くまざわ書店 CoCoLo長岡店",
+   "address": "新潟県長岡市城内町1-611-1",
+   "url": "https://www.kumabook.com/shop/cocolonagaoka/"
+  },
+  {
+   "name": "くまざわ書店 長岡店",
+   "address": "新潟県長岡市千秋2-278",
+   "url": "https://www.kumabook.com/shop/nagaoka/"
+  },
+  {
+   "name": "くまざわ書店 富山マルート店",
+   "address": "富山県富山市明輪町１番２３１号",
+   "url": "https://www.kumabook.com/shop/toyama-maroot/"
+  },
+  {
+   "name": "くまざわ書店 富山店",
+   "address": "富山県富山市上冨居3-8-38",
+   "url": "https://www.kumabook.com/shop/toyama/"
+  },
+  {
+   "name": "くまざわ書店 セレオ甲府店",
+   "address": "甲府市丸の内１丁目1-8",
+   "url": "https://www.kumabook.com/shop/kofu/"
+  },
+  {
+   "name": "くまざわ書店 双葉店",
+   "address": "山梨県甲斐市志田字柿木645-1",
+   "url": "https://www.kumabook.com/shop/futaba/"
+  },
+  {
+   "name": "くまざわ書店 上田店",
+   "address": "長野県上田市天神3-5-1",
+   "url": "https://www.kumabook.com/shop/ueda/"
+  },
+  {
+   "name": "くまざわ書店 GAZA広丘店",
+   "address": "長野県塩尻市大字広丘野村1688番地1",
+   "url": "https://www.kumabook.com/shop/gaza-hirooka/"
+  },
+  {
+   "name": "くまざわ書店 柳津店",
+   "address": "岐阜県岐阜市柳津町丸野3-3-6",
+   "url": "https://www.kumabook.com/shop/yanaizu/"
+  },
+  {
+   "name": "ACADEMIA 大垣店",
+   "address": "岐阜県大垣市林町6-80-21",
+   "url": "https://www.kumabook.com/shop/oogaki/"
+  },
+  {
+   "name": "いけだ書店 北方店",
+   "address": "岐阜県本巣郡北方町平成2-3",
+   "url": "https://www.kumabook.com/shop/kitagata/"
+  },
+  {
+   "name": "くまざわ書店 沼津店",
+   "address": "静岡県沼津市大手町1-1-1",
+   "url": "https://www.kumabook.com/shop/numazu/"
+  },
+  {
+   "name": "くまざわ書店 三島店",
+   "address": "静岡県三島市中田町9-30",
+   "url": "https://www.kumabook.com/shop/mishima/"
+  },
+  {
+   "name": "くまざわ書店 千代田橋店",
+   "address": "愛知県名古屋市千種区千代田橋2-1-1",
+   "url": "https://www.kumabook.com/shop/chiyoda-bashi/"
+  },
+  {
+   "name": "くまざわ書店 名古屋北店",
+   "address": "愛知県名古屋市北区辻町9-1",
+   "url": "https://www.kumabook.com/shop/nagoya-kita/"
+  },
+  {
+   "name": "くまざわ書店 名古屋セントラルパーク店",
+   "address": "愛知県名古屋市中区錦3-15-13先セントラルパーク地下街",
+   "url": "https://www.kumabook.com/shop/nagoya-centralpark/"
+  },
+  {
+   "name": "くまざわ書店 名古屋南店",
+   "address": "愛知県名古屋市南区豊田4-9-47",
+   "url": "https://www.kumabook.com/shop/nagoya-minami/"
+  },
+  {
+   "name": "くまざわ書店 鳴海店",
+   "address": "愛知県名古屋市緑区浦里3-232",
+   "url": "https://www.kumabook.com/shop/narumi/"
+  },
+  {
+   "name": "くまざわ書店 岡崎北店",
+   "address": "愛知県岡崎市日名北町4-46",
+   "url": "https://www.kumabook.com/shop/okazaki-kita/"
+  },
+  {
+   "name": "くまざわ書店 一宮店",
+   "address": "愛知県一宮市両郷町1-2",
+   "url": "https://www.kumabook.com/shop/ichinomiya/"
+  },
+  {
+   "name": "くまざわ書店 ヨロッカ春日井店",
+   "address": "愛知県春日井市六軒屋町字東丘２２番地",
+   "url": "https://www.kumabook.com/shop/iias-kasugai/"
+  },
+  {
+   "name": "くまざわ書店 刈谷店",
+   "address": "愛知県刈谷市南桜町2-56-1",
+   "url": "https://www.kumabook.com/shop/kariya/"
+  },
+  {
+   "name": "くまざわ書店 ららぽーと安城店",
+   "address": "愛知県安城市大東町9-30",
+   "url": "https://www.kumabook.com/shop/rarapo-anjou/"
+  },
+  {
+   "name": "くまざわ書店 犬山店",
+   "address": "愛知県犬山市天神町1-1",
+   "url": "https://www.kumabook.com/shop/inuyama/"
+  },
+  {
+   "name": "くまざわ書店 桃花台店",
+   "address": "愛知県小牧市古雅1-1",
+   "url": "https://www.kumabook.com/shop/tokadai/"
+  },
+  {
+   "name": "くまざわ書店 稲沢店",
+   "address": "愛知県稲沢市天池五反田町1",
+   "url": "https://www.kumabook.com/shop/inazawa/"
+  },
+  {
+   "name": "くまざわ書店 東海荒尾店",
+   "address": "愛知県東海市荒尾町山王前60番地",
+   "url": "https://www.kumabook.com/shop/toukai-arao/"
+  },
+  {
+   "name": "くまざわ書店 岩倉店",
+   "address": "愛知県岩倉市旭町1-25",
+   "url": "https://www.kumabook.com/shop/iwakura/"
+  },
+  {
+   "name": "くまざわ書店 長久手店",
+   "address": "愛知県長久手市戸田谷901番地１",
+   "url": "https://www.kumabook.com/shop/nagakute/"
+  },
+  {
+   "name": "いけだ書店 大口店",
+   "address": "愛知県丹羽郡大口町丸2-36",
+   "url": "https://www.kumabook.com/shop/ooguchi/"
+  },
+  {
+   "name": "くまざわ書店 阿久比店",
+   "address": "愛知県知多郡阿久比町椋岡字徳吉1-12",
+   "url": "https://www.kumabook.com/shop/agui/"
+  },
+  {
+   "name": "くまざわ書店 松阪店",
+   "address": "三重県松阪市市場庄町1266番地1",
+   "url": "https://www.kumabook.com/shop/matsusaka/"
+  },
+  {
+   "name": "くまざわ書店 長浜店",
+   "address": "滋賀県長浜市小堀町450",
+   "url": "https://www.kumabook.com/shop/nagahama/"
+  },
+  {
+   "name": "くまざわ書店 京都ポルタ店",
+   "address": "京都府京都市下京区烏丸通塩小路下る東塩小路町９０２",
+   "url": "https://www.kumabook.com/shop/porta-kyoto/"
+  },
+  {
+   "name": "くまざわ書店 桃山店",
+   "address": "京都府京都市伏見区桃山町山ノ下32",
+   "url": "https://www.kumabook.com/shop/momoyama/"
+  },
+  {
+   "name": "ACADEMIA けいはんな店",
+   "address": "京都府相楽郡精華町精華台9-2-4",
+   "url": "https://www.kumabook.com/shop/keihanna/"
+  },
+  {
+   "name": "くまざわ書店 阿倍野店",
+   "address": "大阪府大阪市阿倍野区阿倍野筋1-6-1",
+   "url": "https://www.kumabook.com/shop/abeno/"
+  },
+  {
+   "name": "くまざわ書店 津久野店",
+   "address": "大阪府堺市西区下田町20-1",
+   "url": "https://www.kumabook.com/shop/tsukuno/"
+  },
+  {
+   "name": "くまざわ書店 守口店",
+   "address": "大阪府守口市河原町8-3",
+   "url": "https://www.kumabook.com/shop/moriguchi/"
+  },
+  {
+   "name": "ACADEMIAくまざわ書店 すみのどう店",
+   "address": "大阪府大東市赤井1-4-1",
+   "url": "https://www.kumabook.com/shop/suminodou/"
+  },
+  {
+   "name": "くまざわ書店 ららぽーと和泉店",
+   "address": "大阪府和泉市あゆみ野4-4-7",
+   "url": "https://www.kumabook.com/shop/rarapo-izumi/"
+  },
+  {
+   "name": "くまざわ書店 みのおキューズモール店",
+   "address": "大阪府箕面市西宿１丁目17-22",
+   "url": "https://www.kumabook.com/shop/minoo/"
+  },
+  {
+   "name": "くまざわ書店 藤原台店",
+   "address": "兵庫県神戸市北区藤原台中町１丁目２番地２号",
+   "url": "https://www.kumabook.com/shop/fujiwaradai/"
+  },
+  {
+   "name": "くまざわ書店 あまがさき店",
+   "address": "兵庫県尼崎市潮江1-3-1",
+   "url": "https://www.kumabook.com/shop/amagasaki/"
+  },
+  {
+   "name": "くまざわ書店 明石店",
+   "address": "兵庫県明石市二見町西二見駅前1-18",
+   "url": "https://www.kumabook.com/shop/akashi/"
+  },
+  {
+   "name": "くまざわ書店 甲子園店",
+   "address": "兵庫県西宮市甲子園高潮町3-3",
+   "url": "https://www.kumabook.com/shop/koushien/"
+  },
+  {
+   "name": "くまざわ書店 加古川店",
+   "address": "兵庫県加古川市別府町緑町2",
+   "url": "https://www.kumabook.com/shop/kakogawa/"
+  },
+  {
+   "name": "くまざわ書店 川西阪急スクエア店",
+   "address": "兵庫県川西市栄町26番1号",
+   "url": "https://www.kumabook.com/shop/kawanishi/"
+  },
+  {
+   "name": "くまざわ書店 真美ヶ丘店",
+   "address": "奈良県北葛城郡広陵町馬見中４－１",
+   "url": "https://www.kumabook.com/shop/ecoll-mami/"
+  },
+  {
+   "name": "くまざわ書店 和歌山MIO店",
+   "address": "和歌山県和歌山市美園町5-61",
+   "url": "https://www.kumabook.com/shop/wakayama-mio/"
+  },
+  {
+   "name": "くまざわ書店 安芸店",
+   "address": "広島県安芸郡坂町北新地2-3-30",
+   "url": "https://www.kumabook.com/shop/aki/"
+  },
+  {
+   "name": "くまざわ書店 下関店",
+   "address": "山口県下関市竹崎町4-4-7",
+   "url": "https://www.kumabook.com/shop/shimonoseki/"
+  },
+  {
+   "name": "くまざわ書店 おのだサンパーク店",
+   "address": "山口県山陽小野田市中川6丁目4番1号",
+   "url": "https://www.kumabook.com/shop/onoda/"
+  },
+  {
+   "name": "くまざわ書店 高松店",
+   "address": "香川県高松市三条町中所608-1",
+   "url": "https://www.kumabook.com/shop/takamatsu/"
+  },
+  {
+   "name": "くまざわ書店 高松オルネ店",
+   "address": "香川県高松市浜ノ町1-20",
+   "url": "https://www.kumabook.com/shop/com-takamatsu/"
+  },
+  {
+   "name": "くまざわ書店 若松店",
+   "address": "福岡県北九州市若松区二島1-3-1",
+   "url": "https://www.kumabook.com/shop/wakamatsu/"
+  },
+  {
+   "name": "くまざわ書店 小倉店",
+   "address": "福岡県北九州市小倉北区浅野1-1-1",
+   "url": "https://www.kumabook.com/shop/kokura/"
+  },
+  {
+   "name": "ACADEMIA サンリブ小倉店",
+   "address": "福岡県北九州市小倉南区上葛原2-14-1",
+   "url": "https://www.kumabook.com/shop/sunlive-kokura/"
+  },
+  {
+   "name": "くまざわ書店 サンリブもりつね店",
+   "address": "福岡県北九州市小倉南区守恒1-11-25",
+   "url": "https://www.kumabook.com/shop/sunlive-moritsune/"
+  },
+  {
+   "name": "くまざわ書店 ららぽーと福岡店",
+   "address": "福岡県福岡市博多区那珂６丁目２３番１号",
+   "url": "https://www.kumabook.com/shop/rarapo-fukuoka/"
+  },
+  {
+   "name": "くまざわ書店 福岡西新店",
+   "address": "福岡県福岡市早良区西新4-1-1",
+   "url": "https://www.kumabook.com/shop/praliva-nishijin/"
+  },
+  {
+   "name": "くまざわ書店 佐賀店",
+   "address": "佐賀県佐賀市大和町尼寺3535",
+   "url": "https://www.kumabook.com/shop/saga/"
+  },
+  {
+   "name": "くまざわ書店 モラージュ佐賀店",
+   "address": "佐賀県佐賀市巨勢町大字牛島730",
+   "url": "https://www.kumabook.com/shop/saga-mallage/"
+  },
+  {
+   "name": "くまざわ書店 佐世保店",
+   "address": "長崎県佐世保市本島町4-7",
+   "url": "https://www.kumabook.com/shop/sasebo/"
+  },
+  {
+   "name": "くまざわ書店 熊本店",
+   "address": "熊本県熊本市手取本町8-1",
+   "url": "https://www.kumabook.com/shop/kumamoto/"
+  },
+  {
+   "name": "くまざわ書店 大分明野店",
+   "address": "大分県大分市明野東1丁目1番1号",
+   "url": "https://www.kumabook.com/shop/ooita-akeno/"
+  },
+  {
+   "name": "くまざわ書店 大分店",
+   "address": "大分県大分市公園通り西2-1",
+   "url": "https://www.kumabook.com/shop/ooita/"
+  },
+  {
+   "name": "くまざわ書店 延岡店",
+   "address": "宮崎県延岡市旭町2-2-1",
+   "url": "https://www.kumabook.com/shop/nobeoka/"
+  },
+  {
+   "name": "くまざわ書店 那覇店",
+   "address": "沖縄県那覇市字金城5-10-2",
+   "url": "https://www.kumabook.com/shop/naha/"
+  },
+  {
+   "name": "球陽堂書房 メインプレイス店",
+   "address": "沖縄県那覇市おもろまち4-4-9",
+   "url": "https://www.kumabook.com/shop/mainplace/"
+  },
+  {
+   "name": "田園書房 具志川店",
+   "address": "沖縄県うるま市江洲450-1",
+   "url": "https://www.kumabook.com/shop/gushikawa/"
+  },
+  {
+   "name": "球陽堂書房 西原シティ店",
+   "address": "沖縄県中頭郡西原町嘉手苅130",
+   "url": "https://www.kumabook.com/shop/nishiharacity/"
+  },
+  {
+   "name": "田園書房 つかざん店",
+   "address": "沖縄県島尻郡南風原町字津嘉山1471-2",
+   "url": "https://www.kumabook.com/shop/tsukazan/"
+  },
+  {
+   "name": "球陽堂書房 サンエー八重瀬店",
+   "address": "沖縄県島尻郡八重瀬町字屋宜原95-1",
+   "url": "https://www.kumabook.com/shop/yaese/"
+  }
+ ]
+}

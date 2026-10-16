@@ -1,0 +1,43 @@
+# 毎月1日に、大手チェーンの公式店舗一覧と地図データを突き合わせて、報告を Issue にする
+# 手で動かすときは Actions → 「チェーン公式一覧との突き合わせ」 → Run workflow
+name: チェーン公式一覧との突き合わせ
+on:
+  schedule:
+    - cron: '0 21 1 * *'   # 毎月2日 06:00 JST（UTC 21:00 の1日）
+  workflow_dispatch: {}
+permissions:
+  contents: write
+  issues: write
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: 突き合わせを実行
+        run: node tools/chain_check.js
+      - name: 結果を枝に保存
+        id: save
+        run: |
+          DATE=$(date -u +%Y-%m-%d)
+          BR="chain-check/$DATE"
+          git config user.name "chain-check bot"
+          git config user.email "chain-check@users.noreply.github.com"
+          git checkout -b "$BR"
+          git add data/chain_check
+          git commit -m "chain-check $DATE：公式店舗一覧との突き合わせ（自動）" || echo "no changes"
+          git push -f origin "$BR"
+          echo "branch=$BR" >> "$GITHUB_OUTPUT"
+          echo "date=$DATE" >> "$GITHUB_OUTPUT"
+      - name: 報告を Issue にする
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          DATE=${{ steps.save.outputs.date }}
+          BR=${{ steps.save.outputs.branch }}
+          REPORT="data/chain_check/report_$DATE.md"
+          BODY=$(mktemp)
+          { echo "自動の突き合わせ結果です。枝 \`$BR\` に報告と候補（\`data/chain_check/candidates.json\`）があります。"; echo; echo "確かめて反映するとき：候補を \`data/overrides.json\` に写し、\`node tools/build_data.js data/bookstores_raw.json data/bookstores.json\` → 版を上げて push。"; echo; head -c 60000 "$REPORT"; } > "$BODY"
+          gh issue create --title "チェーン公式一覧との突き合わせ $DATE" --body-file "$BODY" --label "chain-check" || gh issue create --title "チェーン公式一覧との突き合わせ $DATE" --body-file "$BODY"

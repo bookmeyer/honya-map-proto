@@ -1,0 +1,311 @@
+{
+ "fetchedAt": "2026-10-16T01:38:54.144Z",
+ "list": [
+  {
+   "name": "有隣堂 伊勢佐木町本店",
+   "address": "神奈川県横浜市中区伊勢佐木町 1-4-1",
+   "url": "https://www.yurindo.co.jp/store/honten/",
+   "lat": 35.444702695449884,
+   "lon": 139.63286664524384
+  },
+  {
+   "name": "有隣堂 伊勢佐木町本店 医学書センター",
+   "address": "神奈川県横浜市中区伊勢佐木町 1-4-1 伊勢佐木町本店5F",
+   "url": "https://www.yurindo.co.jp/store/honten-medical/",
+   "lat": 35.44454211080849,
+   "lon": 139.6328464815661
+  },
+  {
+   "name": "有隣堂 BASEGATE横浜関内店",
+   "address": "",
+   "url": ""
+  },
+  {
+   "name": "有隣堂 横浜駅西口ジョイナス店",
+   "address": "神奈川県横浜市西区南幸1-4-B1F",
+   "url": "https://www.yurindo.co.jp/store/yokohama-joinus/",
+   "lat": 35.466882052454416,
+   "lon": 139.62023219947
+  },
+  {
+   "name": "有隣堂 横浜駅西口コミック王国",
+   "address": "神奈川県横浜市西区南幸1-4-B1F",
+   "url": "https://www.yurindo.co.jp/store/yokohama-comic/",
+   "lat": 35.46722650000002,
+   "lon": 139.6202180259288
+  },
+  {
+   "name": "有隣堂 横浜駅西口エキニア横浜店",
+   "address": "神奈川県横浜市西区北幸1-1-8 エキニア横浜B1F",
+   "url": "https://www.yurindo.co.jp/store/yokohama-ekinear/",
+   "lat": 35.467405848927754,
+   "lon": 139.62068204231693
+  },
+  {
+   "name": "有隣堂 横浜駅西口店 医学書センター",
+   "address": "神奈川県横浜市西区北幸1-1-8 エキニア横浜B1F",
+   "url": "https://www.yurindo.co.jp/store/yokohama-medical/",
+   "lat": 35.46717867608042,
+   "lon": 139.6208467595136
+  },
+  {
+   "name": "有隣堂 ルミネ横浜店",
+   "address": "神奈川県横浜市西区高島2-16-1 ルミネ横浜B2F",
+   "url": "https://www.yurindo.co.jp/store/yokohama-lumine/",
+   "lat": 35.46555804245811,
+   "lon": 139.62218769747298
+  },
+  {
+   "name": "有隣堂 戸塚モディ店",
+   "address": "神奈川県横浜市戸塚区戸塚町10 戸塚モディ4F",
+   "url": "https://www.yurindo.co.jp/store/totsuka-modi/",
+   "lat": 35.401297238176504,
+   "lon": 139.53387369264868
+  },
+  {
+   "name": "有隣堂 戸塚駅地下売店",
+   "address": "神奈川県横浜市戸塚区戸塚町12-1 戸塚駅B1F",
+   "url": "https://www.yurindo.co.jp/store/totsuka-chika/",
+   "lat": 35.4011534620093,
+   "lon": 139.52939372059328
+  },
+  {
+   "name": "有隣堂 東急プラザ戸塚店",
+   "address": "神奈川県横浜市戸塚区戸塚町16-1 東急プラザ戸塚2F",
+   "url": "https://www.yurindo.co.jp/store/totsuka-tokyu/",
+   "lat": 35.4009623,
+   "lon": 139.5333963
+  },
+  {
+   "name": "有隣堂 トレッサ横浜店",
+   "address": "神奈川県横浜市港北区師岡町700 トレッサ横浜 北棟2F",
+   "url": "https://www.yurindo.co.jp/store/tressa/",
+   "lat": 35.52587925605065,
+   "lon": 139.64497859621477
+  },
+  {
+   "name": "有隣堂 キュービックプラザ新横浜店",
+   "address": "神奈川県横浜市港北区新横浜2-100-45 キュービックプラザ新横浜 8F",
+   "url": "https://www.yurindo.co.jp/store/shinyokohama/",
+   "lat": 35.50773662870499,
+   "lon": 139.61728715402586
+  },
+  {
+   "name": "有隣堂 センター南駅店",
+   "address": "神奈川県横浜市都筑区茅ヶ崎中央1-1 センター南駅構内",
+   "url": "https://www.yurindo.co.jp/store/center/",
+   "lat": 35.5447774,
+   "lon": 139.5740165
+  },
+  {
+   "name": "有隣堂 たまプラーザテラス店",
+   "address": "神奈川県横浜市青葉区美しが丘1-1-2 たまプラーザテラス ゲートプラザ1F・2F",
+   "url": "https://www.yurindo.co.jp/store/tamaplaza/",
+   "lat": 35.5768876,
+   "lon": 139.5582175
+  },
+  {
+   "name": "有隣堂 アトレ川崎店",
+   "address": "神奈川県川崎市川崎区駅前本町26-1 アトレ川崎4F",
+   "url": "https://www.yurindo.co.jp/store/kawasaki/",
+   "lat": 35.531352291172055,
+   "lon": 139.69646507301118
+  },
+  {
+   "name": "有隣堂 武蔵小杉東急スクエア店",
+   "address": "神奈川県川崎市中原区小杉町3-472 武蔵小杉東急スクエア3F",
+   "url": "https://www.yurindo.co.jp/store/musashikosugi/",
+   "lat": 35.57587787512187,
+   "lon": 139.65807806137195
+  },
+  {
+   "name": "有隣堂 新百合ヶ丘エルミロード店",
+   "address": "神奈川県川崎市麻生区上麻生1-4-1 小田急新百合ヶ丘エルミロード4F",
+   "url": "https://www.yurindo.co.jp/store/shinyuri/",
+   "lat": 35.603432069756394,
+   "lon": 139.50803785269818
+  },
+  {
+   "name": "有隣堂 湘南台ウエストプラザ店",
+   "address": "神奈川県藤沢市湘南台2-5-11 湘南台ウエストプラザ1番地 2F",
+   "url": "https://www.yurindo.co.jp/store/shonandai/",
+   "lat": 35.39617248480108,
+   "lon": 139.46461642336905
+  },
+  {
+   "name": "有隣堂 藤沢店",
+   "address": "神奈川県藤沢市南藤沢2-1-1 フジサワ名店ビル 2・3・4・5F",
+   "url": "https://www.yurindo.co.jp/store/fujisawa/",
+   "lat": 35.33868539219087,
+   "lon": 139.4879974153331
+  },
+  {
+   "name": "有隣堂 藤沢本町トレアージュ白旗店",
+   "address": "神奈川県藤沢市藤沢2-3-15 トレアージュ白旗2F",
+   "url": "https://www.yurindo.co.jp/store/shirahata/",
+   "lat": 35.34928588067614,
+   "lon": 139.47921177611275
+  },
+  {
+   "name": "有隣堂 テラスモール湘南店",
+   "address": "神奈川県藤沢市辻堂神台1-3-1 テラスモール湘南4F",
+   "url": "https://www.yurindo.co.jp/store/tsujido/",
+   "lat": 35.3375129,
+   "lon": 139.4456315
+  },
+  {
+   "name": "有隣堂 ラスカ茅ヶ崎店",
+   "address": "神奈川県茅ヶ崎市元町1-1 ラスカ茅ヶ崎5F",
+   "url": "https://www.yurindo.co.jp/store/chigasaki/",
+   "lat": 35.3303329824793,
+   "lon": 139.40562315983686
+  },
+  {
+   "name": "有隣堂 ららぽーと湘南平塚店",
+   "address": "神奈川県平塚市天沼10-1 ららぽーと湘南平塚3F",
+   "url": "https://www.yurindo.co.jp/store/hiratsuka/",
+   "lat": 35.3363006067793,
+   "lon": 139.3538895859086
+  },
+  {
+   "name": "有隣堂 厚木店",
+   "address": "神奈川県厚木市中町2-6 三成ほていやビル",
+   "url": "https://www.yurindo.co.jp/store/honatsugi/",
+   "lat": 35.4406782,
+   "lon": 139.3638945
+  },
+  {
+   "name": "有隣堂 ららぽーと海老名店",
+   "address": "神奈川県海老名市扇町13-1 ららぽーと海老名4F",
+   "url": "https://www.yurindo.co.jp/store/ebina/",
+   "lat": 35.4548876334012,
+   "lon": 139.3890065552145
+  },
+  {
+   "name": "有隣堂 ミウィ橋本店",
+   "address": "神奈川県相模原市緑区橋本3-28-1 ミウィ橋本4F",
+   "url": "https://www.yurindo.co.jp/store/hashimoto/",
+   "lat": 35.594925932690366,
+   "lon": 139.3450985128864
+  },
+  {
+   "name": "有隣堂 淵野辺店",
+   "address": "神奈川県相模原市中央区淵野辺4-16-34",
+   "url": "https://www.yurindo.co.jp/store/huchinobe/",
+   "lat": 35.56804088013906,
+   "lon": 139.3955593063471
+  },
+  {
+   "name": "有隣堂 ラスカ小田原店",
+   "address": "神奈川県小田原市栄町1-1-9 ラスカ小田原3F",
+   "url": "https://www.yurindo.co.jp/store/odawara/",
+   "lat": 35.2553308,
+   "lon": 139.1556983
+  },
+  {
+   "name": "有隣堂 医学書センター 北里大学病院店",
+   "address": "神奈川県相模原市南区北里 1-15-1 1号館1F",
+   "url": "https://www.yurindo.co.jp/store/kitazato-medical/",
+   "lat": 35.53790130502751,
+   "lon": 139.3948916039773
+  },
+  {
+   "name": "有隣堂 グランデュオ蒲田店",
+   "address": "東京都大田区西蒲田7-68-1 グランデュオ蒲田 西館6F",
+   "url": "https://www.yurindo.co.jp/store/tokyo-kamata/",
+   "lat": 35.56254789529871,
+   "lon": 139.71564689701736
+  },
+  {
+   "name": "有隣堂 アトレ大井町店",
+   "address": "東京都品川区大井1-2-1 アトレ大井町5F",
+   "url": "https://www.yurindo.co.jp/store/tokyo-oimachi/",
+   "lat": 35.60666212957878,
+   "lon": 139.73372373219078
+  },
+  {
+   "name": "有隣堂 アトレ目黒店",
+   "address": "東京都品川区上大崎2-16-9 アトレ目黒１ 5F",
+   "url": "https://www.yurindo.co.jp/store/tokyo-meguro/",
+   "lat": 35.63401539979172,
+   "lon": 139.7155673423486
+  },
+  {
+   "name": "有隣堂 アトレ恵比寿店",
+   "address": "東京都渋谷区恵比寿南1-5-5 アトレ恵比寿5F",
+   "url": "https://www.yurindo.co.jp/store/tokyo-ebisu/",
+   "lat": 35.646315927503615,
+   "lon": 139.7098385816037
+  },
+  {
+   "name": "有隣堂 アトレ中野店",
+   "address": "東京都中野区中野4-9-26 アトレ中野4F",
+   "url": "https://www.yurindo.co.jp/store/tokyo-nakano/",
+   "lat": 35.70570646427532,
+   "lon": 139.66498883757697
+  },
+  {
+   "name": "有隣堂 アトレ亀戸店",
+   "address": "東京都江東区亀戸5-1-1 アトレ亀戸5F",
+   "url": "https://www.yurindo.co.jp/store/tokyo-kameido/",
+   "lat": 35.69752684890499,
+   "lon": 139.82556412460124
+  },
+  {
+   "name": "有隣堂 ららぽーと豊洲店",
+   "address": "東京都江東区豊洲2-2-1 豊洲ベイサイドクロスタワー2F",
+   "url": "https://www.yurindo.co.jp/store/tokyo-toyosu/",
+   "lat": 35.65444011713626,
+   "lon": 139.79403552607963
+  },
+  {
+   "name": "有隣堂 ららテラス HARUMI FLAG店",
+   "address": "東京都中央区晴海5-2-31 ららテラス HARUMI FLAG 2F",
+   "url": "https://www.yurindo.co.jp/store/tokyo-harumi/",
+   "lat": 35.6512197,
+   "lon": 139.7741365
+  },
+  {
+   "name": "有隣堂 セレオ八王子店",
+   "address": "東京都八王子市旭町1-1 セレオ八王子 北館8F",
+   "url": "https://www.yurindo.co.jp/store/tokyo-hachioji/",
+   "lat": 35.656082198096904,
+   "lon": 139.33801283372458
+  },
+  {
+   "name": "有隣堂 ららぽーと立川立飛店",
+   "address": "東京都立川市泉町935-1 ららぽーと立川立飛1F",
+   "url": "https://www.yurindo.co.jp/store/tokyo-tachihi/",
+   "lat": 35.71281092823784,
+   "lon": 139.4161622364691
+  },
+  {
+   "name": "有隣堂 アトレ新浦安店",
+   "address": "千葉県浦安市入船1-1-1 アトレ新浦安2F",
+   "url": "https://www.yurindo.co.jp/store/chiba-shinurayasu/",
+   "lat": 35.65037636786614,
+   "lon": 139.9124173920603
+  },
+  {
+   "name": "有隣堂 ニッケコルトンプラザ店",
+   "address": "千葉県市川市鬼高1-1-1 ニッケコルトンプラザ センターモール3F",
+   "url": "https://www.yurindo.co.jp/store/chiba-motoyawata/",
+   "lat": 35.7167938,
+   "lon": 139.9338628
+  },
+  {
+   "name": "有隣堂 神戸阪急店",
+   "address": "兵庫県 神戸市中央区小野柄通8-1-8 神戸阪急 本館8F",
+   "url": "https://www.yurindo.co.jp/store/hyogo-sannomiya/",
+   "lat": 34.6930366,
+   "lon": 135.1954767
+  },
+  {
+   "name": "有隣堂 グラングリーン大阪店",
+   "address": "大阪府大阪市北区大深町6-38 グラングリーン大阪 ショップ&レストラン 北館2F",
+   "url": "https://www.yurindo.co.jp/store/osaka-umekita/",
+   "lat": 34.70615893497148,
+   "lon": 135.4917709410646
+  }
+ ]
+}

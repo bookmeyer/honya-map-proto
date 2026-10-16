@@ -1,0 +1,340 @@
+{
+ "fetchedAt": "2026-10-15T07:53:07.420Z",
+ "list": [
+  {
+   "name": "明屋書店 MEGA西の土居店",
+   "address": "愛媛県新居浜市西の土居町1-1-23",
+   "url": "https://www.haruya.co.jp/shopdetail?id=19"
+  },
+  {
+   "name": "明屋書店 川東店",
+   "address": "愛媛県新居浜市郷1-3-11",
+   "url": "https://www.haruya.co.jp/shopdetail?id=18"
+  },
+  {
+   "name": "明屋書店 西条本店",
+   "address": "愛媛県西条市神拝乙141",
+   "url": "https://www.haruya.co.jp/shopdetail?id=20"
+  },
+  {
+   "name": "明屋書店 東予店",
+   "address": "愛媛県西条市周布336-8",
+   "url": "https://www.haruya.co.jp/shopdetail?id=22"
+  },
+  {
+   "name": "明屋書店 川之江店",
+   "address": "愛媛県四国中央市妻鳥町1662-1",
+   "url": "https://www.haruya.co.jp/shopdetail?id=23"
+  },
+  {
+   "name": "明屋書店 今治本店",
+   "address": "愛媛県今治市片山2-6-22",
+   "url": "https://www.haruya.co.jp/shopdetail?id=24"
+  },
+  {
+   "name": "明屋書店 喜田村店",
+   "address": "愛媛県今治市東村1-1-30",
+   "url": "https://www.haruya.co.jp/shopdetail?id=26"
+  },
+  {
+   "name": "明屋書店 MEGA平田店",
+   "address": "愛媛県松山市平田町81-1",
+   "url": "https://www.haruya.co.jp/shopdetail?id=5"
+  },
+  {
+   "name": "明屋書店 空港通店",
+   "address": "愛媛県松山市空港通3-10-3",
+   "url": "https://www.haruya.co.jp/shopdetail?id=4"
+  },
+  {
+   "name": "BooksHaruyaSpirits石手店",
+   "address": "愛媛県松山市石手1-2-7",
+   "url": "https://www.haruya.co.jp/shopdetail?id=73"
+  },
+  {
+   "name": "明屋書店 石井店",
+   "address": "愛媛県松山市北井門2-20-32",
+   "url": "https://www.haruya.co.jp/shopdetail?id=88"
+  },
+  {
+   "name": "明屋書店 中央通店",
+   "address": "愛媛県松山市中央2-69-1",
+   "url": "https://www.haruya.co.jp/shopdetail?id=6"
+  },
+  {
+   "name": "明屋書店 松前店",
+   "address": "愛媛県伊予郡松前町大字浜萱田1091-1",
+   "url": "https://www.haruya.co.jp/shopdetail?id=8"
+  },
+  {
+   "name": "明屋書店 大洲店",
+   "address": "愛媛県大洲市東大洲661-2",
+   "url": "https://www.haruya.co.jp/shopdetail?id=9"
+  },
+  {
+   "name": "明屋書店 八幡浜店",
+   "address": "愛媛県八幡浜市大字松柏乙956",
+   "url": "https://www.haruya.co.jp/shopdetail?id=12"
+  },
+  {
+   "name": "明屋書店 宇和島明倫店",
+   "address": "愛媛県宇和島市新田町2-2-1",
+   "url": "https://www.haruya.co.jp/shopdetail?id=13"
+  },
+  {
+   "name": "明屋書店 南宇和店",
+   "address": "愛媛県南宇和郡愛南町御荘平城3730-1",
+   "url": "https://www.haruya.co.jp/shopdetail?id=16"
+  },
+  {
+   "name": "明屋書店 四万十川店",
+   "address": "高知県四万十市具同370",
+   "url": "https://www.haruya.co.jp/shopdetail?id=27"
+  },
+  {
+   "name": "明屋書店 高城店",
+   "address": "大分県大分市城東町9-16",
+   "url": "https://www.haruya.co.jp/shopdetail?id=31"
+  },
+  {
+   "name": "明屋書店 賀来店",
+   "address": "大分県大分市賀来北2-9-15",
+   "url": "https://www.haruya.co.jp/shopdetail?id=32"
+  },
+  {
+   "name": "明屋書店 フリーモールわさだ店",
+   "address": "大分県大分市大字木上2103",
+   "url": "https://www.haruya.co.jp/shopdetail?id=33"
+  },
+  {
+   "name": "明屋書店 コスモタウン佐伯店",
+   "address": "大分県佐伯市鶴岡西町2-199",
+   "url": "https://www.haruya.co.jp/shopdetail?id=36"
+  },
+  {
+   "name": "明屋書店 臼杵野田店",
+   "address": "大分県臼杵市大字野田205",
+   "url": "https://www.haruya.co.jp/shopdetail?id=34"
+  },
+  {
+   "name": "明屋書店 宇佐店",
+   "address": "大分県宇佐市辛島33-1",
+   "url": "https://www.haruya.co.jp/shopdetail?id=39"
+  },
+  {
+   "name": "明屋書店 行橋行事店",
+   "address": "福岡県行橋市行事2-14-11",
+   "url": "https://www.haruya.co.jp/shopdetail?id=45"
+  },
+  {
+   "name": "明屋書店 くりえいと宗像店",
+   "address": "福岡県宗像市くりえいと1-4-6",
+   "url": "https://www.haruya.co.jp/shopdetail?id=44"
+  },
+  {
+   "name": "明屋書店 伊加利店",
+   "address": "福岡県田川市大字伊加利2011",
+   "url": "https://www.haruya.co.jp/shopdetail?id=47"
+  },
+  {
+   "name": "金龍堂 まるぶん店",
+   "address": "熊本県熊本市中央区上通町5-1",
+   "url": "https://www.haruya.co.jp/shopdetail?id=103"
+  },
+  {
+   "name": "金龍堂八代ファースト文庫店",
+   "address": "熊本県八代市大手町2丁目4-25",
+   "url": "https://www.haruya.co.jp/shopdetail?id=105"
+  },
+  {
+   "name": "明屋書店 川内店",
+   "address": "鹿児島県薩摩川内市中郷2-1-3",
+   "url": "https://www.haruya.co.jp/shopdetail?id=86"
+  },
+  {
+   "name": "明屋書店 フジグラン三原店",
+   "address": "広島県三原市円一町1-1-7",
+   "url": "https://www.haruya.co.jp/shopdetail?id=109"
+  },
+  {
+   "name": "明屋書店 光店",
+   "address": "山口県光市虹ケ浜1-4-10",
+   "url": "https://www.haruya.co.jp/shopdetail?id=55"
+  },
+  {
+   "name": "明屋書店 下松店",
+   "address": "山口県下松市桜町3-14-30",
+   "url": "https://www.haruya.co.jp/shopdetail?id=53"
+  },
+  {
+   "name": "明屋書店 南岩国店",
+   "address": "山口県岩国市南岩国町3-8",
+   "url": "https://www.haruya.co.jp/shopdetail?id=54"
+  },
+  {
+   "name": "明屋書店 柳井店",
+   "address": "山口県柳井市大字古開作651-3",
+   "url": "https://www.haruya.co.jp/shopdetail?id=58"
+  },
+  {
+   "name": "SerenDip明屋書店ゆめタウン徳山店",
+   "address": "山口県周南市青山町1-18",
+   "url": "https://www.haruya.co.jp/shopdetail?id=102"
+  },
+  {
+   "name": "明屋書店 今宿店",
+   "address": "山口県周南市月丘町4-19",
+   "url": "https://www.haruya.co.jp/shopdetail?id=57"
+  },
+  {
+   "name": "明屋書店 富田店",
+   "address": "山口県周南市政所2-11-1",
+   "url": "https://www.haruya.co.jp/shopdetail?id=56"
+  },
+  {
+   "name": "明屋書店 MEGA大内店",
+   "address": "山口県山口市大内千坊2-16-21",
+   "url": "https://www.haruya.co.jp/shopdetail?id=61"
+  },
+  {
+   "name": "明屋書店 宮野店",
+   "address": "山口県山口市宮野下2885-7",
+   "url": "https://www.haruya.co.jp/shopdetail?id=60"
+  },
+  {
+   "name": "明屋書店 小郡店",
+   "address": "山口県山口市小郡津市2-11",
+   "url": "https://www.haruya.co.jp/shopdetail?id=62"
+  },
+  {
+   "name": "明屋書店 緑町店",
+   "address": "山口県防府市緑町1-4-20",
+   "url": "https://www.haruya.co.jp/shopdetail?id=59"
+  },
+  {
+   "name": "明屋書店 MEGA新下関店",
+   "address": "山口県下関市伊倉新町2-3-15",
+   "url": "https://www.haruya.co.jp/shopdetail?id=52"
+  },
+  {
+   "name": "明屋書店 萩店",
+   "address": "山口県萩市大字土原宇川島沖田474",
+   "url": "https://www.haruya.co.jp/shopdetail?id=66"
+  },
+  {
+   "name": "明屋書店 東岐波店",
+   "address": "山口県宇部市大字東岐波字大津出5609-1",
+   "url": "https://www.haruya.co.jp/shopdetail?id=63"
+  },
+  {
+   "name": "明屋書店 長門店",
+   "address": "山口県長門市東深川字丁ヶ坪850",
+   "url": "https://www.haruya.co.jp/shopdetail?id=65"
+  },
+  {
+   "name": "明屋書店 厚狭店",
+   "address": "山口県山陽小野田市大字厚狭埴生田460-1",
+   "url": "https://www.haruya.co.jp/shopdetail?id=64"
+  },
+  {
+   "name": "明屋書店 中野ブロードウェイ店",
+   "address": "東京都中野区中野5-52-15",
+   "url": "https://www.haruya.co.jp/shopdetail?id=67"
+  },
+  {
+   "name": "明屋書店 渡瀬店",
+   "address": "静岡県浜松市中央区渡瀬町804-1",
+   "url": "https://www.haruya.co.jp/shopdetail?id=69"
+  },
+  {
+   "name": "イケヤ高丘店",
+   "address": "静岡県浜松市中央区高丘東１－２－４０",
+   "url": "https://www.haruya.co.jp/shopdetail?id=92"
+  },
+  {
+   "name": "らくだ書店本店",
+   "address": "愛知県名古屋市千種区青柳町5-18",
+   "url": "https://www.haruya.co.jp/shopdetail?id=111"
+  },
+  {
+   "name": "らくだ書店城北店",
+   "address": "愛知県名古屋市北区水草町1-60",
+   "url": "https://www.haruya.co.jp/shopdetail?id=112"
+  },
+  {
+   "name": "鎌倉文庫岡崎南店",
+   "address": "愛知県岡崎市牧御堂町字油田56",
+   "url": "https://www.haruya.co.jp/shopdetail?id=113"
+  },
+  {
+   "name": "あおい書店西尾店",
+   "address": "愛知県西尾市熊味町北十五夜５－１",
+   "url": "https://www.haruya.co.jp/shopdetail?id=114"
+  },
+  {
+   "name": "あおい書店西春店",
+   "address": "愛知県北名古屋市徳重大日21-3",
+   "url": "https://www.haruya.co.jp/shopdetail?id=115"
+  },
+  {
+   "name": "あおい書店上里店",
+   "address": "愛知県岡崎市上里1-1-18",
+   "url": "https://www.haruya.co.jp/shopdetail?id=116"
+  },
+  {
+   "name": "カルコス扶桑店",
+   "address": "愛知県丹羽郡扶桑町柏森356",
+   "url": "https://www.haruya.co.jp/shopdetail?id=121"
+  },
+  {
+   "name": "カルコス本店",
+   "address": "岐阜県岐阜市菅生8-7-21",
+   "url": "https://www.haruya.co.jp/shopdetail?id=117"
+  },
+  {
+   "name": "カルコス各務原店",
+   "address": "岐阜県各務原市小佐野町1-11",
+   "url": "https://www.haruya.co.jp/shopdetail?id=118"
+  },
+  {
+   "name": "カルコス穂積店",
+   "address": "岐阜県瑞穂市稲里651-1",
+   "url": "https://www.haruya.co.jp/shopdetail?id=119"
+  },
+  {
+   "name": "ブックスユートピア野間店",
+   "address": "兵庫県伊丹市野間北3-2-2",
+   "url": "https://www.haruya.co.jp/shopdetail?id=76"
+  },
+  {
+   "name": "キダブン",
+   "address": "徳島県小松島市小松島町字領田10-1",
+   "url": "https://www.haruya.co.jp/shopdetail?id=77"
+  },
+  {
+   "name": "サンロード明屋書店 錦店",
+   "address": "熊本県球磨郡錦町西字打越715-32",
+   "url": "https://www.haruya.co.jp/shopdetail?id=78"
+  },
+  {
+   "name": "サンロード明屋書店 免田店",
+   "address": "熊本県球磨郡あさぎり町免田東1253-1",
+   "url": "https://www.haruya.co.jp/shopdetail?id=79"
+  },
+  {
+   "name": "明屋書店サンロードシティ 熊本店",
+   "address": "熊本県熊本市東区東町3-3-3",
+   "url": "https://www.haruya.co.jp/shopdetail?id=80"
+  },
+  {
+   "name": "FC明屋書店 川南店",
+   "address": "宮崎県児湯郡川南町13593-1",
+   "url": "https://www.haruya.co.jp/shopdetail?id=82"
+  },
+  {
+   "name": "FC明屋書店 高千穂店",
+   "address": "宮崎県西臼杵郡高千穂町三田井33-5",
+   "url": "https://www.haruya.co.jp/shopdetail?id=85"
+  }
+ ]
+}

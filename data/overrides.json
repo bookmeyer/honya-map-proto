@@ -1,7 +1,3615 @@
 {
-  "note": "地図データ（OpenStreetMap）の上書き表。閉店・屋号変更など、確かめた分だけ手で足す。id は OSM の種別1文字＋番号",
-  "renames": {
-    "n1315063021": { "n": "紀伊國屋書店 渋谷道玄坂店", "why": "2026-02-25 啓文堂書店渋谷店から屋号変更（文化通信）" }
+ "note": "地図データ（OpenStreetMap）の上書き表。閉店・屋号変更など、確かめた分だけ手で足す。id は OSM の種別1文字＋番号",
+ "renames": {
+  "n1315063021": {
+   "n": "紀伊國屋書店 渋谷道玄坂店",
+   "why": "2026-02-25 啓文堂書店渋谷店から屋号変更（文化通信）"
   },
-  "closed": {}
+  "n2554342194": {
+   "n": "BOOKOFF 宜野湾店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・16m）"
+  },
+  "w972008678": {
+   "n": "BOOKOFF 鹿児島ジョイプラザ店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・75m）"
+  },
+  "w305423082": {
+   "n": "BOOKOFF 鹿児島ジョイプラザ店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・22m）"
+  },
+  "w658706897": {
+   "n": "BOOKOFF 鹿児島国分店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・42m）"
+  },
+  "w722117783": {
+   "n": "BOOKOFF 宮崎駅東口店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・173m）"
+  },
+  "w693561821": {
+   "n": "BOOKOFF 熊本宇土店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・106m）"
+  },
+  "w410706652": {
+   "n": "BOOKOFF 熊本健軍店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・17m）"
+  },
+  "w425270427": {
+   "n": "BOOKOFF 熊本田崎店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・45m）"
+  },
+  "w546919980": {
+   "n": "BOOKOFF 熊本琴平店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・32m）"
+  },
+  "n12504328759": {
+   "n": "BOOKOFF JR上熊本駅店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・26m）"
+  },
+  "w120063484": {
+   "n": "BOOKOFF 高知高須店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・40m）"
+  },
+  "w190346290": {
+   "n": "BOOKOFF 大橋駅西口店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・11m）"
+  },
+  "n6817751985": {
+   "n": "BOOKOFF 福岡六本松店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・17m）"
+  },
+  "n2319138568": {
+   "n": "BOOKOFF 福岡博多口店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・11m）"
+  },
+  "n4190918838": {
+   "n": "BOOKOFF SUPER BAZAAR ミーナ天神店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・88m）"
+  },
+  "n5581879777": {
+   "n": "BOOKOFF 福岡トリアス久山店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・103m）"
+  },
+  "w222969647": {
+   "n": "BOOKOFF 九産大駅前店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・49m）"
+  },
+  "w552313289": {
+   "n": "BOOKOFF 3号バイパス新宮店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・21m）"
+  },
+  "n10767389085": {
+   "n": "BOOKOFF 松山駅前店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・52m）"
+  },
+  "w1331988415": {
+   "n": "BOOKOFF PLUS 徳島田宮店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・379m）"
+  },
+  "w465818532": {
+   "n": "BOOKOFF 山口旭通り店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・35m）"
+  },
+  "w449324362": {
+   "n": "BOOKOFF 和歌山次郎丸店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・21m）"
+  },
+  "n12539841977": {
+   "n": "BOOKOFF 岩出中央店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・96m）"
+  },
+  "n7196110360": {
+   "n": "BOOKOFF SUPER BAZAAR 広島段原店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・78m）"
+  },
+  "n1365324801": {
+   "n": "BOOKOFF SUPER BAZAAR 広島大手町店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・16m）"
+  },
+  "w394628555": {
+   "n": "BOOKOFF 広島己斐本町店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・9m）"
+  },
+  "n4568230736": {
+   "n": "BOOKOFF 大阪熊取店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・16m）"
+  },
+  "n4909574429": {
+   "n": "BOOKOFF 大阪泉佐野羽倉崎店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・249m）"
+  },
+  "w1377377669": {
+   "n": "BOOKOFF 福山野上店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・32m）"
+  },
+  "n7196110361": {
+   "n": "BOOKOFF SUPER BAZAAR 54号広島八木店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・36m）"
+  },
+  "n2022858941": {
+   "n": "BOOKOFF 伊勢中須店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・20m）"
+  },
+  "n3207433554": {
+   "n": "BOOKOFF 泉大津店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・11m）"
+  },
+  "n5755712321": {
+   "n": "BOOKOFF 堺インター店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・33m）"
+  },
+  "n5185599124": {
+   "n": "BOOKOFF 堺新金岡店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・47m）"
+  },
+  "w608254968": {
+   "n": "BOOKOFF 堺御陵前店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・33m）"
+  },
+  "w616602868": {
+   "n": "BOOKOFF 倉敷笹沖店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・54m）"
+  },
+  "w1347105266": {
+   "n": "BOOKOFF 倉敷浜店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・40m）"
+  },
+  "w657543645": {
+   "n": "BOOKOFF SUPER BAZAAR 25号八尾永畑店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・63m）"
+  },
+  "n9913552093": {
+   "n": "BOOKOFF 岡山妹尾店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・58m）"
+  },
+  "w1417744464": {
+   "n": "BOOKOFF 大和郡山小泉店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・31m）"
+  },
+  "n9913505610": {
+   "n": "BOOKOFF 岡山東古松店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・26m）"
+  },
+  "n4584799995": {
+   "n": "BOOKOFF 天王寺駅前店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・8m）"
+  },
+  "w801770510": {
+   "n": "BOOKOFF 奈良東山店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・15m）"
+  },
+  "n12840276204": {
+   "n": "BOOKOFF SUPER BAZAAR アグロガーデン神戸駒ヶ林店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・193m）"
+  },
+  "n5745479217": {
+   "n": "BOOKOFF 大阪千島ガーデンモール店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・88m）"
+  },
+  "n2294547197": {
+   "n": "BOOKOFF 大阪難波中店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・11m）"
+  },
+  "n12714557182": {
+   "n": "BOOKOFF 大阪弁天町店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・41m）"
+  },
+  "n2312817310": {
+   "n": "BOOKOFF PLUS なんば戎橋店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・19m）"
+  },
+  "n2345182944": {
+   "n": "BOOKOFF 大阪心斎橋店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・5m）"
+  },
+  "n6908384689": {
+   "n": "BOOKOFF 岡山総社店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・4m）"
+  },
+  "w209170961": {
+   "n": "BOOKOFF 奈良法華寺店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・92m）"
+  },
+  "n3204623996": {
+   "n": "BOOKOFF 東大阪吉原店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・168m）"
+  },
+  "n13204116801": {
+   "n": "BOOKOFF 浜松芳川店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・39m）"
+  },
+  "n9593472806": {
+   "n": "BOOKOFF 三宮センター街店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・57m）"
+  },
+  "n5474374963": {
+   "n": "BOOKOFF 京阪京橋店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・31m）"
+  },
+  "n13204116901": {
+   "n": "BOOKOFF 湖西店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・1.6km）"
+  },
+  "w182035723": {
+   "n": "BOOKOFF 奈良押熊店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・16m）"
+  },
+  "n4965165672": {
+   "n": "BOOKOFF 神戸西鈴蘭台店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・17m）"
+  },
+  "w245132170": {
+   "n": "BOOKOFF 浜松富塚店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・57m）"
+  },
+  "w305276817": {
+   "n": "BOOKOFF 尼崎東難波店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・69m）"
+  },
+  "w330773875": {
+   "n": "BOOKOFF 浜松高林店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・16m）"
+  },
+  "n4426052132": {
+   "n": "BOOKOFF 豊橋店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・92m）"
+  },
+  "w275381300": {
+   "n": "BOOKOFF 西宮北口店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・23m）"
+  },
+  "n4851280629": {
+   "n": "BOOKOFF 浜松初生店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・48m）"
+  },
+  "n10025976498": {
+   "n": "BOOKOFF 豊橋駅前店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・22m）"
+  },
+  "n7010633886": {
+   "n": "BOOKOFF 高砂米田店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・120m）"
+  },
+  "w842565401": {
+   "n": "BOOKOFF 香里園店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・29m）"
+  },
+  "w262838288": {
+   "n": "BOOKOFF 姫路網干店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・21m）"
+  },
+  "n7025237152": {
+   "n": "BOOKOFF 宝塚安倉店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・197m）"
+  },
+  "w884068744": {
+   "n": "BOOKOFF SUPER BAZAAR 307号枚方池之宮店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・187m）"
+  },
+  "w163215302": {
+   "n": "BOOKOFF 箕面市役所前店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・26m）"
+  },
+  "n2391504240": {
+   "n": "BOOKOFF 高槻別所店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・30m）"
+  },
+  "n2803690008": {
+   "n": "BOOKOFF 大久保店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・67m）"
+  },
+  "w186583471": {
+   "n": "BOOKOFF 宇治小倉店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・57m）"
+  },
+  "n4546566889": {
+   "n": "BOOKOFF 久世橋店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・69m）"
+  },
+  "w248009302": {
+   "n": "BOOKOFF 滋賀水口店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・19m）"
+  },
+  "w435486482": {
+   "n": "BOOKOFF 岡崎井ノ口店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・46m）"
+  },
+  "w515457951": {
+   "n": "BOOKOFF かりがね店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・47m）"
+  },
+  "w271430984": {
+   "n": "BOOKOFF 滋賀西大津店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・21m）"
+  },
+  "w473513064": {
+   "n": "BOOKOFF 滋賀草津駒井沢店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・308m）"
+  },
+  "n4397119394": {
+   "n": "BOOKOFF SUPER BAZAAR 258号イオン桑名店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・22m）"
+  },
+  "n6715949864": {
+   "n": "BOOKOFF 函南店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・45m）"
+  },
+  "w316658370": {
+   "n": "BOOKOFF 近江八幡店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・67m）"
+  },
+  "n1749089473": {
+   "n": "BOOKOFF PLUS 名古屋ヤマナカ新中島店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・24m）"
+  },
+  "n12756733101": {
+   "n": "BOOKOFF SUPER BAZAAR 西友高針店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・17m）"
+  },
+  "n13464029260": {
+   "n": "BOOKOFF 富士本吉原店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・46m）"
+  },
+  "n5085982921": {
+   "n": "BOOKOFF SUPER BAZAAR 栄スカイル店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・35m）"
+  },
+  "n1275790173": {
+   "n": "BOOKOFF 19号春日井中央店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・15m）"
+  },
+  "w360675543": {
+   "n": "BOOKOFF 春日井高蔵寺店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・36m）"
+  },
+  "n12244122398": {
+   "n": "BOOKOFF 一宮妙興寺店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・36m）"
+  },
+  "w500455944": {
+   "n": "BOOKOFF 平塚駅西口店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・26m）"
+  },
+  "w1026683927": {
+   "n": "BOOKOFF 平塚四之宮店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・18m）"
+  },
+  "n2733198749": {
+   "n": "BOOKOFF PLUS 藤沢大庭店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・29m）"
+  },
+  "n5083123433": {
+   "n": "BOOKOFF 秦野渋沢店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・43m）"
+  },
+  "w446448859": {
+   "n": "BOOKOFF 木更津太田店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・36m）"
+  },
+  "w1037973447": {
+   "n": "BOOKOFF PLUS 各務原インター店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・4m）"
+  },
+  "n9116368191": {
+   "n": "BOOKOFF PLUS 伊勢原店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・56m）"
+  },
+  "n3088738449": {
+   "n": "BOOKOFF SUPER BAZAAR 横浜東戸塚オリンピック店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・451m）"
+  },
+  "n5457012429": {
+   "n": "BOOKOFF PLUS アミューあつぎ店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・31m）"
+  },
+  "n3522834663": {
+   "n": "BOOKOFF PLUS 横浜伊勢佐木モール店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・33m）"
+  },
+  "w314688001": {
+   "n": "BOOKOFF 厚木戸室店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・34m）"
+  },
+  "n5222858478": {
+   "n": "BOOKOFF 厚木妻田店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・19m）"
+  },
+  "n1981032602": {
+   "n": "BOOKOFF 海老名さがみ野駅前店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・13m）"
+  },
+  "n8880555682": {
+   "n": "BOOKOFF 横浜鶴ヶ峰店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・42m）"
+  },
+  "w1076070947": {
+   "n": "BOOKOFF 松江黒田店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・171m）"
+  },
+  "w1100870900": {
+   "n": "BOOKOFF 松江店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・18m）"
+  },
+  "n12351344952": {
+   "n": "BOOKOFF アクロスプラザ東神奈川店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・55m）"
+  },
+  "n12351252690": {
+   "n": "BOOKOFF 横浜鴨居店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・12m）"
+  },
+  "n6961116684": {
+   "n": "BOOKOFF SUPER BAZAAR 川崎モアーズ店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・44m）"
+  },
+  "n5138941402": {
+   "n": "BOOKOFF SUPER BAZAAR 綱島樽町店（本・トレカ館）",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・45m）"
+  },
+  "n4579138909": {
+   "n": "BOOKOFF 港北綱島西店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・43m）"
+  },
+  "w499386026": {
+   "n": "BOOKOFF PLUS 古淵駅前店（本・ソフト館）",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・13m）"
+  },
+  "w425265703": {
+   "n": "BOOKOFF PLUS 16号相模原富士見店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・29m）"
+  },
+  "n4644223587": {
+   "n": "BOOKOFF 横浜あざみ野店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・71m）"
+  },
+  "n2947407159": {
+   "n": "BOOKOFF PLUS 東名川崎インター店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・57m）"
+  },
+  "n12536724535": {
+   "n": "BOOKOFF SUPER BAZAAR 西友大森店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・49m）"
+  },
+  "n2174648283": {
+   "n": "BOOKOFF 中原街道長原店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・11m）"
+  },
+  "n5580050068": {
+   "n": "BOOKOFF 新百合丘オーパ店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・18m）"
+  },
+  "n1975232620": {
+   "n": "BOOKOFF PLUS 田富昭和通り店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・42m）"
+  },
+  "w281846431": {
+   "n": "BOOKOFF SUPER BAZAAR 多摩永山店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・9m）"
+  },
+  "n6991564651": {
+   "n": "BOOKOFF 稲毛マルエツ店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・32m）"
+  },
+  "w1385434665": {
+   "n": "BOOKOFF 敦賀木崎店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・69m）"
+  },
+  "w199982229": {
+   "n": "BOOKOFF 北烏山店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・32m）"
+  },
+  "n12854606101": {
+   "n": "BOOKOFF SUPER BAZAAR ららぽーとTOKYO-BAY North Gate店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・116m）"
+  },
+  "n2262375007": {
+   "n": "BOOKOFF 秋葉原駅前店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・15m）"
+  },
+  "n1152663394": {
+   "n": "BOOKOFF PLUS 荻窪駅北口店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・1m）"
+  },
+  "n12477172606": {
+   "n": "BOOKOFF 江古田店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・9m）"
+  },
+  "n11366154852": {
+   "n": "BOOKOFF 東大和仲原店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・30m）"
+  },
+  "n2012195041": {
+   "n": "BOOKOFF 鎌ヶ谷道野辺店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・58m）"
+  },
+  "n1737464964": {
+   "n": "BOOKOFF 福生店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・20m）"
+  },
+  "n5495789725": {
+   "n": "BOOKOFF 足立加平インター店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・10m）"
+  },
+  "n1622057880": {
+   "n": "BOOKOFF 青梅店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・15m）"
+  },
+  "w366625846": {
+   "n": "BOOKOFF 川口飯塚店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・39m）"
+  },
+  "n1986237007": {
+   "n": "BOOKOFF 川口領家店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・12m）"
+  },
+  "n3438969740": {
+   "n": "BOOKOFF 本川越店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・40m）"
+  },
+  "n7803759589": {
+   "n": "BOOKOFF 埼玉北坂戸店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・108m）"
+  },
+  "n12876838446": {
+   "n": "BOOKOFF SUPER BAZAAR 17号鴻巣吹上店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・49m）"
+  },
+  "w771646309": {
+   "n": "BOOKOFF 塩尻店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・36m）"
+  },
+  "w771646307": {
+   "n": "BOOKOFF PLUS 松本芳川店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・45m）"
+  },
+  "n6170516785": {
+   "n": "BOOKOFF 深谷田所店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・55m）"
+  },
+  "w771646308": {
+   "n": "BOOKOFF 松本筑摩店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・21m）"
+  },
+  "n7203615739": {
+   "n": "BOOKOFF SUPER BAZAAR 松本駅前店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・55m）"
+  },
+  "n3261266469": {
+   "n": "BOOKOFF 玉戸モール店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・210m）"
+  },
+  "w563979973": {
+   "n": "BOOKOFF PLUS 高崎上大類店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・112m）"
+  },
+  "w493696152": {
+   "n": "BOOKOFF 更埴店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・299m）"
+  },
+  "w1078147012": {
+   "n": "BOOKOFF 長野駅前店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・251m）"
+  },
+  "w199980375": {
+   "n": "BOOKOFF PLUS 富山黒瀬店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・28m）"
+  },
+  "w621357949": {
+   "n": "BOOKOFF 長野若槻店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・25m）"
+  },
+  "n1783271860": {
+   "n": "BOOKOFF 中野七瀬店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・49m）"
+  },
+  "n9099965681": {
+   "n": "BOOKOFF 黒磯店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・525m）"
+  },
+  "w221054439": {
+   "n": "BOOKOFF 会津門田店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・29m）"
+  },
+  "w464909134": {
+   "n": "BOOKOFF 三条店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・20m）"
+  },
+  "w1431096103": {
+   "n": "BOOKOFF 米沢中央店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・45m）"
+  },
+  "n4481567593": {
+   "n": "BOOKOFF PLUS 仙台南バイパス店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・47m）"
+  },
+  "n4472730829": {
+   "n": "BOOKOFF PLUS 286号仙台鈎取店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・44m）"
+  },
+  "n3610400528": {
+   "n": "BOOKOFF 山形桜田店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・18m）"
+  },
+  "n5028418424": {
+   "n": "BOOKOFF 仙台六丁の目店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・44m）"
+  },
+  "n4473094328": {
+   "n": "BOOKOFF 仙台高砂店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・26m）"
+  },
+  "n5319924844": {
+   "n": "BOOKOFF 仙台松森店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・51m）"
+  },
+  "n6819630987": {
+   "n": "BOOKOFF 宮城利府店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・8m）"
+  },
+  "w674000028": {
+   "n": "BOOKOFF 仙台泉バイパス店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・28m）"
+  },
+  "n5104653322": {
+   "n": "BOOKOFF 寒河江市役所前通り店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・71m）"
+  },
+  "n4651800297": {
+   "n": "BOOKOFF 石巻蛇田店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・17m）"
+  },
+  "n4625251090": {
+   "n": "BOOKOFF PLUS 古川バイパス店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・45m）"
+  },
+  "w694932537": {
+   "n": "BOOKOFF 一関市役所前店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・22m）"
+  },
+  "w1073232977": {
+   "n": "BOOKOFF 13号横手店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・35m）"
+  },
+  "w568478575": {
+   "n": "BOOKOFF 秋田広面店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・84m）"
+  },
+  "n12255365301": {
+   "n": "BOOKOFF PLUS ドン・キホーテ秋田店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・85m）"
+  },
+  "w755150943": {
+   "n": "BOOKOFF 7号秋田土崎店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・79m）"
+  },
+  "w546949545": {
+   "n": "BOOKOFF 102号弘前高田店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・37m）"
+  },
+  "w664061743": {
+   "n": "BOOKOFF 弘前城東店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・27m）"
+  },
+  "w546949546": {
+   "n": "BOOKOFF 青森石江店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・54m）"
+  },
+  "n12941994001": {
+   "n": "BOOKOFF 函館昭和店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・7m）"
+  },
+  "n5723391347": {
+   "n": "BOOKOFF 千歳サーモン橋店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・23m）"
+  },
+  "n5112151199": {
+   "n": "BOOKOFF 音更店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・165m）"
+  },
+  "w452080021": {
+   "n": "BOOKOFF PLUS 36号札幌美しが丘店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・34m）"
+  },
+  "n9981232810": {
+   "n": "BOOKOFF 札幌平岡店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・25m）"
+  },
+  "n9833371434": {
+   "n": "BOOKOFF 札幌南郷20丁目店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・38m）"
+  },
+  "n13973546658": {
+   "n": "BOOKOFF 月寒東店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・69m）"
+  },
+  "n4455858625": {
+   "n": "BOOKOFF 札幌中の島店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・46m）"
+  },
+  "n2080747614": {
+   "n": "BOOKOFF 札幌南2条店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・17m）"
+  },
+  "n4485086709": {
+   "n": "BOOKOFF 札幌光星店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・31m）"
+  },
+  "n4826284743": {
+   "n": "BOOKOFF 伏古店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・13m）"
+  },
+  "n3086084621": {
+   "n": "BOOKOFF SUPER BAZAAR 5号札幌宮の沢店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・1.4km）"
+  },
+  "n3707671669": {
+   "n": "BOOKOFF 江別店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・208m）"
+  },
+  "n4609800436": {
+   "n": "BOOKOFF 北41条店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・55m）"
+  },
+  "n5164121337": {
+   "n": "BOOKOFF PLUS 札幌屯田店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・23m）"
+  },
+  "n4138815667": {
+   "n": "BOOKOFF 札幌あいの里店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・1m）"
+  },
+  "n4714534656": {
+   "n": "BOOKOFF 岩見沢店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・27m）"
+  },
+  "n10012481678": {
+   "n": "BOOKOFF 滝川店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・288m）"
+  },
+  "n2083126340": {
+   "n": "BOOKOFF 旭川旭神店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・49m）"
+  },
+  "n9855988763": {
+   "n": "BOOKOFF 旭川旭町店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・69m）"
+  },
+  "n5219099728": {
+   "n": "BOOKOFF 旭川永山店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・47m）"
+  },
+  "n4923214321": {
+   "n": "BOOKOFF 北見メッセ店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・37m）"
+  },
+  "n4003662343": {
+   "n": "BOOKOFF 網走店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・368m）"
+  },
+  "n1207120946": {
+   "n": "BOOKOFF 那覇小禄店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・34m）"
+  },
+  "w556346990": {
+   "n": "BOOKOFF 那覇与儀店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・22m）"
+  },
+  "n5325217809": {
+   "n": "BOOKOFF コザ店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・14m）"
+  },
+  "n9878530714": {
+   "n": "BOOKOFF 具志川店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・47m）"
+  },
+  "n9718126295": {
+   "n": "BOOKOFF アクロスプラザ与次郎店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・97m）"
+  },
+  "w973060407": {
+   "n": "BOOKOFF 鹿児島唐湊店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・42m）"
+  },
+  "n9009032929": {
+   "n": "BOOKOFF 鹿児島天文館店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・9m）"
+  },
+  "w568039616": {
+   "n": "BOOKOFF 川内店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・63m）"
+  },
+  "w1108534242": {
+   "n": "BOOKOFF 延岡平原店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・194m）"
+  },
+  "w1062751625": {
+   "n": "BOOKOFF 諫早店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・72m）"
+  },
+  "n5852199004": {
+   "n": "BOOKOFF 熊本くすのき店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・24m）"
+  },
+  "n12027780773": {
+   "n": "BOOKOFF SUPER BAZAAR アクロスプラザ佐世保店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・110m）"
+  },
+  "w985700771": {
+   "n": "BOOKOFF 大分敷戸店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・21m）"
+  },
+  "n5352046616": {
+   "n": "BOOKOFF PLUS 佐賀南部バイパス店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・41m）"
+  },
+  "n4458973793": {
+   "n": "BOOKOFF 久留米上津バイパス店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・21m）"
+  },
+  "n12189369208": {
+   "n": "BOOKOFF 別府観光港前店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・23m）"
+  },
+  "w583620346": {
+   "n": "BOOKOFF PLUS 高知土佐道路店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・58m）"
+  },
+  "w714390307": {
+   "n": "BOOKOFF 福岡長住店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・46m）"
+  },
+  "n13700937701": {
+   "n": "BOOKOFF 福岡飯倉店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・14m）"
+  },
+  "w702576429": {
+   "n": "BOOKOFF 福岡福重店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・27m）"
+  },
+  "n10767414911": {
+   "n": "BOOKOFF 松山久米店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・22m）"
+  },
+  "n4271094207": {
+   "n": "BOOKOFF 小倉葛原店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・29m）"
+  },
+  "n10767411793": {
+   "n": "BOOKOFF 松山中央店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・28m）"
+  },
+  "w1150196608": {
+   "n": "BOOKOFF 新居浜西喜光地店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・17m）"
+  },
+  "w806303044": {
+   "n": "BOOKOFF 今治片山店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・27m）"
+  },
+  "n3076813630": {
+   "n": "BOOKOFF 国府店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・36m）"
+  },
+  "w536684742": {
+   "n": "BOOKOFF 和歌山国体道路店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・192m）"
+  },
+  "n13909042194": {
+   "n": "BOOKOFF 高松仏生山店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・57m）"
+  },
+  "w901951981": {
+   "n": "BOOKOFF 高松国分寺店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・56m）"
+  },
+  "n12112118769": {
+   "n": "BOOKOFF 高松東バイパス店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・101m）"
+  },
+  "n4336619889": {
+   "n": "BOOKOFF 広島海田店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・6m）"
+  },
+  "n11096934311": {
+   "n": "BOOKOFF 西条中央店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・85m）"
+  },
+  "n11452040806": {
+   "n": "BOOKOFF 福山松永店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・20m）"
+  },
+  "n13133962455": {
+   "n": "BOOKOFF 河内長野寿店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・27m）"
+  },
+  "n5764891185": {
+   "n": "BOOKOFF PLUS 堺もず店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・19m）"
+  },
+  "n6861860987": {
+   "n": "BOOKOFF 岡山西長瀬店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・49m）"
+  },
+  "n2319225407": {
+   "n": "BOOKOFF 250号東岡山店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・136m）"
+  },
+  "n8499086836": {
+   "n": "BOOKOFF 43号東灘住吉南店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・15m）"
+  },
+  "w375528082": {
+   "n": "BOOKOFF 門真古川橋店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・13m）"
+  },
+  "n10829501200": {
+   "n": "BOOKOFF 静岡榛原店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・42m）"
+  },
+  "n5948069701": {
+   "n": "BOOKOFF SUPER BAZAAR 守口ジャガータウン店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・117m）"
+  },
+  "n14005662511": {
+   "n": "BOOKOFF イオン吹田店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・48m）"
+  },
+  "w669604228": {
+   "n": "BOOKOFF SUPER BAZAAR 171号尼崎西昆陽店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・45m）"
+  },
+  "n4388780783": {
+   "n": "BOOKOFF 掛川店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・95m）"
+  },
+  "n7142180411": {
+   "n": "BOOKOFF 伊賀上野店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・15m）"
+  },
+  "w714791829": {
+   "n": "BOOKOFF 伊丹大鹿店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・48m）"
+  },
+  "w317040980": {
+   "n": "BOOKOFF 姫路三宅店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・25m）"
+  },
+  "n8288778418": {
+   "n": "BOOKOFF 高槻栄店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・11m）"
+  },
+  "n2909096531": {
+   "n": "BOOKOFF 豊川諏訪西店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・43m）"
+  },
+  "n2730978493": {
+   "n": "BOOKOFF 兵庫太子店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・69m）"
+  },
+  "n12313939341": {
+   "n": "BOOKOFF 静岡島田店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・64m）"
+  },
+  "w695507872": {
+   "n": "BOOKOFF 姫路増位店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・109m）"
+  },
+  "n2108715037": {
+   "n": "BOOKOFF 岡崎上地店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・31m）"
+  },
+  "w565800234": {
+   "n": "BOOKOFF SUPER BAZAAR 1号四日市日永店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・52m）"
+  },
+  "n12976181901": {
+   "n": "BOOKOFF 静岡馬渕店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・21m）"
+  },
+  "n2684764061": {
+   "n": "BOOKOFF 京都東寺駅前店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・19m）"
+  },
+  "w229263799": {
+   "n": "BOOKOFF 京都山科西野店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・6m）"
+  },
+  "n5350646622": {
+   "n": "BOOKOFF 四日市阿倉川店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・157m）"
+  },
+  "n12709766012": {
+   "n": "BOOKOFF SUPER BAZAAR エディオン大津店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・39m）"
+  },
+  "w245427576": {
+   "n": "BOOKOFF 滋賀草津追分店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・28m）"
+  },
+  "n6668921348": {
+   "n": "BOOKOFF 伊豆の国大仁店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・37m）"
+  },
+  "w427036637": {
+   "n": "BOOKOFF 大府店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・13m）"
+  },
+  "w229065478": {
+   "n": "BOOKOFF 京都太秦店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・9m）"
+  },
+  "w494832257": {
+   "n": "BOOKOFF とよあけ店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・43m）"
+  },
+  "n6442434386": {
+   "n": "BOOKOFF 津山店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・74m）"
+  },
+  "w116434695": {
+   "n": "BOOKOFF 京都宝ヶ池店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・19m）"
+  },
+  "w1138267446": {
+   "n": "BOOKOFF 豊田下林店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・102m）"
+  },
+  "n5102776423": {
+   "n": "BOOKOFF 豊田柿本店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・29m）"
+  },
+  "n3704800343": {
+   "n": "BOOKOFF SUPER BAZAAR カインズモール名古屋みなと店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・170m）"
+  },
+  "w1138267447": {
+   "n": "BOOKOFF 豊田朝日店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・38m）"
+  },
+  "n7804042051": {
+   "n": "BOOKOFF SUPER BAZAAR 西友鳴海店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・0m）"
+  },
+  "n13431371721": {
+   "n": "BOOKOFF 沼津リコー通り店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・39m）"
+  },
+  "n4744696952": {
+   "n": "BOOKOFF PLUS 熱田国道1号店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・80m）"
+  },
+  "w110361633": {
+   "n": "BOOKOFF 名古屋平針店（本・ソフト館）",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・6m）"
+  },
+  "n5835900316": {
+   "n": "BOOKOFF PLUS 堅田店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・65m）"
+  },
+  "n4967708721": {
+   "n": "BOOKOFF 名古屋川原通店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・23m）"
+  },
+  "n11265040869": {
+   "n": "BOOKOFF PLUS 富士中島店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・58m）"
+  },
+  "n3853840409": {
+   "n": "BOOKOFF 名古屋豊国通店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・31m）"
+  },
+  "n7228159147": {
+   "n": "BOOKOFF PLUS 名古屋千代田橋店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・28m）"
+  },
+  "n4249930789": {
+   "n": "BOOKOFF SUPER BAZAAR 彦根店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・47m）"
+  },
+  "n2418526555": {
+   "n": "BOOKOFF 岩倉大地店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・13m）"
+  },
+  "n13725562315": {
+   "n": "BOOKOFF 小牧店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・33m）"
+  },
+  "w409247876": {
+   "n": "BOOKOFF 福知山駅南町店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・18m）"
+  },
+  "w639215010": {
+   "n": "BOOKOFF 御殿場店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・36m）"
+  },
+  "n13111892347": {
+   "n": "BOOKOFF 127号君津店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・29m）"
+  },
+  "n4470889589": {
+   "n": "BOOKOFF 横浜朝比奈店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・35m）"
+  },
+  "n9226028621": {
+   "n": "BOOKOFF 茅ヶ崎駅北口店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・21m）"
+  },
+  "n7641863316": {
+   "n": "BOOKOFF 鎌倉手広店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・31m）"
+  },
+  "n4383020855": {
+   "n": "BOOKOFF 258号大垣インター店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・62m）"
+  },
+  "w506231881": {
+   "n": "BOOKOFF 江南赤童子店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・23m）"
+  },
+  "n12082974499": {
+   "n": "BOOKOFF SUPER BAZAAR Luz湘南辻堂店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・62m）"
+  },
+  "n9989705264": {
+   "n": "BOOKOFF SUPER BAZAAR 鎌倉大船店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・104m）"
+  },
+  "w1134764031": {
+   "n": "BOOKOFF 寒川大曲店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・18m）"
+  },
+  "n1694700981": {
+   "n": "BOOKOFF 平塚豊田店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・76m）"
+  },
+  "n1674111023": {
+   "n": "BOOKOFF 横浜本郷台店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・165m）"
+  },
+  "n12963622669": {
+   "n": "BOOKOFF 藤沢六会店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・30m）"
+  },
+  "n7558583779": {
+   "n": "BOOKOFF 横浜港南丸山台店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・12m）"
+  },
+  "n5918151122": {
+   "n": "BOOKOFF 16号袖ヶ浦店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・63m）"
+  },
+  "w1234553128": {
+   "n": "BOOKOFF 千葉茂原店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・38m）"
+  },
+  "w580767693": {
+   "n": "BOOKOFF 松江浜乃木店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・19m）"
+  },
+  "w577626760": {
+   "n": "BOOKOFF 岐阜則武店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・56m）"
+  },
+  "n1982447883": {
+   "n": "BOOKOFF 皆生店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・13m）"
+  },
+  "n9736991824": {
+   "n": "BOOKOFF PLUS 恵那店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・41m）"
+  },
+  "n1955996033": {
+   "n": "BOOKOFF 米子卸団地店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・138m）"
+  },
+  "n2272497785": {
+   "n": "BOOKOFF 横浜ビブレ店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・81m）"
+  },
+  "n13893141352": {
+   "n": "BOOKOFF 座間警察署前店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・69m）"
+  },
+  "n2087967414": {
+   "n": "BOOKOFF 富士吉田店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・20m）"
+  },
+  "n2531791300": {
+   "n": "BOOKOFF 鳥取南吉方店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・122m）"
+  },
+  "n3485989088": {
+   "n": "BOOKOFF 大和西鶴間店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・12m）"
+  },
+  "w250074061": {
+   "n": "BOOKOFF 鳥取カインズモール店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・91m）"
+  },
+  "n1793380345": {
+   "n": "BOOKOFF 大和つきみ野店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・11m）"
+  },
+  "n2426727527": {
+   "n": "BOOKOFF 横浜中山店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・27m）"
+  },
+  "n10921043333": {
+   "n": "BOOKOFF 市原辰巳台店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・25m）"
+  },
+  "w482909384": {
+   "n": "BOOKOFF PLUS 16号相模原上鶴間店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・39m）"
+  },
+  "n4613510267": {
+   "n": "BOOKOFF 横浜十日市場店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・38m）"
+  },
+  "n5081905123": {
+   "n": "BOOKOFF SUPER BAZAAR 409号川崎港町店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・66m）"
+  },
+  "n582878251": {
+   "n": "BOOKOFF SUPER BAZAAR 町田中央通り店（本・ホビー館）",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・16m）"
+  },
+  "n5637045775": {
+   "n": "BOOKOFF 千葉おゆみ野店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・114m）"
+  },
+  "n2324118466": {
+   "n": "BOOKOFF ＪＲ蒲田駅東口店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・5m）"
+  },
+  "n4582293195": {
+   "n": "BOOKOFF 川崎東有馬店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・29m）"
+  },
+  "n4368953589": {
+   "n": "BOOKOFF 武蔵新城店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・12m）"
+  },
+  "n3114516924": {
+   "n": "BOOKOFF 246川崎梶ヶ谷店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・8m）"
+  },
+  "n11267308678": {
+   "n": "BOOKOFF イオン橋本店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・31m）"
+  },
+  "n13680991625": {
+   "n": "BOOKOFF イトーヨーカドー溝ノ口店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・83m）"
+  },
+  "n1192695150": {
+   "n": "BOOKOFF 川崎長沢店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・31m）"
+  },
+  "n13604808507": {
+   "n": "BOOKOFF ＪＲ本千葉駅前店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・42m）"
+  },
+  "n7255647245": {
+   "n": "BOOKOFF 自由が丘駅前店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・3m）"
+  },
+  "n10055316244": {
+   "n": "BOOKOFF 向ヶ丘遊園駅前店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・85m）"
+  },
+  "n5325129465": {
+   "n": "BOOKOFF 向ヶ丘遊園駅前店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・88m）"
+  },
+  "n9164671990": {
+   "n": "BOOKOFF 武蔵小山パルム店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・4m）"
+  },
+  "n5213467950": {
+   "n": "BOOKOFF PLUS 西五反田店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・16m）"
+  },
+  "n3351601199": {
+   "n": "BOOKOFF PLUS 大蔵多摩堤通り店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・15m）"
+  },
+  "n274296679": {
+   "n": "BOOKOFF 八王子堀之内店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・111m）"
+  },
+  "w284349132": {
+   "n": "BOOKOFF JR稲田堤駅前店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・41m）"
+  },
+  "n3182509347": {
+   "n": "BOOKOFF 20号山梨石和広瀬店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・113m）"
+  },
+  "n10740684866": {
+   "n": "BOOKOFF 246三軒茶屋店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・4m）"
+  },
+  "n5107561189": {
+   "n": "BOOKOFF 調布駅南口店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・29m）"
+  },
+  "n11285274224": {
+   "n": "BOOKOFF ヴィータモールせいせき店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・39m）"
+  },
+  "w561240233": {
+   "n": "BOOKOFF 20号西八王子店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・10m）"
+  },
+  "n4907041227": {
+   "n": "BOOKOFF 八王子駅北口店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・14m）"
+  },
+  "n4995928859": {
+   "n": "BOOKOFF 葛西駅前店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・16m）"
+  },
+  "w510609089": {
+   "n": "BOOKOFF 中葛西店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・26m）"
+  },
+  "n4959214196": {
+   "n": "BOOKOFF PLUS MINANO分倍河原店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・87m）"
+  },
+  "n5312647235": {
+   "n": "BOOKOFF 浦安駅北店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・12m）"
+  },
+  "n2285608692": {
+   "n": "BOOKOFF 江東門前仲町店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・16m）"
+  },
+  "n13132206908": {
+   "n": "BOOKOFF 四街道店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・103m）"
+  },
+  "n480787235": {
+   "n": "BOOKOFF 浜田山駅前店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・14m）"
+  },
+  "n1638423340": {
+   "n": "BOOKOFF 杉並方南町駅前店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・2m）"
+  },
+  "n4247417789": {
+   "n": "BOOKOFF 山梨双葉響ヶ丘店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・112m）"
+  },
+  "n1534988289": {
+   "n": "BOOKOFF 千葉花見川店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・40m）"
+  },
+  "n12070523669": {
+   "n": "BOOKOFF PLUS 新宿駅西口店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・28m）"
+  },
+  "n2280500743": {
+   "n": "BOOKOFF 新宿靖国通り店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・7m）"
+  },
+  "n5885985329": {
+   "n": "BOOKOFF 瑞江駅北口店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・13m）"
+  },
+  "n2962576484": {
+   "n": "BOOKOFF ロッテシティ錦糸町店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・17m）"
+  },
+  "n8762200281": {
+   "n": "BOOKOFF SUPER BAZAAR 立川駅北口店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・30m）"
+  },
+  "n913407290": {
+   "n": "BOOKOFF 吉祥寺駅北口店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・33m）"
+  },
+  "w361257671": {
+   "n": "BOOKOFF 武蔵小金井店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・35m）"
+  },
+  "n2238156202": {
+   "n": "BOOKOFF 東中野店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・16m）"
+  },
+  "n4987553043": {
+   "n": "BOOKOFF PLUS 上野広小路店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・4m）"
+  },
+  "n11273435055": {
+   "n": "BOOKOFF SUPER BAZAAR ショップス市川店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・63m）"
+  },
+  "n3397845266": {
+   "n": "BOOKOFF 浅草稲荷町店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・7m）"
+  },
+  "n4452823389": {
+   "n": "BOOKOFF 高田馬場北店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・12m）"
+  },
+  "n3200910532": {
+   "n": "BOOKOFF SUPER BAZAAR ゆめまち習志野台モール店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・17m）"
+  },
+  "n10132671503": {
+   "n": "BOOKOFF 曳舟店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・16m）"
+  },
+  "n10813143021": {
+   "n": "BOOKOFF PLUS 126号旭店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・10m）"
+  },
+  "n13111798017": {
+   "n": "BOOKOFF 江戸川東小岩店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・15m）"
+  },
+  "n4199965028": {
+   "n": "BOOKOFF 船橋高根木戸店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・31m）"
+  },
+  "n3410405913": {
+   "n": "BOOKOFF 千駄木店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・15m）"
+  },
+  "n4102288092": {
+   "n": "BOOKOFF 池袋サンシャイン60通り店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・12m）"
+  },
+  "n5586738076": {
+   "n": "BOOKOFF 大塚駅前店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・14m）"
+  },
+  "n5639103423": {
+   "n": "BOOKOFF PLUS 池袋要町店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・4m）"
+  },
+  "n4953983018": {
+   "n": "BOOKOFF 東久留米前沢店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・21m）"
+  },
+  "n3349822861": {
+   "n": "BOOKOFF 大泉学園駅前店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・14m）"
+  },
+  "n789914019": {
+   "n": "BOOKOFF 練馬光が丘店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・9m）"
+  },
+  "n12074681977": {
+   "n": "BOOKOFF イトーヨーカドー東村山店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・31m）"
+  },
+  "n13583595049": {
+   "n": "BOOKOFF 新座栗原店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・12m）"
+  },
+  "n5948345896": {
+   "n": "BOOKOFF 綾瀬駅前店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・37m）"
+  },
+  "n13111857150": {
+   "n": "BOOKOFF 白井冨士店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・45m）"
+  },
+  "n8377994920": {
+   "n": "BOOKOFF PLUS パサージオ西新井店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・121m）"
+  },
+  "n934905622": {
+   "n": "BOOKOFF 松戸駅西口店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・13m）"
+  },
+  "n6342620178": {
+   "n": "BOOKOFF 西台高島通り店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・23m）"
+  },
+  "n2683201541": {
+   "n": "BOOKOFF PLUS 所沢プロぺ通り店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・8m）"
+  },
+  "n13111855425": {
+   "n": "BOOKOFF 千葉ニュータウン中央店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・65m）"
+  },
+  "n2129987102": {
+   "n": "BOOKOFF 新所沢店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・15m）"
+  },
+  "n11636746969": {
+   "n": "BOOKOFF 新座志木南店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・51m）"
+  },
+  "n12787391465": {
+   "n": "BOOKOFF 朝霞台駅前店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・11m）"
+  },
+  "n4757365100": {
+   "n": "BOOKOFF 西川口駅東口店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・37m）"
+  },
+  "n13111820771": {
+   "n": "BOOKOFF 16号柏沼南店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・40m）"
+  },
+  "n10904354438": {
+   "n": "BOOKOFF 6号南柏店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・25m）"
+  },
+  "n2332623303": {
+   "n": "BOOKOFF 16号柏店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・137m）"
+  },
+  "w461554382": {
+   "n": "BOOKOFF PLUS 17号北浦和店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・25m）"
+  },
+  "n6433501992": {
+   "n": "BOOKOFF PLUS 大宮ラクーン店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・44m）"
+  },
+  "n13852706192": {
+   "n": "BOOKOFF 守谷美園店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・42m）"
+  },
+  "n8325116372": {
+   "n": "BOOKOFF 4号せんげん台店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・41m）"
+  },
+  "n10606557848": {
+   "n": "BOOKOFF SUPER BAZAAR 大宮ステラタウン店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・20m）"
+  },
+  "n4861636677": {
+   "n": "BOOKOFF 鶴ヶ島店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・29m）"
+  },
+  "w202625971": {
+   "n": "BOOKOFF 福井鯖江店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・41m）"
+  },
+  "n11659228544": {
+   "n": "BOOKOFF 福井鯖江店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・42m）"
+  },
+  "w264456549": {
+   "n": "BOOKOFF 牛久栄店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・41m）"
+  },
+  "n13154580846": {
+   "n": "BOOKOFF SUPER BAZAAR PAPA上尾店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・178m）"
+  },
+  "n13142876152": {
+   "n": "BOOKOFF 16号春日部庄和店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・188m）"
+  },
+  "n2139666321": {
+   "n": "BOOKOFF 秩父上野町店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・32m）"
+  },
+  "n4511673689": {
+   "n": "BOOKOFF PLUS 茅野店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・60m）"
+  },
+  "w494451983": {
+   "n": "BOOKOFF 東松山松葉店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・29m）"
+  },
+  "n6255133688": {
+   "n": "BOOKOFF 岡谷若宮店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・135m）"
+  },
+  "n11212269718": {
+   "n": "BOOKOFF 福井米松店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・31m）"
+  },
+  "n12106067034": {
+   "n": "BOOKOFF 福井二の宮店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・50m）"
+  },
+  "w558421475": {
+   "n": "BOOKOFF つくばテクノパーク桜店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・36m）"
+  },
+  "w833506676": {
+   "n": "BOOKOFF PLUS 茨城古河店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・41m）"
+  },
+  "w943238460": {
+   "n": "BOOKOFF 藤岡店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・18m）"
+  },
+  "w505604159": {
+   "n": "BOOKOFF 館林店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・12m）"
+  },
+  "w1299695260": {
+   "n": "BOOKOFF SUPER BAZAAR 407号太田飯塚店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・48m）"
+  },
+  "n13143636343": {
+   "n": "BOOKOFF 小山店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・27m）"
+  },
+  "n7111374788": {
+   "n": "BOOKOFF 足利朝倉店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・72m）"
+  },
+  "n13143639822": {
+   "n": "BOOKOFF 小山花垣店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・45m）"
+  },
+  "w824408730": {
+   "n": "BOOKOFF PLUS 小諸西原店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・167m）"
+  },
+  "n3598009763": {
+   "n": "BOOKOFF PLUS 50号水戸元吉田店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・11m）"
+  },
+  "w941684294": {
+   "n": "BOOKOFF 前橋広瀬店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・45m）"
+  },
+  "n13143639828": {
+   "n": "BOOKOFF 栃木薗部店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・26m）"
+  },
+  "w790244253": {
+   "n": "BOOKOFF 上田原店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・129m）"
+  },
+  "n1941618742": {
+   "n": "BOOKOFF ひたちなか馬渡店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・85m）"
+  },
+  "w1132128397": {
+   "n": "BOOKOFF 6号ひたちなか市毛店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・43m）"
+  },
+  "n12546575383": {
+   "n": "BOOKOFF 上田中央店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・20m）"
+  },
+  "n13143670737": {
+   "n": "BOOKOFF 栃木真岡店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・29m）"
+  },
+  "n13143670742": {
+   "n": "BOOKOFF 宇都宮インターパーク店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・75m）"
+  },
+  "n11238691256": {
+   "n": "BOOKOFF 宇都宮西川田店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・65m）"
+  },
+  "w460253549": {
+   "n": "BOOKOFF 日立金沢店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・58m）"
+  },
+  "n13143655200": {
+   "n": "BOOKOFF 宇都宮環状鶴田店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・20m）"
+  },
+  "w451636123": {
+   "n": "BOOKOFF 宇都宮竹林店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・27m）"
+  },
+  "n6136338438": {
+   "n": "BOOKOFF 川中島店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・16m）"
+  },
+  "n6257021294": {
+   "n": "BOOKOFF 長野高田店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・58m）"
+  },
+  "n12768124001": {
+   "n": "BOOKOFF マリエとやま店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・120m）"
+  },
+  "n11686887975": {
+   "n": "BOOKOFF 高岡西町店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・69m）"
+  },
+  "w111511610": {
+   "n": "BOOKOFF いわき植田店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・14m）"
+  },
+  "w227699811": {
+   "n": "BOOKOFF いわき平店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・62m）"
+  },
+  "n5567919776": {
+   "n": "BOOKOFF 長岡古正寺店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・13m）"
+  },
+  "w294903329": {
+   "n": "BOOKOFF 福島南店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・24m）"
+  },
+  "w464477560": {
+   "n": "BOOKOFF 新津店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・101m）"
+  },
+  "w653243196": {
+   "n": "BOOKOFF 福島瀬上店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・9m）"
+  },
+  "n10981820589": {
+   "n": "BOOKOFF 新潟新通店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・48m）"
+  },
+  "w152800370": {
+   "n": "BOOKOFF 新潟黒埼インター店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・56m）"
+  },
+  "n6919532318": {
+   "n": "BOOKOFF 新潟女池店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・51m）"
+  },
+  "w420287849": {
+   "n": "BOOKOFF 新潟関屋店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・35m）"
+  },
+  "n13859001116": {
+   "n": "BOOKOFF 新潟南万代店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・60m）"
+  },
+  "n8940025366": {
+   "n": "BOOKOFF 新潟河渡店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・101m）"
+  },
+  "n13800901721": {
+   "n": "BOOKOFF 新発田店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・44m）"
+  },
+  "w676683593": {
+   "n": "BOOKOFF 佐渡佐和田店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・45m）"
+  },
+  "n4552218591": {
+   "n": "BOOKOFF 4号宮城大河原店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・11m）"
+  },
+  "w864894334": {
+   "n": "BOOKOFF 山形寿店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・37m）"
+  },
+  "n12757152476": {
+   "n": "BOOKOFF 仙台クリスロード店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・18m）"
+  },
+  "n4476550793": {
+   "n": "BOOKOFF SUPER BAZAAR 仙台泉古内店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・4m）"
+  },
+  "w302699987": {
+   "n": "BOOKOFF 山形天童郵便局前店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・34m）"
+  },
+  "n12272836889": {
+   "n": "BOOKOFF 鶴岡7号バイパス店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・142m）"
+  },
+  "w344643512": {
+   "n": "BOOKOFF 7号酒田店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・111m）"
+  },
+  "w1529298412": {
+   "n": "BOOKOFF 盛岡稲荷店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・16m）"
+  },
+  "n10936747991": {
+   "n": "BOOKOFF 盛岡厨川店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・17m）"
+  },
+  "w752583277": {
+   "n": "BOOKOFF 7号能代店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・119m）"
+  },
+  "w729226048": {
+   "n": "BOOKOFF 大館店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・56m）"
+  },
+  "n13757997735": {
+   "n": "BOOKOFF PLUS 登別店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・14m）"
+  },
+  "n12506467389": {
+   "n": "BOOKOFF 苫小牧柳町店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・57m）"
+  },
+  "n4827828670": {
+   "n": "BOOKOFF 帯広西5条店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・17m）"
+  },
+  "n4333187478": {
+   "n": "BOOKOFF PLUS 札幌川沿店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・21m）"
+  },
+  "w386389317": {
+   "n": "BOOKOFF 公立大学前店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・25m）"
+  },
+  "n3930508259": {
+   "n": "BOOKOFF 札幌山鼻店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・33m）"
+  },
+  "w458117568": {
+   "n": "BOOKOFF 札幌川下店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・28m）"
+  },
+  "n9899818855": {
+   "n": "BOOKOFF シーナシーナ琴似店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・143m）"
+  },
+  "n12941993802": {
+   "n": "BOOKOFF 札幌前田店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（位置で一致・116m）"
+  },
+  "n12488671998": {
+   "n": "文教堂 中央林間店",
+   "why": "chain-check 2026-10-16: 文教堂の公式表記（支店名で一致・67m）"
+  },
+  "n1449283909": {
+   "n": "文教堂 グリーンコート店",
+   "why": "chain-check 2026-10-16: 文教堂の公式表記（支店名で一致・129m）"
+  },
+  "n6673729285": {
+   "n": "文教堂 河内長野店",
+   "why": "chain-check 2026-10-16: 文教堂の公式表記（位置で一致・16m）"
+  },
+  "n5641410124": {
+   "n": "文教堂 淀屋橋店",
+   "why": "chain-check 2026-10-16: 文教堂の公式表記（位置で一致・21m）"
+  },
+  "n5468893431": {
+   "n": "文教堂 葉山店",
+   "why": "chain-check 2026-10-16: 文教堂の公式表記（位置で一致・52m）"
+  },
+  "n5892402720": {
+   "n": "文教堂 鎌倉とうきゅう店",
+   "why": "chain-check 2026-10-16: 文教堂の公式表記（位置で一致・17m）"
+  },
+  "n4866022714": {
+   "n": "文教堂 中山とうきゅう店",
+   "why": "chain-check 2026-10-16: 文教堂の公式表記（位置で一致・19m）"
+  },
+  "n11530190745": {
+   "n": "文教堂 成瀬店",
+   "why": "chain-check 2026-10-16: 文教堂の公式表記（位置で一致・131m）"
+  },
+  "n5475778221": {
+   "n": "文教堂 新城駅店",
+   "why": "chain-check 2026-10-16: 文教堂の公式表記（位置で一致・57m）"
+  },
+  "w209472435": {
+   "n": "文教堂 二子玉川店",
+   "why": "chain-check 2026-10-16: 文教堂の公式表記（位置で一致・115m）"
+  },
+  "n10983043994": {
+   "n": "文教堂 南大沢店",
+   "why": "chain-check 2026-10-16: 文教堂の公式表記（位置で一致・14m）"
+  },
+  "n1719295498": {
+   "n": "文教堂 広尾店",
+   "why": "chain-check 2026-10-16: 文教堂の公式表記（位置で一致・51m）"
+  },
+  "n4994161888": {
+   "n": "文教堂 西葛西店",
+   "why": "chain-check 2026-10-16: 文教堂の公式表記（位置で一致・30m）"
+  },
+  "n11462265754": {
+   "n": "文教堂 東陽町駅前店",
+   "why": "chain-check 2026-10-16: 文教堂の公式表記（位置で一致・39m）"
+  },
+  "n6433519299": {
+   "n": "文教堂 行徳店",
+   "why": "chain-check 2026-10-16: 文教堂の公式表記（位置で一致・79m）"
+  },
+  "n2259805132": {
+   "n": "文教堂 人形町店",
+   "why": "chain-check 2026-10-16: 文教堂の公式表記（位置で一致・28m）"
+  },
+  "n2197521236": {
+   "n": "文教堂 下総中山駅店",
+   "why": "chain-check 2026-10-16: 文教堂の公式表記（位置で一致・93m）"
+  },
+  "n3882860303": {
+   "n": "文教堂 練馬高野台店",
+   "why": "chain-check 2026-10-16: 文教堂の公式表記（位置で一致・26m）"
+  },
+  "n1691980581": {
+   "n": "文教堂 成増店",
+   "why": "chain-check 2026-10-16: 文教堂の公式表記（位置で一致・8m）"
+  },
+  "n6292268127": {
+   "n": "文教堂 西台店",
+   "why": "chain-check 2026-10-16: 文教堂の公式表記（位置で一致・134m）"
+  },
+  "n13719727962": {
+   "n": "文教堂 朝霞マルエツ店",
+   "why": "chain-check 2026-10-16: 文教堂の公式表記（位置で一致・127m）"
+  },
+  "n11896906369": {
+   "n": "文教堂 川口駅店",
+   "why": "chain-check 2026-10-16: 文教堂の公式表記（位置で一致・93m）"
+  },
+  "n6948924887": {
+   "n": "文教堂 東川口店",
+   "why": "chain-check 2026-10-16: 文教堂の公式表記（位置で一致・17m）"
+  },
+  "n13971959086": {
+   "n": "文教堂 札幌大通駅店",
+   "why": "chain-check 2026-10-16: 文教堂の公式表記（位置で一致・62m）"
+  },
+  "w172390365": {
+   "n": "文真堂書店ゲオ 倉賀野店",
+   "why": "chain-check 2026-10-16: 文真堂書店の公式表記（支店名で一致・12m）"
+  },
+  "n7216423381": {
+   "n": "Bookman’s Academy 高崎店",
+   "why": "chain-check 2026-10-16: 文真堂書店の公式表記（支店名で一致・101m）"
+  },
+  "n12626647822": {
+   "n": "文真堂書店 足立花畑店",
+   "why": "chain-check 2026-10-16: 文真堂書店の公式表記（位置で一致・62m）"
+  },
+  "n12294310603": {
+   "n": "文真堂書店ゲオ 幸手店",
+   "why": "chain-check 2026-10-16: 文真堂書店の公式表記（位置で一致・26m）"
+  },
+  "w425729058": {
+   "n": "文真堂書店一の宮店",
+   "why": "chain-check 2026-10-16: 文真堂書店の公式表記（位置で一致・34m）"
+  },
+  "n4366008239": {
+   "n": "文真堂書店ゲオ 足利助戸店",
+   "why": "chain-check 2026-10-16: 文真堂書店の公式表記（位置で一致・85m）"
+  },
+  "n4582153095": {
+   "n": "文真堂書店ゲオ 大胡店",
+   "why": "chain-check 2026-10-16: 文真堂書店の公式表記（位置で一致・24m）"
+  },
+  "w419219222": {
+   "n": "古本市場高槻春日町店",
+   "why": "chain-check 2026-10-16: 古本市場（ふるいち）の公式表記（支店名で一致・42m）"
+  },
+  "n1727573533": {
+   "n": "ふるいち高野店",
+   "why": "chain-check 2026-10-16: 古本市場（ふるいち）の公式表記（支店名で一致・13m）"
+  },
+  "w607234029": {
+   "n": "古本市場羽曳野店",
+   "why": "chain-check 2026-10-16: 古本市場（ふるいち）の公式表記（位置で一致・41m）"
+  },
+  "w279721309": {
+   "n": "古本市場倉敷堀南店",
+   "why": "chain-check 2026-10-16: 古本市場（ふるいち）の公式表記（位置で一致・34m）"
+  },
+  "w172046663": {
+   "n": "古本市場東住吉店",
+   "why": "chain-check 2026-10-16: 古本市場（ふるいち）の公式表記（位置で一致・30m）"
+  },
+  "n3084218563": {
+   "n": "古本市場中仙道店",
+   "why": "chain-check 2026-10-16: 古本市場（ふるいち）の公式表記（位置で一致・35m）"
+  },
+  "n3518387272": {
+   "n": "古本市場京山店",
+   "why": "chain-check 2026-10-16: 古本市場（ふるいち）の公式表記（位置で一致・85m）"
+  },
+  "w506614646": {
+   "n": "古本市場魚住店",
+   "why": "chain-check 2026-10-16: 古本市場（ふるいち）の公式表記（位置で一致・32m）"
+  },
+  "n2191996743": {
+   "n": "古本市場大東店",
+   "why": "chain-check 2026-10-16: 古本市場（ふるいち）の公式表記（位置で一致・36m）"
+  },
+  "w254419412": {
+   "n": "古本市場都島店",
+   "why": "chain-check 2026-10-16: 古本市場（ふるいち）の公式表記（位置で一致・15m）"
+  },
+  "n11640229270": {
+   "n": "古本市場猪名寺店",
+   "why": "chain-check 2026-10-16: 古本市場（ふるいち）の公式表記（位置で一致・65m）"
+  },
+  "w460028841": {
+   "n": "古本市場千里丘店",
+   "why": "chain-check 2026-10-16: 古本市場（ふるいち）の公式表記（位置で一致・18m）"
+  },
+  "n6868609459": {
+   "n": "古本市場東豊中店",
+   "why": "chain-check 2026-10-16: 古本市場（ふるいち）の公式表記（位置で一致・60m）"
+  },
+  "n8265964187": {
+   "n": "古本市場川西店",
+   "why": "chain-check 2026-10-16: 古本市場（ふるいち）の公式表記（位置で一致・17m）"
+  },
+  "n3323079461": {
+   "n": "古本市場くずは店",
+   "why": "chain-check 2026-10-16: 古本市場（ふるいち）の公式表記（位置で一致・23m）"
+  },
+  "w379812014": {
+   "n": "古本市場三田店",
+   "why": "chain-check 2026-10-16: 古本市場（ふるいち）の公式表記（位置で一致・45m）"
+  },
+  "w162218037": {
+   "n": "古本市場桂店",
+   "why": "chain-check 2026-10-16: 古本市場（ふるいち）の公式表記（位置で一致・12m）"
+  },
+  "w229060643": {
+   "n": "古本市場京都太秦店",
+   "why": "chain-check 2026-10-16: 古本市場（ふるいち）の公式表記（位置で一致・10m）"
+  },
+  "n5017201516": {
+   "n": "古本市場西大島駅前店",
+   "why": "chain-check 2026-10-16: 古本市場（ふるいち）の公式表記（位置で一致・13m）"
+  },
+  "n13722391257": {
+   "n": "古本市場朝霞店",
+   "why": "chain-check 2026-10-16: 古本市場（ふるいち）の公式表記（位置で一致・38m）"
+  },
+  "n5710072727": {
+   "n": "古本市場保木間店",
+   "why": "chain-check 2026-10-16: 古本市場（ふるいち）の公式表記（位置で一致・22m）"
+  },
+  "n1736389394": {
+   "n": "古本市場松戸店",
+   "why": "chain-check 2026-10-16: 古本市場（ふるいち）の公式表記（位置で一致・11m）"
+  },
+  "n2403814588": {
+   "n": "古本市場川口伊刈店",
+   "why": "chain-check 2026-10-16: 古本市場（ふるいち）の公式表記（位置で一致・12m）"
+  },
+  "n6703697791": {
+   "n": "古本市場与野本町店",
+   "why": "chain-check 2026-10-16: 古本市場（ふるいち）の公式表記（位置で一致・19m）"
+  },
+  "n8069331221": {
+   "n": "古本市場上尾店",
+   "why": "chain-check 2026-10-16: 古本市場（ふるいち）の公式表記（位置で一致・19m）"
+  },
+  "w1327464021": {
+   "n": "古本市場桶川店",
+   "why": "chain-check 2026-10-16: 古本市場（ふるいち）の公式表記（位置で一致・24m）"
+  },
+  "n370487295": {
+   "n": "フタバ図書TSUTAYA MEGA中筋店",
+   "why": "chain-check 2026-10-16: フタバ図書の公式表記（支店名で一致・35m）"
+  },
+  "n7228473259": {
+   "n": "フタバ図書TSUTAYA MEGA中筋店",
+   "why": "chain-check 2026-10-16: フタバ図書の公式表記（支店名で一致・50m）"
+  },
+  "n7567091389": {
+   "n": "フタバ図書TSUTAYA GIGA上安店",
+   "why": "chain-check 2026-10-16: フタバ図書の公式表記（支店名で一致・18m）"
+  },
+  "n6634868527": {
+   "n": "フタバ図書TSUTAYA 可部センター店",
+   "why": "chain-check 2026-10-16: フタバ図書の公式表記（支店名で一致・38m）"
+  },
+  "n764392328": {
+   "n": "フタバ図書TSUTAYA GIGA福岡春日店",
+   "why": "chain-check 2026-10-16: フタバ図書の公式表記（位置で一致・66m）"
+  },
+  "n4344002889": {
+   "n": "フタバ図書TSUTAYA 海田店",
+   "why": "chain-check 2026-10-16: フタバ図書の公式表記（位置で一致・48m）"
+  },
+  "n13105206262": {
+   "n": "フタバ図書TSUTAYA 五日市福屋店",
+   "why": "chain-check 2026-10-16: フタバ図書の公式表記（位置で一致・54m）"
+  },
+  "n9557935704": {
+   "n": "フタバ図書TSUTAYA アルティ アルパーク北棟店",
+   "why": "chain-check 2026-10-16: フタバ図書の公式表記（位置で一致・31m）"
+  },
+  "w143050712": {
+   "n": "フタバ図書TSUTAYA 横川店",
+   "why": "chain-check 2026-10-16: フタバ図書の公式表記（位置で一致・4m）"
+  },
+  "n13495925801": {
+   "n": "フタバ図書TSUTAYA アルティ福山店",
+   "why": "chain-check 2026-10-16: フタバ図書の公式表記（位置で一致・69m）"
+  },
+  "n6060092188": {
+   "n": "ブックスユートピア野間店",
+   "why": "chain-check 2026-10-16: 明屋書店の公式表記（支店名で一致・12m）"
+  },
+  "w920120200": {
+   "n": "明屋書店 コスモタウン佐伯店",
+   "why": "chain-check 2026-10-16: 明屋書店の公式表記（位置で一致・63m）"
+  },
+  "n13904181630": {
+   "n": "明屋書店 宇和島明倫店",
+   "why": "chain-check 2026-10-16: 明屋書店の公式表記（位置で一致・53m）"
+  },
+  "n4727130892": {
+   "n": "明屋書店 空港通店",
+   "why": "chain-check 2026-10-16: 明屋書店の公式表記（位置で一致・63m）"
+  },
+  "w385186290": {
+   "n": "明屋書店 MEGA平田店",
+   "why": "chain-check 2026-10-16: 明屋書店の公式表記（位置で一致・86m）"
+  },
+  "w1142191176": {
+   "n": "明屋書店 川東店",
+   "why": "chain-check 2026-10-16: 明屋書店の公式表記（位置で一致・74m）"
+  },
+  "n4326402891": {
+   "n": "明屋書店 光店",
+   "why": "chain-check 2026-10-16: 明屋書店の公式表記（位置で一致・45m）"
+  },
+  "n4628681409": {
+   "n": "明屋書店 MEGA新下関店",
+   "why": "chain-check 2026-10-16: 明屋書店の公式表記（位置で一致・53m）"
+  },
+  "w305511661": {
+   "n": "明屋書店 下松店",
+   "why": "chain-check 2026-10-16: 明屋書店の公式表記（位置で一致・47m）"
+  },
+  "w357029273": {
+   "n": "明屋書店 緑町店",
+   "why": "chain-check 2026-10-16: 明屋書店の公式表記（位置で一致・46m）"
+  },
+  "w314792649": {
+   "n": "明屋書店 今宿店",
+   "why": "chain-check 2026-10-16: 明屋書店の公式表記（位置で一致・16m）"
+  },
+  "w374920273": {
+   "n": "明屋書店 富田店",
+   "why": "chain-check 2026-10-16: 明屋書店の公式表記（位置で一致・26m）"
+  },
+  "n9235019617": {
+   "n": "明屋書店 南岩国店",
+   "why": "chain-check 2026-10-16: 明屋書店の公式表記（位置で一致・124m）"
+  },
+  "w412988446": {
+   "n": "明屋書店 MEGA大内店",
+   "why": "chain-check 2026-10-16: 明屋書店の公式表記（位置で一致・58m）"
+  },
+  "w638250167": {
+   "n": "ブックスユートピア野間店",
+   "why": "chain-check 2026-10-16: 明屋書店の公式表記（位置で一致・13m）"
+  },
+  "w653684495": {
+   "n": "らくだ書店本店",
+   "why": "chain-check 2026-10-16: 明屋書店の公式表記（位置で一致・11m）"
+  },
+  "n6615783485": {
+   "n": "平和書店 アル・プラザ茨木店",
+   "why": "chain-check 2026-10-16: 平和書店の公式表記（位置で一致・18m）"
+  },
+  "n5237946359": {
+   "n": "平和書店 アル・プラザ宇治東店",
+   "why": "chain-check 2026-10-16: 平和書店の公式表記（位置で一致・30m）"
+  },
+  "n5862951248": {
+   "n": "平和書店 アル・プラザ瀬田店",
+   "why": "chain-check 2026-10-16: 平和書店の公式表記（位置で一致・76m）"
+  },
+  "n2879732759": {
+   "n": "紀伊國屋書店 京王稲田堤店",
+   "why": "chain-check 2026-10-16: 啓文堂書店（現・紀伊國屋書店）の公式表記（支店名で一致・76m）"
+  },
+  "n6967716744": {
+   "n": "紀伊國屋書店 つつじヶ丘店",
+   "why": "chain-check 2026-10-16: 啓文堂書店（現・紀伊國屋書店）の公式表記（支店名で一致・45m）"
+  },
+  "n2421505113": {
+   "n": "紀伊國屋書店 高尾店",
+   "why": "chain-check 2026-10-16: 啓文堂書店（現・紀伊國屋書店）の公式表記（位置で一致・166m）"
+  },
+  "n12964521993": {
+   "n": "紀伊國屋書店 下高井戸店",
+   "why": "chain-check 2026-10-16: 啓文堂書店（現・紀伊國屋書店）の公式表記（位置で一致・39m）"
+  },
+  "n1339642518": {
+   "n": "紀伊國屋書店 久我山店",
+   "why": "chain-check 2026-10-16: 啓文堂書店（現・紀伊國屋書店）の公式表記（位置で一致・11m）"
+  },
+  "n2148527319": {
+   "n": "紀伊國屋書店 三鷹店",
+   "why": "chain-check 2026-10-16: 啓文堂書店（現・紀伊國屋書店）の公式表記（位置で一致・32m）"
+  },
+  "n4104351003": {
+   "n": "紀伊國屋書店 久留米店",
+   "why": "chain-check 2026-10-16: 紀伊國屋書店の公式表記（支店名で一致・123m）"
+  },
+  "n2393956127": {
+   "n": "紀伊國屋書店 いよてつ髙島屋店",
+   "why": "chain-check 2026-10-16: 紀伊國屋書店の公式表記（支店名で一致・5m）"
+  },
+  "n6400531358": {
+   "n": "紀伊國屋書店 広島店",
+   "why": "chain-check 2026-10-16: 紀伊國屋書店の公式表記（支店名で一致・16m）"
+  },
+  "n3094327863": {
+   "n": "紀伊國屋書店 西武東戸塚S.C.店",
+   "why": "chain-check 2026-10-16: 紀伊國屋書店の公式表記（支店名で一致・144m）"
+  },
+  "n1502259289": {
+   "n": "紀伊國屋書店 Books Kinokuniya Tokyo （洋書専門店）",
+   "why": "chain-check 2026-10-16: 紀伊國屋書店の公式表記（支店名で一致・10m）"
+  },
+  "n2293200712": {
+   "n": "紀伊國屋書店 川越店",
+   "why": "chain-check 2026-10-16: 紀伊國屋書店の公式表記（支店名で一致・25m）"
+  },
+  "n6380332925": {
+   "n": "紀伊國屋書店 長崎店",
+   "why": "chain-check 2026-10-16: 紀伊國屋書店の公式表記（位置で一致・78m）"
+  },
+  "n5606356464": {
+   "n": "紀伊國屋書店 佐賀店",
+   "why": "chain-check 2026-10-16: 紀伊國屋書店の公式表記（位置で一致・132m）"
+  },
+  "n14212336859": {
+   "n": "紀伊國屋書店 徳島店",
+   "why": "chain-check 2026-10-16: 紀伊國屋書店の公式表記（位置で一致・71m）"
+  },
+  "n4807613484": {
+   "n": "紀伊國屋書店 天王寺ミオ店",
+   "why": "chain-check 2026-10-16: 紀伊國屋書店の公式表記（位置で一致・8m）"
+  },
+  "n6649722212": {
+   "n": "紀伊國屋書店 岡山店",
+   "why": "chain-check 2026-10-16: 紀伊國屋書店の公式表記（位置で一致・8m）"
+  },
+  "n2319237145": {
+   "n": "紀伊國屋書店 本町店",
+   "why": "chain-check 2026-10-16: 紀伊國屋書店の公式表記（位置で一致・10m）"
+  },
+  "n5395164728": {
+   "n": "紀伊國屋書店 加古川店",
+   "why": "chain-check 2026-10-16: 紀伊國屋書店の公式表記（位置で一致・51m）"
+  },
+  "n1937606715": {
+   "n": "紀伊國屋書店 mozoワンダーシティ店",
+   "why": "chain-check 2026-10-16: 紀伊國屋書店の公式表記（位置で一致・34m）"
+  },
+  "n14093885296": {
+   "n": "紀伊國屋書店 イトーヨーカドー立場店",
+   "why": "chain-check 2026-10-16: 紀伊國屋書店の公式表記（位置で一致・17m）"
+  },
+  "n6516186629": {
+   "n": "紀伊國屋書店 イトーヨーカドー川崎店",
+   "why": "chain-check 2026-10-16: 紀伊國屋書店の公式表記（位置で一致・182m）"
+  },
+  "n4717817475": {
+   "n": "紀伊國屋書店 ららぽーと横浜店",
+   "why": "chain-check 2026-10-16: 紀伊國屋書店の公式表記（位置で一致・9m）"
+  },
+  "w55798488": {
+   "n": "紀伊國屋書店 新宿本店",
+   "why": "chain-check 2026-10-16: 紀伊國屋書店の公式表記（位置で一致・3m）"
+  },
+  "n10055316257": {
+   "n": "紀伊國屋書店 吉祥寺東急店",
+   "why": "chain-check 2026-10-16: 紀伊國屋書店の公式表記（位置で一致・78m）"
+  },
+  "n9833440380": {
+   "n": "紀伊國屋書店 セブンパークアリオ柏店",
+   "why": "chain-check 2026-10-16: 紀伊國屋書店の公式表記（位置で一致・30m）"
+  },
+  "n6433501985": {
+   "n": "紀伊國屋書店 浦和パルコ店",
+   "why": "chain-check 2026-10-16: 紀伊國屋書店の公式表記（位置で一致・56m）"
+  },
+  "n9560410786": {
+   "n": "紀伊國屋書店 浦和パルコ店",
+   "why": "chain-check 2026-10-16: 紀伊國屋書店の公式表記（位置で一致・61m）"
+  },
+  "n10069845216": {
+   "n": "紀伊國屋書店 流山おおたかの森店",
+   "why": "chain-check 2026-10-16: 紀伊國屋書店の公式表記（位置で一致・27m）"
+  },
+  "n2892742821": {
+   "n": "紀伊國屋書店 さいたま新都心店",
+   "why": "chain-check 2026-10-16: 紀伊國屋書店の公式表記（位置で一致・13m）"
+  },
+  "n4908435616": {
+   "n": "紀伊國屋書店 福井店",
+   "why": "chain-check 2026-10-16: 紀伊國屋書店の公式表記（位置で一致・21m）"
+  },
+  "n4681883253": {
+   "n": "紀伊國屋書店 新潟店",
+   "why": "chain-check 2026-10-16: 紀伊國屋書店の公式表記（位置で一致・31m）"
+  },
+  "n11446459836": {
+   "n": "紀伊國屋書店 厚別店",
+   "why": "chain-check 2026-10-16: 紀伊國屋書店の公式表記（位置で一致・40m）"
+  },
+  "n4535637547": {
+   "n": "くまざわ書店 八王子店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（支店名で一致・15m）"
+  },
+  "n11346342453": {
+   "n": "田園書房 つかざん店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・53m）"
+  },
+  "n6181792784": {
+   "n": "くまざわ書店 那覇店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・52m）"
+  },
+  "n9691924893": {
+   "n": "球陽堂書房 西原シティ店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・36m）"
+  },
+  "n5469497206": {
+   "n": "球陽堂書房 メインプレイス店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・74m）"
+  },
+  "n9878620890": {
+   "n": "田園書房 具志川店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・20m）"
+  },
+  "n12561038302": {
+   "n": "くまざわ書店 福岡西新店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・37m）"
+  },
+  "n5536658489": {
+   "n": "くまざわ書店 若松店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・102m）"
+  },
+  "n2748741359": {
+   "n": "くまざわ書店 下関店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・44m）"
+  },
+  "n6006856952": {
+   "n": "くまざわ書店 和歌山MIO店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・115m）"
+  },
+  "n5545200354": {
+   "n": "くまざわ書店 阿倍野店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・78m）"
+  },
+  "n12452717597": {
+   "n": "ACADEMIA けいはんな店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・171m）"
+  },
+  "n4982803560": {
+   "n": "くまざわ書店 藤原台店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・73m）"
+  },
+  "n11834340295": {
+   "n": "くまざわ書店 みのおキューズモール店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・105m）"
+  },
+  "n11983586229": {
+   "n": "くまざわ書店 ヨロッカ春日井店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・59m）"
+  },
+  "n4709394792": {
+   "n": "くまざわ書店 大船店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・42m）"
+  },
+  "n11477686136": {
+   "n": "ACADEMIA 大垣店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・121m）"
+  },
+  "n13243395929": {
+   "n": "くまざわ書店 犬山店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・6m）"
+  },
+  "n6058951953": {
+   "n": "くまざわ書店 ジョイナステラス二俣川店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・159m）"
+  },
+  "n7178483797": {
+   "n": "くまざわ書店 大和店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・54m）"
+  },
+  "n3977603519": {
+   "n": "くまざわ書店 大和鶴間店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・49m）"
+  },
+  "n10181755304": {
+   "n": "くまざわ書店 新横浜店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・66m）"
+  },
+  "n4750366849": {
+   "n": "くまざわ書店 長津田店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・88m）"
+  },
+  "n14144668756": {
+   "n": "くまざわ書店 アピタテラス横浜綱島店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・51m）"
+  },
+  "n11045983306": {
+   "n": "くまざわ書店 町田根岸店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・44m）"
+  },
+  "n13290284386": {
+   "n": "くまざわ書店 さぎ沼店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・59m）"
+  },
+  "n3684832476": {
+   "n": "くまざわ書店 相模原店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・137m）"
+  },
+  "n11644090323": {
+   "n": "くまざわ書店 蘇我店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・70m）"
+  },
+  "n9407568218": {
+   "n": "くまざわ書店 イーアス高尾店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・109m）"
+  },
+  "n11841508972": {
+   "n": "くまざわ書店 調布店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・74m）"
+  },
+  "n10554074171": {
+   "n": "くまざわ書店 西八王子店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・4m）"
+  },
+  "n13982684351": {
+   "n": "くまざわ書店 セレオ甲府店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・38m）"
+  },
+  "n13912964352": {
+   "n": "くまざわ書店 四街道店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・25m）"
+  },
+  "n4210150181": {
+   "n": "くまざわ書店 船堀店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・17m）"
+  },
+  "n14026132793": {
+   "n": "くまざわ書店 双葉店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・119m）"
+  },
+  "n5872736553": {
+   "n": "くまざわ書店 錦糸町店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・63m）"
+  },
+  "n13912964285": {
+   "n": "くまざわ書店 勝田台店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・19m）"
+  },
+  "n14238539332": {
+   "n": "くまざわ書店 ららテラス北綾瀬店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・92m）"
+  },
+  "n12828512120": {
+   "n": "くまざわ書店 草加ヴァリエ店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・120m）"
+  },
+  "n12421918031": {
+   "n": "くまざわ書店 柏高島屋ステーションモール店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・106m）"
+  },
+  "n11602054326": {
+   "n": "くまざわ書店 ふじみ野店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・133m）"
+  },
+  "n11732892457": {
+   "n": "くまざわ書店 上田店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・16m）"
+  },
+  "n7695307124": {
+   "n": "くまざわ書店 宇都宮店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・79m）"
+  },
+  "w276438314": {
+   "n": "くまざわ書店 須賀川店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・59m）"
+  },
+  "n4644010182": {
+   "n": "くまざわ書店 郡山店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・106m）"
+  },
+  "n4644010181": {
+   "n": "くまざわ書店 郡山店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・176m）"
+  },
+  "n12208869394": {
+   "n": "くまざわ書店 シーナシーナ弘前店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・61m）"
+  },
+  "n7178552298": {
+   "n": "くまざわ書店 シーナシーナ青森店",
+   "why": "chain-check 2026-10-16: くまざわ書店の公式表記（位置で一致・100m）"
+  },
+  "n746464977": {
+   "n": "リブロ 花小金井店",
+   "why": "chain-check 2026-10-16: リブロ（NICリテールズ）の公式表記（支店名で一致・56m）"
+  },
+  "n9712710998": {
+   "n": "オリオン書房 サザン店",
+   "why": "chain-check 2026-10-16: リブロ（NICリテールズ）の公式表記（位置で一致・94m）"
+  },
+  "n1083097890": {
+   "n": "オリオン書房 ノルテ店",
+   "why": "chain-check 2026-10-16: リブロ（NICリテールズ）の公式表記（位置で一致・52m）"
+  },
+  "n9642296908": {
+   "n": "リブロ エミオ富士見台店",
+   "why": "chain-check 2026-10-16: リブロ（NICリテールズ）の公式表記（位置で一致・33m）"
+  },
+  "n2735768947": {
+   "n": "オリオン書房 イオンモールむさし村山店",
+   "why": "chain-check 2026-10-16: リブロ（NICリテールズ）の公式表記（位置で一致・54m）"
+  },
+  "n6097132116": {
+   "n": "オリオン書房 エミオ秋津店",
+   "why": "chain-check 2026-10-16: リブロ（NICリテールズ）の公式表記（位置で一致・8m）"
+  },
+  "n3812273988": {
+   "n": "リブロ ららぽーと富士見店",
+   "why": "chain-check 2026-10-16: リブロ（NICリテールズ）の公式表記（位置で一致・82m）"
+  },
+  "n12278219237": {
+   "n": "リブロ ベニバナウォーク桶川店",
+   "why": "chain-check 2026-10-16: リブロ（NICリテールズ）の公式表記（位置で一致・34m）"
+  },
+  "n2245789107": {
+   "n": "リブロ ピオニウォーク東松山店",
+   "why": "chain-check 2026-10-16: リブロ（NICリテールズ）の公式表記（位置で一致・104m）"
+  },
+  "n13661321104": {
+   "n": "未来屋書店姶良",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（支店名で一致・6m）"
+  },
+  "n9920877785": {
+   "n": "未来屋書店大阪ドームシティ",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（支店名で一致・134m）"
+  },
+  "n5450207721": {
+   "n": "未来屋書店矢巾",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（支店名で一致・28m）"
+  },
+  "n7597860375": {
+   "n": "未来屋書店とよみ",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・15m）"
+  },
+  "n5747745926": {
+   "n": "未来屋書店沖縄ライカム",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・41m）"
+  },
+  "n13247697785": {
+   "n": "未来屋書店直方",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・187m）"
+  },
+  "n4571250743": {
+   "n": "未来屋書店和歌山",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・36m）"
+  },
+  "n5302878231": {
+   "n": "未来屋書店日根野",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・126m）"
+  },
+  "n9295556641": {
+   "n": "未来屋書店喜連瓜破",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・75m）"
+  },
+  "n13963769907": {
+   "n": "未来屋書店岡山",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・165m）"
+  },
+  "n13045386267": {
+   "n": "未来屋書店岡山",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・121m）"
+  },
+  "n5546979225": {
+   "n": "未来屋書店小阪",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・73m）"
+  },
+  "n6865986408": {
+   "n": "未来屋書店明石",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・177m）"
+  },
+  "n14124905903": {
+   "n": "未来屋書店高の原",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・186m）"
+  },
+  "n11871810960": {
+   "n": "未来屋書店古川橋駅前",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・58m）"
+  },
+  "n5965700096": {
+   "n": "未来屋書店四條畷",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・186m）"
+  },
+  "n5400806727": {
+   "n": "未来屋書店加古川",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・79m）"
+  },
+  "n7961272055": {
+   "n": "未来屋書店茨木",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・90m）"
+  },
+  "n5104445219": {
+   "n": "未来屋書店 北千里",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・80m）"
+  },
+  "n9938575917": {
+   "n": "未来屋書店高槻",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・147m）"
+  },
+  "n10858696797": {
+   "n": "未来屋書店三田ウッディタウン",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・98m）"
+  },
+  "n2817078300": {
+   "n": "未来屋書店加西北条",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・45m）"
+  },
+  "n6174547537": {
+   "n": "未来屋書店東員",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・41m）"
+  },
+  "n6174674998": {
+   "n": "未来屋書店桑名",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・87m）"
+  },
+  "n7289015894": {
+   "n": "未来屋書店大和",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・49m）"
+  },
+  "n10121695430": {
+   "n": "未来屋書店 天王町",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・123m）"
+  },
+  "n9813466956": {
+   "n": "未来屋書店大和鶴間",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・89m）"
+  },
+  "n6393060565": {
+   "n": "未来屋書店品川シーサイド",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・102m）"
+  },
+  "n6433519301": {
+   "n": "未来屋書店幕張",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・88m）"
+  },
+  "n12378508082": {
+   "n": "未来屋書店幕張",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・65m）"
+  },
+  "n12378521006": {
+   "n": "未来屋書店幕張新都心",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・16m）"
+  },
+  "n10113431579": {
+   "n": "未来屋書店津田沼",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・111m）"
+  },
+  "n11985549917": {
+   "n": "未来屋書店板橋",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・104m）"
+  },
+  "n10043776270": {
+   "n": "未来屋書店成田",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・186m）"
+  },
+  "n9557250244": {
+   "n": "未来屋書店北戸田",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・49m）"
+  },
+  "n12008273494": {
+   "n": "未来屋書店北小金",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・18m）"
+  },
+  "n11871877326": {
+   "n": "未来屋書店武蔵狭山",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・151m）"
+  },
+  "n7120926828": {
+   "n": "未来屋書店西代",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・57m）"
+  },
+  "n2004288244": {
+   "n": "未来屋書店羽生",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・135m）"
+  },
+  "n7152700192": {
+   "n": "未来屋書店下妻",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・91m）"
+  },
+  "n9672319482": {
+   "n": "未来屋書店水戸内原",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・168m）"
+  },
+  "n11732869419": {
+   "n": "未来屋書店上田",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・109m）"
+  },
+  "n5120976839": {
+   "n": "未来屋書店名取",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・195m）"
+  },
+  "n5246668021": {
+   "n": "未来屋書店仙台幸町",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・55m）"
+  },
+  "n13204280351": {
+   "n": "未来屋書店仙台上杉",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・73m）"
+  },
+  "n8457426117": {
+   "n": "未来屋書店石巻",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・182m）"
+  },
+  "n13590765189": {
+   "n": "未来屋書店古川",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・169m）"
+  },
+  "w381222380": {
+   "n": "未来屋書店酒田北",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・11m）"
+  },
+  "w734713033": {
+   "n": "ミライア本荘",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・41m）"
+  },
+  "n12046172406": {
+   "n": "未来屋書店大曲",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・195m）"
+  },
+  "n10312379865": {
+   "n": "未来屋書店秋田",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・165m）"
+  },
+  "n10560390466": {
+   "n": "未来屋書店苗穂",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・5m）"
+  },
+  "n9778324868": {
+   "n": "未来屋書店名寄",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式表記（位置で一致・79m）"
+  },
+  "w1169243085": {
+   "n": "宮脇書店 中土佐店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（支店名で一致・125m）"
+  },
+  "n12582293139": {
+   "n": "宮脇書店 木津川店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（支店名で一致・162m）"
+  },
+  "n8219501530": {
+   "n": "宮脇書店 糸満店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・108m）"
+  },
+  "n12095508669": {
+   "n": "宮脇書店 豊見城店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・191m）"
+  },
+  "n6316321639": {
+   "n": "宮脇書店 南風原店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・31m）"
+  },
+  "n6906607248": {
+   "n": "宮脇書店 あがり浜店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・91m）"
+  },
+  "n8219628326": {
+   "n": "宮脇書店 経塚シティ店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・77m）"
+  },
+  "n11869541883": {
+   "n": "宮脇書店 コンベンションシティ店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・167m）"
+  },
+  "w611763785": {
+   "n": "宮脇書店 宜野湾店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・22m）"
+  },
+  "n6247988800": {
+   "n": "宮脇書店 北谷店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・73m）"
+  },
+  "n11231369160": {
+   "n": "宮脇書店 具志川店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・110m）"
+  },
+  "w455591999": {
+   "n": "宮脇書店 名護店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・50m）"
+  },
+  "n10596200333": {
+   "n": "宮脇書店 イオン名護店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・83m）"
+  },
+  "n8201901025": {
+   "n": "宮脇書店 イオンモール今治新都市店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・153m）"
+  },
+  "n3890162129": {
+   "n": "宮脇書店 徳山店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・80m）"
+  },
+  "n12367152753": {
+   "n": "宮脇書店 そよら今治店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・34m）"
+  },
+  "n10237702998": {
+   "n": "宮脇書店 マルナカ脇町店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・85m）"
+  },
+  "n11291231795": {
+   "n": "宮脇書店 三豊店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・70m）"
+  },
+  "w1134538127": {
+   "n": "宮脇書店 善通寺店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・26m）"
+  },
+  "w657434711": {
+   "n": "宮脇書店 寒川店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・31m）"
+  },
+  "w213589881": {
+   "n": "宮脇書店 丸亀バサラ店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・38m）"
+  },
+  "n10290750412": {
+   "n": "宮脇書店 多度津店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・141m）"
+  },
+  "n5091781560": {
+   "n": "宮脇書店 新国分寺店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・20m）"
+  },
+  "w1113490110": {
+   "n": "宮脇書店 宇多津店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・58m）"
+  },
+  "w1117091421": {
+   "n": "宮脇書店 坂出白金店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・70m）"
+  },
+  "n740883991": {
+   "n": "宮脇書店 総本店(M.C.S.)",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・40m）"
+  },
+  "n6953449690": {
+   "n": "宮脇書店 児島店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・59m）"
+  },
+  "w1315091301": {
+   "n": "宮脇書店 鴨方店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・73m）"
+  },
+  "n6370249450": {
+   "n": "宮脇書店 神辺店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・140m）"
+  },
+  "n13115650053": {
+   "n": "宮脇書店 連島店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・49m）"
+  },
+  "n13428087712": {
+   "n": "宮脇書店 マルナカ新倉敷店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・28m）"
+  },
+  "n6984171632": {
+   "n": "宮脇書店 マルナカ新倉敷店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・60m）"
+  },
+  "n6326898911": {
+   "n": "宮脇書店 倉敷マスカット店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・30m）"
+  },
+  "n13098284581": {
+   "n": "宮脇書店 原尾島店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・62m）"
+  },
+  "n12196923558": {
+   "n": "宮脇書店 岡北店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・44m）"
+  },
+  "w447871138": {
+   "n": "宮脇書店 久居店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・112m）"
+  },
+  "n12369044029": {
+   "n": "宮脇書店 ゆめタウン平島店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・43m）"
+  },
+  "w180099129": {
+   "n": "宮脇書店 平島店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・59m）"
+  },
+  "w627176215": {
+   "n": "宮脇書店 加古川店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・142m）"
+  },
+  "n13068151048": {
+   "n": "宮脇書店 サンパーク新見店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・60m）"
+  },
+  "n8324307458": {
+   "n": "宮脇書店 ピエリ守山店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・104m）"
+  },
+  "n11049566996": {
+   "n": "宮脇書店 イオン松江店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・69m）"
+  },
+  "w42932770": {
+   "n": "宮脇書店 舞鶴店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・5m）"
+  },
+  "n6994382802": {
+   "n": "宮脇書店 イオン鳥取店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・23m）"
+  },
+  "n9553108443": {
+   "n": "宮脇書店 境港店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・37m）"
+  },
+  "n6433521985": {
+   "n": "宮脇書店 イオン稲毛店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・104m）"
+  },
+  "n11669122023": {
+   "n": "宮脇書店 ユーカリが丘店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・182m）"
+  },
+  "w512331893": {
+   "n": "宮脇書店 朝霞店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・26m）"
+  },
+  "n4997768670": {
+   "n": "宮脇書店 越谷店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・9m）"
+  },
+  "n11432245719": {
+   "n": "宮脇書店 春江店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・22m）"
+  },
+  "w439255733": {
+   "n": "宮脇書店 小山店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・23m）"
+  },
+  "n9567969011": {
+   "n": "宮脇書店 見附店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・110m）"
+  },
+  "n5153200225": {
+   "n": "宮脇書店 イオン米沢店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・74m）"
+  },
+  "n4952032321": {
+   "n": "宮脇書店 仙台鈎取店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・113m）"
+  },
+  "n13047794061": {
+   "n": "宮脇書店 仙台卸町店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・24m）"
+  },
+  "n5033922023": {
+   "n": "宮脇書店 佐沼店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・74m）"
+  },
+  "w696355616": {
+   "n": "宮脇書店 青森店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式表記（位置で一致・58m）"
+  },
+  "n12944203490": {
+   "n": "大垣書店 ジ アウトレット広島店",
+   "why": "chain-check 2026-10-16: 大垣書店の公式表記（位置で一致・163m）"
+  },
+  "n5156973986": {
+   "n": "大垣書店 プリコ神戸店",
+   "why": "chain-check 2026-10-16: 大垣書店の公式表記（位置で一致・30m）"
+  },
+  "n6165628148": {
+   "n": "大垣書店 豊中緑丘店",
+   "why": "chain-check 2026-10-16: 大垣書店の公式表記（位置で一致・53m）"
+  },
+  "w189671788": {
+   "n": "大垣書店 伏見店",
+   "why": "chain-check 2026-10-16: 大垣書店の公式表記（位置で一致・1m）"
+  },
+  "n8094026061": {
+   "n": "大垣書店 醍醐店",
+   "why": "chain-check 2026-10-16: 大垣書店の公式表記（位置で一致・22m）"
+  },
+  "n14204343701": {
+   "n": "大垣書店 イオンモール京都桂川店",
+   "why": "chain-check 2026-10-16: 大垣書店の公式表記（位置で一致・34m）"
+  },
+  "n12200813845": {
+   "n": "大垣書店 イオンモールKYOTO店",
+   "why": "chain-check 2026-10-16: 大垣書店の公式表記（位置で一致・114m）"
+  },
+  "n2895462424": {
+   "n": "大垣書店 ブックパル五条店",
+   "why": "chain-check 2026-10-16: 大垣書店の公式表記（位置で一致・7m）"
+  },
+  "n6356375603": {
+   "n": "大垣書店 京都本店",
+   "why": "chain-check 2026-10-16: 大垣書店の公式表記（位置で一致・12m）"
+  },
+  "n3512156183": {
+   "n": "大垣書店 京都本店",
+   "why": "chain-check 2026-10-16: 大垣書店の公式表記（位置で一致・189m）"
+  },
+  "n3188040561": {
+   "n": "大垣書店 烏丸三条店",
+   "why": "chain-check 2026-10-16: 大垣書店の公式表記（位置で一致・25m）"
+  },
+  "n1899606400": {
+   "n": "大垣書店 二条駅店",
+   "why": "chain-check 2026-10-16: 大垣書店の公式表記（位置で一致・17m）"
+  },
+  "n10698152990": {
+   "n": "大垣書店 Kotochika御池店",
+   "why": "chain-check 2026-10-16: 大垣書店の公式表記（位置で一致・112m）"
+  },
+  "n10693145922": {
+   "n": "大垣書店 イオンモール北大路店",
+   "why": "chain-check 2026-10-16: 大垣書店の公式表記（位置で一致・42m）"
+  },
+  "n2010136358": {
+   "n": "三省堂書店 アトレ秋葉原1",
+   "why": "chain-check 2026-10-16: 三省堂書店の公式表記（支店名で一致・28m）"
+  },
+  "n11082084323": {
+   "n": "三省堂書店 名古屋本店",
+   "why": "chain-check 2026-10-16: 三省堂書店の公式表記（位置で一致・81m）"
+  },
+  "n2458998331": {
+   "n": "三省堂書店 一宮店",
+   "why": "chain-check 2026-10-16: 三省堂書店の公式表記（位置で一致・11m）"
+  },
+  "n11454316414": {
+   "n": "三省堂書店 カルチャーステーション千葉",
+   "why": "chain-check 2026-10-16: 三省堂書店の公式表記（位置で一致・38m）"
+  },
+  "n11445730002": {
+   "n": "三省堂書店 イコアス千城台店",
+   "why": "chain-check 2026-10-16: 三省堂書店の公式表記（位置で一致・77m）"
+  },
+  "n1360253839": {
+   "n": "三省堂書店 成城店",
+   "why": "chain-check 2026-10-16: 三省堂書店の公式表記（位置で一致・52m）"
+  },
+  "n1992017300": {
+   "n": "三省堂書店 有楽町店",
+   "why": "chain-check 2026-10-16: 三省堂書店の公式表記（位置で一致・29m）"
+  },
+  "n13744773825": {
+   "n": "三省堂書店 神田神保町本店",
+   "why": "chain-check 2026-10-16: 三省堂書店の公式表記（位置で一致・16m）"
+  },
+  "n6433501991": {
+   "n": "三省堂書店 大宮店",
+   "why": "chain-check 2026-10-16: 三省堂書店の公式表記（位置で一致・39m）"
+  },
+  "n10018239847": {
+   "n": "三省堂書店 札幌店",
+   "why": "chain-check 2026-10-16: 三省堂書店の公式表記（位置で一致・102m）"
+  },
+  "n9498453350": {
+   "n": "三省堂書店 留萌ブックセンター",
+   "why": "chain-check 2026-10-16: 三省堂書店の公式表記（位置で一致・175m）"
+  },
+  "w202630121": {
+   "n": "三洋堂書店 豊川店",
+   "why": "chain-check 2026-10-16: 三洋堂書店の公式表記（支店名で一致・38m）"
+  },
+  "w414780692": {
+   "n": "三洋堂書店 橿原神宮店",
+   "why": "chain-check 2026-10-16: 三洋堂書店の公式表記（位置で一致・101m）"
+  },
+  "w273209244": {
+   "n": "三洋堂書店 桜井店",
+   "why": "chain-check 2026-10-16: 三洋堂書店の公式表記（位置で一致・47m）"
+  },
+  "w326868738": {
+   "n": "三洋堂書店 香芝店",
+   "why": "chain-check 2026-10-16: 三洋堂書店の公式表記（位置で一致・13m）"
+  },
+  "w464544316": {
+   "n": "三洋堂書店 白塚店",
+   "why": "chain-check 2026-10-16: 三洋堂書店の公式表記（位置で一致・136m）"
+  },
+  "w382982654": {
+   "n": "三洋堂書店 知立店",
+   "why": "chain-check 2026-10-16: 三洋堂書店の公式表記（位置で一致・30m）"
+  },
+  "w143858078": {
+   "n": "三洋堂書店 桑名店",
+   "why": "chain-check 2026-10-16: 三洋堂書店の公式表記（位置で一致・47m）"
+  },
+  "w144048923": {
+   "n": "三洋堂書店 桑名店",
+   "why": "chain-check 2026-10-16: 三洋堂書店の公式表記（位置で一致・134m）"
+  },
+  "w857473660": {
+   "n": "三洋堂書店 本新店",
+   "why": "chain-check 2026-10-16: 三洋堂書店の公式表記（位置で一致・27m）"
+  },
+  "n4935188290": {
+   "n": "三洋堂書店 当知店",
+   "why": "chain-check 2026-10-16: 三洋堂書店の公式表記（位置で一致・17m）"
+  },
+  "w110352356": {
+   "n": "三洋堂書店 新開橋店",
+   "why": "chain-check 2026-10-16: 三洋堂書店の公式表記（位置で一致・30m）"
+  },
+  "n2890776401": {
+   "n": "三洋堂書店 いりなか店",
+   "why": "chain-check 2026-10-16: 三洋堂書店の公式表記（位置で一致・14m）"
+  },
+  "n10654199522": {
+   "n": "三洋堂書店 北勢店",
+   "why": "chain-check 2026-10-16: 三洋堂書店の公式表記（位置で一致・73m）"
+  },
+  "n9134508053": {
+   "n": "三洋堂書店 よもぎ店",
+   "why": "chain-check 2026-10-16: 三洋堂書店の公式表記（位置で一致・32m）"
+  },
+  "n392687777": {
+   "n": "三洋堂書店 ひしの店",
+   "why": "chain-check 2026-10-16: 三洋堂書店の公式表記（位置で一致・26m）"
+  },
+  "n5597341022": {
+   "n": "三洋堂書店 城山店",
+   "why": "chain-check 2026-10-16: 三洋堂書店の公式表記（位置で一致・59m）"
+  },
+  "w297486447": {
+   "n": "三洋堂書店 清洲店",
+   "why": "chain-check 2026-10-16: 三洋堂書店の公式表記（位置で一致・113m）"
+  },
+  "n5214033538": {
+   "n": "三洋堂書店 鳥居松店",
+   "why": "chain-check 2026-10-16: 三洋堂書店の公式表記（位置で一致・27m）"
+  },
+  "n5289213423": {
+   "n": "三洋堂書店 志段味店",
+   "why": "chain-check 2026-10-16: 三洋堂書店の公式表記（位置で一致・20m）"
+  },
+  "n12026403568": {
+   "n": "三洋堂書店 江南店",
+   "why": "chain-check 2026-10-16: 三洋堂書店の公式表記（位置で一致・13m）"
+  },
+  "n506041303": {
+   "n": "三洋堂書店 長浜店",
+   "why": "chain-check 2026-10-16: 三洋堂書店の公式表記（位置で一致・41m）"
+  },
+  "w1311166509": {
+   "n": "三洋堂書店 長浜店",
+   "why": "chain-check 2026-10-16: 三洋堂書店の公式表記（位置で一致・33m）"
+  },
+  "n9725660537": {
+   "n": "三洋堂書店 アクロスプラザ恵那店",
+   "why": "chain-check 2026-10-16: 三洋堂書店の公式表記（位置で一致・169m）"
+  },
+  "w1206373816": {
+   "n": "三洋堂書店 長良店",
+   "why": "chain-check 2026-10-16: 三洋堂書店の公式表記（位置で一致・13m）"
+  },
+  "w580076794": {
+   "n": "三洋堂書店 本巣店",
+   "why": "chain-check 2026-10-16: 三洋堂書店の公式表記（位置で一致・103m）"
+  },
+  "n1145226107": {
+   "n": "三洋堂書店 駒ヶ根店",
+   "why": "chain-check 2026-10-16: 三洋堂書店の公式表記（位置で一致・28m）"
+  },
+  "n8044181730": {
+   "n": "TSUTAYA佐鳴台店",
+   "why": "chain-check 2026-10-16: 精文館書店の公式表記（支店名で一致・50m）"
+  },
+  "w396133797": {
+   "n": "精文館書店 汐田橋店",
+   "why": "chain-check 2026-10-16: 精文館書店の公式表記（支店名で一致・19m）"
+  },
+  "n12022116082": {
+   "n": "精文館書店 木更津店",
+   "why": "chain-check 2026-10-16: 精文館書店の公式表記（支店名で一致・163m）"
+  },
+  "w438355239": {
+   "n": "精文館書店 三ノ輪店",
+   "why": "chain-check 2026-10-16: 精文館書店の公式表記（位置で一致・55m）"
+  },
+  "n2107363965": {
+   "n": "精文館書店 豊橋本店",
+   "why": "chain-check 2026-10-16: 精文館書店の公式表記（位置で一致・26m）"
+  },
+  "n2071093788": {
+   "n": "精文館書店 幸田店",
+   "why": "chain-check 2026-10-16: 精文館書店の公式表記（位置で一致・57m）"
+  },
+  "n10610580668": {
+   "n": "精文館書店 イオンスタイル豊田店",
+   "why": "chain-check 2026-10-16: 精文館書店の公式表記（位置で一致・49m）"
+  },
+  "n4056312728": {
+   "n": "精文館書店 中島新町店",
+   "why": "chain-check 2026-10-16: 精文館書店の公式表記（位置で一致・17m）"
+  },
+  "n5457964674": {
+   "n": "精文館書店 津島店",
+   "why": "chain-check 2026-10-16: 精文館書店の公式表記（位置で一致・26m）"
+  },
+  "n4132099911": {
+   "n": "精文館書店 尾張一宮店",
+   "why": "chain-check 2026-10-16: 精文館書店の公式表記（位置で一致・40m）"
+  },
+  "n1534988273": {
+   "n": "精文館書店 花見川店",
+   "why": "chain-check 2026-10-16: 精文館書店の公式表記（位置で一致・34m）"
+  },
+  "w1047797471": {
+   "n": "戸田書店 藤岡店",
+   "why": "chain-check 2026-10-16: 戸田書店の公式表記（支店名で一致・52m）"
+  },
+  "w482875024": {
+   "n": "戸田書店 菊川店",
+   "why": "chain-check 2026-10-16: 戸田書店の公式表記（位置で一致・38m）"
+  },
+  "n7476077059": {
+   "n": "戸田書店 熊谷店",
+   "why": "chain-check 2026-10-16: 戸田書店の公式表記（位置で一致・22m）"
+  },
+  "w290566017": {
+   "n": "戸田書店 山形店",
+   "why": "chain-check 2026-10-16: 戸田書店の公式表記（位置で一致・56m）"
+  },
+  "n11795195993": {
+   "n": "newstyle 錦糸町パルコ店",
+   "why": "chain-check 2026-10-16: ヴィレッジヴァンガードの公式表記（支店名で一致・52m）"
+  },
+  "n5606356466": {
+   "n": "ヴィレッジヴァンガード ゆめタウン佐賀店",
+   "why": "chain-check 2026-10-16: ヴィレッジヴァンガードの公式表記（位置で一致・121m）"
+  },
+  "n6943084135": {
+   "n": "ヴィレッジヴァンガード イオンモールりんくう泉南店",
+   "why": "chain-check 2026-10-16: ヴィレッジヴァンガードの公式表記（位置で一致・23m）"
+  },
+  "n12558465381": {
+   "n": "ヴィレッジヴァンガード イオンモール倉敷店",
+   "why": "chain-check 2026-10-16: ヴィレッジヴァンガードの公式表記（位置で一致・145m）"
+  },
+  "n8928093209": {
+   "n": "ヴィレッジヴァンガード 海老名マルイ店",
+   "why": "chain-check 2026-10-16: ヴィレッジヴァンガードの公式表記（位置で一致・11m）"
+  },
+  "n12378521018": {
+   "n": "ヴィレッジヴァンガード イオンモール幕張新都心店",
+   "why": "chain-check 2026-10-16: ヴィレッジヴァンガードの公式表記（位置で一致・41m）"
+  },
+  "n1986358061": {
+   "n": "ヴィレッジヴァンガード オンザコーナー吉祥寺パルコ店",
+   "why": "chain-check 2026-10-16: ヴィレッジヴァンガードの公式表記（位置で一致・187m）"
+  },
+  "n5400775177": {
+   "n": "ヴィレッジヴァンガード ファボーレ店",
+   "why": "chain-check 2026-10-16: ヴィレッジヴァンガードの公式表記（位置で一致・32m）"
+  },
+  "n12046172433": {
+   "n": "ヴィレッジヴァンガード イオンモール大曲店",
+   "why": "chain-check 2026-10-16: ヴィレッジヴァンガードの公式表記（位置で一致・11m）"
+  },
+  "w422894082": {
+   "n": "WonderGOO 鹿沼店",
+   "why": "chain-check 2026-10-16: WonderGOOの公式表記（支店名で一致・123m）"
+  },
+  "w191088235": {
+   "n": "WonderGOO PLUS＋ 鹿島店",
+   "why": "chain-check 2026-10-16: WonderGOOの公式表記（位置で一致・172m）"
+  },
+  "w509380476": {
+   "n": "WonderGOO PLUS＋ 足利店",
+   "why": "chain-check 2026-10-16: WonderGOOの公式表記（位置で一致・184m）"
+  },
+  "w605786243": {
+   "n": "WonderGOO 日立中央店",
+   "why": "chain-check 2026-10-16: WonderGOOの公式表記（位置で一致・194m）"
+  },
+  "n6433519293": {
+   "n": "八重洲ブックセンター フルルガーデン八千代店",
+   "why": "chain-check 2026-10-16: 八重洲ブックセンターの公式表記（位置で一致・50m）"
+  },
+  "n8163410116": {
+   "n": "八重洲ブックセンター 石神井公園店",
+   "why": "chain-check 2026-10-16: 八重洲ブックセンターの公式表記（位置で一致・21m）"
+  },
+  "n1694159889": {
+   "n": "谷島屋 富士宮店",
+   "why": "chain-check 2026-10-16: 谷島屋の公式表記（位置で一致・34m）"
+  },
+  "n1930343831": {
+   "n": "有隣堂 横浜駅西口店 医学書センター",
+   "why": "chain-check 2026-10-16: 有隣堂の公式表記（支店名で一致・32m）"
+  },
+  "n12280356554": {
+   "n": "有隣堂 グラングリーン大阪店",
+   "why": "chain-check 2026-10-16: 有隣堂の公式表記（位置で一致・142m）"
+  },
+  "n12534025715": {
+   "n": "有隣堂 ラスカ小田原店",
+   "why": "chain-check 2026-10-16: 有隣堂の公式表記（位置で一致・79m）"
+  },
+  "n2711761168": {
+   "n": "有隣堂 東急プラザ戸塚店",
+   "why": "chain-check 2026-10-16: 有隣堂の公式表記（位置で一致・15m）"
+  },
+  "n14028309885": {
+   "n": "有隣堂 キュービックプラザ新横浜店",
+   "why": "chain-check 2026-10-16: 有隣堂の公式表記（位置で一致・28m）"
+  },
+  "n11386683231": {
+   "n": "有隣堂 キュービックプラザ新横浜店",
+   "why": "chain-check 2026-10-16: 有隣堂の公式表記（位置で一致・21m）"
+  },
+  "n10199233429": {
+   "n": "有隣堂 トレッサ横浜店",
+   "why": "chain-check 2026-10-16: 有隣堂の公式表記（位置で一致・143m）"
+  },
+  "n2730824021": {
+   "n": "有隣堂 医学書センター 北里大学病院店",
+   "why": "chain-check 2026-10-16: 有隣堂の公式表記（位置で一致・81m）"
+  },
+  "n1638470521": {
+   "n": "有隣堂 アトレ目黒店",
+   "why": "chain-check 2026-10-16: 有隣堂の公式表記（位置で一致・32m）"
+  },
+  "n5668126823": {
+   "n": "有隣堂 ららぽーと立川立飛店",
+   "why": "chain-check 2026-10-16: 有隣堂の公式表記（位置で一致・103m）"
+  },
+  "n13875804409": {
+   "n": "有隣堂 ニッケコルトンプラザ店",
+   "why": "chain-check 2026-10-16: 有隣堂の公式表記（位置で一致・33m）"
+  }
+ },
+ "closed": {
+  "n7514148791": {
+   "n": "アミーゴ書店 松原店",
+   "why": "chain-check 2026-10-16: ブックファーストの公式店舗一覧に見当たらない（最寄りの公式店：アバンティ ブックセンター 藤井寺店（2.7km））"
+  },
+  "n12401459921": {
+   "n": "アミーゴ書店 昆陽店",
+   "why": "chain-check 2026-10-16: ブックファーストの公式店舗一覧に見当たらない（最寄りの公式店：ブックファースト 豊中店（4.1km））"
+  },
+  "w1306959206": {
+   "n": "アバンティブックセンター 三木志染店",
+   "why": "chain-check 2026-10-16: ブックファーストの公式店舗一覧に見当たらない（最寄りの公式店：アミーゴ書店 西神南店（9.2km））"
+  },
+  "n4481040392": {
+   "n": "ブックファースト Kyoto",
+   "why": "chain-check 2026-10-16: ブックファーストの公式店舗一覧に見当たらない（最寄りの公式店：アバンティ ブックセンター 洛北店（4.1km））"
+  },
+  "n5297194136": {
+   "n": "ブックオフ 泉南店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式店舗一覧に見当たらない（最寄りの公式店：BOOKOFF 大阪泉佐野羽倉崎店（4.9km））"
+  },
+  "n1954280777": {
+   "n": "Bookoff安倍店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式店舗一覧に見当たらない（最寄りの公式店：BOOKOFF 米子卸団地店（3.1km））"
+  },
+  "n979091125": {
+   "n": "ブックオフ 元住吉ブレーメン通り店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式店舗一覧に見当たらない（最寄りの公式店：BOOKOFF 武蔵中原店（1.8km））"
+  },
+  "n5425010291": {
+   "n": "ブックオフ 千葉美浜店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式店舗一覧に見当たらない（最寄りの公式店：BOOKOFF 千葉イオンマリンピア専門館店（1.6km））"
+  },
+  "n12019346564": {
+   "n": "ブックオフ 総合買取窓口",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式店舗一覧に見当たらない（最寄りの公式店：BOOKOFF 246三軒茶屋店（3.3km））"
+  },
+  "n2503478901": {
+   "n": "ブックオフ 阿佐ヶ谷南店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式店舗一覧に見当たらない（最寄りの公式店：BOOKOFF PLUS 荻窪駅北口店（1.6km））"
+  },
+  "n696527541": {
+   "n": "ブックオフ 江戸川松島店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式店舗一覧に見当たらない（最寄りの公式店：BOOKOFF 江戸川東小岩店（3.1km））"
+  },
+  "n4102273592": {
+   "n": "BOOKOFF 板橋前野店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式店舗一覧に見当たらない（最寄りの公式店：BOOKOFF 中板橋駅北口店（1.6km））"
+  },
+  "n5697571721": {
+   "n": "BOOKOFF 草加店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式店舗一覧に見当たらない（最寄りの公式店：BOOKOFF SUPER BAZAAR 草加セーモンプラザ店（3.1km））"
+  },
+  "w434841342": {
+   "n": "ブックオフ 16号野田店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式店舗一覧に見当たらない（最寄りの公式店：BOOKOFF SUPER BAZAAR 野田店（2.0km））"
+  },
+  "w307453014": {
+   "n": "ブックオフ＆TSUTAYA",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式店舗一覧に見当たらない（最寄りの公式店：BOOKOFF PLUS 加須店（2.1km））"
+  },
+  "n6041303495": {
+   "n": "ブックオフ 白河店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式店舗一覧に見当たらない（最寄りの公式店：BOOKOFF 黒磯店（22.1km））"
+  },
+  "n5563513236": {
+   "n": "ブックオフ 秋田仁井田店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式店舗一覧に見当たらない（最寄りの公式店：BOOKOFF PLUS ドン・キホーテ秋田店（3.1km））"
+  },
+  "n1078559153": {
+   "n": "ブックオフ 旭川豊岡店",
+   "why": "chain-check 2026-10-16: BOOKOFFの公式店舗一覧に見当たらない（最寄りの公式店：BOOKOFF 旭川旭神店（3.2km））"
+  },
+  "n13367066334": {
+   "n": "文教堂 イトーヨーカドー立場店",
+   "why": "chain-check 2026-10-16: 文教堂の公式店舗一覧に見当たらない（最寄りの公式店：文教堂 湘南とうきゅう店（7.1km））"
+  },
+  "n8832718866": {
+   "n": "文教堂 杉久保店",
+   "why": "chain-check 2026-10-16: 文教堂の公式店舗一覧に見当たらない（最寄りの公式店：文教堂 Ｒ４１２店（5.3km））"
+  },
+  "n4116956381": {
+   "n": "文教堂書店 鶴ヶ峰店",
+   "why": "chain-check 2026-10-16: 文教堂の公式店舗一覧に見当たらない（最寄りの公式店：文教堂 中山とうきゅう店（4.4km））"
+  },
+  "n1671607094": {
+   "n": "文教堂書店 蓮田店",
+   "why": "chain-check 2026-10-16: 文教堂の公式店舗一覧に見当たらない（最寄りの公式店：文教堂 岩槻店（7.5km））"
+  },
+  "n4949977022": {
+   "n": "文真堂書店小桑原店",
+   "why": "chain-check 2026-10-16: 文真堂書店の公式店舗一覧に見当たらない（最寄りの公式店：文真堂書店 大泉店（8.7km））"
+  },
+  "w538622362": {
+   "n": "文真堂書店瀬戸谷店",
+   "why": "chain-check 2026-10-16: 文真堂書店の公式店舗一覧に見当たらない（最寄りの公式店：文真堂書店 大泉店（10.2km））"
+  },
+  "w943802114": {
+   "n": "文真堂書店 片貝店",
+   "why": "chain-check 2026-10-16: 文真堂書店の公式店舗一覧に見当たらない（最寄りの公式店：文真堂書店 小出店（3.7km））"
+  },
+  "n1406941330": {
+   "n": "古本市場山下店",
+   "why": "chain-check 2026-10-16: 古本市場（ふるいち）の公式店舗一覧に見当たらない（最寄りの公式店：古本市場川西店（6.5km））"
+  },
+  "w769165931": {
+   "n": "古本市場トップブックス 佐久小諸店",
+   "why": "chain-check 2026-10-16: 古本市場（ふるいち）の公式店舗一覧に見当たらない（最寄りの公式店：ふるいちトップブックス佐久平店（1.8km））"
+  },
+  "n7140685772": {
+   "n": "古本市場ゴン",
+   "why": "chain-check 2026-10-16: 古本市場（ふるいち）の公式店舗一覧に見当たらない（最寄りの公式店：ふるいちトップブックスMORIOKA店（104.2km））"
+  },
+  "n5338321520": {
+   "n": "明屋書店宿毛店",
+   "why": "chain-check 2026-10-16: 明屋書店の公式店舗一覧に見当たらない（最寄りの公式店：明屋書店 南宇和店（13.8km））"
+  },
+  "n5977044243": {
+   "n": "（株）明屋書店 広見店",
+   "why": "chain-check 2026-10-16: 明屋書店の公式店舗一覧に見当たらない（最寄りの公式店：明屋書店 宇和島明倫店（12.0km））"
+  },
+  "w879861556": {
+   "n": "明屋書店 今治別宮町店",
+   "why": "chain-check 2026-10-16: 明屋書店の公式店舗一覧に見当たらない（最寄りの公式店：明屋書店 今治本店（2.7km））"
+  },
+  "n5481591624": {
+   "n": "紀伊國屋書店 仙川店",
+   "why": "chain-check 2026-10-16: 紀伊國屋書店の公式店舗一覧に見当たらない（最寄りの公式店：紀伊國屋書店 吉祥寺東急店（4.8km））"
+  },
+  "n4627021391": {
+   "n": "リブロ 江坂店",
+   "why": "chain-check 2026-10-16: リブロ（NICリテールズ）の公式店舗一覧に見当たらない（最寄りの公式店：リブロ イオンモール 鶴見店（8.9km））"
+  },
+  "n1787434003": {
+   "n": "よむよむ草加松原店",
+   "why": "chain-check 2026-10-16: リブロ（NICリテールズ）の公式店舗一覧に見当たらない（最寄りの公式店：リブロ 浅草店（14.1km））"
+  },
+  "n8897876541": {
+   "n": "よむよむMEGAドン・キホーテUNY本庄店",
+   "why": "chain-check 2026-10-16: リブロ（NICリテールズ）の公式店舗一覧に見当たらない（最寄りの公式店：リブロ ピオニウォーク東松山店（32.9km））"
+  },
+  "n7216423379": {
+   "n": "未来屋書店 高崎オーパ店",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式店舗一覧に見当たらない（最寄りの公式店：未来屋書店高崎（7.5km））"
+  },
+  "n11099718163": {
+   "n": "未来屋書店 藤崎店",
+   "why": "chain-check 2026-10-16: 未来屋書店の公式店舗一覧に見当たらない（最寄りの公式店：未来屋書店弘前樋の口（7.7km））"
+  },
+  "n1791615604": {
+   "n": "宮脇書店 (2F)",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式店舗一覧に見当たらない（最寄りの公式店：宮脇書店 フジグラン葛島店（2.9km））"
+  },
+  "n3228903247": {
+   "n": "宮脇書店 北島店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式店舗一覧に見当たらない（最寄りの公式店：宮脇書店 フジグラン北島店（1.6km））"
+  },
+  "n722521962": {
+   "n": "宮脇書店 今里店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式店舗一覧に見当たらない（最寄りの公式店：宮脇書店 南本店（1.6km））"
+  },
+  "w440548568": {
+   "n": "宮脇書店 笠岡店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式店舗一覧に見当たらない（最寄りの公式店：宮脇書店 鴨方店（7.5km））"
+  },
+  "n1281763431": {
+   "n": "宮脇書店田原本店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式店舗一覧に見当たらない（最寄りの公式店：宮脇書店 木津川店（18.2km））"
+  },
+  "n6982159092": {
+   "n": "宮脇書店 中島店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式店舗一覧に見当たらない（最寄りの公式店：宮脇書店 笹沖店（1.9km））"
+  },
+  "n3730338175": {
+   "n": "宮脇書店フリーウェイ",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式店舗一覧に見当たらない（最寄りの公式店：宮脇書店 サンパーク新見店（3.2km））"
+  },
+  "w753377243": {
+   "n": "宮脇書店小浜店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式店舗一覧に見当たらない（最寄りの公式店：宮脇書店 舞鶴店（32.7km））"
+  },
+  "n5044927691": {
+   "n": "宮脇書店ヨークタウン野田店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式店舗一覧に見当たらない（最寄りの公式店：宮脇書店 大玉店（24.9km））"
+  },
+  "w292423628": {
+   "n": "宮脇書店 天童店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式店舗一覧に見当たらない（最寄りの公式店：宮脇書店 成沢店（19.4km））"
+  },
+  "n5434689026": {
+   "n": "宮脇書店 花巻店",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式店舗一覧に見当たらない（最寄りの公式店：宮脇書店 一関店（51.2km））"
+  },
+  "n620388614": {
+   "n": "宮脇書店 (Books Miyawaki)",
+   "why": "chain-check 2026-10-16: 宮脇書店の公式店舗一覧に見当たらない（最寄りの公式店：宮脇書店 札幌元町店（110.7km））"
+  },
+  "w573166440": {
+   "n": "三省堂書店 富田店",
+   "why": "chain-check 2026-10-16: 三省堂書店の公式店舗一覧に見当たらない（最寄りの公式店：三省堂書店 名古屋本店（28.5km））"
+  },
+  "n2700716358": {
+   "n": "三省堂書店 函館営業所川原店",
+   "why": "chain-check 2026-10-16: 三省堂書店の公式店舗一覧に見当たらない（最寄りの公式店：三省堂書店 札幌店（149.5km））"
+  },
+  "w387545117": {
+   "n": "三洋堂書店サーキット通り店",
+   "why": "chain-check 2026-10-16: 三洋堂書店の公式店舗一覧に見当たらない（最寄りの公式店：三洋堂書店 白塚店（8.5km））"
+  },
+  "w608533851": {
+   "n": "三洋堂書店　南濃店",
+   "why": "chain-check 2026-10-16: 三洋堂書店の公式店舗一覧に見当たらない（最寄りの公式店：三洋堂書店 北勢店（11.0km））"
+  },
+  "n11164215757": {
+   "n": "三洋堂書店 高月店",
+   "why": "chain-check 2026-10-16: 三洋堂書店の公式店舗一覧に見当たらない（最寄りの公式店：三洋堂書店 長浜店（11.7km））"
+  },
+  "w836137045": {
+   "n": "三洋堂川辺店",
+   "why": "chain-check 2026-10-16: 三洋堂書店の公式店舗一覧に見当たらない（最寄りの公式店：三洋堂書店 みのかも店（5.5km））"
+  },
+  "n6865758690": {
+   "n": "精文館書店 二川店",
+   "why": "chain-check 2026-10-16: 精文館書店の公式店舗一覧に見当たらない（最寄りの公式店：精文館書店 三ノ輪店（4.3km））"
+  },
+  "n7149081727": {
+   "n": "ヴィレッジヴァンガード 豊田元町",
+   "why": "chain-check 2026-10-16: ヴィレッジヴァンガードの公式店舗一覧に見当たらない（最寄りの公式店：ヴィレッジヴァンガード ららぽーと愛知東郷店（8.0km））"
+  },
+  "n3174694836": {
+   "n": "ワンダーグー 鎌ヶ谷店",
+   "why": "chain-check 2026-10-16: WonderGOOの公式店舗一覧に見当たらない（最寄りの公式店：WonderGOO PLUS＋ 守谷店（20.0km））"
+  },
+  "w377717529": {
+   "n": "ワンダーグー 下野店",
+   "why": "chain-check 2026-10-16: WonderGOOの公式店舗一覧に見当たらない（最寄りの公式店：WonderGOO 真岡店（11.9km））"
+  },
+  "n4316798890": {
+   "n": "天竜 谷島屋",
+   "why": "chain-check 2026-10-16: 谷島屋の公式店舗一覧に見当たらない（最寄りの公式店：谷島屋 サンストリート浜北店（9.2km））"
+  }
+ }
 }

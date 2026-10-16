@@ -1,0 +1,155 @@
+{
+ "fetchedAt": "2026-10-16T01:55:03.622Z",
+ "list": [
+  {
+   "name": "喜久屋書店 小樽店",
+   "address": "北海道小樽市築港11番 ウイングベイ小樽 5番街2F",
+   "url": "https://www.blg.co.jp/kikuya/shops/otaru/index.html"
+  },
+  {
+   "name": "喜久屋書店 漫画館仙台店",
+   "address": "宮城県仙台市青葉区中央4-1-1イービーンズ6F",
+   "url": "https://www.blg.co.jp/kikuya/shops/sendai/index.html"
+  },
+  {
+   "name": "喜久屋書店 太田店",
+   "address": "群馬県太田市石原町815",
+   "url": "https://www.blg.co.jp/kikuya/shops/ohta/index.html"
+  },
+  {
+   "name": "喜久屋書店 松戸店",
+   "address": "千葉県松戸市松戸1307-1 KITE MITE MATSUDO 7F",
+   "url": "https://www.blg.co.jp/kikuya/shops/matudo/index.html"
+  },
+  {
+   "name": "喜久屋書店 千葉ニュータウン店",
+   "address": "千葉県印西市中央北3丁目2番",
+   "url": "https://www.blg.co.jp/kikuya/shops/chiba/index.html"
+  },
+  {
+   "name": "喜久屋書店 府中店",
+   "address": "東京都府中市宮町1丁目41-2 『MitteN府中 7F』",
+   "url": "https://www.blg.co.jp/kikuya/shops/fuchu/index.html"
+  },
+  {
+   "name": "喜久屋書店 高岡店",
+   "address": "富山県高岡市下伏間江383番地",
+   "url": "https://www.blg.co.jp/kikuya/shops/takaoka/index.html"
+  },
+  {
+   "name": "喜久屋書店 草津店",
+   "address": "滋賀県草津市新浜町 300番地",
+   "url": "https://www.blg.co.jp/kikuya/shops/kusatsu/index.html"
+  },
+  {
+   "name": "喜久屋書店 大和郡山店",
+   "address": "奈良県大和郡山市下三橋町 741",
+   "url": "https://www.blg.co.jp/kikuya/shops/yamatokoriyama/index.html"
+  },
+  {
+   "name": "喜久屋書店 橿原店",
+   "address": "奈良県橿原市曲川町 7-20-1 (イオンモール橿原)",
+   "url": "https://www.blg.co.jp/kikuya/shops/kashihara/index.html"
+  },
+  {
+   "name": "喜久屋書店 富田林店",
+   "address": "大阪府富田林市向陽台1-1 (エコール・ロゼ3F)",
+   "url": "https://www.blg.co.jp/kikuya/shops/tondabayashi/index.html"
+  },
+  {
+   "name": "喜久屋書店 猪名川店",
+   "address": "兵庫県川辺郡猪名川町白金2丁目-1番",
+   "url": "https://www.blg.co.jp/kikuya/shops/inagawa/index.html"
+  },
+  {
+   "name": "喜久屋書店 西宮東店",
+   "address": "兵庫県西宮市小松北町1丁目6−44 (コープ西宮東店 2F)",
+   "url": "https://www.blg.co.jp/kikuya/shops/nishinomiya_e/index.html"
+  },
+  {
+   "name": "喜久屋書店 北神戸店",
+   "address": "兵庫県神戸市北区上津台 8丁目1番1号 (イオンモール神戸北2F)",
+   "url": "https://www.blg.co.jp/kikuya/shops/kitakobe/index.html"
+  },
+  {
+   "name": "喜久屋書店 神戸北町店",
+   "address": "兵庫県神戸市北区日の峰 2-6-1 (コアキタマチショッピングセンター3F)",
+   "url": "https://www.blg.co.jp/kikuya/shops/kobekitamachi/index.html"
+  },
+  {
+   "name": "喜久屋書店 西神中央店",
+   "address": "兵庫県神戸市西区糀台5-2-3 プレンティ 1番館 3F",
+   "url": "https://www.blg.co.jp/kikuya/shops/seishinchuo/index.html"
+  },
+  {
+   "name": "喜久屋書店 神戸学園都市店",
+   "address": "兵庫県神戸市西区学園西町1丁目4番地 キャンパススクェア内",
+   "url": "https://www.blg.co.jp/kikuya/shops/gakuentoshi/index.html"
+  },
+  {
+   "name": "喜久屋書店 神戸南店",
+   "address": "兵庫県神戸市兵庫区中之島 2丁目1番1号",
+   "url": "https://www.blg.co.jp/kikuya/shops/kobe_sw/index.html"
+  },
+  {
+   "name": "喜久屋書店 西鈴蘭台店",
+   "address": "兵庫県神戸市北区北五葉1-1-1 (西鈴神鉄ビル2F)",
+   "url": "https://www.blg.co.jp/kikuya/shops/nishisuzurandai/index.html"
+  },
+  {
+   "name": "喜久屋書店 新長田店",
+   "address": "兵庫県神戸市長田区若松町5-5-1 東急プラザ 新長田213",
+   "url": "https://www.blg.co.jp/kikuya/shops/shinnagata/index.html"
+  },
+  {
+   "name": "喜久屋書店 須磨パティオ店",
+   "address": "兵庫県神戸市須磨区中落合2丁目2番7号",
+   "url": "https://www.blg.co.jp/kikuya/shops/sumapatio/index.html"
+  },
+  {
+   "name": "喜久屋書店 豊岡店",
+   "address": "兵庫県豊岡市加広町7-32(コープデイズ豊岡店2F)",
+   "url": "https://www.blg.co.jp/kikuya/shops/toyooka/index.html"
+  },
+  {
+   "name": "喜久屋書店 ゆめタウン店",
+   "address": "兵庫県丹波市氷上町本郷300(丹波ゆめタウン 1F )",
+   "url": "https://www.blg.co.jp/kikuya/shops/yumetown/index.html"
+  },
+  {
+   "name": "喜久屋書店 姫路店",
+   "address": "兵庫県姫路市神子岡前3丁目12-17 「ゆめタウン姫路4F」",
+   "url": "https://www.blg.co.jp/kikuya/shops/himeji/index.html"
+  },
+  {
+   "name": "喜久屋書店 辻井店",
+   "address": "兵庫県姫路市東辻井3丁目159-7 (ヤマダストアー辻井店2F)",
+   "url": "https://www.blg.co.jp/kikuya/shops/himeji_tujii/index.html"
+  },
+  {
+   "name": "喜久屋書店 花田店",
+   "address": "兵庫県姫路市花田町小川75 (ヤマダストア花田店内)",
+   "url": "https://www.blg.co.jp/kikuya/shops/hanada/index.html"
+  },
+  {
+   "name": "喜久屋書店 津山店",
+   "address": "岡山県津山市上河原160-2",
+   "url": "https://www.blg.co.jp/kikuya/shops/tuyama/index.html"
+  },
+  {
+   "name": "喜久屋書店 倉敷店",
+   "address": "岡山県倉敷市水江1番地 イオンモール倉敷2F",
+   "url": "https://www.blg.co.jp/kikuya/shops/kurashiki/index.html"
+  },
+  {
+   "name": "喜久屋書店 小倉店",
+   "address": "福岡県北九州市小倉北区京町3丁目1番1号(セントシティ7F)",
+   "url": "https://www.blg.co.jp/kikuya/shops/kokura/index.html"
+  },
+  {
+   "name": "喜久屋書店 小倉南店",
+   "address": "福岡県北九州市小倉南区下曽根新町10-1",
+   "url": "https://www.blg.co.jp/kikuya/shops/kokura_sw/index.html"
+  }
+ ]
+}

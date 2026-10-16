@@ -36,6 +36,15 @@ let ov = { renames: {}, closed: {} }; try { ov = JSON.parse(fs.readFileSync(ovPa
 let renamed = 0, closedN = 0;
 for (let i = out.length - 1; i >= 0; i--) { const r = out[i]; if (ov.closed && ov.closed[r.i]) { out.splice(i, 1); closedN++; continue; } if (ov.renames && ov.renames[r.i]) { r.n = ov.renames[r.i].n; r.ov = 1; renamed++; } }
 console.log('上書き：屋号変更', renamed, '閉店', closedN);
+// 追加表（公式店舗一覧にあって OSM にない店。tools/chain_check.js → tools/apply_candidates.js --add で足す）
+const dataDir = require('path').dirname(outFile);
+let adds = []; try { adds = JSON.parse(fs.readFileSync(require('path').join(dataDir, 'additions.json'), 'utf8')); } catch (e) {}
+const have = new Set(out.map((r) => r.i)); let added = 0;
+for (const x of adds) { if (!x || !x.i || !x.n || x.la == null || x.lo == null || have.has(x.i) || (ov.closed && ov.closed[x.i])) continue; const rec = { i: x.i, n: x.n, la: +Number(x.la).toFixed(5), lo: +Number(x.lo).toFixed(5), x: 1 }; if (x.a) rec.a = x.a; if (x.p) rec.p = x.p; if (x.u) rec.u = 1; if (x.c) rec.c = x.c; out.push(rec); have.add(x.i); added++; }
+// 確認表（公式店舗一覧で「ある」と確かめられた店 → 最終確認の月を更新）
+let confirmed = {}; try { confirmed = JSON.parse(fs.readFileSync(require('path').join(dataDir, 'confirmed.json'), 'utf8')); } catch (e) {}
+let confN = 0; for (const r of out) { const m = confirmed[r.i]; if (m && (!r.c || m > r.c)) { r.c = m; r.cf = 1; confN++; } }
+console.log('追加表：', added, ' 公式一覧で確認：', confN);
 out.sort((a, b) => a.la - b.la);
 // 秘境度：半径5kmにある他の本屋の数（k）。少ないほど珍しい印になる
 const R = 6371000, T = Math.PI / 180;

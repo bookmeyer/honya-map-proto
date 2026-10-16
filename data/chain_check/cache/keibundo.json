@@ -1,0 +1,105 @@
+{
+ "fetchedAt": "2026-10-16T01:38:55.720Z",
+ "list": [
+  {
+   "name": "紀伊國屋書店 下高井戸店",
+   "address": "東京都世田谷区松原３－２９－１７",
+   "url": "https://store.kinokuniya.co.jp/store/shimotakaido-store/"
+  },
+  {
+   "name": "紀伊國屋書店 桜上水店",
+   "address": "東京都世田谷区桜上水５－２９－５２",
+   "url": "https://store.kinokuniya.co.jp/store/sakurajosui-store/"
+  },
+  {
+   "name": "紀伊國屋書店 八幡山店",
+   "address": "東京都世田谷区上北沢４－３６－２３",
+   "url": "https://store.kinokuniya.co.jp/store/hachimanyama-store/"
+  },
+  {
+   "name": "紀伊國屋書店 仙川店",
+   "address": "東京都調布市仙川町１－４３－１",
+   "url": "https://store.kinokuniya.co.jp/store/sengawa-store/"
+  },
+  {
+   "name": "紀伊國屋書店 つつじヶ丘店",
+   "address": "東京都調布市西つつじヶ丘３－３５－１",
+   "url": "https://store.kinokuniya.co.jp/store/tsutsujigaoka-store/"
+  },
+  {
+   "name": "紀伊國屋書店 府中店",
+   "address": "東京都府中市府中町１－２－１",
+   "url": "https://store.kinokuniya.co.jp/store/fuchu-store/"
+  },
+  {
+   "name": "紀伊國屋書店 高幡不動店",
+   "address": "東京都日野市高幡１１６－１０",
+   "url": "https://store.kinokuniya.co.jp/store/takahatafudo-store/"
+  },
+  {
+   "name": "紀伊國屋書店 高尾店",
+   "address": "東京都八王子市初沢町１２２７－３",
+   "url": "https://store.kinokuniya.co.jp/store/takao-store/"
+  },
+  {
+   "name": "紀伊國屋書店 渋谷道玄坂店",
+   "address": "東京都渋谷区道玄坂１－４－１９",
+   "url": "https://store.kinokuniya.co.jp/store/shibuya-dogenzaka-store/"
+  },
+  {
+   "name": "紀伊國屋書店 永福町店",
+   "address": "東京都杉並区永福２－６０－３１",
+   "url": "https://store.kinokuniya.co.jp/store/eifukucho-store/"
+  },
+  {
+   "name": "紀伊國屋書店 久我山店",
+   "address": "東京都杉並区久我山４－１－１１",
+   "url": "https://store.kinokuniya.co.jp/store/kugayama-store/"
+  },
+  {
+   "name": "紀伊國屋書店 キラリナ京王吉祥寺店",
+   "address": "東京都武蔵野市吉祥寺南町２－１－２５",
+   "url": "https://store.kinokuniya.co.jp/store/kirarina-keio-kichijoji-store/"
+  },
+  {
+   "name": "紀伊國屋書店 京王稲田堤店",
+   "address": "神奈川県川崎市多摩区菅４－２－１",
+   "url": "https://store.kinokuniya.co.jp/store/keio-inadazutsumi-store/"
+  },
+  {
+   "name": "紀伊國屋書店 多摩センター店",
+   "address": "東京都多摩市落合１－１０－１",
+   "url": "https://store.kinokuniya.co.jp/store/tama-center-store/"
+  },
+  {
+   "name": "紀伊國屋書店 橋本店",
+   "address": "神奈川県相模原市緑区橋本２－３－２",
+   "url": "https://store.kinokuniya.co.jp/store/hashimoto-store/"
+  },
+  {
+   "name": "紀伊國屋書店 荻窪店",
+   "address": "東京都杉並区上荻１－９－１",
+   "url": "https://store.kinokuniya.co.jp/store/ogikubo-store/"
+  },
+  {
+   "name": "紀伊國屋書店 三鷹店",
+   "address": "東京都三鷹市下連雀３－３５－１",
+   "url": "https://store.kinokuniya.co.jp/store/mitaka-store/"
+  },
+  {
+   "name": "紀伊國屋書店 狛江店",
+   "address": "東京都狛江市元和泉１－８－８",
+   "url": "https://store.kinokuniya.co.jp/store/komae-store/"
+  },
+  {
+   "name": "紀伊國屋書店 鶴川店",
+   "address": "東京都町田市能ヶ谷１－６－１１",
+   "url": "https://store.kinokuniya.co.jp/store/tsurukawa-store/"
+  },
+  {
+   "name": "紀伊國屋書店 小田急相模原店",
+   "address": "神奈川県相模原市南区南台３－２０－１",
+   "url": "https://store.kinokuniya.co.jp/store/odakyu-sagamihara-store/"
+  }
+ ]
+}

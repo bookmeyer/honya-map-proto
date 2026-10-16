@@ -1,0 +1,315 @@
+{
+ "fetchedAt": "2026-10-16T01:38:08.840Z",
+ "list": [
+  {
+   "name": "文教堂 北４９条店",
+   "address": "北海道札幌市東区北49条東8丁目3-5",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=105"
+  },
+  {
+   "name": "文教堂 琴似駅前店",
+   "address": "北海道札幌市西区琴似2条1丁目1－20",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=106"
+  },
+  {
+   "name": "文教堂 札幌大通駅店",
+   "address": "北海道札幌市中央区南1条西4丁目 日之出ビルB1・B2",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=107"
+  },
+  {
+   "name": "文教堂 札幌ルーシー店",
+   "address": "北海道札幌市白石区栄通り18丁目5番地",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=108"
+  },
+  {
+   "name": "文教堂 新札幌ＤＵＯ店",
+   "address": "北海道札幌市厚別区厚別中央2条5丁目6－2 DUO－1",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=109"
+  },
+  {
+   "name": "文教堂 新千歳空港店",
+   "address": "北海道千歳市美々 新千歳空港ターミナルビル1F",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=110"
+  },
+  {
+   "name": "ＣＡ文教堂新千歳空港店",
+   "address": "北海道千歳市美々新千歳空港内 国内線旅客ターミナルビル2F",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=111"
+  },
+  {
+   "name": "文教堂 新道店",
+   "address": "北海道札幌市東区伏古10条5-2-1",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=112"
+  },
+  {
+   "name": "文教堂 西野３条店",
+   "address": "北海道札幌市西区西野3条4丁目8番",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=113"
+  },
+  {
+   "name": "文教堂 函館昭和店",
+   "address": "北海道函館市昭和1丁目29番地3",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=114"
+  },
+  {
+   "name": "文教堂 平岸店",
+   "address": "北海道札幌市豊平区平岸3条2-1-24",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=115"
+  },
+  {
+   "name": "文教堂 湯ノ川店",
+   "address": "北海道函館市湯ノ川町1丁目34-15 コープ湯川店2F",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=117"
+  },
+  {
+   "name": "文教堂 朝霞マルエツ店",
+   "address": "埼玉県朝霞市本町1-12-10 マルエツ朝霞店3F",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=120"
+  },
+  {
+   "name": "文教堂 岩槻店",
+   "address": "埼玉県さいたま市岩槻区西町2丁目5－1ヤオコー岩槻西町店2F",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=121"
+  },
+  {
+   "name": "文教堂 川口駅店",
+   "address": "埼玉県川口市川口1－1－1",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=122"
+  },
+  {
+   "name": "文教堂 熊谷駅店",
+   "address": "埼玉県熊谷市筑波3丁目202番地 ティアラ21 2階",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=123"
+  },
+  {
+   "name": "文教堂 狭山店",
+   "address": "埼玉県狭山市狭山台1-4",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=124"
+  },
+  {
+   "name": "文教堂 新座駅店",
+   "address": "埼玉県新座市野火止5－3－11",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=125"
+  },
+  {
+   "name": "文教堂 東川口店",
+   "address": "埼玉県川口市戸塚3-35-14",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=127"
+  },
+  {
+   "name": "文教堂 浦安西友店",
+   "address": "千葉県浦安市北栄1-14-1 トライアル西友浦安店パート2 4F",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=128"
+  },
+  {
+   "name": "文教堂 小倉台店",
+   "address": "千葉県千葉市若葉区小倉町1754",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=129"
+  },
+  {
+   "name": "文教堂 行徳店",
+   "address": "千葉県市川市行徳駅前1-19-1",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=130"
+  },
+  {
+   "name": "文教堂 下総中山駅店",
+   "address": "千葉県船橋市本中山2－17－20",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=131"
+  },
+  {
+   "name": "文教堂 青戸店",
+   "address": "東京都葛飾区青戸3-36-1",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=133"
+  },
+  {
+   "name": "文教堂 赤羽店",
+   "address": "東京都北区赤羽1-7-9赤羽メッツ",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=137"
+  },
+  {
+   "name": "文教堂 市ヶ谷店",
+   "address": "東京都千代田区五番町3番1",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=139"
+  },
+  {
+   "name": "文教堂 大崎店",
+   "address": "東京都品川区大崎1丁目6番5号 大崎ニューシティ5号館1階",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=140"
+  },
+  {
+   "name": "文教堂 河辺店",
+   "address": "東京都青梅市河辺町10-7-1 イオンスタイル河辺店 4階",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=141"
+  },
+  {
+   "name": "文教堂 グリーンコート店",
+   "address": "東京都文京区本駒込2－28－10",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=142"
+  },
+  {
+   "name": "文教堂 小平店",
+   "address": "東京都小平市仲町439",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=143"
+  },
+  {
+   "name": "文教堂 東陽町駅前店",
+   "address": "東京都江東区東陽4-1-7 佐藤ダイヤビルディング1F",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=145"
+  },
+  {
+   "name": "文教堂 成増店",
+   "address": "東京都板橋区成増1-29-15",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=147"
+  },
+  {
+   "name": "文教堂 成瀬店",
+   "address": "東京都町田市南成瀬1-3-4 そうてつローゼン3F",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=148"
+  },
+  {
+   "name": "文教堂 西葛西店",
+   "address": "東京都江戸川区西葛西6-8-7",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=149"
+  },
+  {
+   "name": "文教堂 人形町店",
+   "address": "東京都中央区日本橋人形町1-18-12 日土地人形町ビル",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=151"
+  },
+  {
+   "name": "文教堂 練馬高野台店",
+   "address": "東京都練馬区高野台1－7－17 ピーコックストア高野台店2F",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=152"
+  },
+  {
+   "name": "文教堂 広尾店",
+   "address": "東京都港区南麻布4丁目1-29 広尾ガーデン2F",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=153"
+  },
+  {
+   "name": "文教堂 二子玉川店",
+   "address": "東京都世田谷区玉川2‐21‐1 二子玉川ライズS.C.タウンフロント6F",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=154"
+  },
+  {
+   "name": "文教堂 南大沢店",
+   "address": "東京都八王子市南大沢二丁目28番地1 ガレリア・ユギ 5階",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=155"
+  },
+  {
+   "name": "文教堂 武蔵境駅前店",
+   "address": "東京都武蔵野市境南町2-2-3",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=156"
+  },
+  {
+   "name": "文教堂 六本木ヒルズ店",
+   "address": "東京都港区六本木6-10-1 六本木ヒルズ ウェストウォーク4階",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=158"
+  },
+  {
+   "name": "文教堂 あきる野店",
+   "address": "東京都あきる野市秋川1-17-1 あきる野プレイス4F",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=211"
+  },
+  {
+   "name": "文教堂 西台店",
+   "address": "東京都板橋区蓮根3丁目8-12 イオン西台店 食品館４階",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=220"
+  },
+  {
+   "name": "文教堂 伊勢原店",
+   "address": "神奈川県伊勢原市桜台1-3-3 伊勢原coma4F",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=161"
+  },
+  {
+   "name": "文教堂 鎌倉とうきゅう店",
+   "address": "神奈川県鎌倉市小町1-2-11 鎌倉とうきゅう 6階",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=165"
+  },
+  {
+   "name": "文教堂 湘南とうきゅう店",
+   "address": "神奈川県藤沢市遠藤字滝ノ沢698番地10 湘南とうきゅう2階",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=168"
+  },
+  {
+   "name": "文教堂 新城駅店",
+   "address": "神奈川県川崎市中原区上新城2-1-17",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=169"
+  },
+  {
+   "name": "文教堂 すすき野とうきゅう店",
+   "address": "神奈川県横浜市青葉区すすき野2-5-4 すすき野とうきゅう2F",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=172"
+  },
+  {
+   "name": "文教堂 中央林間店",
+   "address": "神奈川県大和市中央林間4-6-3 エトモ中央林間 2F",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=175"
+  },
+  {
+   "name": "文教堂 中山とうきゅう店",
+   "address": "神奈川県横浜市緑区中山一丁目4番1号 中山とうきゅう4F",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=176"
+  },
+  {
+   "name": "文教堂 葉山店",
+   "address": "神奈川県三浦郡葉山町一色1465-1",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=178"
+  },
+  {
+   "name": "文教堂 平塚店",
+   "address": "神奈川県中郡大磯町高麗3-2-28",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=180"
+  },
+  {
+   "name": "文教堂 横須賀ＭＯＲＥ’Ｓ店",
+   "address": "神奈川県横須賀市若松町2－30 ヨコスカモアーズシティ 7F",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=186"
+  },
+  {
+   "name": "文教堂 ＬＩＶＩＮよこすか店",
+   "address": "神奈川県横須賀市平成町3－21－4 リヴィンよこすか店内",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=189"
+  },
+  {
+   "name": "文教堂 Ｒ４１２店",
+   "address": "神奈川県厚木市林1-2-10",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=190"
+  },
+  {
+   "name": "文教堂 溝ノ口駅前店",
+   "address": "神奈川県川崎市高津区溝口1-3-1 ノクティプラザ1の7F",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=218"
+  },
+  {
+   "name": "文教堂 溝ノ口本店",
+   "address": "神奈川県川崎市高津区久本3－1－28",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=221"
+  },
+  {
+   "name": "文教堂 淀屋橋店",
+   "address": "大阪府大阪市中央区今橋4丁目1－1 淀屋橋odona2F",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=198"
+  },
+  {
+   "name": "文教堂 河内長野店",
+   "address": "大阪府河内長野市本町24-1 ノバティながの北館4F",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=202"
+  },
+  {
+   "name": "文教堂 王寺店",
+   "address": "奈良県北葛城郡王寺町久度2-2-1 リーベル王寺東館3F",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=201"
+  },
+  {
+   "name": "文教堂 逆瀬川店",
+   "address": "兵庫県宝塚市逆瀬川1-2-1 アピア1－1F",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=204"
+  },
+  {
+   "name": "文教堂 園田店",
+   "address": "兵庫県尼崎市東園田町九丁目４８－１ sononそのだ１階",
+   "url": "https://www.bunkyodo.co.jp/page-detail-store?id=213"
+  }
+ ]
+}
