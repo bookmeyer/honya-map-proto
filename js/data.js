@@ -1,7 +1,7 @@
 // 本屋・図書館・ラリーのデータ。スタンプ（その店だけの絵柄）の見た目もここ
-import { DEMO_STORE } from './config.js?v=0.9.1';
-import { S } from './state.js?v=0.9.1';
-import { esc, hash32, prefOf, weekKey, sleep } from './util.js?v=0.9.1';
+import { DEMO_STORE } from './config.js?v=0.9.2';
+import { S } from './state.js?v=0.9.2';
+import { esc, hash32, prefOf, weekKey, sleep } from './util.js?v=0.9.2';
 
 export let STORES = [];
 export let RALLIES = [];
@@ -74,9 +74,40 @@ const PICTS = [
   '<path d="M8 32C8 14 20 6 34 6c0 16-10 26-26 26z"/><path d="M8 32c8-8 14-14 22-22"/>', // 葉
   '<path d="M4 22a16 16 0 0 1 32 0zM20 22v10a4 4 0 0 1-8 0M20 6v-2"/>', // 傘
 ];
-function shortName(n) {
-  const s = String(n).replace(/(株式会社|有限会社|\(株\)|（株）)/g, '').trim().split(/[\s　]+/)[0] || '本';
-  let out = '', w = 0; for (const ch of s) { const cw = /[ -~]/.test(ch) ? 0.6 : 1; if (w + cw > 6.2) break; out += ch; w += cw; } return { text: out || '本', w };
+// ---- スタンプの帯の名前 ----
+// 言葉の途中で切らない（「コーチャンフォー」が「コーチャンフ」にならないように。v0.9.2）。
+// 名前の最初のまとまり（空白や「・」「（」の前）を使う。幅9までは1行。長いときは2行にし、
+// 「書店」「市立」「図書館」などの前後や、ひらがな・カタカナ・漢字・英字の変わり目のうち、2行の長さがそろうところで分ける
+// 幅は全角1。英字は Mochiy Pop P One で測った幅（大文字0.85・小文字0.66・数字0.74）より少し広めに見積もる
+const cwOf = (ch) => (/[A-Z]/.test(ch) ? 0.9 : /[a-z]/.test(ch) ? 0.7 : /[0-9]/.test(ch) ? 0.78 : ch === ' ' ? 0.3 : /[!-~]/.test(ch) ? 0.6 : 1);
+const widthOf = (s) => { let w = 0; for (const ch of s) w += cwOf(ch); return w; };
+const LABEL_STRIP = /(株式会社|有限会社|\(株\)|（株）|\(財\)|（財）|\(社\)|（社）|公益財団法人|一般財団法人|公益社団法人|一般社団法人|財団法人|社団法人|学校法人|特定非営利活動法人|NPO法人)/g;
+const LABEL_KEY = /(ブックセンター|ブックストア|ブックス|ライブラリー|センター|イオンモール|モール|タウン|TSUTAYA|BOOKS|Books|ふるいち|書店|書房|書林|書院|文庫|図書館|図書室|図書|協会|市立|町立|村立|区立|県立|都立|府立|道立|堂|屋|館|(?:市|町|村|区)(?![民立内場街役営政]))/g;
+const NO_HEAD = 'ーぁぃぅぇぉっゃゅょゎァィゥェォッャュョヮヵヶ、。・）」』！？!?の';
+const clsOf = (ch) => (/[ぁ-ゖ]/.test(ch) ? 'h' : /[ァ-ヺ]/.test(ch) ? 'k' : /[一-龥々〆]/.test(ch) ? 'c' : /[A-Za-z0-9Ａ-Ｚａ-ｚ０-９]/.test(ch) ? 'a' : 's');
+const LINE_MAX = 12;
+export function stampLabel(n) {
+  let s = String(n).replace(LABEL_STRIP, '').trim().split(/[\s　]+/)[0] || '本';
+  const cut = s.search(/[・「『（(;；／/]/); if (cut > 0 && widthOf(s.slice(0, cut)) >= 2) s = s.slice(0, cut);
+  const W = widthOf(s); if (W <= 9) return [s];
+  const chars = [...s]; const at = (i) => widthOf(chars.slice(0, i).join(''));
+  const cand = new Map(); // 分ける位置 → 優先の度合い
+  const add = (i, bonus) => { if (i > 0 && i < chars.length && !NO_HEAD.includes(chars[i])) cand.set(i, Math.max(cand.get(i) || 0, bonus)); };
+  for (const m of s.matchAll(LABEL_KEY)) { const a = [...s.slice(0, m.index)].length; add(a + [...m[0]].length, 0.6); add(a, 0.3); }
+  const cls = []; chars.forEach((ch, i) => { cls[i] = ch === 'ー' && i ? cls[i - 1] : clsOf(ch); });
+  chars.forEach((ch, i) => { if ('ケヶノ'.includes(ch) && cls[i - 1] === 'c' && clsOf(chars[i + 1] || '') === 'c') cls[i] = 'c'; }); // 「香里ケ丘」「虎ノ門」は地名のひとまとまり
+  for (let i = 1; i < chars.length; i++) if ((cls[i] !== cls[i - 1] && cls[i] !== 's') || (/[a-z]/.test(chars[i - 1]) && /[A-Z]/.test(chars[i]))) add(i, 0.3); // 「VillageVangard」の大文字の前も
+  let best = -1, bestS = Infinity;
+  for (const [i, bonus] of cand) { const a = at(i); if (a > LINE_MAX || W - a > LINE_MAX) continue; const sc = Math.abs(a - W / 2) - bonus; if (sc < bestS || (sc === bestS && i > best)) { bestS = sc; best = i; } }
+  if (best < 0) { // 切れ目がなければ、真ん中に近いところ
+    const idx = []; for (let i = 1; i < chars.length; i++) idx.push(i);
+    idx.sort((p, q) => Math.abs(at(p) - W / 2) - Math.abs(at(q) - W / 2) || p - q);
+    const mid = idx.find((i) => !NO_HEAD.includes(chars[i])) || Math.ceil(chars.length / 2);
+    if (Math.max(at(mid), W - at(mid)) <= LINE_MAX) best = mid;
+    else { for (const [i] of cand) if (at(i) <= LINE_MAX && i > best) best = i; if (best < 0) best = mid; } // 2行にも収まらないときは、1行目を切れ目まで（2行目は「…」で終える）
+  }
+  const clip = (t) => { if (widthOf(t) <= LINE_MAX) return t; let out = '', w = 0; for (const ch of t) { if (w + cwOf(ch) > LINE_MAX - 1) break; out += ch; w += cwOf(ch); } return out + '…'; };
+  return [clip(chars.slice(0, best).join('')), clip(chars.slice(best).join(''))];
 }
 const hsl = (h, s, l) => `hsl(${h} ${Math.max(0, Math.min(100, s))}% ${Math.max(0, Math.min(100, l))}%)`;
 export function stampInk(st) { const h = hash32(st.i); const [main, pic] = INKS[(h >>> 16) % INKS.length]; return { main, dark: '#1B1B1B', light: '#FFFFFF', pic }; }
@@ -85,13 +116,19 @@ export function stampSVG(st, collected, size = 96, opts = {}) {
   const id = 'k' + h.toString(36) + (collected ? 'c' : 'u') + (opts.sfx || '');
   const EDGE = '#1B1B1B'; const fill = collected ? main : '#ECE6DA', pic = collected ? picCol : '#BDB5A8', edge = collected ? EDGE : '#A69E91', nameCol = collected ? EDGE : '#A69E91';
   const outer = shape === 0 ? '<rect x="8" y="8" width="84" height="84" rx="22"/>' : shape === 1 ? '<circle cx="50" cy="50" r="42"/>' : '<path d="M50 7L87 28v44L50 93 13 72V28z"/>';
-  const { text, w } = shortName(st.n); const fs = w <= 3 ? 15 : w <= 4 ? 13 : w <= 5 ? 11.5 : 10.5;
+  const lines = stampLabel(st.n); const lw = lines.map(widthOf); const two = lines.length > 1;
+  const fs = two ? Math.max(7.5, Math.min(10.5, 66 / Math.max(...lw))) : Math.max(8.4, Math.min(13, 66 / lw[0]));
+  const FONT = `font-size="${+fs.toFixed(2)}" font-family="'Mochiy Pop P One','Zen Maru Gothic','Hiragino Sans',sans-serif" fill="${nameCol}"`;
+  const squeeze = (w) => (w * fs > 68 ? ' textLength="66" lengthAdjust="spacingAndGlyphs"' : ''); // 帯からはみ出しそうなときだけ横に詰める
+  const label = two
+    ? `<rect x="13" y="58" width="74" height="29" rx="11" fill="#FFFFFF" stroke="${edge}" stroke-width="1.5"/><text x="50" y="65.6" text-anchor="middle" dominant-baseline="central" ${FONT}${squeeze(lw[0])}>${esc(lines[0])}</text><text x="50" y="79.4" text-anchor="middle" dominant-baseline="central" ${FONT}${squeeze(lw[1])}>${esc(lines[1])}</text>`
+    : `<rect x="13" y="63" width="74" height="19" rx="9.5" fill="#FFFFFF" stroke="${edge}" stroke-width="1.5"/><text x="50" y="72.5" text-anchor="middle" dominant-baseline="central" ${FONT}${squeeze(lw[0])}>${esc(lines[0])}</text>`;
   // 秘境（★3）は檸檬の光の輪、街（★2）は白い二重のふち
   const ring = !collected ? '' : r === 3 ? `<polygon points="${BURST}" fill="#FFD447" stroke="${EDGE}" stroke-width="1.5" stroke-linejoin="round"/>` : r === 2 ? `<g transform="translate(50 50) scale(1.1) translate(-50 -50)" fill="#FFFFFF" stroke="${EDGE}" stroke-width="1.5">${outer}</g>` : '';
   const star = (x, y, s, f) => `<path transform="translate(${x} ${y}) scale(${s})" fill="${f}" stroke="${EDGE}" stroke-width="1.4" stroke-linejoin="round" d="M0-9l2.6 5.4 6 .8-4.4 4.2 1.1 5.9L0 4.5l-5.3 2.8 1.1-5.9-4.4-4.2 6-.8z"/>`;
   const crown = (x, y, s, f) => `<g transform="translate(${x} ${y}) scale(${s})"><path fill="${f}" stroke="${EDGE}" stroke-width="1.4" stroke-linejoin="round" d="M-9 6l-3-11 6 4 6-9 6 9 6-4-3 11z"/></g>`;
   const marks = collected ? (rank >= 4 ? crown(78, 15, 0.85, '#FFD447') : rank >= 3 ? crown(78, 15, 0.72, '#FFFFFF') : rank >= 2 ? star(79, 15, 0.6, '#FFFFFF') : '') : '';
-  return `<svg viewBox="0 0 100 100" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg" aria-label="${esc(st.n)}のスタンプ"><defs><clipPath id="c${id}">${outer}</clipPath></defs>${ring}<g fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linejoin="round">${outer}</g><g fill="${fill}" stroke="${edge}" stroke-width="2.5" stroke-linejoin="round"${collected ? '' : ' stroke-dasharray="5 3"'}>${outer}</g><ellipse cx="38" cy="22" rx="22" ry="9" fill="#fff" opacity="${collected ? '.22' : '.3'}" clip-path="url(#c${id})"/><g transform="translate(30 15)" fill="none" stroke="${pic}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">${pict}</g><rect x="13" y="63" width="74" height="19" rx="9.5" fill="#FFFFFF" stroke="${edge}" stroke-width="1.5"/><text x="50" y="72.5" text-anchor="middle" dominant-baseline="central" font-size="${fs}" font-family="'Mochiy Pop P One','Zen Maru Gothic','Hiragino Sans',sans-serif" fill="${nameCol}">${esc(text)}</text>${marks}</svg>`;
+  return `<svg viewBox="0 0 100 100" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg" aria-label="${esc(st.n)}のスタンプ"><defs><clipPath id="c${id}">${outer}</clipPath></defs>${ring}<g fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linejoin="round">${outer}</g><g fill="${fill}" stroke="${edge}" stroke-width="2.5" stroke-linejoin="round"${collected ? '' : ' stroke-dasharray="5 3"'}>${outer}</g><ellipse cx="38" cy="22" rx="22" ry="9" fill="#fff" opacity="${collected ? '.22' : '.3'}" clip-path="url(#c${id})"/><g transform="translate(30 ${two ? 13 : 15})" fill="none" stroke="${pic}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">${pict}</g>${label}${marks}</svg>`;
 }
 
 // ---- 本（openBD） ----

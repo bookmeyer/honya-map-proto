@@ -1,15 +1,15 @@
 // 画面：レーダー・図鑑・お題・設定・最初の案内
-import { APP_VER, RANGE_M, PG, pagesForVol, frameOf, PREFS } from './config.js?v=0.9.1';
-import { S, save, exportJSON, parseImport, replace, reset } from './state.js?v=0.9.1';
-import { STORES, BYID, FEAT, RALLIES, isFeat, rarityOf, rarityText, stampSVG, unhideAll, rebuild, DATA_DATE } from './data.js?v=0.9.1';
-import * as G from './game.js?v=0.9.1';
-import * as MAP from './map.js?v=0.9.1';
-import { POS, hasPos } from './position.js?v=0.9.1';
-import { sfx, haptic } from './audio.js?v=0.9.1';
-import { profileImage, shareBlob } from './share.js?v=0.9.1';
-import { toast, openModal, closeModal, confirmBox, openSheet, openCard, switchView, setSub, refreshHud, applyMapStates, updateNear, locate, setTrialUI, warp, makeAvatar, nameModal, cleanHandle, NEAR, currentSub } from './ui.js?v=0.9.1';
+import { APP_VER, RANGE_M, PG, pagesForVol, frameOf, PREFS } from './config.js?v=0.9.2';
+import { S, save, exportJSON, parseImport, replace, reset } from './state.js?v=0.9.2';
+import { STORES, BYID, FEAT, RALLIES, isFeat, rarityOf, rarityText, stampSVG, unhideAll, rebuild, DATA_DATE } from './data.js?v=0.9.2';
+import * as G from './game.js?v=0.9.2';
+import * as MAP from './map.js?v=0.9.2';
+import { POS, hasPos } from './position.js?v=0.9.2';
+import { sfx, haptic } from './audio.js?v=0.9.2';
+import { profileImage, shareBlob } from './share.js?v=0.9.2';
+import { toast, openModal, closeModal, confirmBox, openSheet, openCard, switchView, setSub, refreshHud, applyMapStates, updateNear, locate, setTrialUI, warp, makeAvatar, nameModal, cleanHandle, NEAR, currentSub } from './ui.js?v=0.9.2';
 import * as JU from './journey_ui.js?v=0.6.3';
-import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, weekKey } from './util.js?v=0.9.1';
+import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, weekKey } from './util.js?v=0.9.2';
 
 const empty = (ic, text) => `<div class="empty">${icon(ic)}<div>${text}</div></div>`;
 
