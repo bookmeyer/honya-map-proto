@@ -1,14 +1,14 @@
 // 旅の記録の画面：行きたい店のお知らせ・この辺りの行きたい店・今日の物語・月のふり返り・投稿の記録・Googleマップの★の読み込み
-import { S, save } from './state.js?v=0.8.2';
-import { STORES, BYID, addCustom } from './data.js?v=0.8.2';
-import * as J from './journey.js?v=0.8.2';
-import * as G from './game.js?v=0.8.2';
-import * as MAP from './map.js?v=0.8.2';
-import { POS, hasPos } from './position.js?v=0.8.2';
-import { sfx, haptic } from './audio.js?v=0.8.2';
-import { storyImage, shareBlob } from './share.js?v=0.8.2';
-import { toast, openModal, closeModal, openSheet, applyMapStates, updateNear, refreshHud } from './ui.js?v=0.8.2';
-import { $, $$, esc, fmtDist, todayISO, icon, arrowOf, bearing, dist, gmapDir } from './util.js?v=0.8.2';
+import { S, save } from './state.js?v=0.8.3';
+import { STORES, BYID, addCustom } from './data.js?v=0.8.3';
+import * as J from './journey.js?v=0.8.3';
+import * as G from './game.js?v=0.8.3';
+import * as MAP from './map.js?v=0.8.3';
+import { POS, hasPos } from './position.js?v=0.8.3';
+import { sfx, haptic } from './audio.js?v=0.8.3';
+import { storyImage, shareBlob } from './share.js?v=0.8.3';
+import { toast, openModal, closeModal, openSheet, applyMapStates, updateNear, refreshHud } from './ui.js?v=0.8.3';
+import { $, $$, esc, fmtDist, todayISO, icon, arrowOf, bearing, dist, gmapDir } from './util.js?v=0.8.3';
 
 const dirLink = (st, label = '道順') => `<a class="btn" href="${gmapDir(st)}" target="_blank" rel="noopener" data-stop>${label}</a>`;
 const stopLinks = (root) => $$('[data-stop]', root).forEach((a) => a.addEventListener('click', (e) => e.stopPropagation()));
@@ -21,7 +21,7 @@ export function showWantAlerts(list) {
   const more = list.length > 1 ? `（ほか${list.length - 1}店）` : '';
   const arrow = hasPos() ? ' ' + arrowOf(bearing(POS.lat, POS.lon, st.la, st.lo)) : '';
   box.innerHTML = `<div class="wa-main">${icon('star')}<div><b>${stage === 2 ? 'もうすぐ' : fmtDist(d) + '先に'}、行きたい店があります${more}</b><div class="small">${esc(st.n)}　${fmtDist(d)}${arrow}</div></div><button class="icon-btn" id="wa-x" aria-label="閉じる">${icon('close')}</button></div><div class="wa-act"><button class="btn primary" id="wa-open">${icon('map')}地図で見る</button>${dirLink(st, 'Googleマップで道順')}</div>`;
-  box.hidden = false; sfx.reveal(); haptic([40, 60, 40]);
+  box.hidden = false; // 音と振動はなし（帯だけで知らせる）
   $('#wa-x').onclick = () => { box.hidden = true; };
   $('#wa-open').onclick = () => { box.hidden = true; openSheet(st.i); };
   clearTimeout(waTimer); waTimer = setTimeout(() => { box.hidden = true; }, 90000);

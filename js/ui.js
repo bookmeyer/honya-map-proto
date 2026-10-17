@@ -1,18 +1,18 @@
 // 画面の部品：見出し帯・タブ・店のシート・モーダル・スタンプの演出・カード・さがす・追加
-import { RANGE_M, SENSE_M, TERRITORY_M, PG, pagesForVol, INK } from './config.js?v=0.8.2';
-import { S, save, inkRefill } from './state.js?v=0.8.2';
-import { STORES, BYID, FEAT, isFeat, isLib, placeWord, rarityOf, rarityText, stampSVG, stampInk, search, addCustom, hideStore, renameStore, lookupIsbn, DATA_DATE } from './data.js?v=0.8.2';
-import * as G from './game.js?v=0.8.2';
-import * as MAP from './map.js?v=0.8.2';
-import { POS, setPos, startWatch, setTrial, setFollow, hasPos, jumped } from './position.js?v=0.8.2';
-import { sfx, haptic, unlock } from './audio.js?v=0.8.2';
-import { stampImage, cardImage, shareBlob } from './share.js?v=0.8.2';
-import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, on, emit, weekKey, gmapDir } from './util.js?v=0.8.2';
+import { RANGE_M, SENSE_M, TERRITORY_M, PG, pagesForVol, INK } from './config.js?v=0.8.3';
+import { S, save, inkRefill } from './state.js?v=0.8.3';
+import { STORES, BYID, FEAT, isFeat, isLib, placeWord, rarityOf, rarityText, stampSVG, stampInk, search, addCustom, hideStore, renameStore, lookupIsbn, DATA_DATE } from './data.js?v=0.8.3';
+import * as G from './game.js?v=0.8.3';
+import * as MAP from './map.js?v=0.8.3';
+import { POS, setPos, startWatch, setTrial, setFollow, hasPos, jumped } from './position.js?v=0.8.3';
+import { sfx, haptic, unlock } from './audio.js?v=0.8.3';
+import { stampImage, cardImage, shareBlob } from './share.js?v=0.8.3';
+import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, on, emit, weekKey, gmapDir } from './util.js?v=0.8.3';
 
 export let currentView = 'map';
 export let currentSub = 'stamps';
 export const NEAR = { list: [], inRange: new Set() };
-let scanStopper = null, lastBuzz = 0, lastGlowTick = 0;
+let scanStopper = null;
 
 // ---------- 小物 ----------
 export function toast(msg, kind = '') { const box = $('#toasts'); const t = document.createElement('div'); t.className = 'toast ' + kind; t.textContent = msg; box.appendChild(t); while (box.children.length > 3) box.firstChild.remove(); setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity .3s'; setTimeout(() => t.remove(), 300); }, 2600); }
@@ -36,12 +36,8 @@ export function refreshHud() {
 }
 
 // ---------- 現在地まわりの表示（レーダーの帯・最初のクエスト・縁の光） ----------
-function setGlow(d) {
-  const g = $('#glow'); if (d == null || d > SENSE_M || d <= RANGE_M) { g.className = 'glow'; g.style.opacity = '0'; return; }
-  const t = (d - RANGE_M) / (SENSE_M - RANGE_M);
-  g.className = 'glow beat'; g.style.setProperty('--beat', `${(0.35 + t * 1.3).toFixed(2)}s`); g.style.opacity = (0.25 + (1 - t) * 0.75).toFixed(2);
-  const gap = 350 + t * 1500; if (Date.now() - lastBuzz > gap) { lastBuzz = Date.now(); haptic(18); if (Date.now() - lastGlowTick > gap) { lastGlowTick = Date.now(); sfx.tick(1 - t); } }
-}
+// 近づいたときの画面の縁の光・音・振動は使わない（2026-10-17 ぶっくまさんの指示）。射程に入ったらトーストで知らせるだけ
+function setGlow() { const g = $('#glow'); g.className = 'glow'; g.style.opacity = '0'; }
 export function updateNear() {
   const strip = $('#radar-items'), quest = $('#first-quest');
   if (!hasPos()) { NEAR.list = []; NEAR.inRange = new Set(); strip.innerHTML = ''; quest.hidden = true; setGlow(null); applyMapStates(); emit('near'); return; }
@@ -49,7 +45,7 @@ export function updateNear() {
   cand.sort((a, b) => a.d - b.d); NEAR.list = cand.slice(0, 30);
   const now = new Set(NEAR.list.filter((x) => x.d <= RANGE_M).map((x) => x.s.i));
   const entered = [...now].filter((id) => !NEAR.inRange.has(id)); NEAR.inRange = now;
-  if (entered.length) { haptic([60, 40, 60, 40, 120]); sfx.enter(); const g = $('#glow'); g.className = 'glow gold'; g.style.opacity = '1'; setTimeout(() => { if (g.className === 'glow gold') { g.className = 'glow'; g.style.opacity = '0'; } }, 900); const first = BYID.get(entered[0]); toast(`📍 ${first.n}${entered.length > 1 ? ` ほか${entered.length - 1}店` : ''} が射程に入りました`, 'ok'); }
+  if (entered.length) { const first = BYID.get(entered[0]); toast(`📍 ${first.n}${entered.length > 1 ? ` ほか${entered.length - 1}店` : ''} が射程に入りました`, 'ok'); }
   else { const nd = NEAR.list.find((x) => !G.hasStamp(x.s.i)); setGlow(nd ? nd.d : null); }
   const target = NEAR.list.find((x) => !G.hasStamp(x.s.i));
   if (target && !now.size) { quest.hidden = false; quest.innerHTML = `${icon('pin')}<span>いちばん近い${isLib(target.s) ? '図書館' : '本屋'} <b>${esc(target.s.n)}</b> まで あと${fmtDist(Math.max(0, target.d - RANGE_M))} ${arrowOf(bearing(POS.lat, POS.lon, target.s.la, target.s.lo))}</span>`; quest.onclick = () => openSheet(target.s.i); } else quest.hidden = true;

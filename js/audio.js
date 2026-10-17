@@ -1,7 +1,7 @@
-// 音（部品ファイルなしで、その場で合成）と振動
+// 音（部品ファイルなしで、その場で合成）。振動は使わない（2026-10-17 ぶっくまさんの指示）
 // 材料：マリンバ風の打音（mallet）・鐘（bell）・弦をはじく音（pluck）・低い打音（thump）・小さな「ぽ」（pop）。
 // すべて残響（convolver）とコンプレッサーを通すので、安っぽい電子音にならない
-import { S } from './state.js?v=0.8.2';
+import { S } from './state.js?v=0.8.3';
 
 let ctx = null, bus = null;
 function ac() { if (!ctx) { try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { ctx = null; } } if (ctx && ctx.state === 'suspended') ctx.resume().catch(() => {}); return ctx; }
@@ -63,7 +63,7 @@ function engine() { const c = ac(); if (!c) return null; if (!bus || bus.c !== c
 export const NAMES = ['click', 'tick', 'enter', 'stamp', 'rare', 'levelup', 'regular', 'reveal', 'nope'];
 export const sfx = {};
 for (const n of NAMES) sfx[n] = (...a) => { if (!S.settings.sound) return; const e = engine(); if (!e) return; try { e[n](...a); } catch (err) {} };
-export function haptic(pattern) { if (!S.settings.haptic) return; try { if (navigator.vibrate) navigator.vibrate(pattern); } catch (e) {} }
+export function haptic() {} // 振動はしない（呼び出し側はそのまま残しても鳴らない）
 
 // 確認用：鳴らさずに波形を計算して、大きさと長さを測る（試作の点検で使う）
 export async function renderOffline(name, sec = 2.5) {

@@ -2,7 +2,7 @@
 // ・版のついた部品（?v=）は覚えたものを先に使う（版が変わればURLも変わるので、古い部品は混ざらない）
 // ・index.html・データ・版のないものはネット優先（必ずサーバーに確かめる）。切れていたら前回のもの
 // ・地図タイル・本の情報（外部）は触らない
-const V = '0.8.2';
+const V = '0.8.3';
 const VER = 'honya-map-' + V;
 const MODS = ['main', 'config', 'util', 'state', 'audio', 'position', 'data', 'map', 'game', 'ui', 'screens', 'share', 'journey', 'journey_ui'];
 const SHELL = ['./', './index.html', `./css/app.css?v=${V}`, ...MODS.map((m) => `./js/${m}.js?v=${V}`), './manifest.webmanifest', './icon-192.png', './icon-512.png'];

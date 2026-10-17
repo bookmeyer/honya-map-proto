@@ -1,7 +1,7 @@
 // 本屋・図書館・ラリーのデータ。スタンプ（その店だけの絵柄）の見た目もここ
-import { DEMO_STORE } from './config.js?v=0.8.2';
-import { S } from './state.js?v=0.8.2';
-import { esc, hash32, prefOf, weekKey, sleep } from './util.js?v=0.8.2';
+import { DEMO_STORE } from './config.js?v=0.8.3';
+import { S } from './state.js?v=0.8.3';
+import { esc, hash32, prefOf, weekKey, sleep } from './util.js?v=0.8.3';
 
 export let STORES = [];
 export let RALLIES = [];
