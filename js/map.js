@@ -1,6 +1,6 @@
 // 地図（MapLibre）。店はピンの絵で表示し、固まり（クラスタ）でまとめ、状態は feature-state で軽く更新する
-import { STYLE_LIGHT, STYLE_DARK, TERRITORY_M, RANGE_M } from './config.js?v=0.8.3';
-import { circlePoly, emit } from './util.js?v=0.8.3';
+import { STYLE_LIGHT, STYLE_DARK, TERRITORY_M, RANGE_M } from './config.js?v=0.8.4';
+import { circlePoly, emit } from './util.js?v=0.8.4';
 
 export const M = { map: null, ready: false, theme: 'light' };
 let storesGeo = { type: 'FeatureCollection', features: [] };
@@ -11,7 +11,8 @@ let handlers = {};
 let pulseRaf = null, pulseOn = false;
 
 // ---- ピンの絵（canvasで描く。種類：plain ふつう／used 古書店／rare 秘境／stamped 押した／near 射程内） ----
-const PIN = { plain: ['#fffaf0', '#e9e1d2', '#8f877a', '#9d9488'], used: ['#efeadf', '#d3cab8', '#6f6757', '#8a8275'], rare: ['#fff0b8', '#e6b93c', '#8a6610', '#b08a1e'], stamped: ['#ff9a7a', '#d6452b', '#ffffff', '#a8321c'], near: ['#ffe58f', '#e8a51e', '#ffffff', '#b07a10'], lib: ['#e3f4f0', '#8fcfbf', '#1f6f63', '#2f8a7b'] };
+// ピンの色：本屋＝朱／古書店＝茶／秘境の本屋＝墨に金／図書館＝緑／スタンプ済み＝藍／射程内＝金の星（地図の灰色の印と見分けやすく）
+const PIN = { plain: ['#f2775f', '#d6452b', '#c43d24', '#a8321c'], used: ['#b98563', '#8a5a3c', '#7a4a2c', '#5e3a22'], rare: ['#5a4e45', '#2a221d', '#c99a1e', '#15100c'], stamped: ['#7d8cd0', '#3b4a8a', '#ffffff', '#2c376b'], near: ['#ffe27a', '#e8a51e', '#ffffff', '#b07a10'], lib: ['#4fb3a2', '#2a8576', '#1f6f63', '#17574d'] };
 function starPath(g, cx, cy, R, r) { for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + (i * Math.PI) / 5; const rr = i % 2 ? r : R; const x = cx + Math.cos(a) * rr, y = cy + Math.sin(a) * rr; if (i) g.lineTo(x, y); else g.moveTo(x, y); } g.closePath(); }
 export function pinCanvas(kind, s = 2) {
   const W = 44, H = 56; const c = document.createElement('canvas'); c.width = W * s; c.height = H * s; const g = c.getContext('2d'); g.scale(s, s);
@@ -19,7 +20,7 @@ export function pinCanvas(kind, s = 2) {
   const path = () => { g.beginPath(); g.moveTo(22, 53); g.bezierCurveTo(16, 42, 6, 33, 6, 21); g.arc(22, 21, 16, Math.PI, 0); g.bezierCurveTo(38, 33, 28, 42, 22, 53); g.closePath(); };
   g.save(); g.shadowColor = 'rgba(0,0,0,.28)'; g.shadowBlur = 5; g.shadowOffsetY = 2; path(); const gr = g.createLinearGradient(0, 4, 0, 50); gr.addColorStop(0, P[0]); gr.addColorStop(1, P[1]); g.fillStyle = gr; g.fill(); g.restore();
   path(); g.lineWidth = 2.5; g.strokeStyle = '#ffffff'; g.stroke(); path(); g.lineWidth = 1; g.strokeStyle = P[3]; g.stroke();
-  g.beginPath(); g.arc(22, 21, 10.5, 0, Math.PI * 2); g.fillStyle = kind === 'stamped' || kind === 'near' ? '#ffffff' : 'rgba(255,255,255,.88)'; g.fill();
+  g.beginPath(); g.arc(22, 21, 10.5, 0, Math.PI * 2); g.fillStyle = '#ffffff'; g.fill();
   g.lineCap = 'round'; g.lineJoin = 'round';
   if (kind === 'stamped') { g.strokeStyle = P[1]; g.lineWidth = 3; g.beginPath(); g.moveTo(16, 21.5); g.lineTo(20.5, 26); g.lineTo(29, 16.5); g.stroke(); }
   else if (kind === 'near') { g.fillStyle = P[1]; g.beginPath(); starPath(g, 22, 21.5, 7, 3.2); g.fill(); }
@@ -97,7 +98,9 @@ function addLayers() {
   for (const [id, st] of stateCache) map.setFeatureState({ source: 'stores', id }, st);
 }
 
-function safeAddLayers() { try { addLayers(); } catch (e) { console.error('layers', e); window.__mapErr = String(e && e.message || e); } }
+// 地図にもともと出ている店・お寺などの印は消す（本屋・図書館のピンと紛れるため）。駅とバス停の印は残す
+function hideBasePoi() { for (const id of ['poi_r1', 'poi_r7', 'poi_r20']) { try { if (M.map.getLayer(id)) M.map.setLayoutProperty(id, 'visibility', 'none'); } catch (e) {} } }
+function safeAddLayers() { try { hideBasePoi(); addLayers(); } catch (e) { console.error('layers', e); window.__mapErr = String(e && e.message || e); } }
 export function initMap({ center, zoom, theme = 'light', onStoreClick, onMapClick, onDrag }) {
   handlers = { onStoreClick, onMapClick, onDrag }; M.theme = theme;
   const map = new maplibregl.Map({ container: 'map', style: theme === 'dark' ? STYLE_DARK : STYLE_LIGHT, center, zoom, attributionControl: false, preserveDrawingBuffer: true, maxZoom: 18 });

@@ -332,3 +332,7 @@ ol.steps li{margin:4px 0}
 .icon-btn.sm .ic{width:16px;height:16px}
 .profile .ph .tt{display:flex;align-items:center;gap:2px;font-size:18px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .badge.lib{background:#2f8a7b;color:#fff}
+.legend{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;margin:0 0 10px;font-size:12px;color:var(--ink-2)}
+.legend .lg-t{font-weight:700;color:var(--ink)}
+.legend .lg{display:inline-flex;align-items:center;gap:4px}
+.legend .lg i{width:12px;height:12px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:inline-block;border:1.5px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.15)}

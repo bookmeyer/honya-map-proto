@@ -1,13 +1,13 @@
 // 画面の部品：見出し帯・タブ・店のシート・モーダル・スタンプの演出・カード・さがす・追加
-import { RANGE_M, SENSE_M, TERRITORY_M, PG, pagesForVol, INK } from './config.js?v=0.8.3';
-import { S, save, inkRefill } from './state.js?v=0.8.3';
-import { STORES, BYID, FEAT, isFeat, isLib, placeWord, rarityOf, rarityText, stampSVG, stampInk, search, addCustom, hideStore, renameStore, lookupIsbn, DATA_DATE } from './data.js?v=0.8.3';
-import * as G from './game.js?v=0.8.3';
-import * as MAP from './map.js?v=0.8.3';
-import { POS, setPos, startWatch, setTrial, setFollow, hasPos, jumped } from './position.js?v=0.8.3';
-import { sfx, haptic, unlock } from './audio.js?v=0.8.3';
-import { stampImage, cardImage, shareBlob } from './share.js?v=0.8.3';
-import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, on, emit, weekKey, gmapDir } from './util.js?v=0.8.3';
+import { RANGE_M, SENSE_M, TERRITORY_M, PG, pagesForVol, INK } from './config.js?v=0.8.4';
+import { S, save, inkRefill } from './state.js?v=0.8.4';
+import { STORES, BYID, FEAT, isFeat, isLib, placeWord, rarityOf, rarityText, stampSVG, stampInk, search, addCustom, hideStore, renameStore, lookupIsbn, DATA_DATE } from './data.js?v=0.8.4';
+import * as G from './game.js?v=0.8.4';
+import * as MAP from './map.js?v=0.8.4';
+import { POS, setPos, startWatch, setTrial, setFollow, hasPos, jumped } from './position.js?v=0.8.4';
+import { sfx, haptic, unlock } from './audio.js?v=0.8.4';
+import { stampImage, cardImage, shareBlob } from './share.js?v=0.8.4';
+import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, on, emit, weekKey, gmapDir } from './util.js?v=0.8.4';
 
 export let currentView = 'map';
 export let currentSub = 'stamps';

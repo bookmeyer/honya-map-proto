@@ -1,9 +1,9 @@
 // シェア用の画像（スタンプ・常連度・カード・プレイヤーカード）
-import { S } from './state.js?v=0.8.3';
-import { stampSVG, stampInk, rarityOf, rarityText } from './data.js?v=0.8.3';
-import { snapshot } from './map.js?v=0.8.3';
-import { regularInfo } from './game.js?v=0.8.3';
-import { stars, prefOf, fmtDate, todayISO } from './util.js?v=0.8.3';
+import { S } from './state.js?v=0.8.4';
+import { stampSVG, stampInk, rarityOf, rarityText } from './data.js?v=0.8.4';
+import { snapshot } from './map.js?v=0.8.4';
+import { regularInfo } from './game.js?v=0.8.4';
+import { stars, prefOf, fmtDate, todayISO } from './util.js?v=0.8.4';
 
 const PAPER = '#faf7f1', INK = '#231f1c', INK2 = '#5f574f', SHU = '#d6452b', LINE = '#e3dbcd';
 const DISP = '"Zen Maru Gothic","Zen Kaku Gothic New","Hiragino Sans",sans-serif', BODY = '"Zen Kaku Gothic New","Hiragino Sans",sans-serif';

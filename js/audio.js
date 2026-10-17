@@ -1,7 +1,7 @@
 // 音（部品ファイルなしで、その場で合成）。振動は使わない（2026-10-17 ぶっくまさんの指示）
 // 材料：マリンバ風の打音（mallet）・鐘（bell）・弦をはじく音（pluck）・低い打音（thump）・小さな「ぽ」（pop）。
 // すべて残響（convolver）とコンプレッサーを通すので、安っぽい電子音にならない
-import { S } from './state.js?v=0.8.3';
+import { S } from './state.js?v=0.8.4';
 
 let ctx = null, bus = null;
 function ac() { if (!ctx) { try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { ctx = null; } } if (ctx && ctx.state === 'suspended') ctx.resume().catch(() => {}); return ctx; }

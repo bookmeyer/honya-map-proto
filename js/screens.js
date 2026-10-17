@@ -1,21 +1,23 @@
 // 画面：レーダー・図鑑・お題・設定・最初の案内
-import { APP_VER, RANGE_M, PG, pagesForVol, frameOf, PREFS, INK } from './config.js?v=0.8.3';
-import { S, save, exportJSON, parseImport, replace, reset } from './state.js?v=0.8.3';
-import { STORES, BYID, FEAT, RALLIES, isFeat, rarityOf, rarityText, stampSVG, unhideAll, rebuild, DATA_DATE } from './data.js?v=0.8.3';
-import * as G from './game.js?v=0.8.3';
-import * as MAP from './map.js?v=0.8.3';
-import { POS, hasPos } from './position.js?v=0.8.3';
-import { sfx, haptic } from './audio.js?v=0.8.3';
-import { profileImage, shareBlob } from './share.js?v=0.8.3';
-import { toast, openModal, closeModal, confirmBox, openSheet, openCard, switchView, setSub, refreshHud, applyMapStates, updateNear, locate, setTrialUI, warp, devRefillInk, makeAvatar, nameModal, cleanHandle, NEAR, currentSub } from './ui.js?v=0.8.3';
+import { APP_VER, RANGE_M, PG, pagesForVol, frameOf, PREFS, INK } from './config.js?v=0.8.4';
+import { S, save, exportJSON, parseImport, replace, reset } from './state.js?v=0.8.4';
+import { STORES, BYID, FEAT, RALLIES, isFeat, rarityOf, rarityText, stampSVG, unhideAll, rebuild, DATA_DATE } from './data.js?v=0.8.4';
+import * as G from './game.js?v=0.8.4';
+import * as MAP from './map.js?v=0.8.4';
+import { POS, hasPos } from './position.js?v=0.8.4';
+import { sfx, haptic } from './audio.js?v=0.8.4';
+import { profileImage, shareBlob } from './share.js?v=0.8.4';
+import { toast, openModal, closeModal, confirmBox, openSheet, openCard, switchView, setSub, refreshHud, applyMapStates, updateNear, locate, setTrialUI, warp, devRefillInk, makeAvatar, nameModal, cleanHandle, NEAR, currentSub } from './ui.js?v=0.8.4';
 import * as JU from './journey_ui.js?v=0.6.3';
-import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, weekKey } from './util.js?v=0.8.3';
+import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, weekKey } from './util.js?v=0.8.4';
 
 const empty = (ic, text) => `<div class="empty">${icon(ic)}<div>${text}</div></div>`;
 
 // ---------- レーダー ----------
+const LEGEND = [['#d6452b', '本屋'], ['#8a5a3c', '古書店'], ['#2a221d', '秘境の本屋'], ['#2a8576', '図書館'], ['#3b4a8a', 'スタンプ済み'], ['#e8a51e', '射程内']];
+function renderLegend() { const el = $('#radar-legend'); if (el) el.innerHTML = '<span class="lg-t">ピンの色</span>' + LEGEND.map(([c, t]) => `<span class="lg"><i style="background:${c}"></i>${t}</span>`).join(''); }
 export function renderRadar() {
-  JU.renderRadarWants();
+  renderLegend(); JU.renderRadarWants();
   const st = $('#radar-status'), list = $('#radar-list');
   if (!hasPos()) { st.className = 'status-card'; st.innerHTML = `現在地がまだありません。<div class="actions"><button class="btn primary" id="rd-loc">${icon('locate')}現在地を追う</button><button class="btn" id="rd-trial">${icon('foot')}お試し歩き</button></div>`; $('#rd-loc').onclick = () => { switchView('map'); locate(); }; $('#rd-trial').onclick = () => { switchView('map'); setTrialUI(true); warp(); }; list.innerHTML = ''; return; }
   st.className = 'status-card gold'; st.innerHTML = `${POS.fake ? '<span class="badge feat">お試し</span>' : '<span class="badge ao">追跡中</span>'} 射程内 <b>${NEAR.inRange.size}</b>店　<span class="muted small">${POS.acc ? `誤差 約${Math.round(POS.acc)}m　` : ''}店から${RANGE_M}m以内でスタンプが押せます</span>`;
