@@ -1,15 +1,15 @@
 // 画面：レーダー・図鑑・お題・設定・最初の案内
-import { APP_VER, RANGE_M, PG, pagesForVol, frameOf, PREFS, INK } from './config.js?v=0.7.3';
-import { S, save, exportJSON, parseImport, replace, reset } from './state.js?v=0.7.3';
-import { STORES, BYID, FEAT, RALLIES, isFeat, rarityOf, rarityText, stampSVG, unhideAll, rebuild, DATA_DATE } from './data.js?v=0.7.3';
-import * as G from './game.js?v=0.7.3';
-import * as MAP from './map.js?v=0.7.3';
-import { POS, hasPos } from './position.js?v=0.7.3';
-import { sfx, haptic } from './audio.js?v=0.7.3';
-import { profileImage, shareBlob } from './share.js?v=0.7.3';
-import { toast, openModal, closeModal, confirmBox, openSheet, openCard, switchView, setSub, refreshHud, applyMapStates, updateNear, locate, setTrialUI, warp, devRefillInk, makeAvatar, nameModal, cleanHandle, NEAR, currentSub } from './ui.js?v=0.7.3';
+import { APP_VER, RANGE_M, PG, pagesForVol, frameOf, PREFS, INK } from './config.js?v=0.8.2';
+import { S, save, exportJSON, parseImport, replace, reset } from './state.js?v=0.8.2';
+import { STORES, BYID, FEAT, RALLIES, isFeat, rarityOf, rarityText, stampSVG, unhideAll, rebuild, DATA_DATE } from './data.js?v=0.8.2';
+import * as G from './game.js?v=0.8.2';
+import * as MAP from './map.js?v=0.8.2';
+import { POS, hasPos } from './position.js?v=0.8.2';
+import { sfx, haptic } from './audio.js?v=0.8.2';
+import { profileImage, shareBlob } from './share.js?v=0.8.2';
+import { toast, openModal, closeModal, confirmBox, openSheet, openCard, switchView, setSub, refreshHud, applyMapStates, updateNear, locate, setTrialUI, warp, devRefillInk, makeAvatar, nameModal, cleanHandle, NEAR, currentSub } from './ui.js?v=0.8.2';
 import * as JU from './journey_ui.js?v=0.6.3';
-import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, weekKey } from './util.js?v=0.7.3';
+import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, weekKey } from './util.js?v=0.8.2';
 
 const empty = (ic, text) => `<div class="empty">${icon(ic)}<div>${text}</div></div>`;
 
@@ -19,7 +19,7 @@ export function renderRadar() {
   const st = $('#radar-status'), list = $('#radar-list');
   if (!hasPos()) { st.className = 'status-card'; st.innerHTML = `現在地がまだありません。<div class="actions"><button class="btn primary" id="rd-loc">${icon('locate')}現在地を追う</button><button class="btn" id="rd-trial">${icon('foot')}お試し歩き</button></div>`; $('#rd-loc').onclick = () => { switchView('map'); locate(); }; $('#rd-trial').onclick = () => { switchView('map'); setTrialUI(true); warp(); }; list.innerHTML = ''; return; }
   st.className = 'status-card gold'; st.innerHTML = `${POS.fake ? '<span class="badge feat">お試し</span>' : '<span class="badge ao">追跡中</span>'} 射程内 <b>${NEAR.inRange.size}</b>店　<span class="muted small">${POS.acc ? `誤差 約${Math.round(POS.acc)}m　` : ''}店から${RANGE_M}m以内でスタンプが押せます。400mから縁が脈打ちます</span>`;
-  list.innerHTML = NEAR.list.map(({ s, d }) => `<div class="item ${d <= RANGE_M ? 'in' : ''}" data-id="${esc(s.i)}"><div class="main"><div class="name">${G.hasStamp(s.i) ? '🔴 ' : ''}${isFeat(s.i) ? '<span class="crown">👑</span> ' : ''}${esc(s.n)}${s.u ? ' <span class="badge">古書店</span>' : ''}</div><div class="sub">${esc(s.a || prefOf(s))}　<span class="stars">${stars(rarityOf(s))}</span></div></div><div class="dist">${d <= RANGE_M ? '射程内' : fmtDist(d)}<br>${arrowOf(bearing(POS.lat, POS.lon, s.la, s.lo))}</div></div>`).join('') || empty('radar', '3kmの中に店がありません。');
+  list.innerHTML = NEAR.list.map(({ s, d }) => `<div class="item ${d <= RANGE_M ? 'in' : ''}" data-id="${esc(s.i)}"><div class="main"><div class="name">${G.hasStamp(s.i) ? '🔴 ' : ''}${isFeat(s.i) ? '<span class="crown">👑</span> ' : ''}${esc(s.n)}${s.u ? ' <span class="badge">古書店</span>' : ''}${s.t === 'l' ? ' <span class="badge lib">図書館</span>' : ''}</div><div class="sub">${esc(s.a || prefOf(s))}　<span class="stars">${stars(rarityOf(s))}</span></div></div><div class="dist">${d <= RANGE_M ? '射程内' : fmtDist(d)}<br>${arrowOf(bearing(POS.lat, POS.lon, s.la, s.lo))}</div></div>`).join('') || empty('radar', '3kmの中に店がありません。');
   $$('#radar-list .item').forEach((el) => el.addEventListener('click', () => openSheet(el.dataset.id)));
 }
 
@@ -30,7 +30,7 @@ export function renderZukan() {
     <div class="stats">${[['スタンプ', st.stamps], ['行きつけ', st.regulars], ['カード', st.cards], ['県', `${st.prefs}/47`]].map(([l, n]) => `<div class="s"><div class="n">${n}</div><div class="l">${l}</div></div>`).join('')}</div>
     <div class="titles">${(() => { const all = G.titles(); const got = all.filter((t) => t.ok); const next = all.filter((t) => !t.ok).slice(0, 3); const rest = all.length - got.length - next.length; return got.map((t) => `<span class="t">🏅 ${esc(t.name)}</span>`).join('') + next.map((t) => `<span class="t off" title="${esc(t.need)}">${esc(t.name)}（${esc(t.need)}）</span>`).join('') + (rest > 0 ? `<span class="t off">ほか${rest}</span>` : ''); })()}</div>`;
   $('#pf-name').onclick = () => nameModal(renderZukan);
-  $('#pf-share').onclick = async () => { try { const ids = Object.keys(S.stamps); const top = ids.map((id) => BYID.get(id)).filter(Boolean).sort((a, b) => rarityOf(b) - rarityOf(a)); const blob = await profileImage({ level: lv, title, st, topStamps: top, avatar: S.settings.avatar, handle: S.settings.handle }); const r = await shareBlob(blob, 'honya-profile.png', '本屋の地図', `${S.settings.handle ? S.settings.handle + '　' : ''}第${lv}巻 ${title} スタンプ${st.stamps} #本屋の地図`); if (r !== 'cancel') G.noteShare('profile', '', r); if (r !== 'cancel') toast(r === 'saved' ? '画像を保存しました' : 'シェアしました', 'ok'); } catch (e) { toast('画像にできませんでした', 'warn'); } };
+  $('#pf-share').onclick = async () => { try { const ids = Object.keys(S.stamps); const top = ids.map((id) => BYID.get(id)).filter(Boolean).sort((a, b) => rarityOf(b) - rarityOf(a)); const blob = await profileImage({ level: lv, title, st, topStamps: top, avatar: S.settings.avatar, handle: S.settings.handle }); const r = await shareBlob(blob, 'honya-profile.png', '本めぐり', `${S.settings.handle ? S.settings.handle + '　' : ''}第${lv}巻 ${title} スタンプ${st.stamps} #本めぐり`); if (r !== 'cancel') G.noteShare('profile', '', r); if (r !== 'cancel') toast(r === 'saved' ? '画像を保存しました' : 'シェアしました', 'ok'); } catch (e) { toast('画像にできませんでした', 'warn'); } };
   $$('.segmented button').forEach((b) => b.classList.toggle('active', b.dataset.sub === currentSub));
   $$('.sub').forEach((el) => el.classList.toggle('active', el.id === 'sub-' + currentSub));
   const fr = frameOf(lv); const ids = Object.keys(S.stamps);
@@ -78,6 +78,7 @@ export function renderSettings() {
     <div class="setting"><div><div class="l">見た目</div><div class="s">自動は端末の設定に合わせます</div></div><div class="seg3" id="st-theme">${['auto', 'light', 'dark'].map((t) => `<button data-t="${t}" class="${s.theme === t ? 'active' : ''}">${{ auto: '自動', light: '明', dark: '暗' }[t]}</button>`).join('')}</div></div>
     <div class="setting"><div><div class="l">ハンドルネーム</div><div class="s">${S.settings.handle ? esc(S.settings.handle) : 'まだありません。見出し・プロフィール・シェアする画像に出ます'}</div></div><button class="btn" id="st-name">${S.settings.handle ? '変える' : '付ける'}</button></div>
     <div class="setting"><div><div class="l">自分のアイコン</div><div class="s">地図の現在地に出ます。写真はこの端末の中だけに置き、どこにも送りません</div></div><div class="avatar-ctl">${s.avatar ? `<img class="avatar" src="${s.avatar}" alt="">` : ''}<label class="btn">${s.avatar ? '替える' : '選ぶ'}<input type="file" id="st-avatar" accept="image/*" hidden></label>${s.avatar ? '<button class="btn ghost" id="st-avatar-del">外す</button>' : ''}</div></div>
+    <div class="setting"><div><div class="l">図書館も地図に出す</div><div class="s">全国の公共図書館（約3,500館）。大学・学校の図書館は入っていません</div></div><button class="switch ${s.showLib !== false ? 'on' : ''}" id="st-lib" role="switch" aria-checked="${s.showLib !== false}" aria-label="図書館も地図に出す"></button></div>
     <div class="setting"><div><div class="l">行きたい店のお知らせ</div><div class="s">行きたい店に近づくと、地図の下でお知らせします（アプリを開いて現在地を追っているあいだ）</div></div><button class="switch ${s.wantAlert !== false ? 'on' : ''}" id="st-want" role="switch" aria-checked="${s.wantAlert !== false}" aria-label="行きたい店のお知らせ"></button></div>
     ${s.wantAlert !== false ? `<div class="setting"><div><div class="l">お知らせする距離</div><div class="s">この距離に入ったときと、500mに入ったとき</div></div><div class="seg3" id="st-want-m">${[1000, 2000, 5000].map((m) => `<button data-m="${m}" class="${(s.wantAlertM || 2000) === m ? 'active' : ''}">${m / 1000}km</button>`).join('')}</div></div>` : ''}
     <div class="setting stack"><div><div class="l">Googleマップの★</div><div class="s">Googleマップで★を付けた本屋を「行きたい」にまとめて入れます${S.gimport ? `（前回 ${S.gimport.n}店）` : ''}</div></div><div class="avatar-ctl"><button class="btn ghost" id="st-ghelp">読み込み方</button><label class="btn">読み込む<input type="file" id="st-gimport" accept=".json,.csv,application/json,text/csv" multiple hidden></label></div></div>
@@ -95,13 +96,14 @@ export function renderSettings() {
     <div class="setting"><div><div class="l">端末の確認</div><div class="s">位置・カメラ・保存が使えるか</div></div><button class="btn" id="st-diag">確認</button></div>
     <div id="st-diag-out"></div>
     <h3>このアプリについて</h3>
-    <div class="about">本屋の地図 v${APP_VER}（試作）。本屋をめぐる位置ゲーム。<br>位置はこの端末の中で距離を出すためだけに使い、どこにも送りません。記録はこの端末の中だけに残ります。<br><br>
+    <div class="about">本めぐり v${APP_VER}（試作）。本屋と図書館をめぐる位置ゲーム。<br>位置はこの端末の中で距離を出すためだけに使い、どこにも送りません。記録はこの端末の中だけに残ります。<br><br>
       店の位置：© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors（ODbL）。地図：<a href="https://openfreemap.org/" target="_blank" rel="noopener">OpenFreeMap</a>・<a href="https://openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a>。本の情報と表紙：<a href="https://openbd.jp/" target="_blank" rel="noopener">openBD</a>（表紙は紹介のための参照表示で、保存しません）。地図の描画：MapLibre GL JS。文字：Google Fonts。<br>
       店のデータは ${DATA_DATE} 時点の OpenStreetMap（有志が作る地図）で、閉店や名前の変更が反映されていない店があります。店のページの「閉店している」で外せ、「名前が違う」で直せます（この端末だけ。記録の書き出しに含まれます）。</div>`;
   $('#st-back').onclick = () => switchView('map');
   $$('#st-theme button').forEach((b) => b.addEventListener('click', () => { s.theme = b.dataset.t; save(); applyTheme(); renderSettings(); }));
   $('#st-avatar').addEventListener('change', async (e) => { const f = e.target.files[0]; if (!f) return; try { const url = await makeAvatar(f); s.avatar = url; save(); await MAP.setAvatar(url); toast('アイコンを設定しました。地図の現在地に出ます', 'ok'); } catch (err) { toast('この画像は使えませんでした（別の写真でお試しください）', 'warn'); } e.target.value = ''; renderSettings(); });
   if ($('#st-avatar-del')) $('#st-avatar-del').onclick = () => { s.avatar = ''; save(); MAP.setAvatar(null); renderSettings(); toast('アイコンを外しました'); };
+  $('#st-lib').onclick = () => { s.showLib = s.showLib === false; save(); rebuild(); MAP.setStores(STORES); applyMapStates(); updateNear(); refreshHud(); toast(s.showLib ? '図書館を地図に出しました' : '図書館を地図から隠しました'); renderSettings(); };
   $('#st-want').onclick = () => { s.wantAlert = s.wantAlert === false; save(); renderSettings(); };
   $$('#st-want-m button').forEach((b) => b.addEventListener('click', () => { s.wantAlertM = +b.dataset.m; save(); renderSettings(); }));
   $('#st-ghelp').onclick = JU.googleHelp;
@@ -125,8 +127,8 @@ export function applyTheme() {
 // ---------- 最初の案内 ----------
 export function showOnboarding(onDone) {
   const pages = [
-    { art: `<svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="92" fill="#efe8da"/><circle cx="96" cy="124" r="46" fill="none" stroke="#d9a521" stroke-width="3" stroke-dasharray="6 5"/><circle cx="96" cy="124" r="10" fill="#2b6cb0" stroke="#fff" stroke-width="4"/><image href="${MAP.pinDataURL('plain')}" x="34" y="62" width="40" height="51"/><image href="${MAP.pinDataURL('rare')}" x="136" y="108" width="40" height="51"/><image href="${MAP.pinDataURL('near')}" x="104" y="30" width="52" height="66"/></svg>`, h: '本屋に近づくと、光る', p: '地図に現在地が出ます。店から120m以内に入ると、ピンが金色に光って振動します。' },
-    { art: `<svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="92" fill="#efe8da"/><g transform="rotate(-7 100 100)">${stampSVG({ i: 'onboard-sample', n: 'ほんの森書店', k: 0 }, true, 124).replace('<svg ', '<svg x="38" y="38" ')}</g></svg>`, h: 'その店だけのスタンプを押す', p: `スタンプは全国 ${STORES.length.toLocaleString()} 種類。周りに本屋が少ない「秘境」ほど珍しいスタンプです。押すとインクを1つ使い、時間で回復します。同じ店に通うほど「常連度」が上がります。` },
+    { art: `<svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="92" fill="#efe8da"/><circle cx="96" cy="124" r="46" fill="none" stroke="#d9a521" stroke-width="3" stroke-dasharray="6 5"/><circle cx="96" cy="124" r="10" fill="#2b6cb0" stroke="#fff" stroke-width="4"/><image href="${MAP.pinDataURL('lib')}" x="34" y="62" width="40" height="51"/><image href="${MAP.pinDataURL('rare')}" x="136" y="108" width="40" height="51"/><image href="${MAP.pinDataURL('near')}" x="104" y="30" width="52" height="66"/></svg>`, h: '本屋や図書館に近づくと、光る', p: '地図に現在地が出ます。店から120m以内に入ると、ピンが金色に光って振動します。' },
+    { art: `<svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="92" fill="#efe8da"/><g transform="rotate(-7 100 100)">${stampSVG({ i: 'onboard-sample', n: 'ほんの森書店', k: 0 }, true, 124).replace('<svg ', '<svg x="38" y="38" ')}</g></svg>`, h: 'その店だけのスタンプを押す', p: `スタンプは本屋と図書館で全国 ${STORES.length.toLocaleString()} 種類。周りに同じ種類の場所が少ない「秘境」ほど珍しいスタンプです。押すとインクを1つ使い、時間で回復します。同じ店に通うほど「常連度」が上がります。` },
     { art: `<svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="86" fill="#eee6d8"/><rect x="62" y="52" width="76" height="100" rx="6" fill="#fffdf8" stroke="#ddd4c6" stroke-width="2"/><rect x="74" y="66" width="52" height="54" rx="3" fill="#d6452b" opacity=".9"/><rect x="74" y="128" width="52" height="5" rx="2" fill="#5f574f"/><rect x="74" y="138" width="34" height="5" rx="2" fill="#8a8178"/></svg>`, h: '本と出会ったら、カードに', p: '買った本の裏のバーコードを読むと、表紙と店と日付が1枚のカードになります。読んだかどうかは問いません。' },
     { art: `<svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="92" fill="#efe8da"/><g transform="translate(100 106)"><path d="M-64 -46q32 -14 64 0v88q-32 -14 -64 0z" fill="#fffdf7" stroke="#d6452b" stroke-width="4" stroke-linejoin="round"/><path d="M0 -46q32 -14 64 0v88q-32 -14 -64 0z" fill="#fffdf7" stroke="#d6452b" stroke-width="4" stroke-linejoin="round"/><text x="-32" y="-8" text-anchor="middle" font-size="19" font-weight="900" fill="#d6452b" font-family="Zen Maru Gothic, sans-serif">第1巻</text><path d="M-50 14h36M-50 27h28M14 -16h36M14 -3h36M14 10h28M14 23h32" stroke="#cbbfae" stroke-width="3" stroke-linecap="round"/><path d="M42 -53v32l-7 -6-7 6v-32" fill="#d9a521"/></g></svg>`, h: 'ページがたまると、次の巻へ', p: 'スタンプを押す、本と出会う、歩く（100mで1ページ）。どれもあなたの物語のページになり、ページがたまると巻が進みます。ほかのゲームでいうレベルです。' },
   ];

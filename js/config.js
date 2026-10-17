@@ -1,5 +1,5 @@
 // 設定値（数字はここだけで変える）
-export const APP_VER = '0.7.3';
+export const APP_VER = '0.8.2';
 export const STORAGE_KEY = 'honya_map_v3';
 export const LEGACY_KEYS = ['honya_map_v2'];
 
@@ -61,6 +61,7 @@ export const ACHIEVEMENTS = [
   { id: 'a_card1', name: '本と出会った', desc: 'カードを1枚作る', kind: 'cards', n: 1 },
   { id: 'a_card10', name: '出会いの常連', desc: 'カードを10枚', kind: 'cards', n: 10 },
   { id: 'a_used', name: '古書の香り', desc: '古書店でスタンプを1つ', kind: 'used', n: 1 },
+  { id: 'a_lib', name: '図書館通い', desc: '図書館でスタンプを3つ', kind: 'libs', n: 3 },
   { id: 'a_rare', name: '秘境へ', desc: '★★★のスタンプを1つ', kind: 'rare', n: 1 },
   { id: 'a_feat', name: '推し店めぐり', desc: '今週の推し店でスタンプを3回', kind: 'feat', n: 3 },
   { id: 'a_regular', name: '常連', desc: '同じ店でスタンプを5日', kind: 'regMax', n: 5 },

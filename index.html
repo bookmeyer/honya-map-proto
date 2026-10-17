@@ -3,21 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
-<title>本屋の地図</title>
-<meta name="description" content="本屋をめぐる位置ゲーム。店に近づくとピンが光り、その店だけのスタンプが押せる。買った本のバーコードでカードが1枚。">
+<title>本めぐり</title>
+<meta name="description" content="本屋と図書館をめぐる位置ゲーム。近づくとピンが光り、その場所だけのスタンプが押せる。歩いた道のりと本との出会いが、物語のページになる。">
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#faf7f1">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1f1b18">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="本屋の地図">
+<meta name="apple-mobile-web-app-title" content="本めぐり">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Zen+Maru+Gothic:wght@700;900&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
-<link rel="stylesheet" href="css/app.css?v=0.7.3">
+<link rel="stylesheet" href="css/app.css?v=0.8.2">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -50,7 +50,7 @@
 </svg>
 
 <header id="top">
-  <div class="brand"><svg class="seal" aria-hidden="true"><use href="#i-seal"></use></svg><div><div class="brand-name">本屋の地図</div><div id="brand-title" class="brand-sub"></div></div></div>
+  <div class="brand"><svg class="seal" aria-hidden="true"><use href="#i-seal"></use></svg><div><div class="brand-name">本めぐり</div><div id="brand-title" class="brand-sub"></div></div></div>
   <div class="hud">
     <button id="ink-btn" class="ink" aria-label="インク（スタンプを押せる回数）"><svg class="ic"><use href="#i-ink"></use></svg><span id="ink-dots" class="dots"></span></button>
     <button id="lv-btn" class="lv" aria-label="巻（物語の進み）"><span id="lv-label">第1巻</span><i class="xpbar"><b id="xp-fill"></b></i></button>
@@ -136,6 +136,6 @@
 <div id="toasts" aria-live="polite"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
-<script type="module" src="js/main.js?v=0.7.3"></script>
+<script type="module" src="js/main.js?v=0.8.2"></script>
 </body>
 </html>

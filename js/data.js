@@ -1,7 +1,7 @@
-// 店・ラリーのデータ。スタンプ（その店だけの絵柄）の見た目もここ
-import { DEMO_STORE } from './config.js?v=0.7.3';
-import { S } from './state.js?v=0.7.3';
-import { esc, hash32, prefOf, weekKey, sleep } from './util.js?v=0.7.3';
+// 本屋・図書館・ラリーのデータ。スタンプ（その店だけの絵柄）の見た目もここ
+import { DEMO_STORE } from './config.js?v=0.8.2';
+import { S } from './state.js?v=0.8.2';
+import { esc, hash32, prefOf, weekKey, sleep } from './util.js?v=0.8.2';
 
 export let STORES = [];
 export let RALLIES = [];
@@ -17,22 +17,26 @@ async function fetchJSON(url, tries = 3) {
   return null;
 }
 export async function loadAll() {
-  const [base, rallies] = await Promise.all([fetchJSON('data/bookstores.json'), fetchJSON('data/rallies.json')]);
-  baseLoaded = Array.isArray(base) && base.length > 0;
+  const [base, libs, rallies] = await Promise.all([fetchJSON('data/bookstores.json'), fetchJSON('data/libraries.json'), fetchJSON('data/rallies.json')]);
+  baseLoaded = Array.isArray(base) && base.length > 0; LIBS = Array.isArray(libs) ? libs : [];
   RALLIES = Array.isArray(rallies) ? rallies : [];
   rebuild(baseLoaded ? base : []);
   return { ok: baseLoaded, count: STORES.length };
 }
-let BASE = [];
+let BASE = [], LIBS = [];
+export const isLib = (st) => !!st && st.t === 'l';
+export const placeWord = (st) => (isLib(st) ? '図書館' : '店');
 export function rebuild(base) {
   if (base) BASE = base;
-  STORES = [DEMO_STORE, ...BASE, ...S.custom.map((c) => Object.assign({}, c, { custom: 1 }))].filter((s) => !S.hidden[s.i]).map((s) => (S.renames && S.renames[s.i] ? Object.assign({}, s, { n: S.renames[s.i].n, fix: 1 }) : s));
+  const libs = S.settings.showLib === false ? [] : LIBS;
+  STORES = [DEMO_STORE, ...BASE, ...libs, ...S.custom.map((c) => Object.assign({}, c, { custom: 1 }))].filter((s) => !S.hidden[s.i]).map((s) => (S.renames && S.renames[s.i] ? Object.assign({}, s, { n: S.renames[s.i].n, fix: 1 }) : s));
   BYID.clear(); STORES.forEach((s) => BYID.set(s.i, s));
   computeFeatured();
 }
 export function computeFeatured() {
   const wk = weekKey(); const byPref = {};
-  for (const s of STORES) { if (s.demo || s.custom) continue; const p = prefOf(s); (byPref[p] = byPref[p] || []).push(s); }
+  // 今週の推し店は本屋だけ（図書館・見本・自分で足した店は入れない）
+  for (const s of STORES) { if (s.demo || s.custom || s.t === 'l') continue; const p = prefOf(s); (byPref[p] = byPref[p] || []).push(s); }
   FEAT.clear();
   for (const [p, arr] of Object.entries(byPref)) { arr.sort((a, b) => (a.i < b.i ? -1 : 1)); FEAT.set(p, arr[hash32(wk + '|' + p) % arr.length].i); }
 }
@@ -49,7 +53,7 @@ export const DATA_DATE = '2026-10-12';
 
 // ---- レア度（秘境度） ----
 export function rarityOf(st) { if (st.demo) return 3; const k = st.k == null ? 3 : st.k; return k === 0 ? 3 : k <= 6 ? 2 : 1; }
-export function rarityText(st) { const r = rarityOf(st); if (st.demo) return 'めったにないスタンプ（見本）'; if (st.k == null) return '街のスタンプ'; return r === 3 ? '秘境スタンプ（周り5kmに本屋なし）' : r === 2 ? `街のスタンプ（周り5kmに本屋 ${st.k}店）` : `ふつうのスタンプ（周り5kmに本屋 ${st.k}店）`; }
+export function rarityText(st) { const r = rarityOf(st); if (st.demo) return 'めったにないスタンプ（見本）'; if (st.k == null) return '街のスタンプ'; const w = isLib(st) ? '図書館' : '本屋', u = isLib(st) ? '館' : '店'; return r === 3 ? `秘境スタンプ（周り5kmに${w}なし）` : r === 2 ? `街のスタンプ（周り5kmに${w} ${st.k}${u}）` : `ふつうのスタンプ（周り5kmに${w} ${st.k}${u}）`; }
 export const rarityName = (r) => (r === 3 ? '秘境' : r === 2 ? '街' : '並');
 
 // ---- スタンプの見た目 ----

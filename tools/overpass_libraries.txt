@@ -1,0 +1,8 @@
+[out:json][timeout:300];
+area["ISO3166-1"="JP"]["admin_level"="2"]->.jp;
+(
+  node["amenity"="library"](area.jp);
+  way["amenity"="library"](area.jp);
+  relation["amenity"="library"](area.jp);
+);
+out center tags;

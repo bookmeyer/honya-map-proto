@@ -331,3 +331,4 @@ ol.steps li{margin:4px 0}
 .icon-btn.sm{width:30px;height:30px;flex:none}
 .icon-btn.sm .ic{width:16px;height:16px}
 .profile .ph .tt{display:flex;align-items:center;gap:2px;font-size:18px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.badge.lib{background:#2f8a7b;color:#fff}

@@ -1,6 +1,6 @@
 // 地図（MapLibre）。店はピンの絵で表示し、固まり（クラスタ）でまとめ、状態は feature-state で軽く更新する
-import { STYLE_LIGHT, STYLE_DARK, TERRITORY_M, RANGE_M } from './config.js?v=0.7.3';
-import { circlePoly, emit } from './util.js?v=0.7.3';
+import { STYLE_LIGHT, STYLE_DARK, TERRITORY_M, RANGE_M } from './config.js?v=0.8.2';
+import { circlePoly, emit } from './util.js?v=0.8.2';
 
 export const M = { map: null, ready: false, theme: 'light' };
 let storesGeo = { type: 'FeatureCollection', features: [] };
@@ -11,7 +11,7 @@ let handlers = {};
 let pulseRaf = null, pulseOn = false;
 
 // ---- ピンの絵（canvasで描く。種類：plain ふつう／used 古書店／rare 秘境／stamped 押した／near 射程内） ----
-const PIN = { plain: ['#fffaf0', '#e9e1d2', '#8f877a', '#9d9488'], used: ['#efeadf', '#d3cab8', '#6f6757', '#8a8275'], rare: ['#fff0b8', '#e6b93c', '#8a6610', '#b08a1e'], stamped: ['#ff9a7a', '#d6452b', '#ffffff', '#a8321c'], near: ['#ffe58f', '#e8a51e', '#ffffff', '#b07a10'] };
+const PIN = { plain: ['#fffaf0', '#e9e1d2', '#8f877a', '#9d9488'], used: ['#efeadf', '#d3cab8', '#6f6757', '#8a8275'], rare: ['#fff0b8', '#e6b93c', '#8a6610', '#b08a1e'], stamped: ['#ff9a7a', '#d6452b', '#ffffff', '#a8321c'], near: ['#ffe58f', '#e8a51e', '#ffffff', '#b07a10'], lib: ['#e3f4f0', '#8fcfbf', '#1f6f63', '#2f8a7b'] };
 function starPath(g, cx, cy, R, r) { for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + (i * Math.PI) / 5; const rr = i % 2 ? r : R; const x = cx + Math.cos(a) * rr, y = cy + Math.sin(a) * rr; if (i) g.lineTo(x, y); else g.moveTo(x, y); } g.closePath(); }
 export function pinCanvas(kind, s = 2) {
   const W = 44, H = 56; const c = document.createElement('canvas'); c.width = W * s; c.height = H * s; const g = c.getContext('2d'); g.scale(s, s);
@@ -23,6 +23,7 @@ export function pinCanvas(kind, s = 2) {
   g.lineCap = 'round'; g.lineJoin = 'round';
   if (kind === 'stamped') { g.strokeStyle = P[1]; g.lineWidth = 3; g.beginPath(); g.moveTo(16, 21.5); g.lineTo(20.5, 26); g.lineTo(29, 16.5); g.stroke(); }
   else if (kind === 'near') { g.fillStyle = P[1]; g.beginPath(); starPath(g, 22, 21.5, 7, 3.2); g.fill(); }
+  else if (kind === 'lib') { g.strokeStyle = P[2]; g.fillStyle = P[2]; g.lineWidth = 2; g.beginPath(); g.moveTo(14, 18); g.lineTo(22, 13); g.lineTo(30, 18); g.closePath(); g.fill(); g.beginPath(); g.moveTo(16.5, 19.5); g.lineTo(16.5, 26); g.moveTo(22, 19.5); g.lineTo(22, 26); g.moveTo(27.5, 19.5); g.lineTo(27.5, 26); g.moveTo(14, 27.5); g.lineTo(30, 27.5); g.stroke(); }
   else { g.strokeStyle = P[2]; g.lineWidth = 2.2; g.beginPath(); g.moveTo(15, 17); g.quadraticCurveTo(18.5, 15.5, 22, 17); g.lineTo(22, 27); g.quadraticCurveTo(18.5, 25.5, 15, 27); g.closePath(); g.moveTo(22, 17); g.quadraticCurveTo(25.5, 15.5, 29, 17); g.lineTo(29, 27); g.quadraticCurveTo(25.5, 25.5, 22, 27); g.closePath(); g.stroke(); }
   return c;
 }
@@ -80,7 +81,7 @@ function addLayers() {
   const sz = ['interpolate', ['linear'], ['zoom'], 8, 0.5, 12, 0.66, 15, 0.9];
   const sym = (image, size) => ({ 'icon-image': image, 'icon-size': size, 'icon-anchor': 'bottom', 'icon-allow-overlap': true, 'icon-ignore-placement': true });
   // 下から順：ふつうのピン（押した・射程内は透明に）→ 押したピン → 射程内のピン → 行きたい☆
-  map.addLayer({ id: 'stores', type: 'symbol', source: 'stores', filter: unc, layout: sym(['case', ['==', ['get', 'r'], 3], 'pin-rare', ['==', ['get', 'u'], 1], 'pin-used', 'pin-plain'], sz), paint: { 'icon-opacity': ['case', ['any', ['==', fs('stamp'), 1], ['==', fs('near'), 1]], 0, ['==', fs('st'), 0], 0.92, 1] } });
+  map.addLayer({ id: 'stores', type: 'symbol', source: 'stores', filter: unc, layout: sym(['case', ['==', ['get', 'l'], 1], 'pin-lib', ['==', ['get', 'r'], 3], 'pin-rare', ['==', ['get', 'u'], 1], 'pin-used', 'pin-plain'], sz), paint: { 'icon-opacity': ['case', ['any', ['==', fs('stamp'), 1], ['==', fs('near'), 1]], 0, ['==', fs('st'), 0], 0.92, 1] } });
   map.addLayer({ id: 'stores-stamped', type: 'symbol', source: 'stores', filter: unc, layout: sym('pin-stamped', sz), paint: { 'icon-opacity': ['case', ['all', ['==', fs('stamp'), 1], ['!=', fs('near'), 1]], 1, 0] } });
   map.addLayer({ id: 'stores-near', type: 'symbol', source: 'stores', filter: unc, layout: sym('pin-near', ['interpolate', ['linear'], ['zoom'], 8, 0.6, 12, 0.8, 15, 1.05]), paint: { 'icon-opacity': fs('near') } });
   map.addLayer({ id: 'stores-want', type: 'symbol', source: 'stores', filter: unc, layout: { 'icon-image': 'mark-want', 'icon-size': ['interpolate', ['linear'], ['zoom'], 8, 0.5, 15, 0.8], 'icon-anchor': 'bottom-left', 'icon-offset': [10, -34], 'icon-allow-overlap': true, 'icon-ignore-placement': true }, paint: { 'icon-opacity': fs('want') } });
@@ -114,7 +115,7 @@ export function setTheme(theme) {
   M.map.setStyle(theme === 'dark' ? STYLE_DARK : STYLE_LIGHT, { diff: false }); // 差分更新だと 'style.load' が来ず、自作の層が戻らない
 }
 export function setStores(stores) {
-  storesGeo = { type: 'FeatureCollection', features: stores.map((s) => ({ type: 'Feature', id: s.i, geometry: { type: 'Point', coordinates: [s.lo, s.la] }, properties: { id: s.i, r: s.k == null ? (s.demo ? 3 : 2) : (s.k === 0 ? 3 : s.k <= 6 ? 2 : 1), u: s.u ? 1 : 0, custom: s.custom ? 1 : 0, demo: s.demo ? 1 : 0 } })) };
+  storesGeo = { type: 'FeatureCollection', features: stores.map((s) => ({ type: 'Feature', id: s.i, geometry: { type: 'Point', coordinates: [s.lo, s.la] }, properties: { id: s.i, r: s.k == null ? (s.demo ? 3 : 2) : (s.k === 0 ? 3 : s.k <= 6 ? 2 : 1), u: s.u ? 1 : 0, l: s.t === 'l' ? 1 : 0, custom: s.custom ? 1 : 0, demo: s.demo ? 1 : 0 } })) };
   if (M.ready) M.map.getSource('stores').setData(storesGeo);
 }
 export function setStates(next) { // Map<id, {stamp, near, feat, want, st}>

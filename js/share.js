@@ -1,16 +1,16 @@
 // シェア用の画像（スタンプ・常連度・カード・プレイヤーカード）
-import { S } from './state.js?v=0.7.3';
-import { stampSVG, stampInk, rarityOf, rarityText } from './data.js?v=0.7.3';
-import { snapshot } from './map.js?v=0.7.3';
-import { regularInfo } from './game.js?v=0.7.3';
-import { stars, prefOf, fmtDate, todayISO } from './util.js?v=0.7.3';
+import { S } from './state.js?v=0.8.2';
+import { stampSVG, stampInk, rarityOf, rarityText } from './data.js?v=0.8.2';
+import { snapshot } from './map.js?v=0.8.2';
+import { regularInfo } from './game.js?v=0.8.2';
+import { stars, prefOf, fmtDate, todayISO } from './util.js?v=0.8.2';
 
 const PAPER = '#faf7f1', INK = '#231f1c', INK2 = '#5f574f', SHU = '#d6452b', LINE = '#e3dbcd';
 const DISP = '"Zen Maru Gothic","Zen Kaku Gothic New","Hiragino Sans",sans-serif', BODY = '"Zen Kaku Gothic New","Hiragino Sans",sans-serif';
 function svgToImage(svg) { return new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg); }); }
 function wrap(g, text, max) { const lines = []; let cur = ''; for (const ch of String(text)) { if (g.measureText(cur + ch).width > max) { lines.push(cur); cur = ch; } else cur += ch; } if (cur) lines.push(cur); return lines; }
 function rrect(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
-function footer(g, W, H) { g.textAlign = 'left'; g.fillStyle = SHU; g.font = `bold 28px ${DISP}`; g.fillText('本屋の地図', 60, H - 56); g.textAlign = 'right'; g.fillStyle = INK2; g.font = `22px ${BODY}`; g.fillText(`${S.settings.handle ? S.settings.handle + '　' : ''}#本屋の地図`, W - 60, H - 56); g.textAlign = 'left'; }
+function footer(g, W, H) { g.textAlign = 'left'; g.fillStyle = SHU; g.font = `bold 28px ${DISP}`; g.fillText('本めぐり', 60, H - 56); g.textAlign = 'right'; g.fillStyle = INK2; g.font = `22px ${BODY}`; g.fillText(`${S.settings.handle ? S.settings.handle + '　' : ''}#本めぐり`, W - 60, H - 56); g.textAlign = 'left'; }
 
 // スタンプ（地図の切り抜き＋スタンプ）。常連度があれば、その帯も
 export async function stampImage(st, opts = {}) {
@@ -43,7 +43,7 @@ export async function cardImage(c) {
   y += 10; g.font = `bold 28px ${DISP}`; g.fillStyle = INK; g.fillText(c.sn, W / 2, y); y += 40; g.font = `22px ${BODY}`; g.fillStyle = INK2; g.fillText(fmtDate(c.d), W / 2, y); y += 44;
   if (c.why) { g.font = `24px ${BODY}`; g.fillStyle = INK; wrap(g, c.why, W - 140).slice(0, 4).forEach((l) => { g.fillText(l, W / 2, y); y += 34; }); }
   g.save(); g.translate(W - 120, H - 120); g.rotate(-0.15); g.fillStyle = SHU; rrect(g, -56, -56, 112, 112, 26); g.fill(); g.fillStyle = '#fff'; g.font = `bold 34px ${DISP}`; g.fillText('出会', 0, 12); g.restore();
-  g.textAlign = 'left'; g.fillStyle = SHU; g.font = `bold 22px ${DISP}`; g.fillText('本屋の地図', 48, H - 48);
+  g.textAlign = 'left'; g.fillStyle = SHU; g.font = `bold 22px ${DISP}`; g.fillText('本めぐり', 48, H - 48);
   return await new Promise((res) => cv.toBlob(res, 'image/png'));
 }
 // プレイヤーカード
@@ -73,14 +73,14 @@ export async function storyImage(ch, avatar, handle) {
   const W = 1080, H = 1350, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
   g.fillStyle = '#fbf7ee'; g.fillRect(0, 0, W, H);
   g.strokeStyle = LINE; g.lineWidth = 4; rrect(g, 40, 40, W - 80, H - 80, 36); g.stroke();
-  g.textAlign = 'left'; g.fillStyle = SHU; g.font = `bold 28px ${DISP}`; g.fillText(`本屋の地図　${handle ? handle + 'の物語' : 'その日の物語'}`, 96, 130);
+  g.textAlign = 'left'; g.fillStyle = SHU; g.font = `bold 28px ${DISP}`; g.fillText(`本めぐり　${handle ? handle + 'の物語' : 'その日の物語'}`, 96, 130);
   if (avatar) { try { const im = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = avatar; }); g.save(); g.beginPath(); g.arc(W - 150, 150, 56, 0, Math.PI * 2); g.clip(); g.drawImage(im, W - 206, 94, 112, 112); g.restore(); g.lineWidth = 6; g.strokeStyle = SHU; g.beginPath(); g.arc(W - 150, 150, 59, 0, Math.PI * 2); g.stroke(); } catch (e) {} }
   g.fillStyle = INK; g.font = `900 64px ${DISP}`; g.fillText(ch.title, 96, 220);
   g.strokeStyle = SHU; g.lineWidth = 4; g.beginPath(); g.moveTo(96, 254); g.lineTo(260, 254); g.stroke();
   let y = 330; const LH = 56, MAXY = H - 300; g.font = `34px ${BODY}`; g.fillStyle = INK;
   const lines = ch.empty ? [{ s: ch.blank }] : ch.lines;
   outer: for (const l of lines) { const parts = wrap(g, '　' + l.s, W - 192); for (const p of parts) { if (y > MAXY) { g.fillText('……', 96, y); break outer; } g.fillText(p, 96, y); y += LH; } y += 10; }
-  const boxes = [[`+${ch.earned}`, 'ページ'], [`${ch.km}`, 'km'], [`${(ch.steps || 0).toLocaleString()}`, '歩（目安）'], [`${ch.nStores}`, '本屋']];
+  const boxes = [[`+${ch.earned}`, 'ページ'], [`${ch.km}`, 'km'], [`${(ch.steps || 0).toLocaleString()}`, '歩（目安）'], [`${ch.nStores}`, '訪ねた場所']];
   boxes.forEach(([n, l], i) => { const x = 96 + i * 228; g.fillStyle = '#efe7d8'; rrect(g, x, H - 250, 204, 120, 22); g.fill(); g.fillStyle = SHU; g.font = `900 46px ${DISP}`; g.textAlign = 'center'; g.fillText(n, x + 102, H - 185); g.fillStyle = INK2; g.font = `24px ${BODY}`; g.fillText(l, x + 102, H - 148); });
   footer(g, W, H);
   return await new Promise((res) => cv.toBlob(res, 'image/png'));

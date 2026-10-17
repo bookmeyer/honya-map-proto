@@ -1,10 +1,10 @@
 // 旅の記録：歩いた距離（ページ）・その日の物語・月のふり返り・行きたい店のお知らせ・投稿の記録・Googleマップの★の読み込み
 // 位置は、アプリを開いて現在地を追っているあいだだけ使う（ブラウザの決まりで、閉じているあいだは測れない）
-import { WALK, RANGE_M } from './config.js?v=0.7.3';
-import { S, save } from './state.js?v=0.7.3';
-import { STORES, BYID, rarityOf } from './data.js?v=0.7.3';
-import * as G from './game.js?v=0.7.3';
-import { dist, todayISO, prefOf, hash32, fmtDist, monthKey, emit } from './util.js?v=0.7.3';
+import { WALK, RANGE_M } from './config.js?v=0.8.2';
+import { S, save } from './state.js?v=0.8.2';
+import { STORES, BYID, rarityOf } from './data.js?v=0.8.2';
+import * as G from './game.js?v=0.8.2';
+import { dist, todayISO, prefOf, hash32, fmtDist, monthKey, emit } from './util.js?v=0.8.2';
 
 function dayRec(d = todayISO()) { S.days = S.days || {}; const r = (S.days[d] = S.days[d] || { m: 0, v: 0 }); r.pass = r.pass || {}; r.alert = r.alert || {}; return r; }
 export const pagesOf = (m) => Math.floor((m || 0) / WALK.pageM);
@@ -86,7 +86,7 @@ export function chapter(date = todayISO()) {
       const firstToday = vis.find((x) => x.s === v.s && x.near) === v;
       if (firstToday && S.stamps[v.s] && S.stamps[v.s].d === date) s += rarityOf(st) === 3 ? '周りに本屋のない、秘境の一軒。はじめてのスタンプを押した。' : 'はじめてのスタンプを押した。';
       if (firstToday && !seenReg.has(v.s)) { seenReg.add(v.s); const a = regRankAt(v.s, date, false), b = regRankAt(v.s, date, true); if (b.rank > a.rank && b.rank >= 2) s += `常連度は「${G.REGULAR_NAMES[b.rank - 1]}」に（${b.days}日目）。`; }
-      const p = prefOf(st); if (!prefBefore.has(p) && !seenPref.has(p)) { seenPref.add(p); s += `はじめて${p}の本屋に入った。`; }
+      const p = prefOf(st); if (!prefBefore.has(p) && !seenPref.has(p)) { seenPref.add(p); s += `はじめて${p}の${st.t === 'l' ? '図書館' : '本屋'}に入った。`; }
     }
     if (v.memo) s += `「${v.memo}」`;
     events.push({ t: v.t, s });

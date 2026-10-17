@@ -1,8 +1,8 @@
 // 遊びの仕組み：物語のページと巻・称号・実績・インク・ミッション・ラリー・カード
-import { PG, TITLES, ACHIEVEMENTS, REGULAR, WALK, volOf, INK } from './config.js?v=0.7.3';
-import { S, save, inkUse, inkNow, inkNextMs } from './state.js?v=0.7.3';
-import { BYID, RALLIES, FEAT, isFeat, rarityOf } from './data.js?v=0.7.3';
-import { prefOf, todayISO, weekKey, weekStartISO, monthKey, emit } from './util.js?v=0.7.3';
+import { PG, TITLES, ACHIEVEMENTS, REGULAR, WALK, volOf, INK } from './config.js?v=0.8.2';
+import { S, save, inkUse, inkNow, inkNextMs } from './state.js?v=0.8.2';
+import { BYID, RALLIES, FEAT, isFeat, rarityOf } from './data.js?v=0.8.2';
+import { prefOf, todayISO, weekKey, weekStartISO, monthKey, emit } from './util.js?v=0.8.2';
 
 export const visitsOf = (id) => S.visits.filter((v) => v.s === id);
 export const cardsOf = (id) => S.cards.filter((c) => c.s === id);
@@ -30,7 +30,7 @@ export function stats() {
   const featTotal = Object.values(S.featDone).reduce((a, b) => a + b.length, 0);
   const days = {}; S.visits.filter((v) => v.near).forEach((v) => { (days[v.s] = days[v.s] || new Set()).add(v.d); }); const regMax = Math.max(0, ...Object.values(days).map((x) => x.size)); const regulars = Object.values(days).filter((x) => regularRank(x.size) >= 3).length;
   const look = Object.keys(S.looks || {}).length;
-  return { stamps: ids.length, stores: visited.size, cards: S.cards.length, prefs: prefs.size, used, rare, featTotal, feat: featTotal, regMax, regulars, look, pages: pagesTotal(), rally: Object.keys(S.rallyDone).length, share: S.shareCount || 0, streak: streakWeeks() };
+  return { stamps: ids.length, stores: visited.size, cards: S.cards.length, prefs: prefs.size, used, rare, featTotal, feat: featTotal, regMax, regulars, look, pages: pagesTotal(), libs: sts.filter((s) => s.t === 'l').length, rally: Object.keys(S.rallyDone).length, share: S.shareCount || 0, streak: streakWeeks() };
 }
 export function streakWeeks() {
   const weeks = new Set(Object.values(S.stamps).map((v) => weekKey(new Date(v.d)))); if (!weeks.size) return 0;
@@ -63,6 +63,7 @@ export function weeklyMissions() {
     { id: 'w3', name: '初めての県でスタンプを1つ', sub: 'まだスタンプのない県の本屋へ', cur: newPrefs.size, goal: 1 },
     { id: 'w4', name: '本と出会う', sub: '今週、カードを1枚', cur: S.cards.filter((c) => c.d >= ws).length, goal: 1 },
     { id: 'w5', name: '今週の推し店でスタンプを1つ', sub: '紫の輪の店（県ごとに1店）', cur: (S.featDone[wk] || []).length, goal: 1 },
+    ...(S.settings.showLib === false ? [] : [{ id: 'w7', name: '図書館でスタンプを1つ', sub: '図書館のピンは緑色', cur: weekStamps.filter((s) => s.t === 'l').length, goal: 1 }]),
     { id: 'w6', name: '同じ店にもう一度', sub: '今週、同じ店で2日スタンプを押す（通う人の味方）', cur: weekSameStore, goal: 2 },
   ];
 }
