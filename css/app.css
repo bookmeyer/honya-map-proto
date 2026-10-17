@@ -277,3 +277,50 @@ video#scanner{width:100%;border-radius:var(--r-m);background:#000;max-height:50v
 .avatar.big{width:52px;height:52px;border:3px solid var(--card);box-shadow:0 0 0 2px var(--shu)}
 .avatar-ctl{display:flex;align-items:center;gap:8px;flex:none}
 .stamp-grid .empty,.card-grid .empty{grid-column:1/-1}
+/* ---- v0.7 旅の記録 ---- */
+a.btn{text-decoration:none}
+#want-alert{pointer-events:auto;background:var(--card);border:2px solid var(--gold);border-radius:var(--r-l);padding:10px 12px;margin-bottom:8px;box-shadow:var(--shadow-2);animation:up var(--mid) var(--ease)}
+#want-alert .wa-main{display:flex;align-items:center;gap:10px}
+#want-alert .wa-main>.ic{color:var(--gold);width:28px;height:28px}
+#want-alert .wa-main>div{flex:1;min-width:0}
+#want-alert .small{font-size:13px;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#want-alert .wa-act{display:flex;gap:8px;margin-top:8px}
+#want-alert .wa-act .btn{flex:1;min-height:40px;padding:6px 10px;font-size:14px}
+.area-chip{pointer-events:auto;display:inline-flex;align-items:center;gap:6px;background:var(--gold);color:#fff;border:none;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700;margin-bottom:8px;box-shadow:var(--shadow-1)}
+.area-chip .ic{width:16px;height:16px}
+.story{background:#fffdf7;border:1px solid var(--line);border-radius:var(--r-l);padding:16px 16px 12px;box-shadow:var(--shadow-1);position:relative}
+:root[data-theme="dark"] .story{background:var(--card)}
+.story .ch-sub{font-size:11px;color:var(--shu);letter-spacing:.08em;font-weight:700}
+.story .ch-title{font-family:var(--display);font-weight:900;font-size:21px;margin:2px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--shu-soft)}
+.story-body p{margin:0 0 6px;line-height:1.9;text-indent:1em}
+.story-body a{color:var(--ao)}
+.story-stats{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.story-stats span{display:inline-flex;align-items:center;gap:4px;font-size:12px;background:var(--paper-2);border-radius:999px;padding:3px 10px;color:var(--ink-2)}
+.story-stats .ic{width:14px;height:14px}
+details.chap{background:var(--card);border:1px solid var(--line);border-radius:var(--r-m);padding:10px 14px;margin:8px 0}
+details.chap summary{cursor:pointer;display:flex;justify-content:space-between;gap:8px;align-items:center;list-style:none}
+details.chap summary::-webkit-details-marker{display:none}
+details.chap[open] summary{margin-bottom:10px}
+details.chap .story{box-shadow:none}
+.mtiles{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.mtile{background:var(--card);border:1px solid var(--line);border-radius:var(--r-m);padding:10px 12px}
+.mtile .l{font-size:12px;color:var(--ink-2)}
+.mtile .n{font-family:var(--display);font-weight:900;font-size:26px;color:var(--shu);line-height:1.2}
+.mtile .s{font-size:11px;color:var(--ink-3)}
+.mbars{display:flex;align-items:stretch;gap:8px;height:150px;padding:22px 8px 0;background:var(--card);border:1px solid var(--line);border-radius:var(--r-m)}
+.mbars .mb{flex:1;display:flex;flex-direction:column;align-items:center;min-width:0}
+.mbars .bw{flex:1;width:100%;display:flex;align-items:flex-end;justify-content:center}
+.mbars .bar{width:64%;min-height:3px;background:linear-gradient(180deg,var(--gold),var(--shu));border-radius:6px 6px 2px 2px;position:relative}
+.mbars .bar span{position:absolute;top:-18px;left:-10px;right:-10px;text-align:center;font-size:11px;color:var(--ink-2)}
+.mbars .lbl{font-size:11px;color:var(--ink-2);padding:4px 0 6px}
+select{width:100%;border:1px solid var(--line-2);border-radius:var(--r-m);padding:10px 12px;background:var(--card);min-height:46px}
+.list label.item{cursor:pointer}
+.list .item input[type=checkbox]{width:20px;height:20px;flex:none;accent-color:var(--shu)}
+.list .item .btn{min-height:36px;padding:4px 12px;flex:none}
+ol.steps{padding-left:1.3em;line-height:1.8;margin:8px 0}
+ol.steps li{margin:4px 0}
+.segmented button{min-width:0;padding:0 2px}
+.setting.stack{flex-wrap:wrap}
+.setting.stack>.avatar-ctl{width:100%;justify-content:flex-end}
+.list label.item .main{display:block}
+.list label.item .sub{display:block}

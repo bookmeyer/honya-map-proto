@@ -1,14 +1,17 @@
 // 遊びの仕組み：経験値・称号・実績・インク・ミッション・ラリー・カード
-import { XP, TITLES, ACHIEVEMENTS, REGULAR, levelOf, INK } from './config.js?v=0.6.3';
-import { S, save, inkUse, inkNow, inkNextMs } from './state.js?v=0.6.3';
-import { BYID, RALLIES, FEAT, isFeat, rarityOf } from './data.js?v=0.6.3';
-import { prefOf, todayISO, weekKey, weekStartISO, monthKey, emit } from './util.js?v=0.6.3';
+import { XP, TITLES, ACHIEVEMENTS, REGULAR, WALK, levelOf, INK } from './config.js?v=0.7.0';
+import { S, save, inkUse, inkNow, inkNextMs } from './state.js?v=0.7.0';
+import { BYID, RALLIES, FEAT, isFeat, rarityOf } from './data.js?v=0.7.0';
+import { prefOf, todayISO, weekKey, weekStartISO, monthKey, emit } from './util.js?v=0.7.0';
 
 export const visitsOf = (id) => S.visits.filter((v) => v.s === id);
 export const cardsOf = (id) => S.cards.filter((c) => c.s === id);
 export const hasStamp = (id) => !!S.stamps[id];
 export function stateOf(id) { const n = visitsOf(id).length + cardsOf(id).length; return n === 0 ? 0 : n >= 3 ? 2 : 1; }
 // 常連度：その店で射程内スタンプを押した日数 → 段（0=まだ、1=はじめまして … 6=殿堂入り）
+export const REGULAR_NAMES = REGULAR.map((r) => r.name);
+const pagesToday = () => Math.floor((((S.days || {})[todayISO()] || {}).m || 0) / WALK.pageM);
+const pagesTotal = () => Math.floor(Object.values(S.days || {}).reduce((a, r) => a + (r.m || 0), 0) / WALK.pageM);
 export const regularDays = (id) => new Set(S.visits.filter((v) => v.s === id && v.near).map((v) => v.d)).size;
 export function regularRank(days) { let r = 0; REGULAR.forEach((x, i) => { if (days >= x.n) r = i + 1; }); return r; }
 export function regularInfo(id) { const days = regularDays(id); const rank = regularRank(days); const next = REGULAR[rank] || null; const base = rank ? REGULAR[rank - 1].n : 0; return { days, rank, name: rank ? REGULAR[rank - 1].name : '', next, toNext: next ? next.n - days : 0, pct: next ? Math.round(((days - base) / (next.n - base)) * 100) : 100 }; }
@@ -24,7 +27,7 @@ export function stats() {
   const featTotal = Object.values(S.featDone).reduce((a, b) => a + b.length, 0);
   const days = {}; S.visits.filter((v) => v.near).forEach((v) => { (days[v.s] = days[v.s] || new Set()).add(v.d); }); const regMax = Math.max(0, ...Object.values(days).map((x) => x.size)); const regulars = Object.values(days).filter((x) => regularRank(x.size) >= 3).length;
   const look = Object.keys(S.looks || {}).length;
-  return { stamps: ids.length, stores: visited.size, cards: S.cards.length, prefs: prefs.size, used, rare, featTotal, feat: featTotal, regMax, regulars, look, rally: Object.keys(S.rallyDone).length, share: S.shareCount || 0, streak: streakWeeks() };
+  return { stamps: ids.length, stores: visited.size, cards: S.cards.length, prefs: prefs.size, used, rare, featTotal, feat: featTotal, regMax, regulars, look, pages: pagesTotal(), rally: Object.keys(S.rallyDone).length, share: S.shareCount || 0, streak: streakWeeks() };
 }
 export function streakWeeks() {
   const weeks = new Set(Object.values(S.stamps).map((v) => weekKey(new Date(v.d)))); if (!weeks.size) return 0;
@@ -42,6 +45,7 @@ export function dailyMissions() {
     { id: 'd1', name: '今日、スタンプを1つ', sub: '店の射程内でスタンプを押す', cur: dailyCount('stamp'), goal: 1 },
     { id: 'd2', name: '本屋のページを3つ見る', sub: '地図やさがすから、店のページを開く', cur: ((S.daily || {})[todayISO()] || {}).lookIds ? S.daily[todayISO()].lookIds.length : 0, goal: 3 },
     { id: 'd3', name: '行きたい店を1つ', sub: '店のページで☆を付ける', cur: dailyCount('want'), goal: 1 },
+    { id: 'd4', name: '今日、10ページ歩く', sub: '1km歩くと10ページ（現在地を追っているあいだだけ数えます）', cur: pagesToday(), goal: 10 },
   ];
 }
 export function weeklyMissions() {
@@ -103,4 +107,4 @@ export function makeCard(st, book, why, pub) {
 export function deleteCard(id) { S.cards = S.cards.filter((x) => x.id !== id); save(); emit('records'); }
 
 export const inkState = () => ({ n: inkNow(), max: INK.max, nextMs: inkNextMs() });
-export function noteShare() { S.shareCount = (S.shareCount || 0) + 1; save(); checkRewards(); }
+export function noteShare(kind = '', sid = '', r = 'shared') { S.shareCount = (S.shareCount || 0) + 1; S.shares = S.shares || []; S.shares.push({ t: Date.now(), d: todayISO(), kind, s: sid, r }); if (S.shares.length > 500) S.shares.splice(0, S.shares.length - 500); save(); checkRewards(); emit('records'); }

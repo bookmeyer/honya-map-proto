@@ -1,5 +1,5 @@
 // 小さな道具
-import { PREFS } from './config.js?v=0.6.3';
+import { PREFS } from './config.js?v=0.7.0';
 
 export const $ = (s, el = document) => el.querySelector(s);
 export const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
@@ -20,6 +20,7 @@ export function circlePoly(lon, lat, m, n = 28) { const pts = []; const dLat = m
 export function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
 export function cleanAuthor(a) { return String(a).split(/\s+/).map((t) => t.replace(/,?\s*\d{4}-?(\d{4})?/g, '').replace(/,/g, '').trim()).filter(Boolean).join('、'); }
 export const icon = (name, cls = '') => `<svg class="ic ${cls}" aria-hidden="true"><use href="#i-${name}"></use></svg>`;
+export const gmapDir = (st) => `https://www.google.com/maps/dir/?api=1&destination=${st.la},${st.lo}&travelmode=walking`;
 export const stars = (r) => '★'.repeat(r) + '☆'.repeat(3 - r);
 
 // 小さな出来事の配信（画面の部品どうしをゆるくつなぐ）

@@ -1,5 +1,5 @@
 // 設定値（数字はここだけで変える）
-export const APP_VER = '0.6.3';
+export const APP_VER = '0.7.0';
 export const STORAGE_KEY = 'honya_map_v3';
 export const LEGACY_KEYS = ['honya_map_v2'];
 
@@ -11,6 +11,8 @@ export const JUMP_COOLDOWN_MS = 60000;
 
 // インク：スタンプを押すたびに1つ使う。時間で回復する
 export const INK = { max: 5, rechargeMs: 90 * 60 * 1000 };
+// 歩いた距離：100mで1ページ（歩いて約1分半）。歩数は距離からの目安（ブラウザは端末の歩数計を読めない）
+export const WALK = { pageM: 100, stepM: 0.7, minMoveM: 12, maxAccM: 60, walkMaxMps: 2.8, rideMaxMps: 45, gapS: 600, wantNearM: 500 };
 // 常連度：同じ店でスタンプを押した「日数」で上がる（たくさんの店に行けない人の楽しみ）
 export const REGULAR = [{ n: 1, name: 'はじめまして' }, { n: 3, name: '顔なじみ' }, { n: 5, name: '常連' }, { n: 10, name: 'ぬし' }, { n: 20, name: '名物客' }, { n: 50, name: '殿堂入り' }];
 
@@ -66,5 +68,7 @@ export const ACHIEVEMENTS = [
   { id: 'a_streak4', name: '四週つづけて', desc: '4週連続でスタンプを押す', kind: 'streak', n: 4 },
   { id: 'a_pref5', name: '五つの県', desc: '5県でスタンプを押す', kind: 'prefs', n: 5 },
   { id: 'a_rally', name: 'ラリー制覇', desc: 'ご当地ラリーを1つ', kind: 'rally', n: 1 },
+  { id: 'a_page100', name: '百ページ歩いた', desc: '歩いて100ページ（10km）', kind: 'pages', n: 100 },
+  { id: 'a_book1', name: '一冊ぶん歩いた', desc: '歩いて300ページ（30km）', kind: 'pages', n: 300 },
   { id: 'a_share', name: '見せびらかし', desc: 'スタンプをシェアする', kind: 'share', n: 1 },
 ];

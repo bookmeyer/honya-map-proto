@@ -1,13 +1,13 @@
 // 画面の部品：見出し帯・タブ・店のシート・モーダル・スタンプの演出・カード・さがす・追加
-import { RANGE_M, SENSE_M, TERRITORY_M, XP, levelOf, xpForLevel, INK } from './config.js?v=0.6.3';
-import { S, save, inkRefill } from './state.js?v=0.6.3';
-import { STORES, BYID, FEAT, isFeat, rarityOf, rarityText, stampSVG, stampInk, search, addCustom, hideStore, renameStore, lookupIsbn, DATA_DATE } from './data.js?v=0.6.3';
-import * as G from './game.js?v=0.6.3';
-import * as MAP from './map.js?v=0.6.3';
-import { POS, setPos, startWatch, setTrial, setFollow, hasPos, jumped } from './position.js?v=0.6.3';
-import { sfx, haptic, unlock } from './audio.js?v=0.6.3';
-import { stampImage, cardImage, shareBlob } from './share.js?v=0.6.3';
-import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, on, emit, weekKey } from './util.js?v=0.6.3';
+import { RANGE_M, SENSE_M, TERRITORY_M, XP, levelOf, xpForLevel, INK } from './config.js?v=0.7.0';
+import { S, save, inkRefill } from './state.js?v=0.7.0';
+import { STORES, BYID, FEAT, isFeat, rarityOf, rarityText, stampSVG, stampInk, search, addCustom, hideStore, renameStore, lookupIsbn, DATA_DATE } from './data.js?v=0.7.0';
+import * as G from './game.js?v=0.7.0';
+import * as MAP from './map.js?v=0.7.0';
+import { POS, setPos, startWatch, setTrial, setFollow, hasPos, jumped } from './position.js?v=0.7.0';
+import { sfx, haptic, unlock } from './audio.js?v=0.7.0';
+import { stampImage, cardImage, shareBlob } from './share.js?v=0.7.0';
+import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, on, emit, weekKey, gmapDir } from './util.js?v=0.7.0';
 
 export let currentView = 'map';
 export let currentSub = 'stamps';
@@ -106,6 +106,7 @@ export function openSheet(id, quiet) {
       <button class="btn" data-act="card">${icon('barcode')}本と出会った</button>
       <button class="btn" data-act="want">${icon('star')}${want ? '行きたいを外す' : '行きたい'}</button>
       ${stamp ? `<button class="btn" data-act="share">${icon('share')}シェア</button>` : ''}${reg.rank >= 2 ? `<button class="btn" data-act="regshare">${icon('crown')}常連度シェア</button>` : ''}
+      ${st.demo ? '' : `<a class="btn" href="${gmapDir(st)}" target="_blank" rel="noopener">${icon('map')}Googleマップで道順</a>`}
       ${POS.fake && !near ? `<button class="btn wide" data-act="warp">${icon('warp')}この店へワープ</button>` : ''}
       ${st.demo || st.custom ? '' : '<button class="btn ghost" data-act="report">閉店している</button><button class="btn ghost" data-act="rename">名前が違う</button>'}
     </div><div id="sheet-extra"></div>`;
@@ -146,7 +147,7 @@ export function showCapture(st, res, near) {
   $('#cp-card').onclick = () => { $('#capture').hidden = true; startCard(st); };
   if ($('#cp-share')) $('#cp-share').onclick = () => shareStampUI(st);
 }
-export async function shareStampUI(st, opts = {}) { try { const blob = await stampImage(st, opts); const reg = G.regularInfo(st.i); const text = opts.regular ? `${st.n}の常連度は「${reg.name}」（来店${reg.days}日） #本屋の地図` : `${st.n}のスタンプを押した #本屋の地図`; const r = await shareBlob(blob, `honya-${st.i}.png`, `${st.n}のスタンプ`, text); if (r !== 'cancel') { G.noteShare(); toast(r === 'saved' ? '画像を保存しました' : 'シェアしました', 'ok'); } } catch (e) { toast('画像にできませんでした', 'warn'); } }
+export async function shareStampUI(st, opts = {}) { try { const blob = await stampImage(st, opts); const reg = G.regularInfo(st.i); const text = opts.regular ? `${st.n}の常連度は「${reg.name}」（来店${reg.days}日） #本屋の地図` : `${st.n}のスタンプを押した #本屋の地図`; const r = await shareBlob(blob, `honya-${st.i}.png`, `${st.n}のスタンプ`, text); if (r !== 'cancel') { G.noteShare(opts.regular ? 'regular' : 'stamp', st.i, r); toast(r === 'saved' ? '画像を保存しました' : 'シェアしました', 'ok'); } } catch (e) { toast('画像にできませんでした', 'warn'); } }
 
 // ---------- カード ----------
 export function startCard(st) {
@@ -197,7 +198,7 @@ export function openCard(id) {
     <div class="actions"><button class="btn primary" id="cv-img">${icon('share')}画像にする</button><button class="btn" id="cv-store">店を地図で見る</button><button class="btn danger" id="cv-del">${icon('trash')}消す</button><button class="btn ghost" id="cv-close">閉じる</button></div><div id="cv-out"></div>`);
   $('#cv-close').onclick = closeModal; $('#cv-store').onclick = () => { closeModal(); openSheet(c.s); };
   $('#cv-del').onclick = () => confirmBox($('#cv-out'), 'このカードを消しますか？ 戻せません。', () => { G.deleteCard(id); closeModal(); toast('消しました'); });
-  $('#cv-img').onclick = async () => { try { const blob = await cardImage(c); const r = await shareBlob(blob, `card-${c.d}.png`, c.title, `${c.sn}で『${c.title}』と出会った #本屋の地図`); if (r !== 'cancel') toast(r === 'saved' ? '画像を保存しました' : 'シェアしました', 'ok'); } catch (e) { $('#cv-out').innerHTML = '<p class="muted small">画像にできませんでした（表紙の画像が外部のため、ブラウザが書き出しを止めることがあります）。</p>'; } };
+  $('#cv-img').onclick = async () => { try { const blob = await cardImage(c); const r = await shareBlob(blob, `card-${c.d}.png`, c.title, `${c.sn}で『${c.title}』と出会った #本屋の地図`); if (r !== 'cancel') G.noteShare('card', c.s, r); if (r !== 'cancel') toast(r === 'saved' ? '画像を保存しました' : 'シェアしました', 'ok'); } catch (e) { $('#cv-out').innerHTML = '<p class="muted small">画像にできませんでした（表紙の画像が外部のため、ブラウザが書き出しを止めることがあります）。</p>'; } };
 }
 
 // ---------- さがす・追加 ----------

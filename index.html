@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Zen+Maru+Gothic:wght@700;900&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
-<link rel="stylesheet" href="css/app.css?v=0.6.3">
+<link rel="stylesheet" href="css/app.css?v=0.7.0">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -71,6 +71,8 @@
     </div>
     <div id="trial-banner" class="pill-banner" hidden><svg class="ic"><use href="#i-foot"></use></svg>お試し歩き：地図を押した場所に、自分がいることになります</div>
     <div id="bottom-dock">
+      <div id="want-alert" hidden></div>
+      <button id="area-chip" class="area-chip" hidden></button>
       <div id="first-quest" class="quest" hidden></div>
       <div id="radar-items" class="chips"></div>
     </div>
@@ -81,6 +83,7 @@
       <h2>レーダー</h2>
       <div id="radar-status" class="status-card"></div>
       <div id="radar-list" class="list"></div>
+      <div id="radar-wants"></div>
     </div>
   </section>
 
@@ -88,11 +91,12 @@
     <div class="pane">
       <div class="profile" id="profile"></div>
       <div class="segmented" role="tablist">
-        <button data-sub="stamps" class="active" role="tab">スタンプ</button><button data-sub="cards" role="tab">カード</button><button data-sub="log" role="tab">帳</button><button data-sub="prefs" role="tab">県</button>
+        <button data-sub="stamps" class="active" role="tab">スタンプ</button><button data-sub="cards" role="tab">カード</button><button data-sub="log" role="tab">物語</button><button data-sub="month" role="tab">月</button><button data-sub="prefs" role="tab">県</button>
       </div>
       <div id="sub-stamps" class="sub active"><div id="stamp-grid" class="stamp-grid"></div></div>
       <div id="sub-cards" class="sub"><p class="hint">「この店で、この本と出会った」の記録。読んだかどうかは問いません。</p><div id="card-grid" class="card-grid"></div></div>
-      <div id="sub-log" class="sub"><h3>○年前の今日</h3><div id="anniv" class="status-card"></div><h3>行った店</h3><div id="visit-list" class="list"></div></div>
+      <div id="sub-log" class="sub"><div id="story-today"></div><h3>前の章</h3><div id="chapters"></div><h3>○年前の今日</h3><div id="anniv" class="status-card"></div><h3>行った店</h3><div id="visit-list" class="list"></div></div>
+      <div id="sub-month" class="sub"><div id="month"></div></div>
       <div id="sub-prefs" class="sub"><p class="hint">スタンプを押した県が塗られます（住所の情報がない店は近い県に寄せた目安）。</p><div id="prefs" class="prefs"></div></div>
     </div>
   </section>
@@ -132,6 +136,6 @@
 <div id="toasts" aria-live="polite"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
-<script type="module" src="js/main.js?v=0.6.3"></script>
+<script type="module" src="js/main.js?v=0.7.0"></script>
 </body>
 </html>
