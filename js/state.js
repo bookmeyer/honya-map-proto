@@ -1,6 +1,6 @@
 // 記録（この端末の中だけ）。版の違いを吸収して読み込み、まとめて書き込む
-import { STORAGE_KEY, LEGACY_KEYS, INK, APP_VER } from './config.js?v=0.8.4';
-import { debounce, emit } from './util.js?v=0.8.4';
+import { STORAGE_KEY, LEGACY_KEYS, INK, APP_VER } from './config.js?v=0.8.5';
+import { debounce, emit } from './util.js?v=0.8.5';
 
 export const empty = () => ({
   v: 4, visits: [], cards: [], wants: [], custom: [], stamps: {}, pg: 0, pgDay: {},

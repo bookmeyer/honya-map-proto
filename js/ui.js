@@ -1,13 +1,13 @@
 // 画面の部品：見出し帯・タブ・店のシート・モーダル・スタンプの演出・カード・さがす・追加
-import { RANGE_M, SENSE_M, TERRITORY_M, PG, pagesForVol, INK } from './config.js?v=0.8.4';
-import { S, save, inkRefill } from './state.js?v=0.8.4';
-import { STORES, BYID, FEAT, isFeat, isLib, placeWord, rarityOf, rarityText, stampSVG, stampInk, search, addCustom, hideStore, renameStore, lookupIsbn, DATA_DATE } from './data.js?v=0.8.4';
-import * as G from './game.js?v=0.8.4';
-import * as MAP from './map.js?v=0.8.4';
-import { POS, setPos, startWatch, setTrial, setFollow, hasPos, jumped } from './position.js?v=0.8.4';
-import { sfx, haptic, unlock } from './audio.js?v=0.8.4';
-import { stampImage, cardImage, shareBlob } from './share.js?v=0.8.4';
-import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, on, emit, weekKey, gmapDir } from './util.js?v=0.8.4';
+import { RANGE_M, SENSE_M, TERRITORY_M, PG, pagesForVol, INK } from './config.js?v=0.8.5';
+import { S, save, inkRefill } from './state.js?v=0.8.5';
+import { STORES, BYID, FEAT, isFeat, isLib, placeWord, rarityOf, rarityText, stampSVG, stampInk, search, addCustom, hideStore, renameStore, lookupIsbn, DATA_DATE } from './data.js?v=0.8.5';
+import * as G from './game.js?v=0.8.5';
+import * as MAP from './map.js?v=0.8.5';
+import { POS, setPos, startWatch, setTrial, setFollow, hasPos, jumped } from './position.js?v=0.8.5';
+import { sfx, haptic, unlock } from './audio.js?v=0.8.5';
+import { stampImage, cardImage, shareBlob } from './share.js?v=0.8.5';
+import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, on, emit, weekKey, gmapDir } from './util.js?v=0.8.5';
 
 export let currentView = 'map';
 export let currentSub = 'stamps';
@@ -102,7 +102,7 @@ export function openSheet(id, quiet) {
       <button class="btn" data-act="card">${icon('barcode')}本と出会った</button>
       <button class="btn" data-act="want">${icon('star')}${want ? '行きたいを外す' : '行きたい'}</button>
       ${stamp ? `<button class="btn" data-act="share">${icon('share')}シェア</button>` : ''}${reg.rank >= 2 ? `<button class="btn" data-act="regshare">${icon('crown')}常連度シェア</button>` : ''}
-      ${st.demo ? '' : `<a class="btn" href="${gmapDir(st)}" target="_blank" rel="noopener">${icon('map')}Googleマップで道順</a>`}
+      ${st.demo ? '' : `<a class="btn wide" href="${gmapDir(st)}" target="_blank" rel="noopener">${icon('map')}Googleマップで道順</a>`}
       ${POS.fake && !near ? `<button class="btn wide" data-act="warp">${icon('warp')}この店へワープ</button>` : ''}
       ${st.demo || st.custom ? '' : `<button class="btn ghost" data-act="report">${isLib(st) ? '閉館している' : '閉店している'}</button><button class="btn ghost" data-act="rename">名前が違う</button>`}
     </div><div id="sheet-extra"></div>`;
