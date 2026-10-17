@@ -6,8 +6,8 @@
 <title>本めぐり</title>
 <meta name="description" content="本屋と図書館をめぐる位置ゲーム。近づくとピンが光り、その場所だけのスタンプが押せる。歩いた道のりと本との出会いが、物語のページになる。">
 <meta name="color-scheme" content="light dark">
-<meta name="theme-color" media="(prefers-color-scheme: light)" content="#faf7f1">
-<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1f1b18">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#FFF8EA">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1B1A1F">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="本めぐり">
@@ -15,9 +15,9 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Zen+Maru+Gothic:wght@700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+P+One&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
-<link rel="stylesheet" href="css/app.css?v=0.8.6">
+<link rel="stylesheet" href="css/app.css?v=0.9.0">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -46,11 +46,13 @@
   <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></symbol>
   <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 22s7-7.5 7-13a7 7 0 1 0-14 0c0 5.5 7 13 7 13z" fill="currentColor"/><circle cx="12" cy="9" r="2.6" fill="#fff"/></symbol>
+  <symbol id="i-stamp" viewBox="0 0 24 24"><path d="M9 3h6v6l3 3v2H6v-2l3-3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M6 19h12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-7-9.5A4 4 0 0 1 12 9a4 4 0 0 1 7 2.5C19 16.6 12 21 12 21z" fill="currentColor"/></symbol>
   <symbol id="i-seal" viewBox="0 0 100 100"><path d="M50 95C50 95 18 62 18 38a32 32 0 0 1 64 0c0 24-32 57-32 57z" fill="currentColor"/><circle cx="50" cy="38" r="17" fill="#fff"/><path d="M39 31q5.5-2.5 11 0v15q-5.5-2.5-11 0zM50 31q5.5-2.5 11 0v15q-5.5-2.5-11 0z" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linejoin="round"/></symbol>
 </svg>
 
 <header id="top">
-  <div class="brand"><svg class="seal" aria-hidden="true"><use href="#i-seal"></use></svg><div><div class="brand-name">本めぐり</div><div id="brand-title" class="brand-sub"></div></div></div>
+  <div class="brand"><svg class="seal" aria-hidden="true"><use href="#i-seal"></use></svg><div><div id="brand-title" class="brand-name"></div><div class="brand-sub">本めぐり</div></div></div>
   <div class="hud">
     <button id="lv-btn" class="lv" aria-label="巻（物語の進み）"><span id="lv-label">第1巻</span><i class="xpbar"><b id="xp-fill"></b></i></button>
     <button id="btn-settings" class="icon-btn" aria-label="設定"><svg class="ic"><use href="#i-gear"></use></svg></button>
@@ -71,7 +73,7 @@
     <div id="trial-banner" class="pill-banner" hidden><svg class="ic"><use href="#i-foot"></use></svg>お試し歩き：地図を押した場所に、自分がいることになります</div>
     <div id="bottom-dock">
       <div id="want-alert" hidden></div>
-      <button id="area-chip" class="area-chip" hidden></button>
+      <div class="dock-row"><button id="area-chip" class="area-chip" hidden></button><button id="mission-chip" class="ticket" hidden aria-label="きょうのお題"></button></div>
       <div id="first-quest" class="quest" hidden></div>
       <div id="radar-items" class="chips"></div>
     </div>
@@ -136,6 +138,6 @@
 <div id="toasts" aria-live="polite"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
-<script type="module" src="js/main.js?v=0.8.6"></script>
+<script type="module" src="js/main.js?v=0.9.0"></script>
 </body>
 </html>

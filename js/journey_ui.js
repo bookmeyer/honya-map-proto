@@ -1,14 +1,14 @@
 // 旅の記録の画面：行きたい店のお知らせ・この辺りの行きたい店・今日の物語・月のふり返り・投稿の記録・Googleマップの★の読み込み
-import { S, save } from './state.js?v=0.8.6';
-import { STORES, BYID, addCustom } from './data.js?v=0.8.6';
-import * as J from './journey.js?v=0.8.6';
-import * as G from './game.js?v=0.8.6';
-import * as MAP from './map.js?v=0.8.6';
-import { POS, hasPos } from './position.js?v=0.8.6';
-import { sfx, haptic } from './audio.js?v=0.8.6';
-import { storyImage, shareBlob } from './share.js?v=0.8.6';
-import { toast, openModal, closeModal, openSheet, applyMapStates, updateNear, refreshHud } from './ui.js?v=0.8.6';
-import { $, $$, esc, fmtDist, todayISO, icon, arrowOf, bearing, dist, gmapDir } from './util.js?v=0.8.6';
+import { S, save } from './state.js?v=0.9.0';
+import { STORES, BYID, addCustom } from './data.js?v=0.9.0';
+import * as J from './journey.js?v=0.9.0';
+import * as G from './game.js?v=0.9.0';
+import * as MAP from './map.js?v=0.9.0';
+import { POS, hasPos } from './position.js?v=0.9.0';
+import { sfx, haptic } from './audio.js?v=0.9.0';
+import { storyImage, shareBlob } from './share.js?v=0.9.0';
+import { toast, openModal, closeModal, openSheet, applyMapStates, updateNear, refreshHud } from './ui.js?v=0.9.0';
+import { $, $$, esc, fmtDist, todayISO, icon, arrowOf, bearing, dist, gmapDir } from './util.js?v=0.9.0';
 
 const dirLink = (st, label = '道順') => `<a class="btn" href="${gmapDir(st)}" target="_blank" rel="noopener" data-stop>${label}</a>`;
 const stopLinks = (root) => $$('[data-stop]', root).forEach((a) => a.addEventListener('click', (e) => e.stopPropagation()));
@@ -20,7 +20,7 @@ export function showWantAlerts(list) {
   const { st, d, stage } = list[0]; const box = $('#want-alert');
   const more = list.length > 1 ? `（ほか${list.length - 1}店）` : '';
   const arrow = hasPos() ? ' ' + arrowOf(bearing(POS.lat, POS.lon, st.la, st.lo)) : '';
-  box.innerHTML = `<div class="wa-main">${icon('star')}<div><b>${stage === 2 ? 'もうすぐ' : fmtDist(d) + '先に'}、行きたい店があります${more}</b><div class="small">${esc(st.n)}　${fmtDist(d)}${arrow}</div></div><button class="icon-btn" id="wa-x" aria-label="閉じる">${icon('close')}</button></div><div class="wa-act"><button class="btn primary" id="wa-open">${icon('map')}地図で見る</button>${dirLink(st, 'Googleマップで道順')}</div>`;
+  box.innerHTML = `<div class="wa-main">${icon('heart')}<div><b>${stage === 2 ? 'もうすぐ' : fmtDist(d) + '先に'}、行きたい店があります${more}</b><div class="small">${esc(st.n)}　${fmtDist(d)}${arrow}</div></div><button class="icon-btn" id="wa-x" aria-label="閉じる">${icon('close')}</button></div><div class="wa-act"><button class="btn primary" id="wa-open">${icon('map')}地図で見る</button>${dirLink(st, 'Googleマップで道順')}</div>`;
   box.hidden = false; // 音と振動はなし（帯だけで知らせる）
   $('#wa-x').onclick = () => { box.hidden = true; };
   $('#wa-open').onclick = () => { box.hidden = true; openSheet(st.i); };
@@ -33,7 +33,7 @@ export function updateAreaChip() {
   if (!chip || !m || !S.wants.length || m.getZoom() < 10) { if (chip) chip.hidden = true; return; }
   const b = m.getBounds(); const list = J.wantsInBounds({ s: b.getSouth(), n: b.getNorth(), w: b.getWest(), e: b.getEast() });
   if (!list.length) { chip.hidden = true; return; }
-  chip.innerHTML = `${icon('star')}この辺りに行きたい店 ${list.length}店`; chip.hidden = false;
+  chip.innerHTML = `${icon('heart')}この辺りに行きたい店 ${list.length}店`; chip.hidden = false;
   chip.onclick = () => {
     const c = m.getCenter(); const rows = list.map((st) => ({ st, d: dist(c.lat, c.lng, st.la, st.lo) })).sort((a, b) => a.d - b.d);
     openModal(`<h2>この辺りの行きたい店</h2><p class="hint">地図に映っている範囲です。出かける前に、行き先の地図を開くだけで分かります。</p><div class="list">${rows.map(({ st, d }) => `<div class="item" data-id="${esc(st.i)}"><div class="main"><div class="name">${esc(st.n)}</div><div class="sub">地図の真ん中から ${fmtDist(d)}</div></div>${dirLink(st)}</div>`).join('')}</div><div class="actions"><button class="btn ghost wide" id="ar-close">閉じる</button></div>`);
@@ -47,7 +47,7 @@ export function renderRadarWants() {
   const el = $('#radar-wants'); if (!el) return;
   let base; if (hasPos()) base = { lat: POS.lat, lon: POS.lon, lbl: 'ここから' }; else { const c = MAP.center(); base = { lat: c.lat, lon: c.lng, lbl: '地図の真ん中から' }; }
   const list = J.wantsSorted(base.lat, base.lon);
-  el.innerHTML = `<h3>行きたい店 ${list.length}店（近い順）</h3>` + (list.length ? `<div class="list">${list.slice(0, 40).map(({ st, d }) => `<div class="item" data-id="${esc(st.i)}"><div class="main"><div class="name">${esc(st.n)}</div><div class="sub">${base.lbl} ${fmtDist(d)}${hasPos() && d < 5000 ? ' ' + arrowOf(bearing(base.lat, base.lon, st.la, st.lo)) : ''}</div></div>${dirLink(st)}</div>`).join('')}</div>` : `<div class="empty">${icon('star')}<div>店のページの「行きたい」を押すか、設定から Googleマップの★を読み込むと、ここに近い順で並びます。</div></div>`);
+  el.innerHTML = `<h3>行きたい店 ${list.length}店（近い順）</h3>` + (list.length ? `<div class="list">${list.slice(0, 40).map(({ st, d }) => `<div class="item" data-id="${esc(st.i)}"><div class="main"><div class="name">${esc(st.n)}</div><div class="sub">${base.lbl} ${fmtDist(d)}${hasPos() && d < 5000 ? ' ' + arrowOf(bearing(base.lat, base.lon, st.la, st.lo)) : ''}</div></div>${dirLink(st)}</div>`).join('')}</div>` : `<div class="empty">${icon('heart')}<div>店のページの「行きたい」を押すか、設定から Googleマップの★を読み込むと、ここに近い順で並びます。</div></div>`);
   stopLinks(el); $$('#radar-wants .item[data-id]').forEach((it) => it.addEventListener('click', () => openSheet(it.dataset.id)));
 }
 
@@ -123,7 +123,7 @@ export async function importGoogleFiles(files) {
     ${r.hits.length ? `<div class="list gi">${r.hits.map((h, i) => `<label class="item"><input type="checkbox" data-h="${i}" ${h.want ? 'checked disabled' : 'checked'}><div class="main"><div class="name">${esc(h.st.n)}</div><div class="sub">Google：${esc(h.p.name || '（名前なし）')}${h.d != null ? '・' + fmtDist(h.d) : ''}${h.want ? '・すでに行きたい' : ''}</div></div></label>`).join('')}</div>` : ''}
     ${addable.length ? `<h3>地図にない本屋らしい店</h3><p class="hint">チェックした店を自分の地図に足して「行きたい」にします（この端末だけ）。</p><div class="list gi">${addable.map((p, i) => `<label class="item"><input type="checkbox" data-a="${i}" checked><div class="main"><div class="name">${esc(p.name)}</div><div class="sub">${esc(p.address || '')}</div></div></label>`).join('')}</div>` : ''}
     ${others.length ? `<details class="chap"><summary><span>地図に見当たらない ${others.length}件</span></summary><div class="muted small">${others.slice(0, 120).map((p) => esc(p.name || '（名前なし）')).join('、')}${others.length > 120 ? '…' : ''}</div></details>` : ''}
-    <div class="actions"><button class="btn primary wide" id="gi-ok" ${r.hits.length || addable.length ? '' : 'disabled'}>${icon('star')}行きたいに入れる</button><button class="btn ghost wide" id="gi-cancel">やめる</button></div>`);
+    <div class="actions"><button class="btn primary wide" id="gi-ok" ${r.hits.length || addable.length ? '' : 'disabled'}>${icon('heart')}行きたいに入れる</button><button class="btn ghost wide" id="gi-cancel">やめる</button></div>`);
   $('#gi-cancel').onclick = closeModal;
   $('#gi-ok').onclick = () => {
     let n = 0;

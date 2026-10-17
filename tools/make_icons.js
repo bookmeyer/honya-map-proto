@@ -1,4 +1,4 @@
-// アイコン（PNG）を外部ライブラリなしで作る：紙色の地に、朱のピン（中に本）
+// アイコン（PNG）を外部ライブラリなしで作る：クリームの地に、墨の輪郭の朱のピン（中に本）。v0.9 ポップ・ラリー
 const zlib = require('zlib');
 const fs = require('fs');
 const path = require('path');
@@ -34,11 +34,12 @@ function png(w, h, px) {
 }
 // 4×4 の点で縁をなめらかに（アンチエイリアス）
 function icon(size) {
-  const PAPER = [250, 247, 241], SHU = [214, 69, 43], SHU2 = [179, 50, 28], WHITE = [255, 255, 255];
+  const PAPER = [255, 248, 234], SHU = [255, 106, 72], SHU2 = [255, 106, 72], WHITE = [255, 255, 255], EDGE = [27, 27, 27];
   const cx = 0.5, cy = 0.40, R = 0.26, TIP = 0.90;
-  const inPin = (x, y) => { const dx = x - cx, dy = y - cy; if (dx * dx + dy * dy <= R * R) return true; if (y > cy && y <= TIP) { const t = (y - cy) / (TIP - cy); return Math.abs(dx) <= R * Math.sqrt(Math.max(0, 1 - t * t)) * (1 - t * 0.15) + 0.0; } return false; };
+  const pinAt = (x, y, R, TIP) => { const dx = x - cx, dy = y - cy; if (dx * dx + dy * dy <= R * R) return true; if (y > cy && y <= TIP) { const t = (y - cy) / (TIP - cy); return Math.abs(dx) <= R * Math.sqrt(Math.max(0, 1 - t * t)) * (1 - t * 0.15) + 0.0; } return false; };
+  const inPin = (x, y) => pinAt(x, y, R, TIP), inEdge = (x, y) => pinAt(x, y, R + 0.03, TIP + 0.03);
   const sample = (x, y) => {
-    if (!inPin(x, y)) return PAPER;
+    if (!inEdge(x, y)) return PAPER; if (!inPin(x, y)) return EDGE;
     const dx = x - cx, dy = y - cy; const d = Math.sqrt(dx * dx + dy * dy);
     if (d <= 0.145) { // 白い丸と、中の本
       const bx = Math.abs(dx) <= 0.075, by = dy >= -0.085 && dy <= 0.075;

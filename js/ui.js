@@ -1,13 +1,13 @@
 // 画面の部品：見出し帯・タブ・店のシート・モーダル・スタンプの演出・カード・さがす・追加
-import { RANGE_M, SENSE_M, TERRITORY_M, PG, pagesForVol } from './config.js?v=0.8.6';
-import { S, save } from './state.js?v=0.8.6';
-import { STORES, BYID, FEAT, isFeat, isLib, placeWord, rarityOf, rarityText, stampSVG, stampInk, search, addCustom, hideStore, renameStore, lookupIsbn, DATA_DATE } from './data.js?v=0.8.6';
-import * as G from './game.js?v=0.8.6';
-import * as MAP from './map.js?v=0.8.6';
-import { POS, setPos, startWatch, setTrial, setFollow, hasPos, jumped } from './position.js?v=0.8.6';
-import { sfx, haptic, unlock } from './audio.js?v=0.8.6';
-import { stampImage, cardImage, shareBlob } from './share.js?v=0.8.6';
-import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, on, emit, weekKey, gmapDir } from './util.js?v=0.8.6';
+import { RANGE_M, SENSE_M, TERRITORY_M, PG, pagesForVol } from './config.js?v=0.9.0';
+import { S, save } from './state.js?v=0.9.0';
+import { STORES, BYID, FEAT, isFeat, isLib, placeWord, rarityOf, rarityText, stampSVG, stampInk, search, addCustom, hideStore, renameStore, lookupIsbn, DATA_DATE } from './data.js?v=0.9.0';
+import * as G from './game.js?v=0.9.0';
+import * as MAP from './map.js?v=0.9.0';
+import { POS, setPos, startWatch, setTrial, setFollow, hasPos, jumped } from './position.js?v=0.9.0';
+import { sfx, haptic, unlock } from './audio.js?v=0.9.0';
+import { stampImage, cardImage, shareBlob } from './share.js?v=0.9.0';
+import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, on, emit, weekKey, gmapDir } from './util.js?v=0.9.0';
 
 export let currentView = 'map';
 export let currentSub = 'stamps';
@@ -32,6 +32,17 @@ export function refreshHud() {
   $('#lv-label').textContent = `第${vol}巻`; $('#xp-fill').style.width = `${Math.round(((pg - cur) / (next - cur)) * 100)}%`; $('#lv-btn').title = `第${vol}巻 ${pg}ページ（あと${next - pg}ページで第${vol + 1}巻）`;
   $('#brand-title').textContent = S.settings.handle || G.currentTitle() || '本屋あるき見習い';
   $('#tab-dot').hidden = true; // お題は達成と同時に受け取るので、赤い点はいまは使わない
+  renderMissionChip();
+}
+// きょうのお題のチケット（地図の下）。押すとお題の画面へ
+export function renderMissionChip() {
+  const el = $('#mission-chip'); if (!el) return;
+  let ms; try { ms = G.dailyMissions(); } catch (e) { el.hidden = true; return; }
+  if (!ms || !ms.length) { el.hidden = true; return; }
+  const done = ms.filter((m) => m.cur >= m.goal).length; const nxt = ms.find((m) => m.cur < m.goal);
+  el.hidden = false; el.classList.toggle('done', !nxt);
+  el.innerHTML = `<span class="stub">${done}/${ms.length}</span><span class="body"><span class="l">きょうのお題</span><span class="m">${nxt ? `${esc(nxt.name)}・あと ${Math.max(0, nxt.goal - nxt.cur)}` : 'ぜんぶ達成！'}</span></span>`;
+  el.onclick = () => switchView('mission');
 }
 
 // ---------- 現在地まわりの表示（レーダーの帯・最初のクエスト・縁の光） ----------
@@ -48,7 +59,7 @@ export function updateNear() {
   else { const nd = NEAR.list.find((x) => !G.hasStamp(x.s.i)); setGlow(nd ? nd.d : null); }
   const target = NEAR.list.find((x) => !G.hasStamp(x.s.i));
   if (target && !now.size) { quest.hidden = false; quest.innerHTML = `${icon('pin')}<span>いちばん近い${isLib(target.s) ? '図書館' : '本屋'} <b>${esc(target.s.n)}</b> まで あと${fmtDist(Math.max(0, target.d - RANGE_M))} ${arrowOf(bearing(POS.lat, POS.lon, target.s.la, target.s.lo))}</span>`; quest.onclick = () => openSheet(target.s.i); } else quest.hidden = true;
-  strip.innerHTML = NEAR.list.slice(0, 8).map(({ s, d }) => `<div class="rchip ${d <= RANGE_M ? 'in' : ''}" data-id="${esc(s.i)}"><div class="n">${G.hasStamp(s.i) ? '🔴 ' : ''}${isFeat(s.i) ? '👑 ' : ''}${esc(s.n)}</div><div class="d"><span>${d <= RANGE_M ? '射程内！' : `あと${fmtDist(d - RANGE_M)} ${arrowOf(bearing(POS.lat, POS.lon, s.la, s.lo))}`}</span><span class="stars">${'★'.repeat(rarityOf(s))}</span></div></div>`).join('');
+  strip.innerHTML = NEAR.list.slice(0, 8).map(({ s, d }) => `<div class="rchip ${d <= RANGE_M ? 'in' : ''}" data-id="${esc(s.i)}"><div class="n">${G.hasStamp(s.i) ? icon('check') : ''}${isFeat(s.i) ? '👑 ' : ''}${esc(s.n)}</div><div class="d"><span>${d <= RANGE_M ? '射程内！' : `あと${fmtDist(d - RANGE_M)} ${arrowOf(bearing(POS.lat, POS.lon, s.la, s.lo))}`}</span><span class="stars">${'★'.repeat(rarityOf(s))}</span></div></div>`).join('');
   $$('#radar-items .rchip').forEach((el) => el.addEventListener('click', () => openSheet(el.dataset.id)));
   applyMapStates(); emit('near');
   const sheet = $('#sheet'); if (!sheet.hidden && sheet.dataset.id) openSheet(sheet.dataset.id, true);
@@ -87,7 +98,7 @@ export function openSheet(id, quiet) {
   if (st.demo) b.push('<span class="badge">見本（実在しません）</span>'); if (st.custom) b.push('<span class="badge">自分で追加</span>'); if (st.fix) b.push('<span class="badge">名前を直した（この端末）</span>'); if (st.ov) b.push('<span class="badge">名前を確認ずみ</span>'); if (st.cf || st.x) b.push('<span class="badge ao">公式一覧で確認</span>');
   if (feat) b.push(`<span class="badge feat">${icon('crown')}今週の推し店</span>`); if (st.u) b.push('<span class="badge">古書店</span>'); if (isLib(st)) b.push('<span class="badge lib">図書館</span>');
   b.push(stamp ? `<span class="badge shu">スタンプ ${fmtDate(stamp.d)}</span>${stamp.trial ? '<span class="badge trial">体験</span>' : ''}` : vs.length ? `<span class="badge sumi">記録 ${vs.length}回</span>` : '<span class="badge">まだ</span>');
-  if (cs.length) b.push(`<span class="badge">カード${cs.length}枚</span>`); if (want) b.push(`<span class="badge gold">${icon('star')}行きたい</span>`); if (near) b.push('<span class="badge gold">射程内</span>');
+  if (cs.length) b.push(`<span class="badge">カード${cs.length}枚</span>`); if (want) b.push(`<span class="badge gold">${icon('heart')}行きたい</span>`); if (near) b.push('<span class="badge gold">射程内</span>');
   const rec = st.rec ? `<div class="staff"><div class="who">${esc(st.rec.who)}の手放せない1冊</div><div class="title">${esc(st.rec.title)}</div><div>${esc(st.rec.say)}</div><div class="muted small">棚：${esc(st.rec.shelf)}</div></div>` : '';
   const hist = vs.length ? `<div class="muted small" style="margin-top:8px">${vs.slice(-3).reverse().map((v) => `${fmtDate(v.d)}${v.near ? '（スタンプ）' : '（記録）'}${v.memo ? '「' + esc(v.memo) + '」' : ''}`).join('<br>')}</div>` : '';
   const distText = d == null ? '現在地なし' : jumped() ? '位置が大きく飛んだので、少し待ってから（1分）' : near ? `射程内（約${fmtDist(d)}）` : `ここから約${fmtDist(d)}（あと${fmtDist(d - RANGE_M)}で射程内）`;
@@ -95,11 +106,11 @@ export function openSheet(id, quiet) {
     <div class="sheet-head"><div class="stamp-sm">${stampSVG(st, !!stamp, 72, { rank: reg.rank })}</div><div style="min-width:0"><h2>${esc(st.n)}</h2><div class="stars">${stars(r)} <span class="muted small">${esc(rarityText(st))}</span></div></div></div>
     <div style="margin-top:8px">${b.join('')}</div>
     <div class="muted small">${esc(st.a || (st.custom ? '' : '住所の情報なし（地図データより）'))}　${esc(prefOf(st))}</div>
-    <div class="muted small">${esc(distText)}</div>${st.demo || st.custom ? '' : `<div class="muted small">店の情報：${st.x ? 'チェーンの公式店舗一覧' : `OpenStreetMap（${DATA_DATE} 取得）`}。${st.c ? '最終確認 ' + st.c.slice(0, 4) + '年' + Number(st.c.slice(5)) + '月' + (st.cf || st.x ? '（公式の店舗一覧で確認）' : '') : '確認日の記録なし'}。${st.cf || st.x ? '' : `${isLib(st) ? '閉館' : '閉店'}や名前の変更が反映されていないことがあります`}</div>`}${st.demo ? '' : `<div class="reg"><span class="badge ${reg.rank >= 3 ? 'shu' : reg.rank >= 2 ? 'gold' : ''}">常連度 ${reg.rank ? esc(reg.name) : 'まだ'}</span><span class="muted small">来店 ${reg.days}日${reg.next ? `・あと${reg.toNext}日で「${esc(reg.next.name)}」` : '・最高位'}</span><div class="regbar"><i style="width:${reg.pct}%"></i></div></div>`}${rec}${hist}
+    <div class="muted small">${esc(distText)}</div>${st.demo || st.custom ? '' : `<div class="muted small">店の情報：${st.x ? 'チェーンの公式店舗一覧' : `OpenStreetMap（${DATA_DATE} 取得）`}。${st.c ? '最終確認 ' + st.c.slice(0, 4) + '年' + Number(st.c.slice(5)) + '月' + (st.cf || st.x ? '（公式の店舗一覧で確認）' : '') : '確認日の記録なし'}。${st.cf || st.x ? '' : `${isLib(st) ? '閉館' : '閉店'}や名前の変更が反映されていないことがあります`}</div>`}${st.demo ? '' : `<div class="reg"><div class="reg-h"><span class="badge ${reg.rank >= 3 ? 'shu' : reg.rank >= 2 ? 'gold' : ''}">常連度 ${reg.rank ? esc(reg.name) : 'まだ'}</span><span class="muted small">来店 ${reg.days}日${reg.next ? `・あと${reg.toNext}日で「${esc(reg.next.name)}」` : '・最高位'}</span></div><div class="rally" role="img" aria-label="常連度 ${G.REGULAR_NAMES.length}段階のうち${reg.rank}">${G.REGULAR_NAMES.map((nm, k) => `<i class="${k < reg.rank ? (k === G.REGULAR_NAMES.length - 1 ? 'top' : 'on') : ''}" title="${esc(nm)}">${k < reg.rank ? icon('check') : ''}</i>`).join('')}</div><div class="rally-l"><span>${esc(G.REGULAR_NAMES[0])}</span><span>${esc(G.REGULAR_NAMES[G.REGULAR_NAMES.length - 1])}</span></div></div>`}${rec}${hist}
     <div class="actions">
-      <button class="btn primary wide" data-act="checkin">${near ? (stamp ? `${icon('ink')}もう一度押す（来店）` : `${icon('ink')}スタンプを押す${feat ? `（+${PG.feat}ページ）` : ''}`) : '来た記録だけ（スタンプなし）'}</button>
+      <button class="btn primary wide" data-act="checkin">${near ? (stamp ? `${icon('stamp')}もう一度押す（来店）` : `${icon('stamp')}スタンプを押す${feat ? `（+${PG.feat}ページ）` : ''}`) : '来た記録だけ（スタンプなし）'}</button>
       <button class="btn" data-act="card">${icon('barcode')}本と出会った</button>
-      <button class="btn" data-act="want">${icon('star')}${want ? '行きたいを外す' : '行きたい'}</button>
+      <button class="btn" data-act="want">${icon('heart')}${want ? '行きたいを外す' : '行きたい'}</button>
       ${stamp ? `<button class="btn" data-act="share">${icon('share')}シェア</button>` : ''}${reg.rank >= 2 ? `<button class="btn" data-act="regshare">${icon('crown')}常連度シェア</button>` : ''}
       ${st.demo ? '' : `<a class="btn wide" href="${gmapDir(st)}" target="_blank" rel="noopener">${icon('map')}Googleマップで道順</a>`}
       ${POS.fake && !near ? `<button class="btn wide" data-act="warp">${icon('warp')}この店へワープ</button>` : ''}
@@ -136,7 +147,7 @@ export function showCapture(st, res, near) {
     ${lv.after > lv.before ? `<div class="lvup">📖 第${lv.after}巻に入った！</div>` : ''}${rewards.map((x) => `<div class="lvup">${esc(x)}</div>`).join('')}
     <div class="actions" style="margin-top:18px"><button class="btn primary wide" id="cp-card">${icon('barcode')}この${placeWord(st)}で本と出会った（+${PG.card}ページ〜）</button>${near ? `<button class="btn wide" id="cp-share">${icon('share')}スタンプをシェア</button>` : ''}<button class="btn ghost wide" id="cp-close">閉じる</button></div>`;
   $('#capture').hidden = false; $$('#capture .burst, #capture .confetti').forEach((el) => el.remove());
-  if (near) { const bb = document.createElement('div'); bb.className = 'burst'; $('#capture').prepend(bb); if (isNew || regUp || lv.after > lv.before) confetti($('#capture'), [stampInk(st).main, '#d9a521', '#ffffff', '#6d4fc3', '#2e8b57']); }
+  if (near) { const bb = document.createElement('div'); bb.className = 'burst'; $('#capture').prepend(bb); if (isNew || regUp || lv.after > lv.before) confetti($('#capture'), [stampInk(st).main, '#FFD447', '#FFFFFF', '#2F9BFF', '#4FC07A']); }
   $('#cp-close').onclick = () => { $('#capture').hidden = true; openSheet(st.i, true); };
   $('#cp-card').onclick = () => { $('#capture').hidden = true; startCard(st); };
   if ($('#cp-share')) $('#cp-share').onclick = () => shareStampUI(st);

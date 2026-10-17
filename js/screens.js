@@ -1,27 +1,27 @@
 // 画面：レーダー・図鑑・お題・設定・最初の案内
-import { APP_VER, RANGE_M, PG, pagesForVol, frameOf, PREFS } from './config.js?v=0.8.6';
-import { S, save, exportJSON, parseImport, replace, reset } from './state.js?v=0.8.6';
-import { STORES, BYID, FEAT, RALLIES, isFeat, rarityOf, rarityText, stampSVG, unhideAll, rebuild, DATA_DATE } from './data.js?v=0.8.6';
-import * as G from './game.js?v=0.8.6';
-import * as MAP from './map.js?v=0.8.6';
-import { POS, hasPos } from './position.js?v=0.8.6';
-import { sfx, haptic } from './audio.js?v=0.8.6';
-import { profileImage, shareBlob } from './share.js?v=0.8.6';
-import { toast, openModal, closeModal, confirmBox, openSheet, openCard, switchView, setSub, refreshHud, applyMapStates, updateNear, locate, setTrialUI, warp, makeAvatar, nameModal, cleanHandle, NEAR, currentSub } from './ui.js?v=0.8.6';
+import { APP_VER, RANGE_M, PG, pagesForVol, frameOf, PREFS } from './config.js?v=0.9.0';
+import { S, save, exportJSON, parseImport, replace, reset } from './state.js?v=0.9.0';
+import { STORES, BYID, FEAT, RALLIES, isFeat, rarityOf, rarityText, stampSVG, unhideAll, rebuild, DATA_DATE } from './data.js?v=0.9.0';
+import * as G from './game.js?v=0.9.0';
+import * as MAP from './map.js?v=0.9.0';
+import { POS, hasPos } from './position.js?v=0.9.0';
+import { sfx, haptic } from './audio.js?v=0.9.0';
+import { profileImage, shareBlob } from './share.js?v=0.9.0';
+import { toast, openModal, closeModal, confirmBox, openSheet, openCard, switchView, setSub, refreshHud, applyMapStates, updateNear, locate, setTrialUI, warp, makeAvatar, nameModal, cleanHandle, NEAR, currentSub } from './ui.js?v=0.9.0';
 import * as JU from './journey_ui.js?v=0.6.3';
-import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, weekKey } from './util.js?v=0.8.6';
+import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, weekKey } from './util.js?v=0.9.0';
 
 const empty = (ic, text) => `<div class="empty">${icon(ic)}<div>${text}</div></div>`;
 
 // ---------- レーダー ----------
-const LEGEND = [['#d6452b', '本屋'], ['#8a5a3c', '古書店'], ['#2a221d', '秘境の本屋'], ['#2a8576', '図書館'], ['#3b4a8a', 'スタンプ済み'], ['#e8a51e', '射程内']];
+const LEGEND = [['#FF6A48', '本屋'], ['#B9794A', '古書店'], ['#1B1B1B', '秘境の本屋'], ['#2F9BFF', '図書館'], ['#4FC07A', 'スタンプ済み'], ['#FFD447', '射程内（光の輪）']];
 function renderLegend() { const el = $('#radar-legend'); if (el) el.innerHTML = '<span class="lg-t">ピンの色</span>' + LEGEND.map(([c, t]) => `<span class="lg"><i style="background:${c}"></i>${t}</span>`).join(''); }
 export function renderRadar() {
   renderLegend(); JU.renderRadarWants();
   const st = $('#radar-status'), list = $('#radar-list');
   if (!hasPos()) { st.className = 'status-card'; st.innerHTML = `現在地がまだありません。<div class="actions"><button class="btn primary" id="rd-loc">${icon('locate')}現在地を追う</button><button class="btn" id="rd-trial">${icon('foot')}お試し歩き</button></div>`; $('#rd-loc').onclick = () => { switchView('map'); locate(); }; $('#rd-trial').onclick = () => { switchView('map'); setTrialUI(true); warp(); }; list.innerHTML = ''; return; }
   st.className = 'status-card gold'; st.innerHTML = `${POS.fake ? '<span class="badge feat">お試し</span>' : '<span class="badge ao">追跡中</span>'} 射程内 <b>${NEAR.inRange.size}</b>店　<span class="muted small">${POS.acc ? `誤差 約${Math.round(POS.acc)}m　` : ''}店から${RANGE_M}m以内でスタンプが押せます</span>`;
-  list.innerHTML = NEAR.list.map(({ s, d }) => `<div class="item ${d <= RANGE_M ? 'in' : ''}" data-id="${esc(s.i)}"><div class="main"><div class="name">${G.hasStamp(s.i) ? '🔴 ' : ''}${isFeat(s.i) ? '<span class="crown">👑</span> ' : ''}${esc(s.n)}${s.u ? ' <span class="badge">古書店</span>' : ''}${s.t === 'l' ? ' <span class="badge lib">図書館</span>' : ''}</div><div class="sub">${esc(s.a || prefOf(s))}　<span class="stars">${stars(rarityOf(s))}</span></div></div><div class="dist">${d <= RANGE_M ? '射程内' : fmtDist(d)}<br>${arrowOf(bearing(POS.lat, POS.lon, s.la, s.lo))}</div></div>`).join('') || empty('radar', '3kmの中に店がありません。');
+  list.innerHTML = NEAR.list.map(({ s, d }) => `<div class="item ${d <= RANGE_M ? 'in' : ''}" data-id="${esc(s.i)}"><div class="main"><div class="name">${G.hasStamp(s.i) ? icon('check') + ' ' : ''}${isFeat(s.i) ? '<span class="crown">👑</span> ' : ''}${esc(s.n)}${s.u ? ' <span class="badge">古書店</span>' : ''}${s.t === 'l' ? ' <span class="badge lib">図書館</span>' : ''}</div><div class="sub">${esc(s.a || prefOf(s))}　<span class="stars">${stars(rarityOf(s))}</span></div></div><div class="dist">${d <= RANGE_M ? '射程内' : fmtDist(d)}<br>${arrowOf(bearing(POS.lat, POS.lon, s.la, s.lo))}</div></div>`).join('') || empty('radar', '3kmの中に店がありません。');
   $$('#radar-list .item').forEach((el) => el.addEventListener('click', () => openSheet(el.dataset.id)));
 }
 
@@ -37,7 +37,7 @@ export function renderZukan() {
   $$('.sub').forEach((el) => el.classList.toggle('active', el.id === 'sub-' + currentSub));
   const fr = frameOf(lv); const ids = Object.keys(S.stamps);
   const stamped = ids.map((id) => ({ st: BYID.get(id), d: S.stamps[id].d, trial: S.stamps[id].trial })).filter((x) => x.st).sort((a, b) => b.d.localeCompare(a.d));
-  $('#stamp-grid').innerHTML = stamped.length ? `<div class="hint" style="grid-column:1/-1">${fr ? `第${lv}巻の額縁：${['', '銅', '銀', '金'][fr]}` : '第3巻になるとスタンプに額縁が付きます'}　スタンプは全部で ${STORES.length.toLocaleString()}種類</div>` + stamped.map(({ st, d, trial }) => { const reg = G.regularInfo(st.i); return `<div class="st f${fr}" data-id="${esc(st.i)}">${stampSVG(st, true, 76, { rank: reg.rank })}<div class="n">${esc(st.n)}</div>${reg.rank >= 2 ? `<div class="n reg">${esc(reg.name)}・${reg.days}日</div>` : `<div class="n">${fmtDate(d)}${trial ? '・体験' : ''}</div>`}</div>`; }).join('') : empty('ink', '店の射程内（120m）で「スタンプを押す」と、ここに並びます。家で試すなら お試し歩き → ワープ。');
+  $('#stamp-grid').innerHTML = stamped.length ? `<div class="hint" style="grid-column:1/-1">${fr ? `第${lv}巻の額縁：${['', '銅', '銀', '金'][fr]}` : '第3巻になるとスタンプに額縁が付きます'}　スタンプは全部で ${STORES.length.toLocaleString()}種類</div>` + stamped.map(({ st, d, trial }) => { const reg = G.regularInfo(st.i); return `<div class="st f${fr}" data-id="${esc(st.i)}">${stampSVG(st, true, 76, { rank: reg.rank })}<div class="n">${esc(st.n)}</div>${reg.rank >= 2 ? `<div class="n reg">${esc(reg.name)}・${reg.days}日</div>` : `<div class="n">${fmtDate(d)}${trial ? '・体験' : ''}</div>`}</div>`; }).join('') : empty('stamp', '店の射程内（120m）で「スタンプを押す」と、ここに並びます。家で試すなら お試し歩き → ワープ。');
   $$('#stamp-grid .st').forEach((el) => el.addEventListener('click', () => openSheet(el.dataset.id)));
   // カード
   const g = $('#card-grid'); g.innerHTML = S.cards.length ? S.cards.slice().reverse().map((c) => `<div class="card" data-id="${esc(c.id)}"><div class="cover">${c.cover ? `<img src="${esc(c.cover)}" alt="" referrerpolicy="no-referrer" loading="lazy">` : `<div class="notitle">${esc(c.title)}</div>`}</div><div class="stampmark">出会</div><div class="meta"><b>${esc(c.title)}</b>${esc(c.sn)}<br>${fmtDate(c.d)}${c.pub ? '・公開' : ''}</div></div>`).join('') : empty('barcode', '店のページで「本と出会った」を押すと、ここに増えます。');
@@ -125,10 +125,10 @@ export function applyTheme() {
 // ---------- 最初の案内 ----------
 export function showOnboarding(onDone) {
   const pages = [
-    { art: `<svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="92" fill="#efe8da"/><circle cx="96" cy="124" r="46" fill="none" stroke="#d9a521" stroke-width="3" stroke-dasharray="6 5"/><circle cx="96" cy="124" r="10" fill="#2b6cb0" stroke="#fff" stroke-width="4"/><image href="${MAP.pinDataURL('lib')}" x="34" y="62" width="40" height="51"/><image href="${MAP.pinDataURL('rare')}" x="136" y="108" width="40" height="51"/><image href="${MAP.pinDataURL('near')}" x="104" y="30" width="52" height="66"/></svg>`, h: '本屋や図書館に近づくと、光る', p: '地図に現在地が出ます。店から120m以内に入ると、ピンが金色の星に変わります。' },
-    { art: `<svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="92" fill="#efe8da"/><g transform="rotate(-7 100 100)">${stampSVG({ i: 'onboard-sample', n: 'ほんの森書店', k: 0 }, true, 124).replace('<svg ', '<svg x="38" y="38" ')}</g></svg>`, h: 'その店だけのスタンプを押す', p: `スタンプは本屋と図書館で全国 ${STORES.length.toLocaleString()} 種類。周りに同じ種類の場所が少ない「秘境」ほど珍しいスタンプです。同じ店に通うほど「常連度」が上がります。` },
-    { art: `<svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="86" fill="#eee6d8"/><rect x="62" y="52" width="76" height="100" rx="6" fill="#fffdf8" stroke="#ddd4c6" stroke-width="2"/><rect x="74" y="66" width="52" height="54" rx="3" fill="#d6452b" opacity=".9"/><rect x="74" y="128" width="52" height="5" rx="2" fill="#5f574f"/><rect x="74" y="138" width="34" height="5" rx="2" fill="#8a8178"/></svg>`, h: '本と出会ったら、カードに', p: '買った本の裏のバーコードを読むと、表紙と店と日付が1枚のカードになります。読んだかどうかは問いません。' },
-    { art: `<svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="92" fill="#efe8da"/><g transform="translate(100 106)"><path d="M-64 -46q32 -14 64 0v88q-32 -14 -64 0z" fill="#fffdf7" stroke="#d6452b" stroke-width="4" stroke-linejoin="round"/><path d="M0 -46q32 -14 64 0v88q-32 -14 -64 0z" fill="#fffdf7" stroke="#d6452b" stroke-width="4" stroke-linejoin="round"/><text x="-32" y="-8" text-anchor="middle" font-size="19" font-weight="900" fill="#d6452b" font-family="Zen Maru Gothic, sans-serif">第1巻</text><path d="M-50 14h36M-50 27h28M14 -16h36M14 -3h36M14 10h28M14 23h32" stroke="#cbbfae" stroke-width="3" stroke-linecap="round"/><path d="M42 -53v32l-7 -6-7 6v-32" fill="#d9a521"/></g></svg>`, h: 'ページがたまると、次の巻へ', p: 'スタンプを押す、本と出会う、歩く（100mで1ページ）。どれもあなたの物語のページになり、ページがたまると巻が進みます。ほかのゲームでいうレベルです。' },
+    { art: `<svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="92" fill="#FBEFD6" stroke="#1B1B1B" stroke-width="2.5"/><circle cx="96" cy="124" r="46" fill="none" stroke="#2F9BFF" stroke-width="3" stroke-dasharray="6 5"/><circle cx="96" cy="124" r="10" fill="#FFFFFF" stroke="#1B1B1B" stroke-width="3"/><image href="${MAP.pinDataURL('lib')}" x="34" y="62" width="40" height="51"/><image href="${MAP.pinDataURL('rare')}" x="136" y="108" width="40" height="51"/><image href="${MAP.pinDataURL('near')}" x="100" y="28" width="58" height="65"/></svg>`, h: '本屋や図書館に近づくと、ピンが光る', p: '地図に現在地が出ます。店から120m以内に入ると、ピンに黄色い光の輪が付きます。' },
+    { art: `<svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="92" fill="#FBEFD6" stroke="#1B1B1B" stroke-width="2.5"/><g transform="rotate(-7 100 100)">${stampSVG({ i: 'onboard-sample', n: 'ほんの森書店', k: 0 }, true, 124).replace('<svg ', '<svg x="38" y="38" ')}</g></svg>`, h: 'その店だけのスタンプを押す', p: `スタンプは本屋と図書館で全国 ${STORES.length.toLocaleString()} 種類。周りに同じ種類の場所が少ない「秘境」ほど珍しいスタンプです。同じ店に通うほど「常連度」が上がります。` },
+    { art: `<svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="86" fill="#FBEFD6" stroke="#1B1B1B" stroke-width="2.5"/><rect x="62" y="52" width="76" height="100" rx="8" fill="#FFFFFF" stroke="#1B1B1B" stroke-width="2.5"/><rect x="74" y="66" width="52" height="54" rx="4" fill="#FF6A48" stroke="#1B1B1B" stroke-width="2"/><rect x="74" y="128" width="52" height="5" rx="2" fill="#1B1B1B"/><rect x="74" y="138" width="34" height="5" rx="2" fill="#8A8378"/></svg>`, h: '本と出会ったら、カードに', p: '買った本の裏のバーコードを読むと、表紙と店と日付が1枚のカードになります。読んだかどうかは問いません。' },
+    { art: `<svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="92" fill="#FBEFD6" stroke="#1B1B1B" stroke-width="2.5"/><g transform="translate(100 106)"><path d="M-64 -46q32 -14 64 0v88q-32 -14 -64 0z" fill="#FFFFFF" stroke="#1B1B1B" stroke-width="3" stroke-linejoin="round"/><path d="M0 -46q32 -14 64 0v88q-32 -14 -64 0z" fill="#FFFFFF" stroke="#1B1B1B" stroke-width="3" stroke-linejoin="round"/><text x="-32" y="-8" text-anchor="middle" font-size="19" fill="#FF6A48" font-family="Mochiy Pop P One, Zen Maru Gothic, sans-serif">第1巻</text><path d="M-50 14h36M-50 27h28M14 -16h36M14 -3h36M14 10h28M14 23h32" stroke="#D9CDB4" stroke-width="3" stroke-linecap="round"/><path d="M42 -53v32l-7 -6-7 6v-32" fill="#FFD447" stroke="#1B1B1B" stroke-width="1.5" stroke-linejoin="round"/></g></svg>`, h: 'ページがたまると、次の巻へ', p: 'スタンプを押す、本と出会う、歩く（100mで1ページ）。どれもあなたの物語のページになり、ページがたまると巻が進みます。ほかのゲームでいうレベルです。' },
   ];
   let i = 0; const box = $('#onboard-box');
   const draw = () => { const p = pages[i]; const last = i === pages.length - 1;

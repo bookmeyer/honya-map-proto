@@ -1,7 +1,7 @@
 // 本屋・図書館・ラリーのデータ。スタンプ（その店だけの絵柄）の見た目もここ
-import { DEMO_STORE } from './config.js?v=0.8.6';
-import { S } from './state.js?v=0.8.6';
-import { esc, hash32, prefOf, weekKey, sleep } from './util.js?v=0.8.6';
+import { DEMO_STORE } from './config.js?v=0.9.0';
+import { S } from './state.js?v=0.9.0';
+import { esc, hash32, prefOf, weekKey, sleep } from './util.js?v=0.9.0';
 
 export let STORES = [];
 export let RALLIES = [];
@@ -57,8 +57,9 @@ export function rarityText(st) { const r = rarityOf(st); if (st.demo) return '�
 export const rarityName = (r) => (r === 3 ? '秘境' : r === 2 ? '街' : '並');
 
 // ---- スタンプの見た目 ----
-// 店ごとに、形（角丸・丸・六角）・インクの色・絵柄（本にまつわる12種）が決まる。スタンプラリーの「ご当地スタンプ」の雰囲気
-const INKS = [[222, 60, 46], [150, 45, 40], [26, 78, 52], [268, 46, 54], [348, 62, 54], [190, 55, 38]]; // 色相・彩度・明るさ
+// 店ごとに、形（角丸・丸・六角）・地の色（6色）・絵柄（本にまつわる12種）が決まる。白いふち＋墨の輪郭の「シール」（v0.9 ポップ・ラリー）
+const INKS = [['#FF6A48', '#1B1B1B'], ['#2F9BFF', '#FFFFFF'], ['#4FC07A', '#1B1B1B'], ['#FFD447', '#1B1B1B'], ['#A86CFF', '#FFFFFF'], ['#FF7AB6', '#1B1B1B']]; // 地の色・絵柄の色
+const BURST = '99,50 88.8,66.1 84.7,84.7 66.1,88.8 50,99 33.9,88.8 15.3,84.7 11.2,66.1 1,50 11.2,33.9 15.3,15.3 33.9,11.2 50,1 66.1,11.2 84.7,15.3 88.8,33.9'; // 秘境スタンプの光の輪
 const PICTS = [
   '<path d="M4 8q8-4 16 0v24q-8-4-16 0z"/><path d="M20 8q8-4 16 0v24q-8-4-16 0z"/>', // 開いた本
   '<rect x="6" y="25" width="28" height="8" rx="2"/><rect x="9" y="15" width="24" height="8" rx="2"/><rect x="12" y="5" width="20" height="8" rx="2"/>', // 積んだ本
@@ -78,19 +79,19 @@ function shortName(n) {
   let out = '', w = 0; for (const ch of s) { const cw = /[ -~]/.test(ch) ? 0.6 : 1; if (w + cw > 6.2) break; out += ch; w += cw; } return { text: out || '本', w };
 }
 const hsl = (h, s, l) => `hsl(${h} ${Math.max(0, Math.min(100, s))}% ${Math.max(0, Math.min(100, l))}%)`;
-export function stampInk(st) { const h = hash32(st.i); const [H, Sa, L] = INKS[(h >>> 16) % INKS.length]; return { main: hsl(H, Sa, L), dark: hsl(H, Sa, L - 14), light: hsl(H, Sa, L + 36) }; }
+export function stampInk(st) { const h = hash32(st.i); const [main, pic] = INKS[(h >>> 16) % INKS.length]; return { main, dark: '#1B1B1B', light: '#FFFFFF', pic }; }
 export function stampSVG(st, collected, size = 96, opts = {}) {
-  const h = hash32(st.i); const shape = h % 3; const pict = PICTS[(h >>> 8) % PICTS.length]; const [H, Sa, L] = INKS[(h >>> 16) % INKS.length]; const r = rarityOf(st); const rank = opts.rank || 0;
+  const h = hash32(st.i); const shape = h % 3; const pict = PICTS[(h >>> 8) % PICTS.length]; const [main, picCol] = INKS[(h >>> 16) % INKS.length]; const r = rarityOf(st); const rank = opts.rank || 0;
   const id = 'k' + h.toString(36) + (collected ? 'c' : 'u') + (opts.sfx || '');
-  const top = collected ? hsl(H, Sa, L + 12) : '#ece6da', bot = collected ? hsl(H, Sa, L - 8) : '#dcd4c5', edge = collected ? hsl(H, Sa, L - 20) : '#c8c0b1', pic = collected ? '#ffffff' : '#bdb5a8', band = collected ? 'rgba(255,255,255,.93)' : 'rgba(255,255,255,.55)', nameCol = collected ? hsl(H, Sa, L - 14) : '#a69e91';
-  const outer = shape === 0 ? '<rect x="6" y="6" width="88" height="88" rx="24"/>' : shape === 1 ? '<circle cx="50" cy="50" r="44"/>' : '<path d="M50 5L89 27v46L50 95 11 73V27z"/>';
+  const EDGE = '#1B1B1B'; const fill = collected ? main : '#ECE6DA', pic = collected ? picCol : '#BDB5A8', edge = collected ? EDGE : '#A69E91', nameCol = collected ? EDGE : '#A69E91';
+  const outer = shape === 0 ? '<rect x="8" y="8" width="84" height="84" rx="22"/>' : shape === 1 ? '<circle cx="50" cy="50" r="42"/>' : '<path d="M50 7L87 28v44L50 93 13 72V28z"/>';
   const { text, w } = shortName(st.n); const fs = w <= 3 ? 15 : w <= 4 ? 13 : w <= 5 ? 11.5 : 10.5;
-  const big = size >= 64;
-  const ring = r === 3 ? `<g transform="translate(50 50) scale(1.08) translate(-50 -50)" fill="none" stroke="${collected ? '#d9a521' : '#ddd5c3'}" stroke-width="3">${outer}</g>` : r === 2 ? `<g transform="translate(50 50) scale(1.07) translate(-50 -50)" fill="none" stroke="${collected ? '#c6c3cc' : '#e2dccf'}" stroke-width="2">${outer}</g>` : '';
-  const star = (x, y, s, f) => `<path transform="translate(${x} ${y}) scale(${s})" fill="${f}" d="M0-9l2.6 5.4 6 .8-4.4 4.2 1.1 5.9L0 4.5l-5.3 2.8 1.1-5.9-4.4-4.2 6-.8z"/>`;
-  const crown = (x, y, s, f) => `<g transform="translate(${x} ${y}) scale(${s})"><path fill="${f}" stroke="${edge}" stroke-width="1.2" stroke-linejoin="round" d="M-9 6l-3-11 6 4 6-9 6 9 6-4-3 11z"/></g>`;
-  const marks = collected ? (r === 3 ? star(50, 10, 0.75, '#d9a521') : '') + (rank >= 4 ? crown(77, 12, 0.85, '#ffd54a') : rank >= 3 ? crown(78, 12, 0.72, '#ffffff') : rank >= 2 ? star(79, 12, 0.6, '#ffffff') : '') : '';
-  return `<svg viewBox="0 0 100 100" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg" aria-label="${esc(st.n)}のスタンプ"><defs><linearGradient id="g${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${top}"/><stop offset="1" stop-color="${bot}"/></linearGradient><clipPath id="c${id}">${outer}</clipPath>${big && collected ? `<filter id="t${id}"><feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="2" seed="${h % 97}"/><feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .22 0"/></filter>` : ''}</defs>${ring}<g fill="url(#g${id})" stroke="${edge}" stroke-width="2.5"${collected ? '' : ' stroke-dasharray="5 3"'}>${outer}</g>${big && collected ? `<rect width="100" height="100" clip-path="url(#c${id})" filter="url(#t${id})"/>` : ''}<ellipse cx="40" cy="20" rx="26" ry="11" fill="#fff" opacity="${collected ? '.16' : '.3'}" clip-path="url(#c${id})"/><g transform="translate(30 15)" fill="none" stroke="${pic}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">${pict}</g><g clip-path="url(#c${id})"><rect x="12" y="63" width="76" height="18" rx="9" fill="${band}"/><text x="50" y="72.5" text-anchor="middle" dominant-baseline="central" font-size="${fs}" font-weight="800" font-family="'Zen Maru Gothic','Zen Kaku Gothic New','Hiragino Sans',sans-serif" fill="${nameCol}">${esc(text)}</text></g>${marks}</svg>`;
+  // 秘境（★3）は檸檬の光の輪、街（★2）は白い二重のふち
+  const ring = !collected ? '' : r === 3 ? `<polygon points="${BURST}" fill="#FFD447" stroke="${EDGE}" stroke-width="1.5" stroke-linejoin="round"/>` : r === 2 ? `<g transform="translate(50 50) scale(1.1) translate(-50 -50)" fill="#FFFFFF" stroke="${EDGE}" stroke-width="1.5">${outer}</g>` : '';
+  const star = (x, y, s, f) => `<path transform="translate(${x} ${y}) scale(${s})" fill="${f}" stroke="${EDGE}" stroke-width="1.4" stroke-linejoin="round" d="M0-9l2.6 5.4 6 .8-4.4 4.2 1.1 5.9L0 4.5l-5.3 2.8 1.1-5.9-4.4-4.2 6-.8z"/>`;
+  const crown = (x, y, s, f) => `<g transform="translate(${x} ${y}) scale(${s})"><path fill="${f}" stroke="${EDGE}" stroke-width="1.4" stroke-linejoin="round" d="M-9 6l-3-11 6 4 6-9 6 9 6-4-3 11z"/></g>`;
+  const marks = collected ? (rank >= 4 ? crown(78, 15, 0.85, '#FFD447') : rank >= 3 ? crown(78, 15, 0.72, '#FFFFFF') : rank >= 2 ? star(79, 15, 0.6, '#FFFFFF') : '') : '';
+  return `<svg viewBox="0 0 100 100" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg" aria-label="${esc(st.n)}のスタンプ"><defs><clipPath id="c${id}">${outer}</clipPath></defs>${ring}<g fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linejoin="round">${outer}</g><g fill="${fill}" stroke="${edge}" stroke-width="2.5" stroke-linejoin="round"${collected ? '' : ' stroke-dasharray="5 3"'}>${outer}</g><ellipse cx="38" cy="22" rx="22" ry="9" fill="#fff" opacity="${collected ? '.22' : '.3'}" clip-path="url(#c${id})"/><g transform="translate(30 15)" fill="none" stroke="${pic}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">${pict}</g><rect x="13" y="63" width="74" height="19" rx="9.5" fill="#FFFFFF" stroke="${edge}" stroke-width="1.5"/><text x="50" y="72.5" text-anchor="middle" dominant-baseline="central" font-size="${fs}" font-family="'Mochiy Pop P One','Zen Maru Gothic','Hiragino Sans',sans-serif" fill="${nameCol}">${esc(text)}</text>${marks}</svg>`;
 }
 
 // ---- 本（openBD） ----
