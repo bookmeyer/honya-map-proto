@@ -1,12 +1,12 @@
 // 記録（この端末の中だけ）。版の違いを吸収して読み込み、まとめて書き込む
-import { STORAGE_KEY, LEGACY_KEYS, APP_VER } from './config.js?v=0.9.0';
-import { debounce, emit } from './util.js?v=0.9.0';
+import { STORAGE_KEY, LEGACY_KEYS, APP_VER } from './config.js?v=0.9.1';
+import { debounce, emit } from './util.js?v=0.9.1';
 
 export const empty = () => ({
   v: 4, visits: [], cards: [], wants: [], custom: [], stamps: {}, pg: 0, pgDay: {},
   claimedW: {}, claimedD: {}, rallyDone: {}, featDone: {}, looks: {},
   hidden: {}, renames: {}, days: {}, posts: [], shares: [], seen: 0, lastPos: null, shareCount: 0,
-  settings: { theme: 'auto', sound: true, haptic: true, avatar: '', handle: '', wantAlert: true, wantAlertM: 2000 }, createdAt: Date.now(),
+  settings: { theme: 'light', sound: true, haptic: true, avatar: '', handle: '', wantAlert: true, wantAlertM: 2000 }, createdAt: Date.now(),
 });
 export let S = empty();
 
@@ -14,6 +14,9 @@ function ensure(j) {
   const base = empty(); const out = Object.assign(base, j || {});
   out.settings = Object.assign(base.settings, (j && j.settings) || {});
   delete out.ink; // インクは廃止（v0.8.6）
+  // v0.9.1：明るい見た目が基本。これまでの「自動」は一度だけ「明」に置き換える（端末が暗い設定だと、アプリまで暗くなっていたため）。自分で選び直した「自動」はそのまま
+  if (out.settings.theme === 'auto' && !out.settings.themeV9) out.settings.theme = 'light';
+  out.settings.themeV9 = 1;
   if (j && j.claimed && !j.claimedW) out.claimedW = j.claimed; // 旧版
   if (j && j.pg == null && j.xp != null) out.pg = Math.round(j.xp / 10); // 経験値（XP）→ ページ（10分の1）
   delete out.xp;
