@@ -1,8 +1,8 @@
-// 遊びの仕組み：物語のページと巻・称号・実績・インク・ミッション・ラリー・カード
-import { PG, TITLES, ACHIEVEMENTS, REGULAR, WALK, volOf, INK } from './config.js?v=0.8.5';
-import { S, save, inkUse, inkNow, inkNextMs } from './state.js?v=0.8.5';
-import { BYID, RALLIES, FEAT, isFeat, rarityOf } from './data.js?v=0.8.5';
-import { prefOf, todayISO, weekKey, weekStartISO, monthKey, emit } from './util.js?v=0.8.5';
+// 遊びの仕組み：物語のページと巻・称号・実績・ミッション・ラリー・カード
+import { PG, TITLES, ACHIEVEMENTS, REGULAR, WALK, volOf } from './config.js?v=0.8.6';
+import { S, save } from './state.js?v=0.8.6';
+import { BYID, RALLIES, FEAT, isFeat, rarityOf } from './data.js?v=0.8.6';
+import { prefOf, todayISO, weekKey, weekStartISO, monthKey, emit } from './util.js?v=0.8.6';
 
 export const visitsOf = (id) => S.visits.filter((v) => v.s === id);
 export const cardsOf = (id) => S.cards.filter((c) => c.s === id);
@@ -84,7 +84,6 @@ export function rallyProgress() { return RALLIES.map((r) => ({ ...r, got: r.stor
 export function checkin(st, { near, memo, trial }) {
   const today = todayISO(); const stampedBefore = hasStamp(st.i); const visitedToday = visitsOf(st.i).some((v) => v.d === today);
   const feat = isFeat(st.i); const wk = weekKey(); const featGot = (S.featDone[wk] || []).includes(st.i);
-  if (near && !stampedBefore && !inkUse()) return { inkEmpty: true, nextMs: inkNextMs() };
   const regBefore = regularRank(regularDays(st.i)); let regUp = 0;
   S.visits.push({ s: st.i, n: st.n, d: today, t: Date.now(), near, memo, trial: trial ? 1 : 0 });
   let gain = 0, isNew = false; const r = rarityOf(st); const extras = [];
@@ -96,7 +95,7 @@ export function checkin(st, { near, memo, trial }) {
   } else gain += visitsOf(st.i).length <= 1 ? PG.sumiFirst : (visitedToday ? 0 : PG.sumiRepeat);
   const lv = addPages(gain); save();
   const rewards = [...extras, ...checkRewards()]; lv.after = volume(); // お題の分で巻が上がっても、この画面で知らせる
-  emit('records'); return { gain, isNew, lv, rewards, r, regUp, ink: inkNow() };
+  emit('records'); return { gain, isNew, lv, rewards, r, regUp };
 }
 export function toggleWant(id) { const i = S.wants.indexOf(id); if (i >= 0) S.wants.splice(i, 1); else { S.wants.push(id); bump('want'); } save(); const rewards = checkRewards(); emit('records'); return { on: i < 0, rewards }; }
 
@@ -110,5 +109,4 @@ export function makeCard(st, book, why, pub) {
 }
 export function deleteCard(id) { S.cards = S.cards.filter((x) => x.id !== id); save(); emit('records'); }
 
-export const inkState = () => ({ n: inkNow(), max: INK.max, nextMs: inkNextMs() });
 export function noteShare(kind = '', sid = '', r = 'shared') { S.shareCount = (S.shareCount || 0) + 1; S.shares = S.shares || []; S.shares.push({ t: Date.now(), d: todayISO(), kind, s: sid, r }); if (S.shares.length > 500) S.shares.splice(0, S.shares.length - 500); save(); checkRewards(); emit('records'); }

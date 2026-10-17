@@ -1,15 +1,15 @@
 // 起動：記録を読み、データを取り、地図を出し、部品をつなぐ
-import { APP_VER } from './config.js?v=0.8.5';
-import { S, load, save } from './state.js?v=0.8.5';
-import { loadAll, STORES } from './data.js?v=0.8.5';
-import * as MAP from './map.js?v=0.8.5';
-import { POS, setPos, setFollow, jumped } from './position.js?v=0.8.5';
-import * as AUDIO from './audio.js?v=0.8.5';
-import * as UI from './ui.js?v=0.8.5';
-import * as J from './journey.js?v=0.8.5';
+import { APP_VER } from './config.js?v=0.8.6';
+import { S, load, save } from './state.js?v=0.8.6';
+import { loadAll, STORES } from './data.js?v=0.8.6';
+import * as MAP from './map.js?v=0.8.6';
+import { POS, setPos, setFollow, jumped } from './position.js?v=0.8.6';
+import * as AUDIO from './audio.js?v=0.8.6';
+import * as UI from './ui.js?v=0.8.6';
+import * as J from './journey.js?v=0.8.6';
 import * as JU from './journey_ui.js?v=0.6.3';
-import { renderRadar, renderZukan, renderMissions, renderSettings, applyTheme, showOnboarding } from './screens.js?v=0.8.5';
-import { $, $$, on, emit } from './util.js?v=0.8.5';
+import { renderRadar, renderZukan, renderMissions, renderSettings, applyTheme, showOnboarding } from './screens.js?v=0.8.6';
+import { $, $$, on, emit } from './util.js?v=0.8.6';
 
 async function boot() {
   load(); applyThemeEarly();
@@ -33,7 +33,7 @@ async function boot() {
   $('#sheet-close').onclick = UI.closeSheet;
   $('#modal').addEventListener('click', (e) => { if (e.target.id === 'modal') UI.closeModal(); });
   $('#btn-add').onclick = UI.startAdd; $('#btn-locate').onclick = UI.locate; $('#btn-trial').onclick = () => { AUDIO.unlock(); UI.setTrialUI(!POS.fake); }; $('#btn-warp').onclick = () => UI.warp();
-  $('#btn-settings').onclick = () => UI.switchView('settings'); $('#ink-btn').onclick = () => UI.toast(`インク：スタンプを押すたびに1つ使い、90分に1つ回復します`); $('#lv-btn').onclick = () => UI.switchView('zukan');
+  $('#btn-settings').onclick = () => UI.switchView('settings'); $('#lv-btn').onclick = () => UI.switchView('zukan');
   document.addEventListener('pointerdown', AUDIO.unlock, { once: true });
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
   window.addEventListener('online', () => { $('#offline').hidden = true; }); window.addEventListener('offline', () => { $('#offline').hidden = false; }); if (!navigator.onLine) $('#offline').hidden = false;
