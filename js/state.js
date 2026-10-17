@@ -1,12 +1,12 @@
 // 記録（この端末の中だけ）。版の違いを吸収して読み込み、まとめて書き込む
-import { STORAGE_KEY, LEGACY_KEYS, INK, APP_VER } from './config.js?v=0.7.0';
-import { debounce, emit } from './util.js?v=0.7.0';
+import { STORAGE_KEY, LEGACY_KEYS, INK, APP_VER } from './config.js?v=0.7.3';
+import { debounce, emit } from './util.js?v=0.7.3';
 
 export const empty = () => ({
-  v: 3, visits: [], cards: [], wants: [], custom: [], stamps: {}, xp: 0,
+  v: 4, visits: [], cards: [], wants: [], custom: [], stamps: {}, pg: 0, pgDay: {},
   claimedW: {}, claimedD: {}, rallyDone: {}, featDone: {}, looks: {},
   hidden: {}, renames: {}, days: {}, posts: [], shares: [], seen: 0, lastPos: null, ink: { n: INK.max, at: Date.now() }, shareCount: 0,
-  settings: { theme: 'auto', sound: true, haptic: true, avatar: '', wantAlert: true, wantAlertM: 2000 }, createdAt: Date.now(),
+  settings: { theme: 'auto', sound: true, haptic: true, avatar: '', handle: '', wantAlert: true, wantAlertM: 2000 }, createdAt: Date.now(),
 });
 export let S = empty();
 
@@ -15,7 +15,9 @@ function ensure(j) {
   out.settings = Object.assign(base.settings, (j && j.settings) || {});
   out.ink = Object.assign(base.ink, (j && j.ink) || {});
   if (j && j.claimed && !j.claimedW) out.claimedW = j.claimed; // 旧版
-  out.v = 3; return out;
+  if (j && j.pg == null && j.xp != null) out.pg = Math.round(j.xp / 10); // 経験値（XP）→ ページ（10分の1）
+  delete out.xp;
+  out.v = 4; return out;
 }
 export function load() {
   let j = null;

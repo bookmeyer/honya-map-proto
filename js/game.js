@@ -1,8 +1,8 @@
-// 遊びの仕組み：経験値・称号・実績・インク・ミッション・ラリー・カード
-import { XP, TITLES, ACHIEVEMENTS, REGULAR, WALK, levelOf, INK } from './config.js?v=0.7.0';
-import { S, save, inkUse, inkNow, inkNextMs } from './state.js?v=0.7.0';
-import { BYID, RALLIES, FEAT, isFeat, rarityOf } from './data.js?v=0.7.0';
-import { prefOf, todayISO, weekKey, weekStartISO, monthKey, emit } from './util.js?v=0.7.0';
+// 遊びの仕組み：物語のページと巻・称号・実績・インク・ミッション・ラリー・カード
+import { PG, TITLES, ACHIEVEMENTS, REGULAR, WALK, volOf, INK } from './config.js?v=0.7.3';
+import { S, save, inkUse, inkNow, inkNextMs } from './state.js?v=0.7.3';
+import { BYID, RALLIES, FEAT, isFeat, rarityOf } from './data.js?v=0.7.3';
+import { prefOf, todayISO, weekKey, weekStartISO, monthKey, emit } from './util.js?v=0.7.3';
 
 export const visitsOf = (id) => S.visits.filter((v) => v.s === id);
 export const cardsOf = (id) => S.cards.filter((c) => c.s === id);
@@ -15,7 +15,10 @@ const pagesTotal = () => Math.floor(Object.values(S.days || {}).reduce((a, r) =>
 export const regularDays = (id) => new Set(S.visits.filter((v) => v.s === id && v.near).map((v) => v.d)).size;
 export function regularRank(days) { let r = 0; REGULAR.forEach((x, i) => { if (days >= x.n) r = i + 1; }); return r; }
 export function regularInfo(id) { const days = regularDays(id); const rank = regularRank(days); const next = REGULAR[rank] || null; const base = rank ? REGULAR[rank - 1].n : 0; return { days, rank, name: rank ? REGULAR[rank - 1].name : '', next, toNext: next ? next.n - days : 0, pct: next ? Math.round(((days - base) / (next.n - base)) * 100) : 100 }; }
-export function addXP(n) { const before = levelOf(S.xp); S.xp += n; const after = levelOf(S.xp); save(); emit('xp', { n, before, after }); return { before, after }; }
+// 物語のページ（行動で増えた分＋歩いた分）と、いまの巻
+export const storyPages = () => (S.pg || 0) + pagesTotal();
+export const volume = () => volOf(storyPages());
+export function addPages(n) { const before = volume(); S.pg = (S.pg || 0) + n; const d = todayISO(); S.pgDay = S.pgDay || {}; S.pgDay[d] = (S.pgDay[d] || 0) + n; const after = volume(); save(); emit('pages', { n, before, after }); return { before, after }; }
 function bump(kind, n = 1) { const d = todayISO(); S.daily = S.daily || {}; S.daily[d] = S.daily[d] || {}; S.daily[d][kind] = (S.daily[d][kind] || 0) + n; }
 const dailyCount = (kind) => ((S.daily || {})[todayISO()] || {})[kind] || 0;
 
@@ -66,10 +69,10 @@ export function weeklyMissions() {
 export function checkRewards() {
   const rewards = []; const wk = weekKey(); const d = todayISO(); const mk = monthKey();
   S.claimedW[wk] = S.claimedW[wk] || []; S.claimedD[d] = S.claimedD[d] || [];
-  for (const m of dailyMissions()) if (m.cur >= m.goal && !S.claimedD[d].includes(m.id)) { S.claimedD[d].push(m.id); addXP(XP.daily); rewards.push(`今日のお題「${m.name}」 +${XP.daily} XP`); }
-  for (const m of weeklyMissions()) if (m.cur >= m.goal && !S.claimedW[wk].includes(m.id)) { S.claimedW[wk].push(m.id); addXP(XP.weekly); rewards.push(`今週のお題「${m.name}」 +${XP.weekly} XP`); }
-  const sk = streakWeeks(); S.streakClaimed = S.streakClaimed || {}; if (sk >= 2 && !S.streakClaimed[wk]) { S.streakClaimed[wk] = sk; addXP(XP.streak); rewards.push(`${sk}週つづけて本屋へ +${XP.streak} XP`); }
-  for (const r of RALLIES) { if (!S.rallyDone[r.id] && r.stores.every((id) => hasStamp(id))) { S.rallyDone[r.id] = d; addXP(XP.rally); rewards.push(`ラリー制覇「${r.name}」 称号「${r.title}」 +${XP.rally} XP`); } }
+  for (const m of dailyMissions()) if (m.cur >= m.goal && !S.claimedD[d].includes(m.id)) { S.claimedD[d].push(m.id); addPages(PG.daily); rewards.push(`今日のお題「${m.name}」 +${PG.daily}ページ`); }
+  for (const m of weeklyMissions()) if (m.cur >= m.goal && !S.claimedW[wk].includes(m.id)) { S.claimedW[wk].push(m.id); addPages(PG.weekly); rewards.push(`今週のお題「${m.name}」 +${PG.weekly}ページ`); }
+  const sk = streakWeeks(); S.streakClaimed = S.streakClaimed || {}; if (sk >= 2 && !S.streakClaimed[wk]) { S.streakClaimed[wk] = sk; addPages(PG.streak); rewards.push(`${sk}週つづけて本屋へ +${PG.streak}ページ`); }
+  for (const r of RALLIES) { if (!S.rallyDone[r.id] && r.stores.every((id) => hasStamp(id))) { S.rallyDone[r.id] = d; addPages(PG.rally); rewards.push(`ラリー制覇「${r.name}」 称号「${r.title}」 +${PG.rally}ページ`); } }
   // 古い日の記録は間引く
   if (S.daily) for (const k of Object.keys(S.daily)) if (k < d.slice(0, 7)) delete S.daily[k];
   if (rewards.length) save(); return rewards;
@@ -85,24 +88,24 @@ export function checkin(st, { near, memo, trial }) {
   S.visits.push({ s: st.i, n: st.n, d: today, t: Date.now(), near, memo, trial: trial ? 1 : 0 });
   let gain = 0, isNew = false; const r = rarityOf(st); const extras = [];
   if (near) {
-    if (!stampedBefore) { S.stamps[st.i] = { d: today, r, trial: trial ? 1 : 0 }; isNew = true; gain += XP.shuFirst + (r === 3 ? XP.rare3 : r === 2 ? XP.rare2 : 0); bump('stamp'); }
-    else gain += visitedToday ? 0 : XP.shuRepeat;
-    if (feat && !featGot) { S.featDone[wk] = S.featDone[wk] || []; S.featDone[wk].push(st.i); gain += XP.feat; extras.push(`👑 今週の推し店 +${XP.feat} XP`); }
-    const regAfter = regularRank(regularDays(st.i)); if (regAfter > regBefore && regAfter >= 2) { regUp = regAfter; const x = XP.regular[regAfter - 1] || 0; gain += x; extras.push(`🏮 この店の常連度が「${REGULAR[regAfter - 1].name}」に（来店${regularDays(st.i)}日） +${x} XP`); }
-  } else gain += visitsOf(st.i).length <= 1 ? XP.sumiFirst : (visitedToday ? 0 : XP.sumiRepeat);
-  const lv = addXP(gain); save();
-  const rewards = [...extras, ...checkRewards()];
+    if (!stampedBefore) { S.stamps[st.i] = { d: today, r, trial: trial ? 1 : 0 }; isNew = true; gain += PG.shuFirst + (r === 3 ? PG.rare3 : r === 2 ? PG.rare2 : 0); bump('stamp'); }
+    else gain += visitedToday ? 0 : PG.shuRepeat;
+    if (feat && !featGot) { S.featDone[wk] = S.featDone[wk] || []; S.featDone[wk].push(st.i); gain += PG.feat; extras.push(`👑 今週の推し店 +${PG.feat}ページ`); }
+    const regAfter = regularRank(regularDays(st.i)); if (regAfter > regBefore && regAfter >= 2) { regUp = regAfter; const x = PG.regular[regAfter - 1] || 0; gain += x; extras.push(`🏮 この店の常連度が「${REGULAR[regAfter - 1].name}」に（来店${regularDays(st.i)}日） +${x}ページ`); }
+  } else gain += visitsOf(st.i).length <= 1 ? PG.sumiFirst : (visitedToday ? 0 : PG.sumiRepeat);
+  const lv = addPages(gain); save();
+  const rewards = [...extras, ...checkRewards()]; lv.after = volume(); // お題の分で巻が上がっても、この画面で知らせる
   emit('records'); return { gain, isNew, lv, rewards, r, regUp, ink: inkNow() };
 }
 export function toggleWant(id) { const i = S.wants.indexOf(id); if (i >= 0) S.wants.splice(i, 1); else { S.wants.push(id); bump('want'); } save(); const rewards = checkRewards(); emit('records'); return { on: i < 0, rewards }; }
 
 // ---- カード（本との出会い） ----
-export function cardBonus(st) { const today = todayISO(); const inStore = !!(S.stamps[st.i] && S.stamps[st.i].d === today) || visitsOf(st.i).some((v) => v.d === today && v.near); return { inStore, total: XP.card + (inStore ? XP.cardInStore : 0) }; }
+export function cardBonus(st) { const today = todayISO(); const inStore = !!(S.stamps[st.i] && S.stamps[st.i].d === today) || visitsOf(st.i).some((v) => v.d === today && v.near); return { inStore, total: PG.card + (inStore ? PG.cardInStore : 0) }; }
 export function noteLook(id) { const st = BYID.get(id); if (!st || st.demo) return []; const d = todayISO(); S.daily = S.daily || {}; S.daily[d] = S.daily[d] || {}; const a = (S.daily[d].lookIds = S.daily[d].lookIds || []); S.looks = S.looks || {}; if (!S.looks[id]) S.looks[id] = d; if (!a.includes(id)) { a.push(id); save(); return checkRewards(); } return []; }
 export function makeCard(st, book, why, pub) {
   const { total } = cardBonus(st); const today = todayISO();
   S.cards.push({ id: 'c' + Date.now(), s: st.i, sn: st.n, d: today, t: Date.now(), isbn: book ? book.isbn : '', title: book.title, author: book.author || '', publisher: book.publisher || '', cover: book.cover || '', why, pub: pub ? 1 : 0 });
-  bump('card'); const lv = addXP(total); save(); const rewards = checkRewards(); emit('records'); return { total, lv, rewards };
+  bump('card'); const lv = addPages(total); save(); const rewards = checkRewards(); lv.after = volume(); emit('records'); return { total, lv, rewards };
 }
 export function deleteCard(id) { S.cards = S.cards.filter((x) => x.id !== id); save(); emit('records'); }
 

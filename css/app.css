@@ -324,3 +324,10 @@ ol.steps li{margin:4px 0}
 .setting.stack>.avatar-ctl{width:100%;justify-content:flex-end}
 .list label.item .main{display:block}
 .list label.item .sub{display:block}
+.profile .ph .lvbig{white-space:nowrap;flex:none}
+.profile .ph .lvbig small{font-size:15px;font-weight:700;margin:0 1px}
+.linkish{border:none;background:none;padding:0;color:var(--shu);font-weight:700;display:inline-flex;align-items:center;gap:4px;font-size:16px;cursor:pointer}
+.linkish .ic{width:18px;height:18px}
+.icon-btn.sm{width:30px;height:30px;flex:none}
+.icon-btn.sm .ic{width:16px;height:16px}
+.profile .ph .tt{display:flex;align-items:center;gap:2px;font-size:18px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}

@@ -1,13 +1,13 @@
 // 画面の部品：見出し帯・タブ・店のシート・モーダル・スタンプの演出・カード・さがす・追加
-import { RANGE_M, SENSE_M, TERRITORY_M, XP, levelOf, xpForLevel, INK } from './config.js?v=0.7.0';
-import { S, save, inkRefill } from './state.js?v=0.7.0';
-import { STORES, BYID, FEAT, isFeat, rarityOf, rarityText, stampSVG, stampInk, search, addCustom, hideStore, renameStore, lookupIsbn, DATA_DATE } from './data.js?v=0.7.0';
-import * as G from './game.js?v=0.7.0';
-import * as MAP from './map.js?v=0.7.0';
-import { POS, setPos, startWatch, setTrial, setFollow, hasPos, jumped } from './position.js?v=0.7.0';
-import { sfx, haptic, unlock } from './audio.js?v=0.7.0';
-import { stampImage, cardImage, shareBlob } from './share.js?v=0.7.0';
-import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, on, emit, weekKey, gmapDir } from './util.js?v=0.7.0';
+import { RANGE_M, SENSE_M, TERRITORY_M, PG, pagesForVol, INK } from './config.js?v=0.7.3';
+import { S, save, inkRefill } from './state.js?v=0.7.3';
+import { STORES, BYID, FEAT, isFeat, rarityOf, rarityText, stampSVG, stampInk, search, addCustom, hideStore, renameStore, lookupIsbn, DATA_DATE } from './data.js?v=0.7.3';
+import * as G from './game.js?v=0.7.3';
+import * as MAP from './map.js?v=0.7.3';
+import { POS, setPos, startWatch, setTrial, setFollow, hasPos, jumped } from './position.js?v=0.7.3';
+import { sfx, haptic, unlock } from './audio.js?v=0.7.3';
+import { stampImage, cardImage, shareBlob } from './share.js?v=0.7.3';
+import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, on, emit, weekKey, gmapDir } from './util.js?v=0.7.3';
 
 export let currentView = 'map';
 export let currentSub = 'stamps';
@@ -28,9 +28,9 @@ export function switchView(v) {
 }
 export function setSub(s) { currentSub = s; emit('view', currentView); }
 export function refreshHud() {
-  const lv = levelOf(S.xp), cur = xpForLevel(lv), next = xpForLevel(lv + 1);
-  $('#lv-label').textContent = `Lv.${lv}`; $('#xp-fill').style.width = `${Math.round(((S.xp - cur) / (next - cur)) * 100)}%`;
-  $('#brand-title').textContent = G.currentTitle() || '本屋あるき見習い';
+  const vol = G.volume(), pg = G.storyPages(), cur = pagesForVol(vol), next = pagesForVol(vol + 1);
+  $('#lv-label').textContent = `第${vol}巻`; $('#xp-fill').style.width = `${Math.round(((pg - cur) / (next - cur)) * 100)}%`; $('#lv-btn').title = `第${vol}巻 ${pg}ページ（あと${next - pg}ページで第${vol + 1}巻）`;
+  $('#brand-title').textContent = S.settings.handle || G.currentTitle() || '本屋あるき見習い';
   const ink = G.inkState(); $('#ink-dots').innerHTML = Array.from({ length: ink.max }, (_, i) => `<i class="${i < ink.n ? '' : 'off'}"></i>`).join('');
   $('#tab-dot').hidden = true; // お題は達成と同時に受け取るので、赤い点はいまは使わない
 }
@@ -102,7 +102,7 @@ export function openSheet(id, quiet) {
     <div class="muted small">${esc(st.a || (st.custom ? '' : '住所の情報なし（地図データより）'))}　${esc(prefOf(st))}</div>
     <div class="muted small">${esc(distText)}</div>${st.demo || st.custom ? '' : `<div class="muted small">店の情報：${st.x ? 'チェーンの公式店舗一覧' : `OpenStreetMap（${DATA_DATE} 取得）`}。${st.c ? '最終確認 ' + st.c.slice(0, 4) + '年' + Number(st.c.slice(5)) + '月' + (st.cf || st.x ? '（公式の店舗一覧で確認）' : '') : '確認日の記録なし'}。${st.cf || st.x ? '' : '閉店や名前の変更が反映されていないことがあります'}</div>`}${st.demo ? '' : `<div class="reg"><span class="badge ${reg.rank >= 3 ? 'shu' : reg.rank >= 2 ? 'gold' : ''}">常連度 ${reg.rank ? esc(reg.name) : 'まだ'}</span><span class="muted small">来店 ${reg.days}日${reg.next ? `・あと${reg.toNext}日で「${esc(reg.next.name)}」` : '・最高位'}</span><div class="regbar"><i style="width:${reg.pct}%"></i></div></div>`}${rec}${hist}
     <div class="actions">
-      <button class="btn primary wide" data-act="checkin">${near ? (stamp ? `${icon('ink')}もう一度押す（来店）` : `${icon('ink')}スタンプを押す${feat ? `（+${XP.feat}）` : ''}`) : '来た記録だけ（スタンプなし）'}</button>
+      <button class="btn primary wide" data-act="checkin">${near ? (stamp ? `${icon('ink')}もう一度押す（来店）` : `${icon('ink')}スタンプを押す${feat ? `（+${PG.feat}ページ）` : ''}`) : '来た記録だけ（スタンプなし）'}</button>
       <button class="btn" data-act="card">${icon('barcode')}本と出会った</button>
       <button class="btn" data-act="want">${icon('star')}${want ? '行きたいを外す' : '行きたい'}</button>
       ${stamp ? `<button class="btn" data-act="share">${icon('share')}シェア</button>` : ''}${reg.rank >= 2 ? `<button class="btn" data-act="regshare">${icon('crown')}常連度シェア</button>` : ''}
@@ -124,7 +124,7 @@ export function closeSheet() { const s = $('#sheet'); s.hidden = true; s.dataset
 export function startCheckin(st, near) {
   const stamped = G.hasStamp(st.i); const feat = isFeat(st.i); const featGot = (S.featDone[weekKey()] || []).includes(st.i); const ink = G.inkState();
   if (near && !stamped && ink.n <= 0) { const m = Math.ceil(ink.nextMs / 60000); openModal(`<h2>インクが切れています</h2><div class="status-card sumi">スタンプを押すにはインクが要ります。あと${m}分で1つ回復します（最大${INK.max}、${INK.rechargeMs / 60000}分に1つ）。</div><div class="actions"><button class="btn ghost wide" id="ik-close">閉じる</button></div>`); $('#ik-close').onclick = closeModal; sfx.nope(); return; }
-  const note = near ? (stamped ? 'この店のスタンプはもう持っています。もう一度押すと少し経験値が入り、常連度が上がります。' : `射程内です。この店だけのスタンプ（${stars(rarityOf(st))}）が押せます。インクを1つ使います（残り${ink.n}）。${feat && !featGot ? ` 今週の推し店なので +${XP.feat} XP。` : ''}`) : '店から離れています（位置がないか、射程の外）。「来た記録」として自己申告で残します。スタンプは押せません。';
+  const note = near ? (stamped ? 'この店のスタンプはもう持っています。もう一度押すと少しページが増え、常連度が上がります。' : `射程内です。この店だけのスタンプ（${stars(rarityOf(st))}）が押せます。インクを1つ使います（残り${ink.n}）。${feat && !featGot ? ` 今週の推し店なので +${PG.feat} XP。` : ''}`) : '店から離れています（位置がないか、射程の外）。「来た記録」として自己申告で残します。スタンプは押せません。';
   openModal(`<h2>${esc(st.n)}</h2><div class="status-card ${near ? 'shu' : 'sumi'}">${esc(note)}</div>
     <div class="field"><label for="ci-memo">一言メモ（任意・100字まで）</label><textarea id="ci-memo" maxlength="100" placeholder="例：文庫の棚が広い。店員さんの手書きPOPがよかった"></textarea></div>
     <div class="note">位置はこの画面の中で距離を出すためだけに使い、どこにも送りません。記録はこの端末の中だけに残ります。</div>
@@ -138,9 +138,9 @@ export function showCapture(st, res, near) {
   $('#capture-box').innerHTML = `<div class="big">${stampSVG(st, near, 250, { rank: G.regularInfo(st.i).rank })}</div>
     <h2>${near ? (isNew ? `${esc(st.n)}のスタンプを押した！` : `${esc(st.n)}に、また来た`) : `${esc(st.n)}に来た（記録だけ）`}</h2>
     <div class="stars">${near ? stars(r) + ' ' + esc(rarityText(st)) : ''}</div>
-    <div class="gain">+${gain} XP</div>
-    ${lv.after > lv.before ? `<div class="lvup">レベルアップ！ Lv.${lv.after}</div>` : ''}${rewards.map((x) => `<div class="lvup">${esc(x)}</div>`).join('')}
-    <div class="actions" style="margin-top:18px"><button class="btn primary wide" id="cp-card">${icon('barcode')}この店で本と出会った → カード（+${XP.card}〜）</button>${near ? `<button class="btn wide" id="cp-share">${icon('share')}スタンプをシェア</button>` : ''}<button class="btn ghost wide" id="cp-close">閉じる</button></div>`;
+    <div class="gain">+${gain}ページ</div>
+    ${lv.after > lv.before ? `<div class="lvup">📖 第${lv.after}巻に入った！</div>` : ''}${rewards.map((x) => `<div class="lvup">${esc(x)}</div>`).join('')}
+    <div class="actions" style="margin-top:18px"><button class="btn primary wide" id="cp-card">${icon('barcode')}この店で本と出会った（+${PG.card}ページ〜）</button>${near ? `<button class="btn wide" id="cp-share">${icon('share')}スタンプをシェア</button>` : ''}<button class="btn ghost wide" id="cp-close">閉じる</button></div>`;
   $('#capture').hidden = false; $$('#capture .burst, #capture .confetti').forEach((el) => el.remove());
   if (near) { const bb = document.createElement('div'); bb.className = 'burst'; $('#capture').prepend(bb); if (isNew || regUp || lv.after > lv.before) confetti($('#capture'), [stampInk(st).main, '#d9a521', '#ffffff', '#6d4fc3', '#2e8b57']); }
   $('#cp-close').onclick = () => { $('#capture').hidden = true; openSheet(st.i, true); };
@@ -152,7 +152,7 @@ export async function shareStampUI(st, opts = {}) { try { const blob = await sta
 // ---------- カード ----------
 export function startCard(st) {
   openModal(`<h2>この店で本と出会った</h2><p class="hint">${esc(st.n)}</p>
-    <div class="note">カードは +${XP.card} XP。今日この店でスタンプを押していれば「店で出会った」+${XP.cardInStore}。</div>
+    <div class="note">カードは +${PG.card}ページ。今日この店でスタンプを押していれば「店で出会った」+${PG.cardInStore}ページ。</div>
     <div class="actions"><button class="btn primary wide" id="cd-scan">${icon('camera')}本の裏のバーコードを読む</button><button class="btn" id="cd-manual">ISBNを入力</button><button class="btn" id="cd-free">名前を自分で書く</button><button class="btn ghost wide" id="cd-cancel">やめる</button></div><div id="cd-area"></div>`);
   $('#cd-cancel').onclick = closeModal; $('#cd-manual').onclick = () => manualIsbn(st); $('#cd-free').onclick = () => cardForm(st, null); $('#cd-scan').onclick = () => scanIsbn(st);
 }
@@ -181,15 +181,15 @@ function cardForm(st, b) {
   openModal(`<h2>カードを作る</h2>
     <div class="card-full"><div class="cover">${b && b.cover ? `<img src="${esc(b.cover)}" alt="" referrerpolicy="no-referrer">` : '<div class="notitle">表紙なし</div>'}</div>
       <div style="flex:1;min-width:0">${has ? `<div><b>${esc(b.title)}</b></div><div class="muted small">${esc(b.author)}${b.publisher ? '／' + esc(b.publisher) : ''}</div>` : `<div class="field"><label for="cd-title">本の名前</label><input type="text" id="cd-title" placeholder="書名（わかれば著者も）"></div>`}
-      <div class="muted small" style="margin-top:6px">${esc(st.n)}　${fmtDate(todayISO())}</div><div class="muted small">${inStore ? '🏪 店で出会った +' + XP.cardInStore : ''}</div></div></div>
+      <div class="muted small" style="margin-top:6px">${esc(st.n)}　${fmtDate(todayISO())}</div><div class="muted small">${inStore ? '🏪 店で出会った +' + PG.cardInStore + 'ページ' : ''}</div></div></div>
     <div class="field"><label for="cd-why">なぜ手に取ったか（任意・100字まで）</label><textarea id="cd-why" maxlength="100" placeholder="例：表紙の青に目がとまった。店員さんの手書きPOPに「泣いた」とあった"></textarea></div>
     <label class="chk"><input type="checkbox" id="cd-pub"> このカードを公開する（本番では「みんなの出会い」に流れます。試作では「公開」の札が付くだけ）</label>
     <div class="note">表紙はopenBDから毎回表示するだけで、保存しません。記録はこの端末の中だけに残ります。</div>
-    <div class="actions"><button class="btn primary" id="cd-save">カードにする（+${total} XP）</button><button class="btn ghost" id="cd-cancel2">やめる</button></div>`);
+    <div class="actions"><button class="btn primary" id="cd-save">カードにする（+${total}ページ）</button><button class="btn ghost" id="cd-cancel2">やめる</button></div>`);
   $('#cd-cancel2').onclick = closeModal;
   $('#cd-save').onclick = () => { const title = has ? b.title : ($('#cd-title') ? $('#cd-title').value.trim() : ''); if (!title) { toast('本の名前を入れてください', 'warn'); return; }
     const book = Object.assign({ isbn: '', author: '', publisher: '', cover: '' }, b || {}, { title }); const res = G.makeCard(st, book, $('#cd-why').value.trim(), $('#cd-pub').checked);
-    closeModal(); applyMapStates(); refreshHud(); sfx.reveal(); haptic([30, 40, 30]); toast(`カードができました +${res.total} XP${res.lv.after > res.lv.before ? `　レベルアップ！ Lv.${res.lv.after}` : ''}`, 'ok'); res.rewards.forEach((x) => toast(x, 'ok')); setSub('cards'); switchView('zukan'); };
+    closeModal(); applyMapStates(); refreshHud(); sfx.reveal(); haptic([30, 40, 30]); toast(`カードができました +${res.total}ページ${res.lv.after > res.lv.before ? `　📖 第${res.lv.after}巻に入った！` : ''}`, 'ok'); res.rewards.forEach((x) => toast(x, 'ok')); setSub('cards'); switchView('zukan'); };
 }
 export function openCard(id) {
   const c = S.cards.find((x) => x.id === id); if (!c) return;
@@ -231,6 +231,20 @@ export async function makeAvatar(file) {
     let q = 0.86, out = cv.toDataURL('image/jpeg', q); while (out.length > 120000 && q > 0.4) { q -= 0.12; out = cv.toDataURL('image/jpeg', q); }
     return out;
   } finally { URL.revokeObjectURL(url); }
+}
+// ---------- ハンドルネーム ----------
+export const cleanHandle = (s) => String(s || '').replace(/[\u0000-\u001f\u007f]/g, '').replace(/\s+/g, ' ').trim().slice(0, 20);
+export function nameModal(after) {
+  const cur = S.settings.handle || '';
+  openModal(`<h2>ハンドルネーム</h2><p class="hint">見出し・プロフィール・その日の物語・シェアする画像に出ます。この端末の中だけに残ります。</p>
+    <div class="field"><label for="nm-in">名前（20字まで）</label><input type="text" id="nm-in" maxlength="20" value="${esc(cur)}" placeholder="例：本の虫" autocomplete="nickname"></div>
+    <div class="actions"><button class="btn primary" id="nm-ok">決める</button>${cur ? '<button class="btn ghost" id="nm-clear">外す</button>' : '<button class="btn ghost" id="nm-cancel">やめる</button>'}</div>`);
+  const inp = $('#nm-in'); inp.focus(); inp.select();
+  const finish = (v) => { S.settings.handle = v; save(); closeModal(); refreshHud(); if (after) after(); toast(v ? `「${v}」にしました` : '名前を外しました', 'ok'); };
+  $('#nm-ok').onclick = () => { const v = cleanHandle(inp.value); if (!v) { toast('名前を入れてください', 'warn'); return; } finish(v); };
+  inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') $('#nm-ok').click(); });
+  if ($('#nm-clear')) $('#nm-clear').onclick = () => finish('');
+  if ($('#nm-cancel')) $('#nm-cancel').onclick = closeModal;
 }
 export function devRefillInk() { inkRefill(); refreshHud(); toast('インクを満タンにしました（試作用）'); }
 

@@ -1,10 +1,10 @@
 // 旅の記録：歩いた距離（ページ）・その日の物語・月のふり返り・行きたい店のお知らせ・投稿の記録・Googleマップの★の読み込み
 // 位置は、アプリを開いて現在地を追っているあいだだけ使う（ブラウザの決まりで、閉じているあいだは測れない）
-import { WALK, RANGE_M } from './config.js?v=0.7.0';
-import { S, save } from './state.js?v=0.7.0';
-import { STORES, BYID, rarityOf } from './data.js?v=0.7.0';
-import * as G from './game.js?v=0.7.0';
-import { dist, todayISO, prefOf, hash32, fmtDist, monthKey } from './util.js?v=0.7.0';
+import { WALK, RANGE_M } from './config.js?v=0.7.3';
+import { S, save } from './state.js?v=0.7.3';
+import { STORES, BYID, rarityOf } from './data.js?v=0.7.3';
+import * as G from './game.js?v=0.7.3';
+import { dist, todayISO, prefOf, hash32, fmtDist, monthKey, emit } from './util.js?v=0.7.3';
 
 function dayRec(d = todayISO()) { S.days = S.days || {}; const r = (S.days[d] = S.days[d] || { m: 0, v: 0 }); r.pass = r.pass || {}; r.alert = r.alert || {}; return r; }
 export const pagesOf = (m) => Math.floor((m || 0) / WALK.pageM);
@@ -26,10 +26,11 @@ export function track(POS, jumpedNow) {
   const d = dist(last.lat, last.lon, POS.lat, POS.lon), dt = (now - last.t) / 1000;
   if (dt > WALK.gapS) { last = { lat: POS.lat, lon: POS.lon, t: now }; return; } // 間があいた（閉じていた）ら、その間は数えない
   if (d < Math.max(WALK.minMoveM, acc * 0.6)) return;
-  const v = d / Math.max(dt, 1); const day = dayRec();
+  const v = d / Math.max(dt, 1); const day = dayRec(); const volBefore = G.volume();
   if (v <= WALK.walkMaxMps) day.m = Math.round(day.m + d); else if (v <= WALK.rideMaxMps) day.v = Math.round((day.v || 0) + d);
   if (!day.t0) day.t0 = now; day.t1 = now;
   last = { lat: POS.lat, lon: POS.lon, t: now }; prune(); save();
+  const volAfter = G.volume(); if (volAfter > volBefore) emit('volume', { after: volAfter });
 }
 function prune() { const keys = Object.keys(S.days || {}); if (keys.length <= 420) return; keys.sort(); for (const k of keys.slice(0, keys.length - 400)) delete S.days[k]; }
 
@@ -102,7 +103,7 @@ export function chapter(date = todayISO()) {
   const isEmpty = !lines.length;
   if (!isEmpty) lines.push({ s: rnd(['続きは、また明日。', '今日のしおりは、ここに。', 'また次のページへ。'], 'close') });
   const [y, mo, dd] = date.split('-').map(Number); const dow = new Date(y, mo - 1, dd).getDay();
-  return { no, date, title: `第${no}章　${mo}月${dd}日（${WD[dow]}）`, lines, empty: isEmpty, blank: date === todayISO() ? 'まだ白紙のページ。現在地を追って歩くと、歩いた分だけページが増え、本屋に寄ると物語が書き足されます。' : 'この日は白紙のページ。', m: rec.m || 0, v: rec.v || 0, pages: pagesOf(rec.m), km: kmOf(rec.m), steps: stepsOf(rec.m), nVisits: vis.length, nStores: visited.size, nCards: cards.length };
+  return { no, date, title: `第${no}章　${mo}月${dd}日（${WD[dow]}）`, lines, empty: isEmpty, blank: date === todayISO() ? 'まだ白紙のページ。現在地を追って歩くと、歩いた分だけページが増え、本屋に寄ると物語が書き足されます。' : 'この日は白紙のページ。', m: rec.m || 0, v: rec.v || 0, pages: pagesOf(rec.m), earned: ((S.pgDay || {})[date] || 0) + pagesOf(rec.m), km: kmOf(rec.m), steps: stepsOf(rec.m), nVisits: vis.length, nStores: visited.size, nCards: cards.length };
 }
 export function chapters(limit = 30) { return activeDates().reverse().slice(0, limit).map((d) => chapter(d)); }
 
@@ -113,9 +114,10 @@ export function periodStats(prefix) {
   const stampsNew = Object.values(S.stamps).filter((x) => x.d.startsWith(prefix)).length;
   const cards = S.cards.filter((c) => c.d.startsWith(prefix)).length;
   let m = 0; for (const [d, r] of Object.entries(S.days || {})) if (d.startsWith(prefix)) m += r.m || 0;
+  let act = 0; for (const [d, n] of Object.entries(S.pgDay || {})) if (d.startsWith(prefix)) act += n || 0;
   const per = {}; vis.forEach((v) => { (per[v.s] = per[v.s] || new Set()).add(v.d); });
   const top = Object.entries(per).map(([id, s]) => ({ st: BYID.get(id), days: s.size, reg: G.regularInfo(id) })).filter((x) => x.st).sort((a, b) => b.days - a.days).slice(0, 3);
-  return { prefix, visitDays: days.size, visits: vis.length, stores: stores.size, stampsNew, cards, m, pages: pagesOf(m), top };
+  return { prefix, visitDays: days.size, visits: vis.length, stores: stores.size, stampsNew, cards, m, pages: pagesOf(m), earned: act + pagesOf(m), top };
 }
 export function monthsBack(n) { const out = []; const d = new Date(); d.setDate(1); for (let i = 0; i < n; i++) { out.unshift(monthKey(d)); d.setMonth(d.getMonth() - 1); } return out; }
 

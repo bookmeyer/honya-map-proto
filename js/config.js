@@ -1,5 +1,5 @@
 // 設定値（数字はここだけで変える）
-export const APP_VER = '0.7.0';
+export const APP_VER = '0.7.3';
 export const STORAGE_KEY = 'honya_map_v3';
 export const LEGACY_KEYS = ['honya_map_v2'];
 
@@ -16,16 +16,18 @@ export const WALK = { pageM: 100, stepM: 0.7, minMoveM: 12, maxAccM: 60, walkMax
 // 常連度：同じ店でスタンプを押した「日数」で上がる（たくさんの店に行けない人の楽しみ）
 export const REGULAR = [{ n: 1, name: 'はじめまして' }, { n: 3, name: '顔なじみ' }, { n: 5, name: '常連' }, { n: 10, name: 'ぬし' }, { n: 20, name: '名物客' }, { n: 50, name: '殿堂入り' }];
 
-export const XP = {
-  shuFirst: 300, shuRepeat: 60, sumiFirst: 100, sumiRepeat: 20,
-  card: 400, cardInStore: 200,
-  rare2: 100, rare3: 500, feat: 500,
-  daily: 80, weekly: 200, rally: 1000, streak: 100,
-  regular: [0, 150, 300, 600, 1000, 2000], // 常連度が上がったとき（段ごと）
+// 物語のページ：スタンプ・本との出会い・お題などで増える（歩いた道のりも 100m＝1ページで足される）
+export const PG = {
+  shuFirst: 30, shuRepeat: 6, sumiFirst: 10, sumiRepeat: 2,
+  card: 40, cardInStore: 20,
+  rare2: 10, rare3: 50, feat: 50,
+  daily: 8, weekly: 20, rally: 100, streak: 10,
+  regular: [0, 15, 30, 60, 100, 200], // 常連度が上がったとき（段ごと）
 };
-export const levelOf = (xp) => Math.floor(Math.sqrt(Math.max(xp, 0) / 150)) + 1;
-export const xpForLevel = (lv) => (lv - 1) ** 2 * 150;
-export const frameOf = (lv) => (lv >= 8 ? 3 : lv >= 5 ? 2 : lv >= 3 ? 1 : 0);
+// 巻：ページがたまると次の巻へ（第2巻＝15ページ、第3巻＝60、第4巻＝135、第5巻＝240 …）
+export const volOf = (pages) => Math.floor(Math.sqrt(Math.max(pages, 0) / 15)) + 1;
+export const pagesForVol = (v) => (v - 1) ** 2 * 15;
+export const frameOf = (v) => (v >= 8 ? 3 : v >= 5 ? 2 : v >= 3 ? 1 : 0);
 
 export const STYLE_LIGHT = 'https://tiles.openfreemap.org/styles/liberty';
 export const STYLE_DARK = 'https://tiles.openfreemap.org/styles/dark';

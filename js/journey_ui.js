@@ -1,14 +1,14 @@
 // 旅の記録の画面：行きたい店のお知らせ・この辺りの行きたい店・今日の物語・月のふり返り・投稿の記録・Googleマップの★の読み込み
-import { S, save } from './state.js?v=0.7.0';
-import { STORES, BYID, addCustom } from './data.js?v=0.7.0';
-import * as J from './journey.js?v=0.7.0';
-import * as G from './game.js?v=0.7.0';
-import * as MAP from './map.js?v=0.7.0';
-import { POS, hasPos } from './position.js?v=0.7.0';
-import { sfx, haptic } from './audio.js?v=0.7.0';
-import { storyImage, shareBlob } from './share.js?v=0.7.0';
-import { toast, openModal, closeModal, openSheet, applyMapStates, updateNear, refreshHud } from './ui.js?v=0.7.0';
-import { $, $$, esc, fmtDist, todayISO, icon, arrowOf, bearing, dist, gmapDir } from './util.js?v=0.7.0';
+import { S, save } from './state.js?v=0.7.3';
+import { STORES, BYID, addCustom } from './data.js?v=0.7.3';
+import * as J from './journey.js?v=0.7.3';
+import * as G from './game.js?v=0.7.3';
+import * as MAP from './map.js?v=0.7.3';
+import { POS, hasPos } from './position.js?v=0.7.3';
+import { sfx, haptic } from './audio.js?v=0.7.3';
+import { storyImage, shareBlob } from './share.js?v=0.7.3';
+import { toast, openModal, closeModal, openSheet, applyMapStates, updateNear, refreshHud } from './ui.js?v=0.7.3';
+import { $, $$, esc, fmtDist, todayISO, icon, arrowOf, bearing, dist, gmapDir } from './util.js?v=0.7.3';
 
 const dirLink = (st, label = '道順') => `<a class="btn" href="${gmapDir(st)}" target="_blank" rel="noopener" data-stop>${label}</a>`;
 const stopLinks = (root) => $$('[data-stop]', root).forEach((a) => a.addEventListener('click', (e) => e.stopPropagation()));
@@ -54,10 +54,11 @@ export function renderRadarWants() {
 // ---------- 今日の物語 ----------
 function chapterHTML(ch) {
   const body = ch.empty ? `<p class="muted">${esc(ch.blank)}</p>` : ch.lines.map((l) => `<p>${esc(l.s)}${l.url ? ` <a href="${esc(l.url)}" target="_blank" rel="noopener">投稿を見る</a>` : ''}</p>`).join('');
-  const stats = [`${icon('book')}${ch.pages}ページ`, `${ch.km}km`, `歩数の目安 ${J.stepsOf(ch.m).toLocaleString()}歩`, ch.nStores ? `本屋 ${ch.nStores}店` : '', ch.nCards ? `出会った本 ${ch.nCards}冊` : '', ch.v >= 1000 ? `乗り物 ${J.kmOf(ch.v)}km` : ''].filter(Boolean);
-  return `<div class="story"><div class="ch-sub">本屋の地図　その日の物語</div><div class="ch-title">${esc(ch.title)}</div><div class="story-body">${body}</div><div class="story-stats">${stats.map((s) => `<span>${s}</span>`).join('')}</div></div>`;
+  const walked = ch.m >= 100;
+  const stats = [`${icon('book')}この日 +${ch.earned}ページ`, walked ? `歩いて${ch.pages}ページ・${ch.km}km` : '', walked ? `歩数の目安 ${J.stepsOf(ch.m).toLocaleString()}歩` : '', ch.nStores ? `本屋 ${ch.nStores}店` : '', ch.nCards ? `出会った本 ${ch.nCards}冊` : '', ch.v >= 1000 ? `乗り物 ${J.kmOf(ch.v)}km` : ''].filter(Boolean);
+  return `<div class="story"><div class="ch-sub">本屋の地図　${S.settings.handle ? esc(S.settings.handle) + 'の物語' : 'その日の物語'}</div><div class="ch-title">${esc(ch.title)}</div><div class="story-body">${body}</div><div class="story-stats">${stats.map((s) => `<span>${s}</span>`).join('')}</div></div>`;
 }
-async function shareChapter(date) { try { const ch = J.chapter(date); const blob = await storyImage(ch, S.settings.avatar); const r = await shareBlob(blob, `story-${date}.png`, ch.title, `${ch.title}　${ch.pages}ページ歩いて、本屋${ch.nStores}店 #本屋の地図`); if (r !== 'cancel') { G.noteShare('story', '', r); toast(r === 'saved' ? '画像を保存しました' : 'シェアしました', 'ok'); renderStory(); } } catch (e) { toast('画像にできませんでした', 'warn'); } }
+async function shareChapter(date) { try { const ch = J.chapter(date); const blob = await storyImage(ch, S.settings.avatar, S.settings.handle); const r = await shareBlob(blob, `story-${date}.png`, ch.title, `${ch.title}　+${ch.earned}ページ・本屋${ch.nStores}店 #本屋の地図`); if (r !== 'cancel') { G.noteShare('story', '', r); toast(r === 'saved' ? '画像を保存しました' : 'シェアしました', 'ok'); renderStory(); } } catch (e) { toast('画像にできませんでした', 'warn'); } }
 export function renderStory() {
   const box = $('#story-today'), list = $('#chapters'); if (!box) return;
   const ch = J.chapter(todayISO());
@@ -95,12 +96,12 @@ export function renderMonth() {
   const tile = (l, n, s) => `<div class="mtile"><div class="l">${l}</div><div class="n">${n}</div><div class="s">${s || '&nbsp;'}</div></div>`;
   const max = Math.max(1, ...stats.map((s) => s.visitDays));
   el.innerHTML = `<h3>${y}年${m}月のふり返り</h3>
-    <div class="mtiles">${tile('本屋に行った日', cur.visitDays + '日', diff(cur.visitDays, prev.visitDays))}${tile('本屋に行った回数', cur.visits + '回', diff(cur.visits, prev.visits))}${tile('行った店', cur.stores + '店', `新しいスタンプ ${cur.stampsNew}`)}${tile('歩いたページ', cur.pages + 'ページ', `${J.kmOf(cur.m)}km・歩数の目安 ${J.stepsOf(cur.m).toLocaleString()}歩`)}</div>
+    <div class="mtiles">${tile('本屋に行った日', cur.visitDays + '日', diff(cur.visitDays, prev.visitDays))}${tile('本屋に行った回数', cur.visits + '回', diff(cur.visits, prev.visits))}${tile('行った店', cur.stores + '店', `新しいスタンプ ${cur.stampsNew}`)}${tile('増えたページ', cur.earned + 'ページ', `うち歩いて ${cur.pages}ページ・${J.kmOf(cur.m)}km`)}</div>
     <h3>月ごとの「本屋に行った日」</h3>
     <div class="mbars">${stats.map((s) => `<div class="mb"><div class="bw"><div class="bar" style="height:${Math.round((s.visitDays / max) * 100)}%"><span>${s.visitDays}</span></div></div><div class="lbl">${+s.prefix.slice(5)}月</div></div>`).join('')}</div>
     <h3>今月よく行った店</h3>
     ${cur.top.length ? `<div class="list">${cur.top.map((t, i) => `<div class="item" data-id="${esc(t.st.i)}"><div class="main"><div class="name">${i + 1}. ${esc(t.st.n)}</div><div class="sub">今月 ${t.days}日${t.reg.rank ? `・常連度「${esc(t.reg.name)}」（通算 ${t.reg.days}日）` : ''}</div></div></div>`).join('')}</div>` : '<div class="muted small">今月はまだ本屋の記録がありません。</div>'}
-    <div class="note">${y}年は、ここまで ${yr.visitDays}日 本屋に行っています（${yr.visits}回・${yr.stores}店・出会った本 ${yr.cards}冊・歩いて ${yr.pages}ページ）。</div>`;
+    <div class="note">${y}年は、ここまで ${yr.visitDays}日 本屋に行っています（${yr.visits}回・${yr.stores}店・出会った本 ${yr.cards}冊・増えたページ ${yr.earned}）。</div>`;
   $$('#month .item[data-id]').forEach((it) => it.addEventListener('click', () => openSheet(it.dataset.id)));
 }
 

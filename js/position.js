@@ -1,8 +1,8 @@
 // 現在地：本物（端末の位置）と、お試し歩き（地図を押した場所）
 // 位置はこの端末の中で距離を出すためだけに使う。保存するのは最後の場所（丸めた値）だけ
-import { JUMP_MPS, JUMP_COOLDOWN_MS } from './config.js?v=0.7.0';
-import { S, save } from './state.js?v=0.7.0';
-import { dist, emit } from './util.js?v=0.7.0';
+import { JUMP_MPS, JUMP_COOLDOWN_MS } from './config.js?v=0.7.3';
+import { S, save } from './state.js?v=0.7.3';
+import { dist, emit } from './util.js?v=0.7.3';
 
 export const POS = { lat: null, lon: null, acc: null, heading: null, fake: false, watchId: null, at: 0, follow: false, jumpUntil: 0, lastErr: null };
 
