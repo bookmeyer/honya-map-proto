@@ -1,19 +1,19 @@
-// 画面：レーダー・図鑑・お題・設定・最初の案内
-import { APP_VER, RANGE_M, PG, pagesForVol, frameOf, PREFS } from './config.js?v=0.9.2';
-import { S, save, exportJSON, parseImport, replace, reset } from './state.js?v=0.9.2';
-import { STORES, BYID, FEAT, RALLIES, isFeat, rarityOf, rarityText, stampSVG, unhideAll, rebuild, DATA_DATE } from './data.js?v=0.9.2';
-import * as G from './game.js?v=0.9.2';
-import * as MAP from './map.js?v=0.9.2';
-import { POS, hasPos } from './position.js?v=0.9.2';
-import { sfx, haptic } from './audio.js?v=0.9.2';
-import { profileImage, shareBlob } from './share.js?v=0.9.2';
-import { toast, openModal, closeModal, confirmBox, openSheet, openCard, switchView, setSub, refreshHud, applyMapStates, updateNear, locate, setTrialUI, warp, makeAvatar, nameModal, cleanHandle, NEAR, currentSub } from './ui.js?v=0.9.2';
+// 画面：ちかく（旧レーダー）・めぐり帳（旧図鑑）・ラリー（旧お題）・設定・最初の案内
+import { APP_VER, RANGE_M, PG, pagesForVol, frameOf, PREFS } from './config.js?v=0.9.3';
+import { S, save, exportJSON, parseImport, replace, reset } from './state.js?v=0.9.3';
+import { STORES, BYID, FEAT, RALLIES, isFeat, rarityOf, rarityText, stampSVG, unhideAll, rebuild, DATA_DATE } from './data.js?v=0.9.3';
+import * as G from './game.js?v=0.9.3';
+import * as MAP from './map.js?v=0.9.3';
+import { POS, hasPos } from './position.js?v=0.9.3';
+import { sfx, haptic } from './audio.js?v=0.9.3';
+import { profileImage, shareBlob } from './share.js?v=0.9.3';
+import { toast, openModal, closeModal, confirmBox, openSheet, openCard, switchView, setSub, refreshHud, applyMapStates, updateNear, locate, setTrialUI, warp, makeAvatar, nameModal, cleanHandle, NEAR, currentSub } from './ui.js?v=0.9.3';
 import * as JU from './journey_ui.js?v=0.6.3';
-import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, weekKey } from './util.js?v=0.9.2';
+import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, weekKey } from './util.js?v=0.9.3';
 
 const empty = (ic, text) => `<div class="empty">${icon(ic)}<div>${text}</div></div>`;
 
-// ---------- レーダー ----------
+// ---------- ちかく（view-radar） ----------
 const LEGEND = [['#FF6A48', '本屋'], ['#B9794A', '古書店'], ['#1B1B1B', '秘境の本屋'], ['#2F9BFF', '図書館'], ['#4FC07A', 'スタンプ済み'], ['#FFD447', '射程内（光の輪）']];
 function renderLegend() { const el = $('#radar-legend'); if (el) el.innerHTML = '<span class="lg-t">ピンの色</span>' + LEGEND.map(([c, t]) => `<span class="lg"><i style="background:${c}"></i>${t}</span>`).join(''); }
 export function renderRadar() {
@@ -25,7 +25,7 @@ export function renderRadar() {
   $$('#radar-list .item').forEach((el) => el.addEventListener('click', () => openSheet(el.dataset.id)));
 }
 
-// ---------- 図鑑 ----------
+// ---------- めぐり帳（view-zukan） ----------
 export function renderZukan() {
   const st = G.stats(); const lv = G.volume(); const pgs = G.storyPages(); const title = G.currentTitle();
   $('#profile').innerHTML = `<div class="ph">${S.settings.avatar ? `<img class="avatar big" src="${S.settings.avatar}" alt="">` : ''}<div class="lvbig"><small>第</small>${lv}<small>巻</small></div><div style="min-width:0"><div class="tt">${S.settings.handle ? `${esc(S.settings.handle)}<button class="icon-btn sm" id="pf-name" aria-label="名前を変える">${icon('pen')}</button>` : `<button class="linkish" id="pf-name">${icon('pen')}名前を付ける</button>`}</div><div class="t">称号「${esc(title || '本屋あるき見習い')}」</div><div class="t">📖 ${pgs}ページ（あと${pagesForVol(lv + 1) - pgs}ページで第${lv + 1}巻）${st.streak ? `　🔥 ${st.streak}週連続` : ''}<br>うち歩いて ${st.pages}ページ</div></div><button class="btn" id="pf-share" style="margin-left:auto">${icon('share')}</button></div>
@@ -56,7 +56,7 @@ export function renderZukan() {
   $('#prefs').innerHTML = PREFS.map(([n]) => { const c = pc[n] || 0; return `<div class="p ${c >= 3 ? 'v2' : c ? 'v1' : ''}" title="${esc(n)} ${c}">${esc(n.replace(/[都府県]$/, ''))}</div>`; }).join('');
 }
 
-// ---------- お題 ----------
+// ---------- ラリー（view-mission）：今日・今週のお題、推し店、ご当地ラリー、実績 ----------
 export function renderMissions() {
   const wk = weekKey(), d = todayISO(); const cw = S.claimedW[wk] || [], cd = S.claimedD[d] || [];
   $('#day-label').textContent = `${fmtDate(d)}`; $('#week-label').textContent = `${wk}・月曜から`;

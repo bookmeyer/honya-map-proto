@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+P+One&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
-<link rel="stylesheet" href="css/app.css?v=0.9.2">
+<link rel="stylesheet" href="css/app.css?v=0.9.3">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -79,9 +79,9 @@
     </div>
   </section>
 
-  <section id="view-radar" class="view" aria-label="レーダー">
+  <section id="view-radar" class="view" aria-label="ちかく">
     <div class="pane">
-      <h2>レーダー</h2>
+      <h2>ちかく</h2>
       <div id="radar-legend" class="legend"></div>
       <div id="radar-status" class="status-card"></div>
       <div id="radar-list" class="list"></div>
@@ -89,7 +89,7 @@
     </div>
   </section>
 
-  <section id="view-zukan" class="view" aria-label="図鑑">
+  <section id="view-zukan" class="view" aria-label="めぐり帳">
     <div class="pane">
       <div class="profile" id="profile"></div>
       <div class="segmented" role="tablist">
@@ -103,7 +103,7 @@
     </div>
   </section>
 
-  <section id="view-mission" class="view" aria-label="お題">
+  <section id="view-mission" class="view" aria-label="ラリー">
     <div class="pane">
       <h3>今日のお題 <span class="muted" id="day-label"></span></h3>
       <div id="daily-list" class="mlist"></div>
@@ -125,9 +125,9 @@
 
 <nav id="tabs" aria-label="画面の切り替え">
   <button data-view="map" class="active"><svg class="ic"><use href="#i-map"></use></svg><span>地図</span></button>
-  <button data-view="radar"><svg class="ic"><use href="#i-radar"></use></svg><span>レーダー</span></button>
-  <button data-view="zukan"><svg class="ic"><use href="#i-book"></use></svg><span>図鑑</span></button>
-  <button data-view="mission"><svg class="ic"><use href="#i-flag"></use></svg><span>お題</span><i id="tab-dot" class="dot" hidden></i></button>
+  <button data-view="radar"><svg class="ic"><use href="#i-radar"></use></svg><span>ちかく</span></button>
+  <button data-view="zukan"><svg class="ic"><use href="#i-book"></use></svg><span>めぐり帳</span></button>
+  <button data-view="mission"><svg class="ic"><use href="#i-flag"></use></svg><span>ラリー</span><i id="tab-dot" class="dot" hidden></i></button>
 </nav>
 
 <div id="sheet" class="sheet" hidden role="dialog" aria-label="店"><div class="handle"></div><button class="icon-btn close" id="sheet-close" aria-label="閉じる"><svg class="ic"><use href="#i-close"></use></svg></button><div id="sheet-body"></div></div>
@@ -138,6 +138,6 @@
 <div id="toasts" aria-live="polite"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
-<script type="module" src="js/main.js?v=0.9.2"></script>
+<script type="module" src="js/main.js?v=0.9.3"></script>
 </body>
 </html>
