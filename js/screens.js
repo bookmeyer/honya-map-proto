@@ -1,15 +1,16 @@
 // 画面：ちかく（旧レーダー）・めぐり帳（旧図鑑）・ラリー（旧お題）・設定・最初の案内
-import { APP_VER, RANGE_M, PG, pagesForVol, frameOf, PREFS } from './config.js?v=0.9.3';
-import { S, save, exportJSON, parseImport, replace, reset } from './state.js?v=0.9.3';
-import { STORES, BYID, FEAT, RALLIES, isFeat, rarityOf, rarityText, stampSVG, unhideAll, rebuild, DATA_DATE } from './data.js?v=0.9.3';
-import * as G from './game.js?v=0.9.3';
-import * as MAP from './map.js?v=0.9.3';
-import { POS, hasPos } from './position.js?v=0.9.3';
-import { sfx, haptic } from './audio.js?v=0.9.3';
-import { profileImage, shareBlob } from './share.js?v=0.9.3';
-import { toast, openModal, closeModal, confirmBox, openSheet, openCard, switchView, setSub, refreshHud, applyMapStates, updateNear, locate, setTrialUI, warp, makeAvatar, nameModal, cleanHandle, NEAR, currentSub } from './ui.js?v=0.9.3';
-import * as JU from './journey_ui.js?v=0.6.3';
-import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, weekKey } from './util.js?v=0.9.3';
+import { APP_VER, RANGE_M, PG, pagesForVol, frameOf, PREFS } from './config.js?v=0.10.0';
+import { S, save, exportJSON, parseImport, replace, reset } from './state.js?v=0.10.0';
+import { STORES, BYID, FEAT, RALLIES, isFeat, rarityOf, rarityText, stampSVG, unhideAll, rebuild, DATA_DATE } from './data.js?v=0.10.0';
+import * as G from './game.js?v=0.10.0';
+import * as MAP from './map.js?v=0.10.0';
+import { POS, hasPos } from './position.js?v=0.10.0';
+import { sfx, haptic } from './audio.js?v=0.10.0';
+import { profileImage, shareBlob } from './share.js?v=0.10.0';
+import { toast, openModal, closeModal, confirmBox, openSheet, openCard, switchView, setSub, refreshHud, applyMapStates, updateNear, locate, setTrialUI, warp, makeAvatar, nameModal, cleanHandle, joinModal, NEAR, currentSub } from './ui.js?v=0.10.0';
+import * as JU from './journey_ui.js?v=0.10.0';
+import * as E from './events.js?v=0.10.0';
+import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, weekKey } from './util.js?v=0.10.0';
 
 const empty = (ic, text) => `<div class="empty">${icon(ic)}<div>${text}</div></div>`;
 
@@ -30,14 +31,14 @@ export function renderZukan() {
   const st = G.stats(); const lv = G.volume(); const pgs = G.storyPages(); const title = G.currentTitle();
   $('#profile').innerHTML = `<div class="ph">${S.settings.avatar ? `<img class="avatar big" src="${S.settings.avatar}" alt="">` : ''}<div class="lvbig"><small>第</small>${lv}<small>巻</small></div><div style="min-width:0"><div class="tt">${S.settings.handle ? `${esc(S.settings.handle)}<button class="icon-btn sm" id="pf-name" aria-label="名前を変える">${icon('pen')}</button>` : `<button class="linkish" id="pf-name">${icon('pen')}名前を付ける</button>`}</div><div class="t">称号「${esc(title || '本屋あるき見習い')}」</div><div class="t">📖 ${pgs}ページ（あと${pagesForVol(lv + 1) - pgs}ページで第${lv + 1}巻）${st.streak ? `　🔥 ${st.streak}週連続` : ''}<br>うち歩いて ${st.pages}ページ</div></div><button class="btn" id="pf-share" style="margin-left:auto">${icon('share')}</button></div>
     <div class="stats">${[['スタンプ', st.stamps], ['行きつけ', st.regulars], ['カード', st.cards], ['県', `${st.prefs}/47`]].map(([l, n]) => `<div class="s"><div class="n">${n}</div><div class="l">${l}</div></div>`).join('')}</div>
-    <div class="titles">${(() => { const all = G.titles(); const got = all.filter((t) => t.ok); const next = all.filter((t) => !t.ok).slice(0, 3); const rest = all.length - got.length - next.length; return got.map((t) => `<span class="t">🏅 ${esc(t.name)}</span>`).join('') + next.map((t) => `<span class="t off" title="${esc(t.need)}">${esc(t.name)}（${esc(t.need)}）</span>`).join('') + (rest > 0 ? `<span class="t off">ほか${rest}</span>` : ''); })()}</div>`;
+    <div class="titles">${(() => { const all = G.titles(); const got = all.filter((t) => t.ok); const next = all.filter((t) => !t.ok).slice(0, 3); const rest = all.length - got.length - next.length; return [...got.map((t) => t.name), ...(S.evTitles || []).map((t) => t.name)].map((n) => `<span class="t">🏅 ${esc(n)}</span>`).join('') + next.map((t) => `<span class="t off" title="${esc(t.need)}">${esc(t.name)}（${esc(t.need)}）</span>`).join('') + (rest > 0 ? `<span class="t off">ほか${rest}</span>` : ''); })()}</div>`;
   $('#pf-name').onclick = () => nameModal(renderZukan);
   $('#pf-share').onclick = async () => { try { const ids = Object.keys(S.stamps); const top = ids.map((id) => BYID.get(id)).filter(Boolean).sort((a, b) => rarityOf(b) - rarityOf(a)); const blob = await profileImage({ level: lv, title, st, topStamps: top, avatar: S.settings.avatar, handle: S.settings.handle }); const r = await shareBlob(blob, 'honya-profile.png', '本めぐり', `${S.settings.handle ? S.settings.handle + '　' : ''}第${lv}巻 ${title} スタンプ${st.stamps} #本めぐり`); if (r !== 'cancel') G.noteShare('profile', '', r); if (r !== 'cancel') toast(r === 'saved' ? '画像を保存しました' : 'シェアしました', 'ok'); } catch (e) { toast('画像にできませんでした', 'warn'); } };
   $$('.segmented button').forEach((b) => b.classList.toggle('active', b.dataset.sub === currentSub));
   $$('.sub').forEach((el) => el.classList.toggle('active', el.id === 'sub-' + currentSub));
   const fr = frameOf(lv); const ids = Object.keys(S.stamps);
   const stamped = ids.map((id) => ({ st: BYID.get(id), d: S.stamps[id].d, trial: S.stamps[id].trial })).filter((x) => x.st).sort((a, b) => b.d.localeCompare(a.d));
-  $('#stamp-grid').innerHTML = stamped.length ? `<div class="hint" style="grid-column:1/-1">${fr ? `第${lv}巻の額縁：${['', '銅', '銀', '金'][fr]}` : '第3巻になるとスタンプに額縁が付きます'}　スタンプは全部で ${STORES.length.toLocaleString()}種類</div>` + stamped.map(({ st, d, trial }) => { const reg = G.regularInfo(st.i); return `<div class="st f${fr}" data-id="${esc(st.i)}">${stampSVG(st, true, 76, { rank: reg.rank })}<div class="n">${esc(st.n)}</div>${reg.rank >= 2 ? `<div class="n reg">${esc(reg.name)}・${reg.days}日</div>` : `<div class="n">${fmtDate(d)}${trial ? '・体験' : ''}</div>`}</div>`; }).join('') : empty('stamp', '店の射程内（120m）で「スタンプを押す」と、ここに並びます。家で試すなら お試し歩き → ワープ。');
+  $('#stamp-grid').innerHTML = stamped.length ? `<div class="hint" style="grid-column:1/-1">${fr ? `第${lv}巻の額縁：${['', '銅', '銀', '金'][fr]}` : '第3巻になるとスタンプに額縁が付きます'}　スタンプは全部で ${STORES.length.toLocaleString()}種類</div>` + stamped.map(({ st, d, trial }) => { const reg = G.regularInfo(st.i); return `<div class="st f${fr}" data-id="${esc(st.i)}">${stampSVG(st, true, 76, { rank: reg.rank, ev: E.storeFrame(st.i) })}<div class="n">${esc(st.n)}</div>${reg.rank >= 2 ? `<div class="n reg">${esc(reg.name)}・${reg.days}日</div>` : `<div class="n">${fmtDate(d)}${trial ? '・体験' : ''}</div>`}</div>`; }).join('') : empty('stamp', '店の射程内（120m）で「スタンプを押す」と、ここに並びます。家で試すなら お試し歩き → ワープ。');
   $$('#stamp-grid .st').forEach((el) => el.addEventListener('click', () => openSheet(el.dataset.id)));
   // カード
   const g = $('#card-grid'); g.innerHTML = S.cards.length ? S.cards.slice().reverse().map((c) => `<div class="card" data-id="${esc(c.id)}"><div class="cover">${c.cover ? `<img src="${esc(c.cover)}" alt="" referrerpolicy="no-referrer" loading="lazy">` : `<div class="notitle">${esc(c.title)}</div>`}</div><div class="stampmark">出会</div><div class="meta"><b>${esc(c.title)}</b>${esc(c.sn)}<br>${fmtDate(c.d)}${c.pub ? '・公開' : ''}</div></div>`).join('') : empty('barcode', '店のページで「本と出会った」を押すと、ここに増えます。');
@@ -57,7 +58,49 @@ export function renderZukan() {
 }
 
 // ---------- ラリー（view-mission）：今日・今週のお題、推し店、ご当地ラリー、実績 ----------
+// ---------- イベント（ラリーの画面の一番上。設定はサーバーの管理画面から） ----------
+const WD = ['日', '月', '火', '水', '木', '金', '土'];
+const fmtDT = (iso) => { const d = new Date(iso); return `${d.getMonth() + 1}/${d.getDate()}（${WD[d.getDay()]}）${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`; };
+function eventCard(e, kind) {
+  const n = E.evCount(e.id), g = e.goal, done = !!(g && n >= g.count);
+  const when = kind === 'live' ? `開催中・あと${E.daysLeft(e)}日` : kind === 'soon' ? `はじまるまで あと${E.daysUntil(e)}日` : '終わりました';
+  const stamps = Object.keys(((S.evLog || {})[e.id] || {}).s || {}).map((id) => BYID.get(id)).filter(Boolean);
+  const sample = { i: 'event-sample-' + e.id, n: e.frame.label || e.name, k: 5 };
+  return `<div class="evcard ${kind}" style="--evc:${esc(e.frame.color)}">
+    <div class="evtop"><span class="evwhen">${when}</span><span class="muted small">${fmtDT(e.starts)} 〜 ${fmtDT(e.ends)}</span></div>
+    <div class="evhead"><div class="evpv">${stampSVG(sample, true, 84, { ev: e.frame })}</div><div class="evtt"><h4>${esc(e.name)}</h4>${e.notice ? `<p class="evnotice">${esc(e.notice)}</p>` : ''}<p class="muted small">${esc(E.targetText(e))}スタンプを押すと、限定の枠${e.frame.label ? `「${esc(e.frame.label)}」` : ''}が付きます。</p></div></div>
+    ${e.desc ? `<p class="evdesc">${esc(e.desc)}</p>` : ''}
+    ${e.special ? `<div class="evspecial">${stampSVG({ i: 'event-sp-' + e.id, n: e.special.label || '参加店', k: 5 }, true, 58, { ev: e.special })}<span>参加店（${E.EV.permitted.size}店）で押すと、特別な枠${e.special.label ? `「${esc(e.special.label)}」` : ''}になります。地図では輪が付いています。</span></div>` : ''}
+    ${g ? `<div class="evgoal ${done ? 'done' : ''}"><div class="h"><b>${done ? `記念の称号「${esc(g.title)}」をもらいました` : `${g.count}軒で、記念の称号「${esc(g.title)}」`}</b><span>${Math.min(n, g.count)}/${g.count}軒</span></div><div class="bar"><i style="width:${Math.min(100, Math.round((n / g.count) * 100))}%"></i></div></div>` : ''}
+    ${stamps.length ? `<div class="evstamps">${stamps.slice(0, 12).map((s) => `<button class="evst" data-id="${esc(s.i)}" aria-label="${esc(s.n)}">${stampSVG(s, true, 58, { ev: E.frameIn(e.id, s.i) })}</button>`).join('')}${stamps.length > 12 ? `<span class="muted small">ほか${stamps.length - 12}軒</span>` : ''}</div>` : (kind === 'live' ? '<p class="muted small">お試し歩きで押したスタンプには、枠は付きません。</p>' : '')}
+    <div class="actions">${E.narrow(e) && kind !== 'done' ? `<button class="btn" data-evmap="${e.id}">${icon('map')}地図で対象の店を見る</button>` : ''}${kind !== 'soon' ? `<button class="btn" data-evshare="${e.id}">${icon('share')}シェア</button>` : ''}</div>
+  </div>`;
+}
+function renderEvents() {
+  const box = $('#event-list'); if (!box) return;
+  const live = E.liveEvents(), soon = E.soonEvents(), ended = E.endedEvents();
+  const past = Object.entries(S.evLog || {}).filter(([id]) => !E.EV.list.some((e) => String(e.id) === id));
+  if (!live.length && !soon.length && !ended.length && !past.length) { box.hidden = true; box.innerHTML = ''; return; }
+  box.hidden = false;
+  box.innerHTML = '<h3>イベント</h3>' + [...live.map((e) => eventCard(e, 'live')), ...soon.map((e) => eventCard(e, 'soon')), ...ended.map((e) => eventCard(e, 'done'))].join('')
+    + (past.length ? `<details class="chap evpast"><summary>これまでのイベント（${past.length}）</summary>${past.map(([id, L]) => `<div class="evp"><b>${esc(L.name || 'イベント')}</b><span class="muted small">${Object.keys(L.s || {}).length}軒${(S.evTitles || []).some((t) => String(t.id) === id) ? '・記念の称号' : ''}</span></div>`).join('')}</details>` : '');
+  $$('#event-list .evst').forEach((b) => b.addEventListener('click', () => openSheet(b.dataset.id)));
+  $$('#event-list [data-evmap]').forEach((b) => b.addEventListener('click', () => {
+    const e = E.EV.list.find((x) => String(x.id) === b.dataset.evmap); if (!e) return;
+    const c = hasPos() ? { lat: POS.lat, lng: POS.lon } : MAP.center();
+    let best = null, bd = Infinity; for (const s of STORES) { if (!E.isTarget(e, s)) continue; const d = dist(c.lat, c.lng, s.la, s.lo); if (d < bd) { bd = d; best = s; } }
+    switchView('map'); if (best) { MAP.flyTo(best.lo, best.la, 13); toast(`いちばん近い対象の店：${best.n}（${fmtDist(bd)}）`); } else toast('対象の店が見つかりませんでした', 'warn');
+  }));
+  $$('#event-list [data-evshare]').forEach((b) => b.addEventListener('click', async () => {
+    const e = E.EV.list.find((x) => String(x.id) === b.dataset.evshare); if (!e) return;
+    const tags = [...new Set(['#本めぐり', ...String(e.hashtag || '').split(/\s+/).filter(Boolean)])].join(' ');
+    const text = `${e.name}に参加中。${E.evCount(e.id)}軒の本屋・図書館でスタンプを押しました ${tags}`;
+    try { if (navigator.share) { await navigator.share({ text }); G.noteShare('event', '', 'shared'); } else { await navigator.clipboard.writeText(text); toast('文をコピーしました', 'ok'); } } catch (err) { if (!(err && err.name === 'AbortError')) toast('シェアできませんでした', 'warn'); }
+  }));
+}
+
 export function renderMissions() {
+  renderEvents();
   const wk = weekKey(), d = todayISO(); const cw = S.claimedW[wk] || [], cd = S.claimedD[d] || [];
   $('#day-label').textContent = `${fmtDate(d)}`; $('#week-label').textContent = `${wk}・月曜から`;
   const mrow = (m, claimed, xp) => { const done = m.cur >= m.goal; return `<div class="m ${done ? 'done' : ''}"><div class="h"><b>${done ? '✅ ' : ''}${esc(m.name)}</b><span class="muted small">${Math.min(m.cur, m.goal)}/${m.goal}${claimed.includes(m.id) ? `　+${xp}ページ` : ''}</span></div><div class="bar"><i style="width:${Math.min(100, Math.round((m.cur / m.goal) * 100))}%"></i></div><div class="sub">${esc(m.sub)}</div></div>`; };
@@ -79,6 +122,8 @@ export function renderSettings() {
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><button class="icon-btn" id="st-back" aria-label="戻る" style="transform:rotate(180deg)">${icon('chevron')}</button><h2 style="margin:0">設定</h2></div>
     <div class="setting"><div><div class="l">見た目</div><div class="s">明るい見た目が基本です。「自動」にすると端末の設定に合わせます</div></div><div class="seg3" id="st-theme">${['auto', 'light', 'dark'].map((t) => `<button data-t="${t}" class="${s.theme === t ? 'active' : ''}">${{ auto: '自動', light: '明', dark: '暗' }[t]}</button>`).join('')}</div></div>
     <div class="setting"><div><div class="l">ハンドルネーム</div><div class="s">${S.settings.handle ? esc(S.settings.handle) : 'まだありません。見出し・プロフィール・シェアする画像に出ます'}</div></div><button class="btn" id="st-name">${S.settings.handle ? '変える' : '付ける'}</button></div>
+    <div class="setting"><div><div class="l">参加コード</div><div class="s">${s.joinCode ? `「${esc(s.joinCode)}」で参加中（お試しの人だけのイベントが見えます）` : 'お試しなどで渡されたコードを入れると、その人たちだけのイベントが見えます'}</div></div><button class="btn" id="st-join">${s.joinCode ? '変える' : '入れる'}</button></div>
+    <div class="setting"><div><div class="l">参加の記録を送る</div><div class="s">スタンプを押した店の番号と日時だけを、参加の人数を数えるために送ります。位置の座標・名前・メモは送りません。止めても、イベントの枠は付きます${(S.outbox || []).length ? `（まだ送っていない記録 ${S.outbox.length}件）` : ''}</div></div><button class="switch ${s.sendLog !== false ? 'on' : ''}" id="st-send" role="switch" aria-checked="${s.sendLog !== false}" aria-label="参加の記録を送る"></button></div>
     <div class="setting"><div><div class="l">自分のアイコン</div><div class="s">地図の現在地に出ます。写真はこの端末の中だけに置き、どこにも送りません</div></div><div class="avatar-ctl">${s.avatar ? `<img class="avatar" src="${s.avatar}" alt="">` : ''}<label class="btn">${s.avatar ? '替える' : '選ぶ'}<input type="file" id="st-avatar" accept="image/*" hidden></label>${s.avatar ? '<button class="btn ghost" id="st-avatar-del">外す</button>' : ''}</div></div>
     <div class="setting"><div><div class="l">図書館も地図に出す</div><div class="s">全国の公共図書館（約3,500館）。大学・学校の図書館は入っていません</div></div><button class="switch ${s.showLib !== false ? 'on' : ''}" id="st-lib" role="switch" aria-checked="${s.showLib !== false}" aria-label="図書館も地図に出す"></button></div>
     <div class="setting"><div><div class="l">行きたい店のお知らせ</div><div class="s">行きたい店に近づくと、地図の下でお知らせします（アプリを開いて現在地を追っているあいだ）</div></div><button class="switch ${s.wantAlert !== false ? 'on' : ''}" id="st-want" role="switch" aria-checked="${s.wantAlert !== false}" aria-label="行きたい店のお知らせ"></button></div>
@@ -96,7 +141,7 @@ export function renderSettings() {
     <div class="setting"><div><div class="l">端末の確認</div><div class="s">位置・カメラ・保存が使えるか</div></div><button class="btn" id="st-diag">確認</button></div>
     <div id="st-diag-out"></div>
     <h3>このアプリについて</h3>
-    <div class="about">本めぐり v${APP_VER}（試作）。本屋と図書館をめぐる位置ゲーム。<br>位置はこの端末の中で距離を出すためだけに使い、どこにも送りません。記録はこの端末の中だけに残ります。<br><br>
+    <div class="about">本めぐり v${APP_VER}（試作）。本屋と図書館をめぐる位置ゲーム。<br>位置（座標）は、この端末の中で距離を出すためだけに使い、送りません。スタンプを押した店の番号と日時だけを、参加の人数を数えるために本をつなぐ（tsunagubooks.com）へ送ります（設定で止められます）。そのほかの記録は、この端末の中だけに残ります。<br><br>
       店の位置：© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors（ODbL）。地図：<a href="https://openfreemap.org/" target="_blank" rel="noopener">OpenFreeMap</a>・<a href="https://openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a>。本の情報と表紙：<a href="https://openbd.jp/" target="_blank" rel="noopener">openBD</a>（表紙は紹介のための参照表示で、保存しません）。地図の描画：MapLibre GL JS。文字：Google Fonts。<br>
       店のデータは ${DATA_DATE} 時点の OpenStreetMap（有志が作る地図）で、閉店や名前の変更が反映されていない店があります。店のページの「閉店している」で外せ、「名前が違う」で直せます（この端末だけ。記録の書き出しに含まれます）。</div>`;
   $('#st-back').onclick = () => switchView('map');
@@ -109,6 +154,8 @@ export function renderSettings() {
   $('#st-ghelp').onclick = JU.googleHelp;
   $('#st-gimport').addEventListener('change', async (e) => { const fs = [...e.target.files]; e.target.value = ''; if (fs.length) await JU.importGoogleFiles(fs); renderSettings(); });
   $('#st-name').onclick = () => nameModal(renderSettings);
+  $('#st-join').onclick = () => joinModal(renderSettings);
+  $('#st-send').onclick = () => { E.setSendLog(s.sendLog === false); renderSettings(); toast(S.settings.sendLog === false ? '参加の記録を送るのを止めました' : '参加の記録を送るようにしました', 'ok'); };
   $('#st-sound').onclick = () => { s.sound = !s.sound; save(); renderSettings(); if (s.sound) sfx.click(); };
   $('#st-trial').onclick = () => { setTrialUI(!POS.fake); renderSettings(); };
   $('#st-export').onclick = () => { const blob = new Blob([exportJSON()], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `honya-map-${todayISO()}.json`; document.body.appendChild(a); a.click(); a.remove(); toast('書き出しました', 'ok'); };
@@ -133,7 +180,7 @@ export function showOnboarding(onDone) {
   let i = 0; const box = $('#onboard-box');
   const draw = () => { const p = pages[i]; const last = i === pages.length - 1;
     box.innerHTML = `<div class="art">${p.art}</div><h2>${esc(p.h)}</h2><p>${esc(p.p)}</p><div class="dotsnav">${pages.map((_, k) => `<i class="${k === i ? 'on' : ''}"></i>`).join('')}</div>
-      ${last ? `<div class="field"><label for="ob-name">ハンドルネーム（あとで設定でも変えられます）</label><input type="text" id="ob-name" maxlength="20" placeholder="例：本の虫" autocomplete="nickname"></div><div class="note">位置はこの端末の中で距離を出すためだけに使い、どこにも送りません。記録もこの端末の中だけです。</div><div class="actions"><button class="btn primary wide" id="ob-geo">${icon('locate')}現在地から始める</button><button class="btn wide" id="ob-trial">${icon('foot')}お試し歩きで始める（家で試す）</button><button class="btn ghost wide" id="ob-later">あとで</button></div>` : `<div class="actions"><button class="btn primary wide" id="ob-next">つぎへ</button><button class="btn ghost wide" id="ob-skip">とばす</button></div>`}`;
+      ${last ? `<div class="field"><label for="ob-name">ハンドルネーム（あとで設定でも変えられます）</label><input type="text" id="ob-name" maxlength="20" placeholder="例：本の虫" autocomplete="nickname"></div><div class="note">位置（座標）は送りません。送るのは、スタンプを押した店の番号と日時だけです（参加の人数を数えるため。設定で止められます）。</div><div class="actions"><button class="btn primary wide" id="ob-geo">${icon('locate')}現在地から始める</button><button class="btn wide" id="ob-trial">${icon('foot')}お試し歩きで始める（家で試す）</button><button class="btn ghost wide" id="ob-later">あとで</button></div>` : `<div class="actions"><button class="btn primary wide" id="ob-next">つぎへ</button><button class="btn ghost wide" id="ob-skip">とばす</button></div>`}`;
     if (!last) { $('#ob-next').onclick = () => { i++; draw(); }; $('#ob-skip').onclick = () => { i = pages.length - 1; draw(); }; }
     else { const done = (mode) => { const nm = cleanHandle($('#ob-name') ? $('#ob-name').value : ''); if (nm) { S.settings.handle = nm; save(); } $('#onboard').hidden = true; onDone(mode); }; $('#ob-geo').onclick = () => done('geo'); $('#ob-trial').onclick = () => done('trial'); $('#ob-later').onclick = () => done('later'); } };
   $('#onboard').hidden = false; draw();

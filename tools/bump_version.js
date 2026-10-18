@@ -1,6 +1,6 @@
 // 版を上げる道具：node tools/bump_version.js 0.5.3
 // 直すもの：js/config.js の APP_VER、js/*.js の import の ?v=、index.html の ?v=、sw.js の V
-// 部品（js/*.js）のURLに版が付くので、ブラウザやサービスワーカーに古い部品が混ざらない
+// 部品（js/*.js）のURLに版が付くので、ブラウザやサービスワーカーに古い部品が混ざらない（journey_ui.js のように「_」のある名前もふくむ。v0.10で直した）
 const fs = require('fs');
 const path = require('path');
 
@@ -14,8 +14,8 @@ const edit = (file, fn) => {
 };
 for (const f of fs.readdirSync(path.join(root, 'js')).filter((x) => x.endsWith('.js'))) {
   edit('js/' + f, (s) => s
-    .replace(/(from\s+')(\.\/[a-z]+\.js)(\?v=[^']*)?'/g, `$1$2?v=${ver}'`)
-    .replace(/(import\s+')(\.\/[a-z]+\.js)(\?v=[^']*)?'/g, `$1$2?v=${ver}'`));
+    .replace(/(from\s+')(\.\/[a-z_]+\.js)(\?v=[^']*)?'/g, `$1$2?v=${ver}'`)
+    .replace(/(import\s+')(\.\/[a-z_]+\.js)(\?v=[^']*)?'/g, `$1$2?v=${ver}'`));
 }
 edit('js/config.js', (s) => s.replace(/APP_VER = '[^']*'/, `APP_VER = '${ver}'`));
 edit('index.html', (s) => s.replace(/\?v=\d+\.\d+\.\d+/g, `?v=${ver}`));

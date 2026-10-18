@@ -1,16 +1,16 @@
 // シェア用の画像（スタンプ・常連度・カード・プレイヤーカード）
-import { S } from './state.js?v=0.9.3';
-import { stampSVG, stampInk, rarityOf, rarityText } from './data.js?v=0.9.3';
-import { snapshot } from './map.js?v=0.9.3';
-import { regularInfo } from './game.js?v=0.9.3';
-import { stars, prefOf, fmtDate, todayISO } from './util.js?v=0.9.3';
+import { S } from './state.js?v=0.10.0';
+import { stampSVG, stampInk, rarityOf, rarityText } from './data.js?v=0.10.0';
+import { snapshot } from './map.js?v=0.10.0';
+import { regularInfo } from './game.js?v=0.10.0';
+import { stars, prefOf, fmtDate, todayISO } from './util.js?v=0.10.0';
 
 const PAPER = '#FFF8EA', INK = '#1B1B1B', INK2 = '#5A554D', SHU = '#FF6A48', LINE = '#1B1B1B';
 const DISP = '"Mochiy Pop P One","Zen Maru Gothic","Hiragino Sans",sans-serif', BODY = '"Zen Maru Gothic","Hiragino Sans",sans-serif';
 function svgToImage(svg) { return new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg); }); }
 function wrap(g, text, max) { const lines = []; let cur = ''; for (const ch of String(text)) { if (g.measureText(cur + ch).width > max) { lines.push(cur); cur = ch; } else cur += ch; } if (cur) lines.push(cur); return lines; }
 function rrect(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
-function footer(g, W, H) { g.textAlign = 'left'; g.fillStyle = SHU; g.font = `28px ${DISP}`; g.fillText('本めぐり', 60, H - 56); g.textAlign = 'right'; g.fillStyle = INK2; g.font = `22px ${BODY}`; g.fillText(`${S.settings.handle ? S.settings.handle + '　' : ''}#本めぐり`, W - 60, H - 56); g.textAlign = 'left'; }
+function footer(g, W, H, tags = '#本めぐり') { g.textAlign = 'left'; g.fillStyle = SHU; g.font = `28px ${DISP}`; g.fillText('本めぐり', 60, H - 56); g.textAlign = 'right'; g.fillStyle = INK2; g.font = `22px ${BODY}`; g.fillText(`${S.settings.handle ? S.settings.handle + '　' : ''}${tags}`, W - 60, H - 56); g.textAlign = 'left'; }
 
 // スタンプ（地図の切り抜き＋スタンプ）。常連度があれば、その帯も
 export async function stampImage(st, opts = {}) {
@@ -21,14 +21,14 @@ export async function stampImage(st, opts = {}) {
   if (mc) { try { const side = Math.min(mc.width, mc.height); g.save(); rrect(g, 60, 60, W - 120, W - 120, 36); g.clip(); g.drawImage(mc, (mc.width - side) / 2, (mc.height - side) / 2, side, side, 60, 60, W - 120, W - 120); g.restore(); mapDrawn = true; } catch (e) { mapDrawn = false; } }
   if (!mapDrawn) { g.fillStyle = '#FBEFD6'; rrect(g, 60, 60, W - 120, W - 120, 36); g.fill(); }
   g.strokeStyle = LINE; g.lineWidth = 4; rrect(g, 60, 60, W - 120, W - 120, 36); g.stroke();
-  try { const im = await svgToImage(stampSVG(st, true, 380, { rank: reg.rank })); g.save(); g.translate(W - 60 - 200, W - 60 - 200); g.rotate(-0.1); g.shadowColor = 'rgba(0,0,0,.28)'; g.shadowBlur = 28; g.shadowOffsetY = 8; g.drawImage(im, -190, -190, 380, 380); g.restore(); } catch (e) {}
+  try { const im = await svgToImage(stampSVG(st, true, 380, { rank: reg.rank, ev: opts.ev || null })); g.save(); g.translate(W - 60 - 200, W - 60 - 200); g.rotate(-0.1); g.shadowColor = 'rgba(0,0,0,.28)'; g.shadowBlur = 28; g.shadowOffsetY = 8; g.drawImage(im, -190, -190, 380, 380); g.restore(); } catch (e) {}
   g.fillStyle = INK; g.textAlign = 'left'; g.font = `54px ${DISP}`;
   const lines = wrap(g, st.n, W - 120).slice(0, 2); lines.forEach((l, i) => g.fillText(l, 60, W + 44 + i * 62));
   let y = W + 44 + lines.length * 62 + 14;
   g.font = `30px ${BODY}`; g.fillStyle = INK2; g.fillText(`${prefOf(st)}　${stars(rarityOf(st))}　${rarityText(st)}`, 60, y); y += 46;
   if (opts.regular || reg.rank >= 2) { g.fillStyle = ink.main; rrect(g, 60, y - 34, 520, 54, 27); g.fill(); g.strokeStyle = INK; g.lineWidth = 3; g.stroke(); g.fillStyle = INK; g.font = `28px ${DISP}`; g.fillText(`常連度：${reg.name}　来店 ${reg.days}日`, 84, y + 4); y += 66; }
-  g.fillStyle = INK2; g.font = `30px ${BODY}`; g.fillText(`${fmtDate((S.stamps[st.i] || {}).d || todayISO())}　スタンプ ${Object.keys(S.stamps).length}個目`, 60, y);
-  footer(g, W, H);
+  g.fillStyle = INK2; g.font = `30px ${BODY}`; g.fillText(`${fmtDate((S.stamps[st.i] || {}).d || todayISO())}　スタンプ ${Object.keys(S.stamps).length}個目${opts.ev && opts.ev.ev ? `　${opts.ev.ev}` : ''}`, 60, y);
+  footer(g, W, H, opts.tags || '#本めぐり');
   return await new Promise((res) => cv.toBlob(res, 'image/png'));
 }
 // カード（本との出会い）

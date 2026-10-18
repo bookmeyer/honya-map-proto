@@ -1,13 +1,14 @@
 // 画面の部品：見出し帯・タブ・店のシート・モーダル・スタンプの演出・カード・さがす・追加
-import { RANGE_M, SENSE_M, TERRITORY_M, PG, pagesForVol } from './config.js?v=0.9.3';
-import { S, save } from './state.js?v=0.9.3';
-import { STORES, BYID, FEAT, isFeat, isLib, placeWord, rarityOf, rarityText, stampSVG, stampInk, search, addCustom, hideStore, renameStore, lookupIsbn, DATA_DATE } from './data.js?v=0.9.3';
-import * as G from './game.js?v=0.9.3';
-import * as MAP from './map.js?v=0.9.3';
-import { POS, setPos, startWatch, setTrial, setFollow, hasPos, jumped } from './position.js?v=0.9.3';
-import { sfx, haptic, unlock } from './audio.js?v=0.9.3';
-import { stampImage, cardImage, shareBlob } from './share.js?v=0.9.3';
-import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, on, emit, weekKey, gmapDir } from './util.js?v=0.9.3';
+import { RANGE_M, SENSE_M, TERRITORY_M, PG, pagesForVol } from './config.js?v=0.10.0';
+import { S, save } from './state.js?v=0.10.0';
+import { STORES, BYID, FEAT, isFeat, isLib, placeWord, rarityOf, rarityText, stampSVG, stampInk, search, addCustom, hideStore, renameStore, lookupIsbn, DATA_DATE } from './data.js?v=0.10.0';
+import * as G from './game.js?v=0.10.0';
+import * as MAP from './map.js?v=0.10.0';
+import { POS, setPos, startWatch, setTrial, setFollow, hasPos, jumped } from './position.js?v=0.10.0';
+import { sfx, haptic, unlock } from './audio.js?v=0.10.0';
+import { stampImage, cardImage, shareBlob } from './share.js?v=0.10.0';
+import * as E from './events.js?v=0.10.0';
+import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, on, emit, weekKey, gmapDir } from './util.js?v=0.10.0';
 
 export let currentView = 'map';
 export let currentSub = 'stamps';
@@ -32,7 +33,15 @@ export function refreshHud() {
   $('#lv-label').textContent = `第${vol}巻`; $('#xp-fill').style.width = `${Math.round(((pg - cur) / (next - cur)) * 100)}%`; $('#lv-btn').title = `第${vol}巻 ${pg}ページ（あと${next - pg}ページで第${vol + 1}巻）`;
   $('#brand-title').textContent = S.settings.handle || G.currentTitle() || '本屋あるき見習い';
   $('#tab-dot').hidden = true; // お題は達成と同時に受け取るので、赤い点はいまは使わない
-  renderMissionChip();
+  renderMissionChip(); renderEventChip();
+}
+// 開催中のイベントのチケット（地図の下）。押すとラリーの画面のイベントへ
+export function renderEventChip() {
+  const el = $('#event-chip'); if (!el) return;
+  const e = E.liveEvents()[0]; if (!e) { el.hidden = true; return; }
+  const n = E.evCount(e.id); el.hidden = false; el.style.setProperty('--evc', e.frame.color);
+  el.innerHTML = `<span class="stub">開催中</span><span class="body"><span class="l">あと${E.daysLeft(e)}日${E.liveEvents().length > 1 ? `・ほか${E.liveEvents().length - 1}つ` : ''}</span><span class="m">${esc(e.name)}${e.goal ? `　${Math.min(n, e.goal.count)}/${e.goal.count}軒` : ''}</span></span>`;
+  el.onclick = () => { switchView('mission'); setTimeout(() => { const c = $('#event-list'); if (c) c.scrollIntoView({ block: 'start', behavior: 'smooth' }); }, 60); };
 }
 // きょうのお題のチケット（地図の下）。押すとお題の画面へ
 export function renderMissionChip() {
@@ -66,7 +75,8 @@ export function updateNear() {
 }
 export function applyMapStates() {
   const states = new Map();
-  for (const s of STORES) states.set(s.i, { stamp: G.hasStamp(s.i) ? 1 : 0, near: NEAR.inRange.has(s.i) ? 1 : 0, feat: isFeat(s.i) ? 1 : 0, want: S.wants.includes(s.i) ? 1 : 0, st: G.stateOf(s.i) });
+  const nev = E.liveEvents().filter(E.narrow); if (nev.length) MAP.setEventRingColor(nev[0].frame.color);
+  for (const s of STORES) states.set(s.i, { stamp: G.hasStamp(s.i) ? 1 : 0, near: NEAR.inRange.has(s.i) ? 1 : 0, feat: isFeat(s.i) ? 1 : 0, want: S.wants.includes(s.i) ? 1 : 0, st: G.stateOf(s.i), ev: nev.length && nev.some((e) => E.isTarget(e, s)) ? 1 : 0 });
   MAP.setStates(states);
   MAP.setTerritory(Object.keys(S.stamps).map((id) => { const s = BYID.get(id); if (!s) return null; const rk = G.regularInfo(id).rank; return Object.assign({}, s, { rank: rk, rad: TERRITORY_M * (1 + 0.25 * Math.min(4, Math.max(0, rk - 1))) }); }).filter(Boolean));
 }
@@ -98,12 +108,13 @@ export function openSheet(id, quiet) {
   if (st.demo) b.push('<span class="badge">見本（実在しません）</span>'); if (st.custom) b.push('<span class="badge">自分で追加</span>'); if (st.fix) b.push('<span class="badge">名前を直した（この端末）</span>'); if (st.ov) b.push('<span class="badge">名前を確認ずみ</span>'); if (st.cf || st.x) b.push('<span class="badge ao">公式一覧で確認</span>');
   if (feat) b.push(`<span class="badge feat">${icon('crown')}今週の推し店</span>`); if (st.u) b.push('<span class="badge">古書店</span>'); if (isLib(st)) b.push('<span class="badge lib">図書館</span>');
   b.push(stamp ? `<span class="badge shu">スタンプ ${fmtDate(stamp.d)}</span>${stamp.trial ? '<span class="badge trial">体験</span>' : ''}` : vs.length ? `<span class="badge sumi">記録 ${vs.length}回</span>` : '<span class="badge">まだ</span>');
+  for (const e of E.liveEvents().filter((x) => E.isTarget(x, st)).slice(0, 2)) { const fr = E.frameFor(e, st); b.push(`<span class="badge evb" style="--evc:${esc(fr.color)}">${esc(fr.label || e.name)}${fr === e.special ? '（特別な枠）' : '（イベント）'}</span>`); }
   if (cs.length) b.push(`<span class="badge">カード${cs.length}枚</span>`); if (want) b.push(`<span class="badge gold">${icon('heart')}行きたい</span>`); if (near) b.push('<span class="badge gold">射程内</span>');
   const rec = st.rec ? `<div class="staff"><div class="who">${esc(st.rec.who)}の手放せない1冊</div><div class="title">${esc(st.rec.title)}</div><div>${esc(st.rec.say)}</div><div class="muted small">棚：${esc(st.rec.shelf)}</div></div>` : '';
   const hist = vs.length ? `<div class="muted small" style="margin-top:8px">${vs.slice(-3).reverse().map((v) => `${fmtDate(v.d)}${v.near ? '（スタンプ）' : '（記録）'}${v.memo ? '「' + esc(v.memo) + '」' : ''}`).join('<br>')}</div>` : '';
   const distText = d == null ? '現在地なし' : jumped() ? '位置が大きく飛んだので、少し待ってから（1分）' : near ? `射程内（約${fmtDist(d)}）` : `ここから約${fmtDist(d)}（あと${fmtDist(d - RANGE_M)}で射程内）`;
   $('#sheet-body').innerHTML = `
-    <div class="sheet-head"><div class="stamp-sm">${stampSVG(st, !!stamp, 72, { rank: reg.rank })}</div><div style="min-width:0"><h2>${esc(st.n)}</h2><div class="stars">${stars(r)} <span class="muted small">${esc(rarityText(st))}</span></div></div></div>
+    <div class="sheet-head"><div class="stamp-sm">${stampSVG(st, !!stamp, 72, { rank: reg.rank, ev: stamp ? E.storeFrame(st.i) : null })}</div><div style="min-width:0"><h2>${esc(st.n)}</h2><div class="stars">${stars(r)} <span class="muted small">${esc(rarityText(st))}</span></div></div></div>
     <div style="margin-top:8px">${b.join('')}</div>
     <div class="muted small">${esc(st.a || (st.custom ? '' : '住所の情報なし（地図データより）'))}　${esc(prefOf(st))}</div>
     <div class="muted small">${esc(distText)}</div>${st.demo || st.custom ? '' : `<div class="muted small">店の情報：${st.x ? 'チェーンの公式店舗一覧' : `OpenStreetMap（${DATA_DATE} 取得）`}。${st.c ? '最終確認 ' + st.c.slice(0, 4) + '年' + Number(st.c.slice(5)) + '月' + (st.cf || st.x ? '（公式の店舗一覧で確認）' : '') : '確認日の記録なし'}。${st.cf || st.x ? '' : `${isLib(st) ? '閉館' : '閉店'}や名前の変更が反映されていないことがあります`}</div>`}${st.demo ? '' : `<div class="reg"><div class="reg-h"><span class="badge ${reg.rank >= 3 ? 'shu' : reg.rank >= 2 ? 'gold' : ''}">常連度 ${reg.rank ? esc(reg.name) : 'まだ'}</span><span class="muted small">来店 ${reg.days}日${reg.next ? `・あと${reg.toNext}日で「${esc(reg.next.name)}」` : '・最高位'}</span></div><div class="rally" role="img" aria-label="常連度 ${G.REGULAR_NAMES.length}段階のうち${reg.rank}">${G.REGULAR_NAMES.map((nm, k) => `<i class="${k < reg.rank ? (k === G.REGULAR_NAMES.length - 1 ? 'top' : 'on') : ''}" title="${esc(nm)}">${k < reg.rank ? icon('check') : ''}</i>`).join('')}</div><div class="rally-l"><span>${esc(G.REGULAR_NAMES[0])}</span><span>${esc(G.REGULAR_NAMES[G.REGULAR_NAMES.length - 1])}</span></div></div>`}${rec}${hist}
@@ -132,27 +143,28 @@ export function startCheckin(st, near) {
   const note = near ? (stamped ? `この${placeWord(st)}のスタンプはもう持っています。もう一度押すと少しページが増え、常連度が上がります。` : `射程内です。この${placeWord(st)}だけのスタンプ（${stars(rarityOf(st))}）が押せます。${feat && !featGot ? ` 今週の推し店なので +${PG.feat} XP。` : ''}`) : '店から離れています（位置がないか、射程の外）。「来た記録」として自己申告で残します。スタンプは押せません。';
   openModal(`<h2>${esc(st.n)}</h2><div class="status-card ${near ? 'shu' : 'sumi'}">${esc(note)}</div>
     <div class="field"><label for="ci-memo">一言メモ（任意・100字まで）</label><textarea id="ci-memo" maxlength="100" placeholder="例：文庫の棚が広い。店員さんの手書きPOPがよかった"></textarea></div>
-    <div class="note">位置はこの画面の中で距離を出すためだけに使い、どこにも送りません。記録はこの端末の中だけに残ります。</div>
+    <div class="note">位置（座標）は送りません。${S.settings.sendLog === false ? '参加の記録も送らない設定です。' : '送るのは、この店の番号と日時だけです（設定で止められます）。'}</div>
     <div class="actions"><button class="btn primary" id="ci-save">${near ? 'スタンプを押す' : '記録だけ残す'}</button><button class="btn ghost" id="ci-cancel">やめる</button></div>`);
   $('#ci-cancel').onclick = closeModal;
-  $('#ci-save').onclick = () => { const res = G.checkin(st, { near, memo: $('#ci-memo').value.trim(), trial: POS.fake }); closeModal(); closeSheet(); applyMapStates(); refreshHud(); showCapture(st, res, near); };
+  $('#ci-save').onclick = () => { const res = G.checkin(st, { near, memo: $('#ci-memo').value.trim(), trial: POS.fake }); const evr = E.onCheckin(st, { near, trial: POS.fake }); closeModal(); closeSheet(); applyMapStates(); refreshHud(); showCapture(st, res, near, evr); };
 }
-export function showCapture(st, res, near) {
-  const { gain, isNew, lv, rewards, r, regUp } = res;
+export function showCapture(st, res, near, evr = { frames: [], titles: [], progress: [] }) {
+  const { gain, isNew, lv, rewards, r, regUp } = res; const fr = evr.frames[0] || null;
   if (near) { sfx.stamp(); haptic([30, 30, 90]); if (isNew && r === 3) setTimeout(() => sfx.rare(), 250); } if (lv.after > lv.before) setTimeout(() => sfx.levelup(), 500); if (regUp) setTimeout(() => sfx.regular(), lv.after > lv.before ? 1500 : 800);
-  $('#capture-box').innerHTML = `<div class="big">${stampSVG(st, near, 250, { rank: G.regularInfo(st.i).rank })}</div>
+  $('#capture-box').innerHTML = `<div class="big">${stampSVG(st, near, 250, { rank: G.regularInfo(st.i).rank, ev: fr })}</div>
     <h2>${near ? (isNew ? `${esc(st.n)}のスタンプを押した！` : `${esc(st.n)}に、また来た`) : `${esc(st.n)}に来た（記録だけ）`}</h2>
     <div class="stars">${near ? stars(r) + ' ' + esc(rarityText(st)) : ''}</div>
     <div class="gain">+${gain}ページ</div>
+    ${fr ? `<div class="evline" style="--evc:${esc(fr.color)}">${esc(fr.ev)}の${fr.label ? `「${esc(fr.label)}」の` : ''}枠が付いた</div>` : ''}${evr.progress.map((p) => `<div class="lvup">${esc(p.name)}　${Math.min(p.n, p.goal)}/${p.goal}軒</div>`).join('')}${evr.titles.map((t) => `<div class="lvup">🏅 記念の称号「${esc(t)}」</div>`).join('')}
     ${lv.after > lv.before ? `<div class="lvup">📖 第${lv.after}巻に入った！</div>` : ''}${rewards.map((x) => `<div class="lvup">${esc(x)}</div>`).join('')}
     <div class="actions" style="margin-top:18px"><button class="btn primary wide" id="cp-card">${icon('barcode')}この${placeWord(st)}で本と出会った（+${PG.card}ページ〜）</button>${near ? `<button class="btn wide" id="cp-share">${icon('share')}スタンプをシェア</button>` : ''}<button class="btn ghost wide" id="cp-close">閉じる</button></div>`;
   $('#capture').hidden = false; $$('#capture .burst, #capture .confetti').forEach((el) => el.remove());
-  if (near) { const bb = document.createElement('div'); bb.className = 'burst'; $('#capture').prepend(bb); if (isNew || regUp || lv.after > lv.before) confetti($('#capture'), [stampInk(st).main, '#FFD447', '#FFFFFF', '#2F9BFF', '#4FC07A']); }
+  if (near) { const bb = document.createElement('div'); bb.className = 'burst'; $('#capture').prepend(bb); if (isNew || regUp || lv.after > lv.before || evr.titles.length) confetti($('#capture'), [stampInk(st).main, '#FFD447', '#FFFFFF', '#2F9BFF', '#4FC07A']); }
   $('#cp-close').onclick = () => { $('#capture').hidden = true; openSheet(st.i, true); };
   $('#cp-card').onclick = () => { $('#capture').hidden = true; startCard(st); };
   if ($('#cp-share')) $('#cp-share').onclick = () => shareStampUI(st);
 }
-export async function shareStampUI(st, opts = {}) { try { const blob = await stampImage(st, opts); const reg = G.regularInfo(st.i); const text = opts.regular ? `${st.n}の常連度は「${reg.name}」（来店${reg.days}日） #本めぐり` : `${st.n}のスタンプを押した #本めぐり`; const r = await shareBlob(blob, `honya-${st.i}.png`, `${st.n}のスタンプ`, text); if (r !== 'cancel') { G.noteShare(opts.regular ? 'regular' : 'stamp', st.i, r); toast(r === 'saved' ? '画像を保存しました' : 'シェアしました', 'ok'); } } catch (e) { toast('画像にできませんでした', 'warn'); } }
+export async function shareStampUI(st, opts = {}) { try { const fr = E.storeFrame(st.i); const tags = [...new Set(['#本めぐり', ...String((fr && fr.hashtag) || '').split(/\s+/).filter(Boolean)])].join(' '); const blob = await stampImage(st, Object.assign({ ev: fr, tags }, opts)); const reg = G.regularInfo(st.i); const text = opts.regular ? `${st.n}の常連度は「${reg.name}」（来店${reg.days}日） ${tags}` : `${st.n}のスタンプを押した${fr ? `（${fr.ev}）` : ''} ${tags}`; const r = await shareBlob(blob, `honya-${st.i}.png`, `${st.n}のスタンプ`, text); if (r !== 'cancel') { G.noteShare(opts.regular ? 'regular' : 'stamp', st.i, r); toast(r === 'saved' ? '画像を保存しました' : 'シェアしました', 'ok'); } } catch (e) { toast('画像にできませんでした', 'warn'); } }
 
 // ---------- カード ----------
 export function startCard(st) {
@@ -250,6 +262,28 @@ export function nameModal(after) {
   inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') $('#nm-ok').click(); });
   if ($('#nm-clear')) $('#nm-clear').onclick = () => finish('');
   if ($('#nm-cancel')) $('#nm-cancel').onclick = closeModal;
+}
+
+// ---------- 参加コード・送るもののお知らせ（v0.10） ----------
+const SEND_TEXT = '<ul class="plain"><li><b>送るもの</b>：スタンプを押した店の番号と日時（参加の人数を数えるため。名前のない、ランダムな番号といっしょに）</li><li><b>送らないもの</b>：位置の座標・移動の記録・名前・メモ・カード</li><li>設定の「参加の記録を送る」で、いつでも止められます</li></ul>';
+export function joinNotice(code) {
+  S.settings.privacyV10 = 1; save();
+  openModal(`<h2>お試しに参加しました</h2><p>参加コード「${esc(code)}」が入りました。お試しの人だけのイベントが、ラリーの画面と地図に出ます。</p>${SEND_TEXT}<div class="actions"><button class="btn primary wide" id="jn-ok">はじめる</button></div>`);
+  $('#jn-ok').onclick = closeModal;
+}
+export function privacyNotice() {
+  S.settings.privacyV10 = 1; save();
+  openModal(`<h2>お知らせ</h2><p>イベント（期間限定のスタンプの枠など）が始まるのにあわせて、参加の人数を数えるための記録を送るようになりました。</p>${SEND_TEXT}<div class="actions"><button class="btn primary" id="pv-ok">わかった</button><button class="btn ghost" id="pv-set">設定を見る</button></div>`);
+  $('#pv-ok').onclick = closeModal; $('#pv-set').onclick = () => { closeModal(); switchView('settings'); };
+}
+export function joinModal(after) {
+  const cur = S.settings.joinCode || '';
+  openModal(`<h2>参加コード</h2><p class="hint">お試しなどで渡されたコードを入れると、その人たちだけのイベントが見えます。</p><div class="field"><label for="jc-in">コード（英数字と - _）</label><input type="text" id="jc-in" maxlength="40" value="${esc(cur)}" autocomplete="off" autocapitalize="off"></div><div class="actions"><button class="btn primary" id="jc-ok">決める</button>${cur ? '<button class="btn ghost" id="jc-clear">外す</button>' : '<button class="btn ghost" id="jc-cancel">やめる</button>'}</div>`);
+  const inp = $('#jc-in'); inp.focus();
+  const finish = async (v) => { closeModal(); await E.setJoinCode(v); applyMapStates(); refreshHud(); if (after) after(); toast(v ? `参加コード「${v}」を入れました` : '参加コードを外しました', 'ok'); };
+  $('#jc-ok').onclick = () => { const v = inp.value.trim().toLowerCase(); if (!/^[a-z0-9_-]{2,40}$/.test(v)) { toast('英数字と - _ の2〜40字で入れてください', 'warn'); return; } finish(v); };
+  if ($('#jc-clear')) $('#jc-clear').onclick = () => finish('');
+  if ($('#jc-cancel')) $('#jc-cancel').onclick = closeModal;
 }
 
 // ---------- 紙ふぶき（スタンプを押したときの演出） ----------

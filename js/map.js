@@ -1,6 +1,6 @@
 // 地図（MapLibre）。店はピンの絵で表示し、固まり（クラスタ）でまとめ、状態は feature-state で軽く更新する
-import { STYLE_LIGHT, STYLE_DARK, TERRITORY_M, RANGE_M } from './config.js?v=0.9.3';
-import { circlePoly, emit } from './util.js?v=0.9.3';
+import { STYLE_LIGHT, STYLE_DARK, TERRITORY_M, RANGE_M } from './config.js?v=0.10.0';
+import { circlePoly, emit } from './util.js?v=0.10.0';
 
 export const M = { map: null, ready: false, theme: 'light' };
 let storesGeo = { type: 'FeatureCollection', features: [] };
@@ -42,6 +42,9 @@ function markImage() { // 行きたい（檸檬のハート）
   return g.getImageData(0, 0, W * s, W * s);
 }
 const fs = (k, def = 0) => ['coalesce', ['feature-state', k], def];
+// イベントの対象の店の輪の色（開催中のイベントの枠の色）
+let evRingColor = '#FFD447';
+export function setEventRingColor(c) { if (!c || c === evRingColor) return; evRingColor = c; if (M.ready && M.map.getLayer('event-ring')) M.map.setPaintProperty('event-ring', 'circle-color', c); }
 
 // ---- 自分のアイコン（現在地に出す。写真は端末の中だけ） ----
 let avatar = null; // { blue: ImageData, purple: ImageData }
@@ -82,6 +85,7 @@ function addLayers() {
     'circle-opacity': 1, 'circle-stroke-width': 2.5, 'circle-stroke-color': '#1B1B1B' } });
   map.addLayer({ id: 'cluster-count', type: 'symbol', source: 'stores', filter: ['has', 'point_count'], layout: { 'text-field': ['get', 'point_count_abbreviated'], 'text-font': ['Noto Sans Bold'], 'text-size': 12, 'text-allow-overlap': true }, paint: { 'text-color': '#1B1B1B' } });
   const unc = ['!', ['has', 'point_count']];
+  map.addLayer({ id: 'event-ring', type: 'circle', source: 'stores', filter: unc, paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, 11, 12, 16, 15, 24], 'circle-color': evRingColor, 'circle-opacity': ['*', 0.28, fs('ev')], 'circle-stroke-color': '#1B1B1B', 'circle-stroke-width': 2, 'circle-stroke-opacity': ['*', 0.85, fs('ev')] } });
   map.addLayer({ id: 'feat-ring', type: 'circle', source: 'stores', filter: unc, paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, 10, 12, 15, 15, 22], 'circle-color': '#A86CFF', 'circle-opacity': ['*', 0.12, fs('feat')], 'circle-stroke-color': '#A86CFF', 'circle-stroke-width': 2, 'circle-stroke-opacity': ['*', 0.9, fs('feat')] } });
   map.addLayer({ id: 'stores-halo', type: 'circle', source: 'stores', filter: unc, paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, 8, 12, 12, 15, 18], 'circle-color': '#FF6A48', 'circle-opacity': ['*', 0.16, ['min', 1, fs('st')]] } });
   map.addLayer({ id: 'near-pulse', type: 'circle', source: 'stores', filter: unc, paint: { 'circle-radius': 16, 'circle-color': '#FFD447', 'circle-opacity': ['*', 0.3, fs('near')] } });
@@ -144,10 +148,10 @@ export function setStores(stores) {
   storesGeo = { type: 'FeatureCollection', features: stores.map((s) => ({ type: 'Feature', id: s.i, geometry: { type: 'Point', coordinates: [s.lo, s.la] }, properties: { id: s.i, r: s.k == null ? (s.demo ? 3 : 2) : (s.k === 0 ? 3 : s.k <= 6 ? 2 : 1), u: s.u ? 1 : 0, l: s.t === 'l' ? 1 : 0, custom: s.custom ? 1 : 0, demo: s.demo ? 1 : 0 } })) };
   if (M.ready) M.map.getSource('stores').setData(storesGeo);
 }
-export function setStates(next) { // Map<id, {stamp, near, feat, want, st}>
+export function setStates(next) { // Map<id, {stamp, near, feat, want, st, ev}>
   for (const [id, st] of next) {
     const prev = stateCache.get(id);
-    if (prev && prev.stamp === st.stamp && prev.near === st.near && prev.feat === st.feat && prev.want === st.want && prev.st === st.st) continue;
+    if (prev && prev.stamp === st.stamp && prev.near === st.near && prev.feat === st.feat && prev.want === st.want && prev.st === st.st && prev.ev === st.ev) continue;
     stateCache.set(id, st); if (M.ready) M.map.setFeatureState({ source: 'stores', id }, st);
   }
   const anyNear = [...stateCache.values()].some((s) => s.near); if (anyNear) startPulse(); else stopPulse();

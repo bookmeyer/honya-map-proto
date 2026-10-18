@@ -1,7 +1,7 @@
 // 本屋・図書館・ラリーのデータ。スタンプ（その店だけの絵柄）の見た目もここ
-import { DEMO_STORE } from './config.js?v=0.9.3';
-import { S } from './state.js?v=0.9.3';
-import { esc, hash32, prefOf, weekKey, sleep } from './util.js?v=0.9.3';
+import { DEMO_STORE } from './config.js?v=0.10.0';
+import { S } from './state.js?v=0.10.0';
+import { esc, hash32, prefOf, weekKey, sleep } from './util.js?v=0.10.0';
 
 export let STORES = [];
 export let RALLIES = [];
@@ -128,7 +128,11 @@ export function stampSVG(st, collected, size = 96, opts = {}) {
   const star = (x, y, s, f) => `<path transform="translate(${x} ${y}) scale(${s})" fill="${f}" stroke="${EDGE}" stroke-width="1.4" stroke-linejoin="round" d="M0-9l2.6 5.4 6 .8-4.4 4.2 1.1 5.9L0 4.5l-5.3 2.8 1.1-5.9-4.4-4.2 6-.8z"/>`;
   const crown = (x, y, s, f) => `<g transform="translate(${x} ${y}) scale(${s})"><path fill="${f}" stroke="${EDGE}" stroke-width="1.4" stroke-linejoin="round" d="M-9 6l-3-11 6 4 6-9 6 9 6-4-3 11z"/></g>`;
   const marks = collected ? (rank >= 4 ? crown(78, 15, 0.85, '#FFD447') : rank >= 3 ? crown(78, 15, 0.72, '#FFFFFF') : rank >= 2 ? star(79, 15, 0.6, '#FFFFFF') : '') : '';
-  return `<svg viewBox="0 0 100 100" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg" aria-label="${esc(st.n)}のスタンプ"><defs><clipPath id="c${id}">${outer}</clipPath></defs>${ring}<g fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linejoin="round">${outer}</g><g fill="${fill}" stroke="${edge}" stroke-width="2.5" stroke-linejoin="round"${collected ? '' : ' stroke-dasharray="5 3"'}>${outer}</g><ellipse cx="38" cy="22" rx="22" ry="9" fill="#fff" opacity="${collected ? '.22' : '.3'}" clip-path="url(#c${id})"/><g transform="translate(30 ${two ? 13 : 15})" fill="none" stroke="${pic}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">${pict}</g>${label}${marks}</svg>`;
+  // イベントの限定の枠（v0.10）：外側に色の帯、上に言葉のリボン。枠があるときは中身を少し小さくする
+  const ef = collected && opts.ev && /^#[0-9A-Fa-f]{6}$/.test(opts.ev.color || '') ? opts.ev : null;
+  const evBand = ef ? `<g fill="none" stroke="${EDGE}" stroke-width="17" stroke-linejoin="round">${outer}</g><g fill="none" stroke="${ef.color}" stroke-width="14" stroke-linejoin="round">${outer}</g>` : '';
+  const evLabel = ef && ef.label ? (() => { const lw = Math.min(76, Math.max(30, widthOf(ef.label) * 8.6 + 14)); return `<rect x="${50 - lw / 2}" y="0.8" width="${lw}" height="15" rx="7.5" fill="${ef.color}" stroke="${EDGE}" stroke-width="1.5"/><text x="50" y="8.4" text-anchor="middle" dominant-baseline="central" font-size="8.4" font-family="'Mochiy Pop P One','Zen Maru Gothic','Hiragino Sans',sans-serif" fill="${EDGE}">${esc(ef.label)}</text>`; })() : '';
+  return `<svg viewBox="0 0 100 100" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg" aria-label="${esc(st.n)}のスタンプ"><defs><clipPath id="c${id}">${outer}</clipPath></defs>${ef ? '<g transform="translate(50 52) scale(.86) translate(-50 -50)">' : ''}${ring}${evBand}<g fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linejoin="round">${outer}</g><g fill="${fill}" stroke="${edge}" stroke-width="2.5" stroke-linejoin="round"${collected ? '' : ' stroke-dasharray="5 3"'}>${outer}</g><ellipse cx="38" cy="22" rx="22" ry="9" fill="#fff" opacity="${collected ? '.22' : '.3'}" clip-path="url(#c${id})"/><g transform="translate(30 ${two ? 13 : 15})" fill="none" stroke="${pic}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">${pict}</g>${label}${marks}${ef ? '</g>' : ''}${evLabel}</svg>`;
 }
 
 // ---- 本（openBD） ----

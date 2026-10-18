@@ -1,10 +1,10 @@
 // 旅の記録：歩いた距離（ページ）・その日の物語・月のふり返り・行きたい店のお知らせ・投稿の記録・Googleマップの★の読み込み
 // 位置は、アプリを開いて現在地を追っているあいだだけ使う（ブラウザの決まりで、閉じているあいだは測れない）
-import { WALK, RANGE_M } from './config.js?v=0.9.3';
-import { S, save } from './state.js?v=0.9.3';
-import { STORES, BYID, rarityOf } from './data.js?v=0.9.3';
-import * as G from './game.js?v=0.9.3';
-import { dist, todayISO, prefOf, hash32, fmtDist, monthKey, emit } from './util.js?v=0.9.3';
+import { WALK, RANGE_M } from './config.js?v=0.10.0';
+import { S, save } from './state.js?v=0.10.0';
+import { STORES, BYID, rarityOf } from './data.js?v=0.10.0';
+import * as G from './game.js?v=0.10.0';
+import { dist, todayISO, prefOf, hash32, fmtDist, monthKey, emit } from './util.js?v=0.10.0';
 
 function dayRec(d = todayISO()) { S.days = S.days || {}; const r = (S.days[d] = S.days[d] || { m: 0, v: 0 }); r.pass = r.pass || {}; r.alert = r.alert || {}; return r; }
 export const pagesOf = (m) => Math.floor((m || 0) / WALK.pageM);
