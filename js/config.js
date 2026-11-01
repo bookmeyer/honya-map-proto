@@ -1,7 +1,7 @@
 // 設定値（数字はここだけで変える）
-export const APP_VER = '0.10.0';
+export const APP_VER = '0.10.1';
 export const STORAGE_KEY = 'honya_map_v3';
-// イベントの設定を読み、参加の記録（店番号と日時だけ）を送る先。管理画面は同じ場所の /meguri/admin/
+// イベントの設定を読み、参加の記録（店番号・日時・射程内か・お試しか・イベント＋名前のないランダムな端末の番号）を送る先。管理画面は同じ場所の /meguri/admin/
 export const EVENTS_API = 'https://tsunagubooks.com/meguri/api/';
 export const LEGACY_KEYS = ['honya_map_v2'];
 

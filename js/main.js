@@ -1,16 +1,16 @@
 // 起動：記録を読み、データを取り、地図を出し、部品をつなぐ
-import { APP_VER } from './config.js?v=0.10.0';
-import { S, load, save } from './state.js?v=0.10.0';
-import { loadAll, STORES } from './data.js?v=0.10.0';
-import * as MAP from './map.js?v=0.10.0';
-import { POS, setPos, setFollow, jumped } from './position.js?v=0.10.0';
-import * as AUDIO from './audio.js?v=0.10.0';
-import * as UI from './ui.js?v=0.10.0';
-import * as J from './journey.js?v=0.10.0';
-import * as JU from './journey_ui.js?v=0.10.0';
-import * as E from './events.js?v=0.10.0';
-import { renderRadar, renderZukan, renderMissions, renderSettings, applyTheme, showOnboarding } from './screens.js?v=0.10.0';
-import { $, $$, on, emit } from './util.js?v=0.10.0';
+import { APP_VER } from './config.js?v=0.10.1';
+import { S, load, save } from './state.js?v=0.10.1';
+import { loadAll, STORES } from './data.js?v=0.10.1';
+import * as MAP from './map.js?v=0.10.1';
+import { POS, setPos, setFollow, jumped } from './position.js?v=0.10.1';
+import * as AUDIO from './audio.js?v=0.10.1';
+import * as UI from './ui.js?v=0.10.1';
+import * as J from './journey.js?v=0.10.1';
+import * as JU from './journey_ui.js?v=0.10.1';
+import * as E from './events.js?v=0.10.1';
+import { renderRadar, renderZukan, renderMissions, renderSettings, applyTheme, showOnboarding } from './screens.js?v=0.10.1';
+import { $, $$, on, emit, isStandalone, mobileOS } from './util.js?v=0.10.1';
 
 async function boot() {
   load(); applyThemeEarly();
@@ -60,7 +60,9 @@ async function boot() {
       setTimeout(check, 3000); document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') check(); });
     }).catch(() => {});
   }
-  const afterIntro = () => { if (join && join.isNew) UI.joinNotice(join.code); else if (!S.settings.privacyV10) UI.privacyNotice(); };
+  // ホーム画面のアイコンから開いているときは、記録を消さないよう端末に頼む（ふつうのタブでは頼まない。確かめる窓を出すブラウザがあるため）
+  if (isStandalone() && navigator.storage && navigator.storage.persist) navigator.storage.persisted().then((p) => p || navigator.storage.persist()).catch(() => {});
+  const afterIntro = () => { if (join && join.isNew) UI.joinNotice(join.code); else if (!S.settings.privacyV10) UI.privacyNotice(); else if (!S.settings.homeTip && mobileOS() && !isStandalone()) UI.homeTip(); };
   if (!S.seen) showOnboarding((mode) => { S.seen = 1; S.settings.privacyV10 = join && join.isNew ? 0 : 1; save(); UI.refreshHud(); if (mode === 'geo') UI.locate(); if (mode === 'trial') { UI.setTrialUI(true); UI.warp(); } if (join && join.isNew) UI.joinNotice(join.code); });
   else afterIntro();
   emit('view', 'map');

@@ -1,5 +1,5 @@
 // 小さな道具
-import { PREFS } from './config.js?v=0.10.0';
+import { PREFS } from './config.js?v=0.10.1';
 
 export const $ = (s, el = document) => el.querySelector(s);
 export const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
@@ -22,6 +22,10 @@ export function cleanAuthor(a) { return String(a).split(/\s+/).map((t) => t.repl
 export const icon = (name, cls = '') => `<svg class="ic ${cls}" aria-hidden="true"><use href="#i-${name}"></use></svg>`;
 export const gmapDir = (st) => `https://www.google.com/maps/dir/?api=1&destination=${st.la},${st.lo}&travelmode=walking`;
 export const stars = (r) => '★'.repeat(r) + '☆'.repeat(3 - r);
+// ホーム画面のアイコンから開いているか（iPhone は navigator.standalone）
+export const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+// スマホの種類（ホーム画面への追加のしかたを出し分ける）。パソコンは ''
+export const mobileOS = () => { const ua = navigator.userAgent || ''; if (/iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) return 'ios'; return /Android/.test(ua) ? 'android' : ''; };
 
 // 小さな出来事の配信（画面の部品どうしをゆるくつなぐ）
 const subs = new Map();

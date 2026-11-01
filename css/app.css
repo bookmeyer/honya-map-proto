@@ -366,5 +366,5 @@ ol.steps li{margin:4px 0}
 .evpast .evp{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1.5px dashed var(--line-2)}
 .evline{display:inline-block;margin:4px 2px;padding:4px 12px;border-radius:999px;border:2px solid var(--edge);background:var(--evc,var(--gold));color:var(--on-color);font-weight:700;font-size:13px}
 .badge.evb{background:var(--evc,var(--gold));color:var(--on-color)}
-ul.plain{padding-left:1.2em;margin:8px 0;line-height:1.7;font-size:14px}
+ul.plain,ol.plain{padding-left:1.2em;margin:8px 0;line-height:1.7;font-size:14px}
 .seg3 button{white-space:nowrap}

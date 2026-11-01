@@ -1,14 +1,14 @@
 // 画面の部品：見出し帯・タブ・店のシート・モーダル・スタンプの演出・カード・さがす・追加
-import { RANGE_M, SENSE_M, TERRITORY_M, PG, pagesForVol } from './config.js?v=0.10.0';
-import { S, save } from './state.js?v=0.10.0';
-import { STORES, BYID, FEAT, isFeat, isLib, placeWord, rarityOf, rarityText, stampSVG, stampInk, search, addCustom, hideStore, renameStore, lookupIsbn, DATA_DATE } from './data.js?v=0.10.0';
-import * as G from './game.js?v=0.10.0';
-import * as MAP from './map.js?v=0.10.0';
-import { POS, setPos, startWatch, setTrial, setFollow, hasPos, jumped } from './position.js?v=0.10.0';
-import { sfx, haptic, unlock } from './audio.js?v=0.10.0';
-import { stampImage, cardImage, shareBlob } from './share.js?v=0.10.0';
-import * as E from './events.js?v=0.10.0';
-import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, on, emit, weekKey, gmapDir } from './util.js?v=0.10.0';
+import { RANGE_M, SENSE_M, TERRITORY_M, PG, pagesForVol } from './config.js?v=0.10.1';
+import { S, save, exportJSON } from './state.js?v=0.10.1';
+import { STORES, BYID, FEAT, isFeat, isLib, placeWord, rarityOf, rarityText, stampSVG, stampInk, search, addCustom, hideStore, renameStore, lookupIsbn, DATA_DATE } from './data.js?v=0.10.1';
+import * as G from './game.js?v=0.10.1';
+import * as MAP from './map.js?v=0.10.1';
+import { POS, setPos, startWatch, setTrial, setFollow, hasPos, jumped } from './position.js?v=0.10.1';
+import { sfx, haptic, unlock } from './audio.js?v=0.10.1';
+import { stampImage, cardImage, shareBlob } from './share.js?v=0.10.1';
+import * as E from './events.js?v=0.10.1';
+import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, on, emit, weekKey, gmapDir, mobileOS } from './util.js?v=0.10.1';
 
 export let currentView = 'map';
 export let currentSub = 'stamps';
@@ -143,7 +143,7 @@ export function startCheckin(st, near) {
   const note = near ? (stamped ? `この${placeWord(st)}のスタンプはもう持っています。もう一度押すと少しページが増え、常連度が上がります。` : `射程内です。この${placeWord(st)}だけのスタンプ（${stars(rarityOf(st))}）が押せます。${feat && !featGot ? ` 今週の推し店なので +${PG.feat} XP。` : ''}`) : '店から離れています（位置がないか、射程の外）。「来た記録」として自己申告で残します。スタンプは押せません。';
   openModal(`<h2>${esc(st.n)}</h2><div class="status-card ${near ? 'shu' : 'sumi'}">${esc(note)}</div>
     <div class="field"><label for="ci-memo">一言メモ（任意・100字まで）</label><textarea id="ci-memo" maxlength="100" placeholder="例：文庫の棚が広い。店員さんの手書きPOPがよかった"></textarea></div>
-    <div class="note">位置（座標）は送りません。${S.settings.sendLog === false ? '参加の記録も送らない設定です。' : '送るのは、この店の番号と日時だけです（設定で止められます）。'}</div>
+    <div class="note">位置（座標）は送りません。${S.settings.sendLog === false ? '参加の記録も送らない設定です。' : '送るのは、この店の番号と日時など（名前のない、ランダムな番号といっしょに。設定で止められます）。'}</div>
     <div class="actions"><button class="btn primary" id="ci-save">${near ? 'スタンプを押す' : '記録だけ残す'}</button><button class="btn ghost" id="ci-cancel">やめる</button></div>`);
   $('#ci-cancel').onclick = closeModal;
   $('#ci-save').onclick = () => { const res = G.checkin(st, { near, memo: $('#ci-memo').value.trim(), trial: POS.fake }); const evr = E.onCheckin(st, { near, trial: POS.fake }); closeModal(); closeSheet(); applyMapStates(); refreshHud(); showCapture(st, res, near, evr); };
@@ -265,7 +265,7 @@ export function nameModal(after) {
 }
 
 // ---------- 参加コード・送るもののお知らせ（v0.10） ----------
-const SEND_TEXT = '<ul class="plain"><li><b>送るもの</b>：スタンプを押した店の番号と日時（参加の人数を数えるため。名前のない、ランダムな番号といっしょに）</li><li><b>送らないもの</b>：位置の座標・移動の記録・名前・メモ・カード</li><li>設定の「参加の記録を送る」で、いつでも止められます</li></ul>';
+const SEND_TEXT = '<ul class="plain"><li><b>送るもの</b>：スタンプを押した店の番号と日時、店の近くで押したか・お試し歩きか・どのイベントか（参加の人数を数えるため。名前のない、ランダムな番号といっしょに）</li><li><b>送らないもの</b>：位置の座標・移動の記録・名前・メモ・カード</li><li>設定の「参加の記録を送る」で、いつでも止められます</li></ul>';
 export function joinNotice(code) {
   S.settings.privacyV10 = 1; save();
   openModal(`<h2>お試しに参加しました</h2><p>参加コード「${esc(code)}」が入りました。お試しの人だけのイベントが、ラリーの画面と地図に出ます。</p>${SEND_TEXT}<div class="actions"><button class="btn primary wide" id="jn-ok">はじめる</button></div>`);
@@ -275,6 +275,22 @@ export function privacyNotice() {
   S.settings.privacyV10 = 1; save();
   openModal(`<h2>お知らせ</h2><p>イベント（期間限定のスタンプの枠など）が始まるのにあわせて、参加の人数を数えるための記録を送るようになりました。</p>${SEND_TEXT}<div class="actions"><button class="btn primary" id="pv-ok">わかった</button><button class="btn ghost" id="pv-set">設定を見る</button></div>`);
   $('#pv-ok').onclick = closeModal; $('#pv-set').onclick = () => { closeModal(); switchView('settings'); };
+}
+
+// ---------- 記録を守る：ホーム画面に追加（v0.10.1） ----------
+// iPhone の Safari は、しばらく開かないサイトの記録を消すことがある。ホーム画面のアイコンから開けば消えにくい
+// iPhone ではアイコンと Safari で記録の置き場所が別なので、記録がある人には書き出し→読み込みを案内する
+export function exportFile() {
+  const blob = new Blob([exportJSON()], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `honya-map-${todayISO()}.json`; document.body.appendChild(a); a.click(); a.remove(); toast('書き出しました', 'ok');
+}
+export function homeTip() {
+  S.settings.homeTip = 1; save();
+  const ios = mobileOS() === 'ios'; const has = Object.keys(S.stamps).length + S.cards.length > 0;
+  const why = ios ? 'Safariで開いているだけだと、しばらく開かないうちに、スタンプなどの記録が消えることがあります（Safariの決まりです）。' : 'ブラウザで開いているだけだと、端末の空きが少ないときなどに、記録が消えることがあります。';
+  const steps = ios ? '<ol class="plain"><li>Safariで本めぐりを開く</li><li>共有ボタン（四角に上向きの矢印）を押す</li><li>「ホーム画面に追加」→「追加」を押す</li></ol>' : '<ol class="plain"><li>右上のメニュー（︙）を押す</li><li>「ホーム画面に追加」か「アプリをインストール」を押す</li></ol>';
+  const move = ios && has ? '<p class="hint">いまの記録の移し方：iPhoneでは、ホーム画面のアイコンとSafariとで、記録の置き場所が別になります。先にここで「書き出す」を押してファイルにし、アイコンから開いた本めぐりの設定で「読み込む」を選んでください。</p>' : '';
+  openModal(`<h2>記録を守るために</h2><p>${why}ホーム画面に追加して、アイコンから開くと消えにくくなります。</p>${steps}${move}<div class="actions">${move ? '<button class="btn primary" id="ht-export">書き出す</button>' : ''}<button class="btn ${move ? 'ghost' : 'primary'}" id="ht-ok">わかった</button></div>`);
+  $('#ht-ok').onclick = closeModal; if ($('#ht-export')) $('#ht-export').onclick = exportFile;
 }
 export function joinModal(after) {
   const cur = S.settings.joinCode || '';
