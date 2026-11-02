@@ -15,6 +15,7 @@ module.exports = {
     const seen = new Set();
     for (const b of blocks) {
       let branch = lib.strip((b.match(/<h3[^>]*>([\s\S]*?)<\/h3>/) || [])[1] || '').replace(/\n/g, ' ');
+      if (/OPEN\s*予定|オープン予定/i.test(branch)) continue; // まだ開いていない店（「2026年12月OPEN予定 – 有隣堂 アトレ中野店」など）は入れない
       branch = branch.replace(/^\s*\d{1,2}\/\d{1,2}\s*\([^)]*\)\s*OPEN\s*[–\-ー—]\s*/i, '').replace(/^\s*(NEW|OPEN)\s*[–\-ー—:：]\s*/i, '').trim(); // 「11/5(木)OPEN – 」のような注記を外す
       if (!branch) continue;
       const head = b.slice(0, b.indexOf('store-post__info') > 0 ? b.indexOf('store-post__info') : b.length);
@@ -24,7 +25,7 @@ module.exports = {
       const key = url || branch;
       if (seen.has(key)) continue;
       seen.add(key);
-      stores.push({ name: `有隣堂 ${branch}`, address: '', url });
+      stores.push({ name: /^有隣堂/.test(branch) ? branch : `有隣堂 ${branch}`, address: '', url }); // 2026-11 から見出しに「有隣堂」が入るようになった（二重にしない）
     }
     if (stores.length < 20) throw new Error(`店舗が少なすぎる（${stores.length}件）。ページの作りが変わったかもしれない`);
     // 詳細ページから住所と座標

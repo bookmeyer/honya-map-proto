@@ -370,8 +370,8 @@
    "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・26m）"
   },
   "w1026683927": {
-   "n": "BOOKOFF 平塚四之宮店",
-   "why": "chain-check 2026-10-16: BOOKOFFの公式表記（支店名で一致・18m）"
+   "n": "あそビバ 平塚四之宮店",
+   "why": "chain-check 2026-11-02: BOOKOFFの公式表記（支店名で一致・18m）"
   },
   "n2733198749": {
    "n": "BOOKOFF PLUS 藤沢大庭店",
@@ -4020,6 +4020,10 @@
   "n12041602574": {
    "n": "TSUTAYA BOOKSTORE HIRORO",
    "why": "chain-check 2026-10-16: TSUTAYA／蔦屋書店の公式表記（位置で一致・25m）"
+  },
+  "n1716111436": {
+   "n": "文教堂 溝ノ口駅前店",
+   "why": "chain-check 2026-11-02: 文教堂の公式表記（位置で一致・136m）"
   }
  },
  "closed": {

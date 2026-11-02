@@ -120,10 +120,12 @@ if (!adapters.length) { console.error('部品がありません（--only の名�
   }
   if (flag('--fetch-only')) return;
   // どれか1つのチェーンの公式一覧で確認できた店は、ほかのチェーンの目で「見当たらない」となっても閉店候補にしない（例：元・啓文堂の紀伊國屋書店）
-  let crossKept = 0; for (const id of Object.keys(candidates.closed)) if (candidates.confirmed[id]) { delete candidates.closed[id]; crossKept++; }
+  let crossKept = 0; const crossIds = new Set(); for (const id of Object.keys(candidates.closed)) if (candidates.confirmed[id]) { delete candidates.closed[id]; crossKept++; crossIds.add(id); }
   // 公式店のどれかが 150m 以内にある店も、閉店候補にしない（別の屋号で一覧に載っている複合店など）
   const allOfficial = []; for (const a of adapters) { try { for (const o of JSON.parse(fs.readFileSync(path.join(CACHE, a.id + '.json'), 'utf8')).list) { let la = o.lat, lo = o.lon; if (la == null && o.address) { const g = GEO[lib.normAddr(o.address)]; if (g) { la = g.lat; lo = g.lon; } } if (la != null) allOfficial.push([+la, +lo, o.name]); } } catch (e) {} }
-  for (const id of Object.keys(candidates.closed)) { const s = stores.find((x) => x.i === id); if (!s) continue; const hit = allOfficial.find(([la, lo]) => Math.abs(la - s.la) < 0.002 && Math.abs(lo - s.lo) < 0.0025 && dist(s.la, s.lo, la, lo) <= 150); if (hit) { delete candidates.closed[id]; crossKept++; } }
+  for (const id of Object.keys(candidates.closed)) { const s = stores.find((x) => x.i === id); if (!s) continue; const hit = allOfficial.find(([la, lo]) => Math.abs(la - s.la) < 0.002 && Math.abs(lo - s.lo) < 0.0025 && dist(s.la, s.lo, la, lo) <= 150); if (hit) { delete candidates.closed[id]; crossKept++; crossIds.add(id); } }
+  // 外した店は、報告の閉店候補の行にも印を付ける（例：元・啓文堂の紀伊國屋書店が、紀伊國屋の一覧にないだけで閉店候補に見えないように）
+  for (let k = 0; k < report.length; k++) { const m = report[k].match(/^- \[ \] `([^`]+)` .*確からしさ：/); if (m && crossIds.has(m[1])) report[k] = report[k].replace('- [ ] ', '- [x] ') + '｜→ ほかの一覧か150m以内の公式店で確かめられたので、候補から外した'; }
   report.splice(3, 0, `ほかのチェーンの一覧で確認できた店・150m以内に公式店がある店 ${crossKept} 店は、閉店候補から外しました。`, '');
   report.splice(4, 0, '| チェーン | 地図 | 公式 | 一致 | 閉店候補 | 名前ちがい | 地図にない |', '|---|---|---|---|---|---|---|', ...summary.map((r) => `| ${r.join(' | ')} |`), '');
   fs.writeFileSync(path.join(OUT, `report_${today}.md`), report.join('\n'));

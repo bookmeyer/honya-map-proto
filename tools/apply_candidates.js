@@ -6,6 +6,7 @@
 //   node tools/apply_candidates.js --renames all|id,id      … 公式表記への名前直しを overrides.json の renames に
 //   node tools/apply_candidates.js --confirmed              … 公式一覧で確認できた店の「最終確認の月」を data/confirmed.json に
 //   node tools/apply_candidates.js --add precise|all|kinokuniya … 地図にない公式店を data/additions.json に（precise＝位置が番地まで正確なものだけ）
+//   node tools/apply_candidates.js --add xe8t63h,xvf4c7v    … 地図にない公式店を id で指定して足す（報告を見て選んだ店だけ）
 //   組み合わせ可。写したあと：node tools/build_data.js data/bookstores_raw.json data/bookstores.json → 版を上げて push
 const fs = require('fs');
 const path = require('path');
@@ -47,13 +48,15 @@ const addSel = opt('--add');
 const SKIP_ADD = new Set(['villagevanguard']); // 雑貨が主の店は、名指ししたときだけ足す
 if (addSel) {
   const adds = read('additions.json', []); const have = new Set(adds.map((x) => x.i)); let n = 0;
+  const addIds = /^x[0-9a-z]+(,x[0-9a-z]+)*$/.test(addSel) ? new Set(addSel.split(',')) : null; // id を指定（例：--add xe8t63h,xvf4c7v）。雑貨が主の店も、指定すれば足す
   for (const [chain, list] of Object.entries(cand.additions || {})) {
     for (const x of list) {
-      if (addSel !== 'all' && addSel !== 'precise' && addSel !== chain) continue;
+      if (addIds) { if (!addIds.has(x.i)) continue; }
+      else if (addSel !== 'all' && addSel !== 'precise' && addSel !== chain) continue;
       if (addSel === 'precise' && !x.precise) continue;
       if (have.has(x.i)) continue;
       if (adds.some((y) => Math.abs(y.la - x.la) < 0.0008 && Math.abs(y.lo - x.lo) < 0.001)) continue; // 別チェーンの一覧と同じ店（約70m以内）は1つだけ
-      if (addSel !== chain && SKIP_ADD.has(chain)) continue;
+      if (!addIds && addSel !== chain && SKIP_ADD.has(chain)) continue;
       adds.push({ i: x.i, n: x.n, la: x.la, lo: x.lo, a: x.a, p: x.p, u: x.u, c: x.c, src: 'chain:' + chain, precise: x.precise }); have.add(x.i); n++;
     }
   }
