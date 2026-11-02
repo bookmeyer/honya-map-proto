@@ -1,5 +1,5 @@
 {
- "fetchedAt": "2026-10-16T01:40:21.378Z",
+ "fetchedAt": "2026-11-02T00:01:14.171Z",
  "list": [
   {
    "name": "古本市場新琴似店",
@@ -667,6 +667,14 @@
    "name": "ふるいちトップブックス滑川店",
    "address": "富山県滑川市上小泉2829番地明文堂書店滑川店・店内",
    "url": "https://www.furu1.net/shop/shop2635.html",
+   "tags": [
+    "ふるいち"
+   ]
+  },
+  {
+   "name": "ふるいちトップブックス氷見店",
+   "address": "富山県氷見市窪３４４−１明文堂書店氷見店2階",
+   "url": "https://www.furu1.net/shop/shop2636.html",
    "tags": [
     "ふるいち"
    ]
