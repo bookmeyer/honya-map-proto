@@ -1,5 +1,5 @@
 // 設定値（数字はここだけで変える）
-export const APP_VER = '0.10.1';
+export const APP_VER = '0.11.0';
 export const STORAGE_KEY = 'honya_map_v3';
 // イベントの設定を読み、参加の記録（店番号・日時・射程内か・お試しか・イベント＋名前のないランダムな端末の番号）を送る先。管理画面は同じ場所の /meguri/admin/
 export const EVENTS_API = 'https://tsunagubooks.com/meguri/api/';
@@ -46,7 +46,7 @@ export const PREFS = [
 ];
 
 export const DEMO_STORE = { i: 'demo1', n: '【見本】架空の本屋', la: 35.6812, lo: 139.7671, a: '（実在しません。公認店のページの見え方の見本）', p: '東京都', demo: 1, k: 0,
-  rec: { who: '書店員 Aさん（見本）', title: '『（見本）手放せない1冊』', say: '（見本）取材でうかがった書店員さんのひとことが、ご本人の言葉のまま入ります。', shelf: '文庫の新刊台（見本）' } };
+  rec: { who: '書店員 Aさん（見本）', title: '（見本）ここに書名が入ります', author: '（見本）著者名', say: '（見本）取材でうかがった書店員さんのひとことが、ご本人の言葉のまま入ります。', shelf: '文庫の新刊台（見本）', photo: 'demo' } };
 
 // 称号（ゆるやかに増える）と実績（細かく増える）
 export const TITLES = [

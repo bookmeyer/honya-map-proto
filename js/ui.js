@@ -1,14 +1,14 @@
 // 画面の部品：見出し帯・タブ・店のシート・モーダル・スタンプの演出・カード・さがす・追加
-import { RANGE_M, SENSE_M, TERRITORY_M, PG, pagesForVol } from './config.js?v=0.10.1';
-import { S, save, exportJSON } from './state.js?v=0.10.1';
-import { STORES, BYID, FEAT, isFeat, isLib, placeWord, rarityOf, rarityText, stampSVG, stampInk, search, addCustom, hideStore, renameStore, lookupIsbn, DATA_DATE } from './data.js?v=0.10.1';
-import * as G from './game.js?v=0.10.1';
-import * as MAP from './map.js?v=0.10.1';
-import { POS, setPos, startWatch, setTrial, setFollow, hasPos, jumped } from './position.js?v=0.10.1';
-import { sfx, haptic, unlock } from './audio.js?v=0.10.1';
-import { stampImage, cardImage, shareBlob } from './share.js?v=0.10.1';
-import * as E from './events.js?v=0.10.1';
-import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, on, emit, weekKey, gmapDir, mobileOS } from './util.js?v=0.10.1';
+import { RANGE_M, SENSE_M, TERRITORY_M, PG, pagesForVol } from './config.js?v=0.11.0';
+import { S, save, exportJSON } from './state.js?v=0.11.0';
+import { STORES, BYID, FEAT, isFeat, isLib, placeWord, rarityOf, rarityText, stampSVG, stampInk, search, addCustom, hideStore, renameStore, lookupIsbn, DATA_DATE, pickOpen, bookTitle } from './data.js?v=0.11.0';
+import * as G from './game.js?v=0.11.0';
+import * as MAP from './map.js?v=0.11.0';
+import { POS, setPos, startWatch, setTrial, setFollow, hasPos, jumped } from './position.js?v=0.11.0';
+import { sfx, haptic, unlock } from './audio.js?v=0.11.0';
+import { stampImage, cardImage, shareBlob } from './share.js?v=0.11.0';
+import * as E from './events.js?v=0.11.0';
+import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, on, emit, weekKey, gmapDir, mobileOS } from './util.js?v=0.11.0';
 
 export let currentView = 'map';
 export let currentSub = 'stamps';
@@ -100,6 +100,16 @@ export function warp(target) {
 }
 
 // ---------- 店のシート ----------
+// ---------- 書店員さんの1冊（v0.11） ----------
+// 書名・著者・ひとことは誰でも見られる。手書きのカードは、その店の射程内でスタンプを押した人だけ（data.js pickOpen）
+const DEMO_CARD = `<svg viewBox="0 0 300 186" role="img" aria-label="手書きのカードの見本"><g transform="rotate(-2 150 93)"><rect x="14" y="12" width="272" height="160" rx="6" fill="#FFFDF5" stroke="#1B1B1B" stroke-width="2"/><path d="M32 66h236M32 98h236M32 130h236" stroke="#E6DCC6" stroke-width="1.5"/><text x="150" y="50" text-anchor="middle" font-size="15" fill="#1B1B1B" font-family="'Zen Maru Gothic',sans-serif">（見本）書店員さんの手書きのカード</text><text x="150" y="88" text-anchor="middle" font-size="13" fill="#5A554D" font-family="'Zen Maru Gothic',sans-serif">ここに、お店でいただいた</text><text x="150" y="120" text-anchor="middle" font-size="13" fill="#5A554D" font-family="'Zen Maru Gothic',sans-serif">カードの写真が入ります</text></g><g transform="rotate(-8 246 150)"><rect x="216" y="137" width="60" height="26" rx="6" fill="#FF6A48" stroke="#1B1B1B" stroke-width="2"/><text x="246" y="155" text-anchor="middle" font-size="14" fill="#1B1B1B" font-family="'Mochiy Pop P One',sans-serif">見本</text></g></svg>`;
+function pickHTML(st) {
+  const p = st.rec; const open = pickOpen(st);
+  const card = !p.photo ? '' : open
+    ? `<div class="pick-card">${p.photo === 'demo' ? DEMO_CARD : `<img src="${esc(p.photo)}" alt="${esc(p.who)}の手書きのカード" loading="lazy">`}</div>`
+    : `<div class="pick-lock">${icon('stamp')}<div>この${placeWord(st)}でスタンプを押すと、${esc(p.who)}の<b>手書きのカード</b>が見られます</div></div>`;
+  return `<div class="staff pick"><div class="who">${esc(p.who)}の手放せない1冊</div><div class="pick-book"><div class="pick-cover"${p.isbn ? ` data-isbn="${esc(p.isbn)}"` : ''}>${icon('book')}</div><div style="min-width:0"><div class="title">${esc(bookTitle(p.title))}</div>${p.author ? `<div class="muted small">${esc(p.author)}</div>` : ''}</div></div>${p.say ? `<div class="say">${esc(p.say)}</div>` : ''}${p.shelf ? `<div class="muted small">棚：${esc(p.shelf)}</div>` : ''}${card}</div>`;
+}
 export function openSheet(id, quiet) {
   const st = BYID.get(id); if (!st) return;
   const vs = G.visitsOf(id), cs = G.cardsOf(id), want = S.wants.includes(id), stamp = S.stamps[id], r = rarityOf(st), feat = isFeat(st.i), reg = G.regularInfo(id);
@@ -110,7 +120,7 @@ export function openSheet(id, quiet) {
   b.push(stamp ? `<span class="badge shu">スタンプ ${fmtDate(stamp.d)}</span>${stamp.trial ? '<span class="badge trial">体験</span>' : ''}` : vs.length ? `<span class="badge sumi">記録 ${vs.length}回</span>` : '<span class="badge">まだ</span>');
   for (const e of E.liveEvents().filter((x) => E.isTarget(x, st)).slice(0, 2)) { const fr = E.frameFor(e, st); b.push(`<span class="badge evb" style="--evc:${esc(fr.color)}">${esc(fr.label || e.name)}${fr === e.special ? '（特別な枠）' : '（イベント）'}</span>`); }
   if (cs.length) b.push(`<span class="badge">カード${cs.length}枚</span>`); if (want) b.push(`<span class="badge gold">${icon('heart')}行きたい</span>`); if (near) b.push('<span class="badge gold">射程内</span>');
-  const rec = st.rec ? `<div class="staff"><div class="who">${esc(st.rec.who)}の手放せない1冊</div><div class="title">${esc(st.rec.title)}</div><div>${esc(st.rec.say)}</div><div class="muted small">棚：${esc(st.rec.shelf)}</div></div>` : '';
+  const rec = st.rec ? pickHTML(st) : '';
   const hist = vs.length ? `<div class="muted small" style="margin-top:8px">${vs.slice(-3).reverse().map((v) => `${fmtDate(v.d)}${v.near ? '（スタンプ）' : '（記録）'}${v.memo ? '「' + esc(v.memo) + '」' : ''}`).join('<br>')}</div>` : '';
   const distText = d == null ? '現在地なし' : jumped() ? '位置が大きく飛んだので、少し待ってから（1分）' : near ? `射程内（約${fmtDist(d)}）` : `ここから約${fmtDist(d)}（あと${fmtDist(d - RANGE_M)}で射程内）`;
   $('#sheet-body').innerHTML = `
@@ -127,6 +137,7 @@ export function openSheet(id, quiet) {
       ${POS.fake && !near ? `<button class="btn wide" data-act="warp">${icon('warp')}この店へワープ</button>` : ''}
       ${st.demo || st.custom ? '' : `<button class="btn ghost" data-act="report">${isLib(st) ? '閉館している' : '閉店している'}</button><button class="btn ghost" data-act="rename">名前が違う</button>`}
     </div><div id="sheet-extra"></div>`;
+  const cv = $('#sheet-body .pick-cover[data-isbn]'); if (cv) lookupIsbn(cv.dataset.isbn).then((bk) => { if (bk && bk.cover && cv.isConnected) cv.innerHTML = `<img src="${esc(bk.cover)}" alt="" referrerpolicy="no-referrer">`; });
   $$('#sheet-body [data-act]').forEach((btn) => btn.addEventListener('click', () => { sfx.click(); const a = btn.dataset.act;
     if (a === 'checkin') startCheckin(st, near); else if (a === 'card') startCard(st); else if (a === 'share') shareStampUI(st); else if (a === 'regshare') shareStampUI(st, { regular: true }); else if (a === 'warp') warp(st);
     else if (a === 'report') confirmBox($('#sheet-extra'), 'この店を地図から外しますか？（閉店した店・本屋ではない店。この端末だけ。記録の書き出しに含まれます。設定から戻せます）', () => { hideStore(st); save(); MAP.setStores(STORES); applyMapStates(); updateNear(); closeSheet(); toast(`${st.n} を外しました`); }, '外す');
@@ -146,7 +157,7 @@ export function startCheckin(st, near) {
     <div class="note">位置（座標）は送りません。${S.settings.sendLog === false ? '参加の記録も送らない設定です。' : '送るのは、この店の番号と日時など（名前のない、ランダムな番号といっしょに。設定で止められます）。'}</div>
     <div class="actions"><button class="btn primary" id="ci-save">${near ? 'スタンプを押す' : '記録だけ残す'}</button><button class="btn ghost" id="ci-cancel">やめる</button></div>`);
   $('#ci-cancel').onclick = closeModal;
-  $('#ci-save').onclick = () => { const res = G.checkin(st, { near, memo: $('#ci-memo').value.trim(), trial: POS.fake }); const evr = E.onCheckin(st, { near, trial: POS.fake }); closeModal(); closeSheet(); applyMapStates(); refreshHud(); showCapture(st, res, near, evr); };
+  $('#ci-save').onclick = () => { const pkBefore = pickOpen(st); const res = G.checkin(st, { near, memo: $('#ci-memo').value.trim(), trial: POS.fake }); const evr = E.onCheckin(st, { near, trial: POS.fake }); closeModal(); closeSheet(); applyMapStates(); refreshHud(); showCapture(st, res, near, evr); if (st.rec && !pkBefore && pickOpen(st)) toast('📖 書店員さんの手書きのカードが見られるようになりました（店のページ）', 'ok'); };
 }
 export function showCapture(st, res, near, evr = { frames: [], titles: [], progress: [] }) {
   const { gain, isNew, lv, rewards, r, regUp } = res; const fr = evr.frames[0] || null;

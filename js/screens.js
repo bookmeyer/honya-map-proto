@@ -1,24 +1,37 @@
 // 画面：ちかく（旧レーダー）・めぐり帳（旧図鑑）・ラリー（旧お題）・設定・最初の案内
-import { APP_VER, RANGE_M, PG, pagesForVol, frameOf, PREFS } from './config.js?v=0.10.1';
-import { S, save, exportJSON, parseImport, replace, reset } from './state.js?v=0.10.1';
-import { STORES, BYID, FEAT, RALLIES, isFeat, rarityOf, rarityText, stampSVG, unhideAll, rebuild, DATA_DATE } from './data.js?v=0.10.1';
-import * as G from './game.js?v=0.10.1';
-import * as MAP from './map.js?v=0.10.1';
-import { POS, hasPos } from './position.js?v=0.10.1';
-import { sfx, haptic } from './audio.js?v=0.10.1';
-import { profileImage, shareBlob } from './share.js?v=0.10.1';
-import { toast, openModal, closeModal, confirmBox, openSheet, openCard, switchView, setSub, refreshHud, applyMapStates, updateNear, locate, setTrialUI, warp, makeAvatar, nameModal, cleanHandle, joinModal, NEAR, currentSub, homeTip, exportFile } from './ui.js?v=0.10.1';
-import * as JU from './journey_ui.js?v=0.10.1';
-import * as E from './events.js?v=0.10.1';
-import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, weekKey, isStandalone, mobileOS } from './util.js?v=0.10.1';
+import { APP_VER, RANGE_M, PG, pagesForVol, frameOf, PREFS } from './config.js?v=0.11.0';
+import { S, save, exportJSON, parseImport, replace, reset } from './state.js?v=0.11.0';
+import { STORES, BYID, FEAT, RALLIES, isFeat, rarityOf, rarityText, stampSVG, unhideAll, rebuild, DATA_DATE, pickOpen, bookTitle } from './data.js?v=0.11.0';
+import * as G from './game.js?v=0.11.0';
+import * as MAP from './map.js?v=0.11.0';
+import { POS, hasPos } from './position.js?v=0.11.0';
+import { sfx, haptic } from './audio.js?v=0.11.0';
+import { profileImage, shareBlob } from './share.js?v=0.11.0';
+import { toast, openModal, closeModal, confirmBox, openSheet, openCard, switchView, setSub, refreshHud, applyMapStates, updateNear, locate, setTrialUI, warp, makeAvatar, nameModal, cleanHandle, joinModal, NEAR, currentSub, homeTip, exportFile } from './ui.js?v=0.11.0';
+import * as JU from './journey_ui.js?v=0.11.0';
+import * as E from './events.js?v=0.11.0';
+import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, weekKey, isStandalone, mobileOS } from './util.js?v=0.11.0';
 
 const empty = (ic, text) => `<div class="empty">${icon(ic)}<div>${text}</div></div>`;
 
 // ---------- ちかく（view-radar） ----------
 const LEGEND = [['#FF6A48', '本屋'], ['#B9794A', '古書店'], ['#1B1B1B', '秘境の本屋'], ['#2F9BFF', '図書館'], ['#4FC07A', 'スタンプ済み'], ['#FFD447', '射程内（光の輪）']];
 function renderLegend() { const el = $('#radar-legend'); if (el) el.innerHTML = '<span class="lg-t">ピンの色</span>' + LEGEND.map(([c, t]) => `<span class="lg"><i style="background:${c}"></i>${t}</span>`).join(''); }
+// 書店員さんの1冊（v0.11）：近い順に3店。「すべて見る」で全部。いまは見本だけのときもある
+let picksAll = false;
+function renderPicks() {
+  const el = $('#radar-picks'); if (!el) return;
+  const all = STORES.filter((s) => s.rec); if (!all.length) { el.innerHTML = ''; return; }
+  let base; if (hasPos()) base = { lat: POS.lat, lon: POS.lon, lbl: 'ここから' }; else { const c = MAP.center(); base = { lat: c.lat, lon: c.lng, lbl: '地図の真ん中から' }; }
+  const real = all.filter((s) => !s.demo).length;
+  const sorted = all.map((s) => ({ s, d: dist(base.lat, base.lon, s.la, s.lo) })).sort((a, b) => (a.s.demo ? 1 : 0) - (b.s.demo ? 1 : 0) || a.d - b.d);
+  const show = picksAll ? sorted : sorted.slice(0, 3);
+  el.innerHTML = `<h3>書店員さんの1冊 <span class="muted small">${real ? `全国 ${real}店` : 'これから増えていきます（いまは見本だけ）'}</span></h3><div class="list">${show.map(({ s, d }) => `<div class="item" data-id="${esc(s.i)}"><div class="main"><div class="name">${esc(bookTitle(s.rec.title))}</div><div class="sub">${esc(s.n)}・${esc(s.rec.who)}　${base.lbl} ${fmtDist(d)}${pickOpen(s) ? '　<span class="badge shu">カードを見た</span>' : ''}</div></div></div>`).join('')}</div>${sorted.length > 3 ? `<button class="linkish" id="pk-more">${picksAll ? '近い3店だけにする' : `すべて見る（${sorted.length}店）`}</button>` : ''}`;
+  $$('#radar-picks .item').forEach((x) => x.addEventListener('click', () => openSheet(x.dataset.id)));
+  if ($('#pk-more')) $('#pk-more').onclick = () => { picksAll = !picksAll; renderPicks(); };
+}
 export function renderRadar() {
-  renderLegend(); JU.renderRadarWants();
+  renderLegend(); JU.renderRadarWants(); renderPicks();
   const st = $('#radar-status'), list = $('#radar-list');
   if (!hasPos()) { st.className = 'status-card'; st.innerHTML = `現在地がまだありません。<div class="actions"><button class="btn primary" id="rd-loc">${icon('locate')}現在地を追う</button><button class="btn" id="rd-trial">${icon('foot')}お試し歩き</button></div>`; $('#rd-loc').onclick = () => { switchView('map'); locate(); }; $('#rd-trial').onclick = () => { switchView('map'); setTrialUI(true); warp(); }; list.innerHTML = ''; return; }
   st.className = 'status-card gold'; st.innerHTML = `${POS.fake ? '<span class="badge feat">お試し</span>' : '<span class="badge ao">追跡中</span>'} 射程内 <b>${NEAR.inRange.size}</b>店　<span class="muted small">${POS.acc ? `誤差 約${Math.round(POS.acc)}m　` : ''}店から${RANGE_M}m以内でスタンプが押せます</span>`;
@@ -35,7 +48,7 @@ export function renderZukan() {
   $('#pf-name').onclick = () => nameModal(renderZukan);
   $('#pf-share').onclick = async () => { try { const ids = Object.keys(S.stamps); const top = ids.map((id) => BYID.get(id)).filter(Boolean).sort((a, b) => rarityOf(b) - rarityOf(a)); const blob = await profileImage({ level: lv, title, st, topStamps: top, avatar: S.settings.avatar, handle: S.settings.handle }); const r = await shareBlob(blob, 'honya-profile.png', '本めぐり', `${S.settings.handle ? S.settings.handle + '　' : ''}第${lv}巻 ${title} スタンプ${st.stamps} #本めぐり`); if (r !== 'cancel') G.noteShare('profile', '', r); if (r !== 'cancel') toast(r === 'saved' ? '画像を保存しました' : 'シェアしました', 'ok'); } catch (e) { toast('画像にできませんでした', 'warn'); } };
   $$('.segmented button').forEach((b) => b.classList.toggle('active', b.dataset.sub === currentSub));
-  $$('.sub').forEach((el) => el.classList.toggle('active', el.id === 'sub-' + currentSub));
+  $$('.sub[id^="sub-"]').forEach((el) => el.classList.toggle('active', el.id === 'sub-' + currentSub));
   const fr = frameOf(lv); const ids = Object.keys(S.stamps);
   const stamped = ids.map((id) => ({ st: BYID.get(id), d: S.stamps[id].d, trial: S.stamps[id].trial })).filter((x) => x.st).sort((a, b) => b.d.localeCompare(a.d));
   $('#stamp-grid').innerHTML = stamped.length ? `<div class="hint" style="grid-column:1/-1">${fr ? `第${lv}巻の額縁：${['', '銅', '銀', '金'][fr]}` : '第3巻になるとスタンプに額縁が付きます'}　スタンプは全部で ${STORES.length.toLocaleString()}種類</div>` + stamped.map(({ st, d, trial }) => { const reg = G.regularInfo(st.i); return `<div class="st f${fr}" data-id="${esc(st.i)}">${stampSVG(st, true, 76, { rank: reg.rank, ev: E.storeFrame(st.i) })}<div class="n">${esc(st.n)}</div>${reg.rank >= 2 ? `<div class="n reg">${esc(reg.name)}・${reg.days}日</div>` : `<div class="n">${fmtDate(d)}${trial ? '・体験' : ''}</div>`}</div>`; }).join('') : empty('stamp', '店の射程内（120m）で「スタンプを押す」と、ここに並びます。家で試すなら お試し歩き → ワープ。');

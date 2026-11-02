@@ -1,5 +1,5 @@
 // 小さな道具
-import { PREFS } from './config.js?v=0.10.1';
+import { PREFS } from './config.js?v=0.11.0';
 
 export const $ = (s, el = document) => el.querySelector(s);
 export const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
