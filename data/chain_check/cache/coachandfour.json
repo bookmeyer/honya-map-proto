@@ -1,0 +1,55 @@
+{
+ "fetchedAt": "2026-11-02T15:02:35.283Z",
+ "list": [
+  {
+   "name": "コーチャンフォーつくば店",
+   "address": "茨城県つくば市学園の森3丁目50-7",
+   "url": "https://www.coachandfour-tsukuba.jp/"
+  },
+  {
+   "name": "コーチャンフォー若葉台店",
+   "address": "東京都稲城市若葉台2丁目9番2",
+   "url": "https://www.coachandfour-wakabadai.jp/"
+  },
+  {
+   "name": "コーチャンフォー美しが丘店",
+   "address": "北海道札幌市清田区美しが丘1条5丁目",
+   "url": "https://www.coachandfour-utsukushigaoka.jp/"
+  },
+  {
+   "name": "コーチャンフォーミュンヘン大橋店",
+   "address": "北海道札幌市豊平区中の島1条13丁目",
+   "url": "https://www.coachandfour-myunhen.jp/"
+  },
+  {
+   "name": "コーチャンフォー新川通り店",
+   "address": "北海道札幌市北区新川3条18丁目",
+   "url": "https://www.coachandfour-shinkawa.jp/"
+  },
+  {
+   "name": "コーチャンフォー釧路店",
+   "address": "北海道釧路市春採7丁目1番24号",
+   "url": "https://www.coachandfour-kushiro.jp/"
+  },
+  {
+   "name": "コーチャンフォー旭川店",
+   "address": "北海道旭川市宮前1条2丁目4番1号 (北彩都あさひかわ)",
+   "url": "https://www.coachandfour-asahikawa.jp/"
+  },
+  {
+   "name": "コーチャンフォー北見店",
+   "address": "北海道北見市並木町521 (国道39号線沿い)",
+   "url": "https://www.coachandfour-kitami.jp/"
+  },
+  {
+   "name": "リラィアブルブックス 運動公園通り店",
+   "address": "北海道釧路町桂木3丁目",
+   "url": "https://www.coachandfourgroup-relabu.jp/undoh/"
+  },
+  {
+   "name": "リラィアブルブックス 根室店",
+   "address": "北海道根室市昭和町4丁目",
+   "url": "https://www.coachandfourgroup-relabu.jp/nemuro/"
+  }
+ ]
+}
