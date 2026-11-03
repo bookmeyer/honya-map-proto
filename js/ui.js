@@ -1,15 +1,15 @@
 // 画面の部品：見出し帯・タブ・店のシート・モーダル・スタンプの演出・カード・さがす・追加
-import { RANGE_M, SENSE_M, TERRITORY_M, PG, WALK, pagesForVol } from './config.js?v=0.14.9';
-import { S, save, exportJSON } from './state.js?v=0.14.9';
-import { STORES, BYID, FEAT, isFeat, isLib, placeWord, rarityOf, rarityText, stampSVG, stampInk, search, addCustom, hideStore, renameStore, lookupIsbn, DATA_DATE, pickOpen, bookTitle } from './data.js?v=0.14.9';
-import * as G from './game.js?v=0.14.9';
-import * as MAP from './map.js?v=0.14.9';
-import { POS, setPos, startWatch, setTrial, setFollow, hasPos, jumped } from './position.js?v=0.14.9';
-import { sfx, haptic, unlock } from './audio.js?v=0.14.9';
-import { stampImage, cardImage, shareBlob } from './share.js?v=0.14.9';
-import * as E from './events.js?v=0.14.9';
-import * as J from './journey.js?v=0.14.9';
-import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, on, emit, weekKey, gmapDir, gmapPlace, mobileOS } from './util.js?v=0.14.9';
+import { RANGE_M, SENSE_M, TERRITORY_M, PG, WALK, pagesForVol } from './config.js?v=0.15.0';
+import { S, save, exportJSON } from './state.js?v=0.15.0';
+import { STORES, BYID, FEAT, isFeat, isLib, placeWord, rarityOf, rarityText, stampSVG, stampInk, search, addCustom, hideStore, renameStore, lookupIsbn, DATA_DATE, pickOpen, bookTitle } from './data.js?v=0.15.0';
+import * as G from './game.js?v=0.15.0';
+import * as MAP from './map.js?v=0.15.0';
+import { POS, setPos, startWatch, setTrial, setFollow, hasPos, jumped } from './position.js?v=0.15.0';
+import { sfx, haptic, unlock } from './audio.js?v=0.15.0';
+import { stampImage, cardImage, shareBlob } from './share.js?v=0.15.0';
+import * as E from './events.js?v=0.15.0';
+import * as J from './journey.js?v=0.15.0';
+import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, on, emit, weekKey, gmapDir, gmapPlace, mobileOS } from './util.js?v=0.15.0';
 
 export let currentView = 'map';
 export let currentSub = 'stamps';
@@ -173,7 +173,7 @@ export function startCheckin(st, near) {
 function segHTML(st, g) {
   if (!g) return ''; const rows = [];
   if (g.from) { const pg = Math.floor((g.walked || 0) / WALK.pageM); rows.push(`<div class="ts-h">前の店（${esc(g.fn)}）から ${fmtDist(g.m)}</div>`); if (pg) rows.push(`<div>歩いたページ <b>+${pg}</b>${g.add >= WALK.pageM ? '<span class="muted small">（閉じていた分は、まっすぐの距離で）</span>' : ''}</div>`); }
-  for (const r of g.reads || []) rows.push(`<div class="ts-read" data-r="${esc(r.id)}"><div>📖 読書${r.title ? `『${esc(r.title)}』` : ''} ${J.fmtMin(r.min)} <b class="nw">+${r.pg}ページ</b></div>${r.id === g.autoId ? '<div class="muted small">「おわる」が押されていなかったので、ここまでの時間にしました</div><button class="linkish" data-undo="1">読んでいなかったときは、ここを押す</button>' : ''}</div>`); // 前の店からあとの移動読書（v0.14.4）
+  for (const r of g.reads || []) rows.push(`<div class="ts-read" data-r="${esc(r.id)}"><div>📖 読書${r.title ? `『${esc(r.title)}』` : ''} ${J.fmtMin(r.min)} <b class="nw">+${r.pg}ページ</b>${r.pl ? `<span class="muted small">（${esc(J.placeText(r.pl))}）</span>` : ''}</div>${r.id === g.autoId ? '<div class="muted small">「おわる」が押されていなかったので、ここまでの時間にしました</div><button class="linkish" data-undo="1">読んでいなかったときは、ここを押す</button>' : ''}</div>`); // 前の店からあとの移動読書（v0.14.4）
   const a = g.from ? BYID.get(g.from) : null; const btw = a ? J.betweenStores(a, st).filter((s) => !G.hasStamp(s.i)).slice(0, 3) : [];
   if (btw.length) rows.push(`<div class="ts-btw"><div class="muted small">あいだにあった本屋（まっすぐの線のそば）</div>${btw.map((s) => `<div class="b"><span>${esc(s.n)}</span><button class="btn" data-want="${esc(s.i)}">${S.wants.includes(s.i) ? '行きたい ✓' : '行きたい'}</button></div>`).join('')}</div>`);
   return rows.length ? `<div class="trip-sum">${rows.join('')}</div>` : '';

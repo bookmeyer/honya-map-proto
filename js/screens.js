@@ -1,17 +1,17 @@
 // 画面：ちかく（旧レーダー）・めぐり帳（旧図鑑）・ラリー（旧お題）・設定・最初の案内
-import { APP_VER, RANGE_M, PG, pagesForVol, frameOf, PREFS } from './config.js?v=0.14.9';
-import { S, save, exportJSON, parseImport, replace, reset } from './state.js?v=0.14.9';
-import { STORES, BYID, FEAT, RALLIES, isFeat, rarityOf, rarityText, stampSVG, unhideAll, rebuild, DATA_DATE, pickOpen, bookTitle } from './data.js?v=0.14.9';
-import * as G from './game.js?v=0.14.9';
-import * as MAP from './map.js?v=0.14.9';
-import { POS, hasPos } from './position.js?v=0.14.9';
-import { sfx, haptic } from './audio.js?v=0.14.9';
-import { profileImage, shareBlob } from './share.js?v=0.14.9';
-import { toast, openModal, closeModal, confirmBox, openSheet, openCard, switchView, setSub, refreshHud, applyMapStates, updateNear, locate, setTrialUI, warp, makeAvatar, nameModal, cleanHandle, joinModal, NEAR, currentSub, homeTip, exportFile } from './ui.js?v=0.14.9';
-import * as JU from './journey_ui.js?v=0.14.9';
-import { renderReading } from './reading_ui.js?v=0.14.9';
-import * as E from './events.js?v=0.14.9';
-import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, weekKey, isStandalone, mobileOS } from './util.js?v=0.14.9';
+import { APP_VER, RANGE_M, PG, pagesForVol, frameOf, PREFS } from './config.js?v=0.15.0';
+import { S, save, exportJSON, parseImport, replace, reset } from './state.js?v=0.15.0';
+import { STORES, BYID, FEAT, RALLIES, isFeat, rarityOf, rarityText, stampSVG, unhideAll, rebuild, DATA_DATE, pickOpen, bookTitle } from './data.js?v=0.15.0';
+import * as G from './game.js?v=0.15.0';
+import * as MAP from './map.js?v=0.15.0';
+import { POS, hasPos } from './position.js?v=0.15.0';
+import { sfx, haptic } from './audio.js?v=0.15.0';
+import { profileImage, shareBlob } from './share.js?v=0.15.0';
+import { toast, openModal, closeModal, confirmBox, openSheet, openCard, switchView, setSub, refreshHud, applyMapStates, updateNear, locate, setTrialUI, warp, makeAvatar, nameModal, cleanHandle, joinModal, NEAR, currentSub, homeTip, exportFile } from './ui.js?v=0.15.0';
+import * as JU from './journey_ui.js?v=0.15.0';
+import { renderReading } from './reading_ui.js?v=0.15.0';
+import * as E from './events.js?v=0.15.0';
+import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, weekKey, isStandalone, mobileOS, emit } from './util.js?v=0.15.0';
 
 const empty = (ic, text) => `<div class="empty">${icon(ic)}<div>${text}</div></div>`;
 
@@ -145,6 +145,7 @@ export function renderSettings() {
     <div class="setting"><div><div class="l">図書館も地図に出す</div><div class="s">全国の公共図書館（約3,500館）。大学・学校の図書館は入っていません</div></div><button class="switch ${s.showLib !== false ? 'on' : ''}" id="st-lib" role="switch" aria-checked="${s.showLib !== false}" aria-label="図書館も地図に出す"></button></div>
     <div class="setting"><div><div class="l">行きたい店のお知らせ</div><div class="s">行きたい店に近づくと、地図の下でお知らせします（アプリを開いて現在地を追っているあいだ）</div></div><button class="switch ${s.wantAlert !== false ? 'on' : ''}" id="st-want" role="switch" aria-checked="${s.wantAlert !== false}" aria-label="行きたい店のお知らせ"></button></div>
     ${s.wantAlert !== false ? `<div class="setting"><div><div class="l">お知らせする距離</div><div class="s">この距離に入ったときと、500mに入ったとき</div></div><div class="seg3" id="st-want-m">${[1000, 2000, 5000].map((m) => `<button data-m="${m}" class="${(s.wantAlertM || 2000) === m ? 'active' : ''}">${m / 1000}km</button>`).join('')}</div></div>` : ''}
+    <div class="setting"><div><div class="l">読んだ場所を残す</div><div class="s">読書をはじめた所とおわった所を、この端末の中だけに残します（送りません）。物語に「○○書店のそばで」「移動しながら」と書き、地図に📖の印を出します</div></div><button class="switch ${s.readPlace !== false ? 'on' : ''}" id="st-readplace" role="switch" aria-checked="${s.readPlace !== false}" aria-label="読んだ場所を残す"></button></div>
     <div class="setting stack"><div><div class="l">Googleマップの★</div><div class="s">Googleマップで★を付けた本屋を「行きたい」にまとめて入れます${S.gimport ? `（前回 ${S.gimport.n}店）` : ''}</div></div><div class="avatar-ctl"><button class="btn ghost" id="st-ghelp">読み込み方</button><label class="btn">読み込む<input type="file" id="st-gimport" accept=".json,.csv,application/json,text/csv" multiple hidden></label></div></div>
     <div class="setting"><div><div class="l">音</div><div class="s">スタンプを押したとき・巻が進んだとき（近づいたときは鳴りません）</div></div><button class="switch ${s.sound ? 'on' : ''}" id="st-sound" role="switch" aria-checked="${s.sound}" aria-label="音"></button></div>
     <div class="setting"><div><div class="l">お試し歩き</div><div class="s">地図を押した場所に自分がいることにする（家で試す用）</div></div><button class="switch ${POS.fake ? 'on' : ''}" id="st-trial" role="switch" aria-checked="${POS.fake}" aria-label="お試し歩き"></button></div>
@@ -174,6 +175,7 @@ export function renderSettings() {
   $('#st-name').onclick = () => nameModal(renderSettings);
   $('#st-join').onclick = () => joinModal(renderSettings);
   $('#st-send').onclick = () => { E.setSendLog(s.sendLog === false); renderSettings(); toast(S.settings.sendLog === false ? '参加の記録を送るのを止めました' : '参加の記録を送るようにしました', 'ok'); };
+  $('#st-readplace').onclick = () => { s.readPlace = s.readPlace === false; save(); renderSettings(); emit('records'); toast(s.readPlace === false ? '読んだ場所を残すのを止めました（地図の印も消えます）' : '読んだ場所を残すようにしました', 'ok'); }; // 読んだ場所（v0.15.0）
   $('#st-sound').onclick = () => { s.sound = !s.sound; save(); renderSettings(); if (s.sound) sfx.click(); };
   $('#st-trial').onclick = () => { setTrialUI(!POS.fake); renderSettings(); };
   $('#st-export').onclick = exportFile;

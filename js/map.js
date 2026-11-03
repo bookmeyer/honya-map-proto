@@ -1,11 +1,12 @@
 // 地図（MapLibre）。店はピンの絵で表示し、固まり（クラスタ）でまとめ、状態は feature-state で軽く更新する
-import { STYLE_LIGHT, STYLE_DARK, TERRITORY_M, RANGE_M } from './config.js?v=0.14.9';
-import { circlePoly, emit } from './util.js?v=0.14.9';
+import { STYLE_LIGHT, STYLE_DARK, TERRITORY_M, RANGE_M } from './config.js?v=0.15.0';
+import { circlePoly, emit } from './util.js?v=0.15.0';
 
 export const M = { map: null, ready: false, theme: 'light' };
 let storesGeo = { type: 'FeatureCollection', features: [] };
 let territoryGeo = { type: 'FeatureCollection', features: [] };
 let meGeo = { type: 'FeatureCollection', features: [] };
+let readsGeo = { type: 'FeatureCollection', features: [] }; // 読んだ場所（v0.15.0）
 const stateCache = new Map(); // id → 最後に送った状態
 let handlers = {};
 
@@ -52,6 +53,12 @@ function pickMarkImage() { // 書店員さんの1冊の店（白い丸に朱の�
   page(6.2); page(13);
   return g.getImageData(0, 0, W * s, W * s);
 }
+function readMarkImage() { // 読んだ場所（桃の丸に白い開いた本。図書館のピン＝空と見分けるため桃。v0.15.0）
+  const W = 26, s = 2; const c = document.createElement('canvas'); c.width = W * s; c.height = W * s; const g = c.getContext('2d'); g.scale(s, s);
+  g.beginPath(); g.arc(13, 13, 10.5, 0, Math.PI * 2); g.fillStyle = '#FF7AB6'; g.fill(); g.lineWidth = 1.6; g.strokeStyle = EDGE; g.stroke();
+  g.save(); g.translate(13, 12.6); g.scale(0.66, 0.66); bookPath(g, 0, 0); g.fillStyle = '#FFFFFF'; g.fill(); g.restore();
+  return g.getImageData(0, 0, W * s, W * s);
+}
 const fs = (k, def = 0) => ['coalesce', ['feature-state', k], def];
 // イベントの対象の店の輪の色（開催中のイベントの枠の色）
 let evRingColor = '#FFD447';
@@ -84,9 +91,14 @@ function addLayers() {
   for (const k of Object.keys(PIN)) if (!map.hasImage('pin-' + k)) map.addImage('pin-' + k, pinImage(k), { pixelRatio: 2 });
   if (!map.hasImage('mark-want')) map.addImage('mark-want', markImage(), { pixelRatio: 2 });
   if (!map.hasImage('mark-pick')) map.addImage('mark-pick', pickMarkImage(), { pixelRatio: 2 });
+  if (!map.hasImage('mark-read')) map.addImage('mark-read', readMarkImage(), { pixelRatio: 2 });
   map.addSource('territory', { type: 'geojson', data: territoryGeo });
   map.addLayer({ id: 'territory-fill', type: 'fill', source: 'territory', paint: { 'fill-color': '#4FC07A', 'fill-opacity': ['interpolate', ['linear'], ['coalesce', ['get', 'rank'], 1], 1, 0.14, 5, 0.3] } });
   map.addLayer({ id: 'territory-line', type: 'line', source: 'territory', paint: { 'line-color': '#4FC07A', 'line-opacity': 0.8, 'line-width': 1.5, 'line-dasharray': [2, 1.5] } });
+  // 読んだ場所（店のピンより下）：移動しながら読んだときの点線と、はじめた所の印
+  map.addSource('reads', { type: 'geojson', data: readsGeo });
+  map.addLayer({ id: 'reads-line', type: 'line', source: 'reads', filter: ['==', ['geometry-type'], 'LineString'], layout: { 'line-cap': 'round' }, paint: { 'line-color': '#FF7AB6', 'line-width': 3, 'line-dasharray': [0.1, 2.2], 'line-opacity': 0.9 } });
+  map.addLayer({ id: 'reads', type: 'symbol', source: 'reads', filter: ['==', ['geometry-type'], 'Point'], layout: { 'icon-image': 'mark-read', 'icon-size': ['interpolate', ['linear'], ['zoom'], 8, 0.55, 15, 0.95], 'icon-allow-overlap': true, 'icon-ignore-placement': true } });
   map.addSource('me', { type: 'geojson', data: meGeo });
   map.addLayer({ id: 'me-acc', type: 'fill', source: 'me', filter: ['==', ['get', 'k'], 'acc'], paint: { 'fill-color': '#2F9BFF', 'fill-opacity': 0.12 } });
   map.addLayer({ id: 'me-range', type: 'line', source: 'me', filter: ['==', ['get', 'k'], 'range'], paint: { 'line-color': '#2F9BFF', 'line-width': 1.5, 'line-dasharray': [2, 2], 'line-opacity': 0.85 } });
@@ -117,6 +129,8 @@ function addLayers() {
   }
   map.on('click', 'clusters', (e) => { const f = e.features && e.features[0]; if (!f) return; e.originalEvent._hit = true; map.getSource('stores').getClusterExpansionZoom(f.properties.cluster_id, (err, z) => { if (!err) map.easeTo({ center: f.geometry.coordinates, zoom: Math.min(z + 0.5, 16) }); }); });
   map.on('mouseenter', 'clusters', () => { map.getCanvas().style.cursor = 'pointer'; }); map.on('mouseleave', 'clusters', () => { map.getCanvas().style.cursor = ''; });
+  // 読んだ場所の印を押したとき（店のピンと重なったら店を先に。だから店のあとに登録する）
+  map.on('click', 'reads', (e) => { if (e.originalEvent._hit) return; const f = e.features && e.features[0]; if (!f) return; e.originalEvent._hit = true; handlers.onReadClick && handlers.onReadClick(f.properties); });
   // 保存していた状態を入れ直す（スタイルを替えたときも）
   for (const [id, st] of stateCache) map.setFeatureState({ source: 'stores', id }, st);
 }
@@ -170,6 +184,11 @@ export function setStates(next) { // Map<id, {stamp, near, feat, want, st, ev}>
 }
 // 押した店のまわりを塗る。常連度が高い店ほど広く・濃く（s.rad と s.rank）
 export function setTerritory(stores) { territoryGeo = { type: 'FeatureCollection', features: stores.map((s) => ({ type: 'Feature', geometry: { type: 'Polygon', coordinates: circlePoly(s.lo, s.la, s.rad || TERRITORY_M) }, properties: { rank: s.rank || 1 } })) }; if (M.ready) M.map.getSource('territory').setData(territoryGeo); }
+// 読んだ場所（v0.15.0）：spots＝[{ id, p0:[lat,lon], p1, label }]
+export function setReads(spots) {
+  readsGeo = { type: 'FeatureCollection', features: spots.flatMap((r) => [{ type: 'Feature', geometry: { type: 'Point', coordinates: [r.p0[1], r.p0[0]] }, properties: { id: r.id, label: r.label } }, ...(r.p1 ? [{ type: 'Feature', geometry: { type: 'LineString', coordinates: [[r.p0[1], r.p0[0]], [r.p1[1], r.p1[0]]] }, properties: { id: r.id } }] : [])]) };
+  if (M.ready && M.map.getSource('reads')) M.map.getSource('reads').setData(readsGeo);
+}
 export function setMe(POS) {
   meGeo = POS.lat == null ? { type: 'FeatureCollection', features: [] } : { type: 'FeatureCollection', features: [
     { type: 'Feature', geometry: { type: 'Polygon', coordinates: circlePoly(POS.lon, POS.lat, Math.min(POS.acc || 0, 500)) }, properties: { k: 'acc' } },

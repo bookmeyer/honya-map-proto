@@ -1,17 +1,17 @@
 // 起動：記録を読み、データを取り、地図を出し、部品をつなぐ
-import { APP_VER } from './config.js?v=0.14.9';
-import { S, load, save } from './state.js?v=0.14.9';
-import { loadAll, STORES } from './data.js?v=0.14.9';
-import * as MAP from './map.js?v=0.14.9';
-import { POS, setPos, setFollow, jumped } from './position.js?v=0.14.9';
-import * as AUDIO from './audio.js?v=0.14.9';
-import * as UI from './ui.js?v=0.14.9';
-import * as J from './journey.js?v=0.14.9';
-import * as JU from './journey_ui.js?v=0.14.9';
-import * as RU from './reading_ui.js?v=0.14.9';
-import * as E from './events.js?v=0.14.9';
-import { renderRadar, renderZukan, renderMissions, renderSettings, applyTheme, showOnboarding } from './screens.js?v=0.14.9';
-import { $, $$, on, emit, isStandalone, mobileOS } from './util.js?v=0.14.9';
+import { APP_VER } from './config.js?v=0.15.0';
+import { S, load, save } from './state.js?v=0.15.0';
+import { loadAll, STORES } from './data.js?v=0.15.0';
+import * as MAP from './map.js?v=0.15.0';
+import { POS, setPos, setFollow, jumped } from './position.js?v=0.15.0';
+import * as AUDIO from './audio.js?v=0.15.0';
+import * as UI from './ui.js?v=0.15.0';
+import * as J from './journey.js?v=0.15.0';
+import * as JU from './journey_ui.js?v=0.15.0';
+import * as RU from './reading_ui.js?v=0.15.0';
+import * as E from './events.js?v=0.15.0';
+import { renderRadar, renderZukan, renderMissions, renderSettings, applyTheme, showOnboarding } from './screens.js?v=0.15.0';
+import { $, $$, on, emit, isStandalone, mobileOS } from './util.js?v=0.15.0';
 
 async function boot() {
   load(); applyThemeEarly();
@@ -20,13 +20,14 @@ async function boot() {
   const lp = S.lastPos; const center = lp ? [lp.lon, lp.lat] : [137.5, 37.3]; const zoom = lp ? 14 : 5;
   MAP.initMap({ center, zoom, theme: document.documentElement.dataset.theme || 'light',
     onStoreClick: (id) => UI.openSheet(id),
+    onReadClick: (p) => UI.toast(`📖 ${p.label}`), // 読んだ場所の印（v0.15.0）
     onMapClick: (lngLat) => { if (POS.fake) { setPos(lngLat.lat, lngLat.lng, 15, true); UI.toast('ここにいることにしました'); } else UI.closeSheet(); },
     onDrag: () => { setFollow(false); $('#btn-locate').classList.remove('on'); } });
-  on('map-ready', () => { MAP.setStores(STORES); UI.applyMapStates(); MAP.setMe(POS); if (S.settings.avatar) MAP.setAvatar(S.settings.avatar); });
+  on('map-ready', () => { MAP.setStores(STORES); UI.applyMapStates(); MAP.setMe(POS); MAP.setReads(J.readSpots()); if (S.settings.avatar) MAP.setAvatar(S.settings.avatar); });
   on('pos', () => { MAP.setMe(POS); if (POS.follow && !POS.fake) MAP.easeTo(POS.lon, POS.lat); UI.updateNear(); J.track(POS, jumped()); JU.showWantAlerts(J.checkWanted(POS)); UI.refreshHud(); });
   on('volume', (v) => { UI.toast(`📖 歩いたページで、第${v.after}巻に入りました`, 'ok'); AUDIO.sfx.levelup(); UI.refreshHud(); });
   let areaBound = false; on('map-ready', () => { if (!areaBound) { areaBound = true; MAP.M.map.on('moveend', JU.updateAreaChip); } JU.updateAreaChip(); });
-  on('records', () => { UI.refreshHud(); JU.updateAreaChip(); RU.renderReadBtn(); if (UI.currentView === 'zukan') renderZukan(); if (UI.currentView === 'mission') renderMissions(); });
+  on('records', () => { UI.refreshHud(); JU.updateAreaChip(); RU.renderReadBtn(); MAP.setReads(J.readSpots()); if (UI.currentView === 'zukan') renderZukan(); if (UI.currentView === 'mission') renderMissions(); });
   on('view', (v) => { if (v === 'radar') renderRadar(); if (v === 'zukan') renderZukan(); if (v === 'mission') renderMissions(); if (v === 'settings') renderSettings(); });
   on('near', () => { if (UI.currentView === 'radar') renderRadar(); });
   on('save-error', () => UI.toast('保存できませんでした（端末の空きを確かめてください）', 'warn'));
