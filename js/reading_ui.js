@@ -1,11 +1,11 @@
 // 移動読書・いま読んでいる本の画面（v0.14）
 // 地図の大きなボタン「今から移動読書」で時間を計りはじめ（本も読みかたも選ばない）、読み終えたら「おわる」で止める（v0.14.4）。読んだ時間だけページが増える
 // アプリは閉じてよい（時刻で計る）。読んでいる本は、移動読書中のボタンを押したときに、えらびたい人だけえらぶ
-import { S, save } from './state.js?v=0.14.4';
-import * as J from './journey.js?v=0.14.4';
-import { POS } from './position.js?v=0.14.4';
-import { toast, openModal, closeModal, confirmBox, scanIsbn, manualIsbn, stopScan } from './ui.js?v=0.14.4';
-import { $, $$, esc, fmtDate, icon } from './util.js?v=0.14.4';
+import { S, save } from './state.js?v=0.14.5';
+import * as J from './journey.js?v=0.14.5';
+import { POS } from './position.js?v=0.14.5';
+import { toast, openModal, closeModal, confirmBox, scanIsbn, manualIsbn, stopScan } from './ui.js?v=0.14.5';
+import { $, $$, esc, fmtDate, icon } from './util.js?v=0.14.5';
 
 const cover = (b) => `<div class="rcover">${b.cover ? `<img src="${esc(b.cover)}" alt="" referrerpolicy="no-referrer" loading="lazy">` : icon('book')}</div>`;
 const hm = (t) => { const d = new Date(t); return `${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`; };

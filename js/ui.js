@@ -1,15 +1,15 @@
 // 画面の部品：見出し帯・タブ・店のシート・モーダル・スタンプの演出・カード・さがす・追加
-import { RANGE_M, SENSE_M, TERRITORY_M, PG, WALK, pagesForVol } from './config.js?v=0.14.4';
-import { S, save, exportJSON } from './state.js?v=0.14.4';
-import { STORES, BYID, FEAT, isFeat, isLib, placeWord, rarityOf, rarityText, stampSVG, stampInk, search, addCustom, hideStore, renameStore, lookupIsbn, DATA_DATE, pickOpen, bookTitle } from './data.js?v=0.14.4';
-import * as G from './game.js?v=0.14.4';
-import * as MAP from './map.js?v=0.14.4';
-import { POS, setPos, startWatch, setTrial, setFollow, hasPos, jumped } from './position.js?v=0.14.4';
-import { sfx, haptic, unlock } from './audio.js?v=0.14.4';
-import { stampImage, cardImage, shareBlob } from './share.js?v=0.14.4';
-import * as E from './events.js?v=0.14.4';
-import * as J from './journey.js?v=0.14.4';
-import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, on, emit, weekKey, gmapDir, gmapPlace, mobileOS } from './util.js?v=0.14.4';
+import { RANGE_M, SENSE_M, TERRITORY_M, PG, WALK, pagesForVol } from './config.js?v=0.14.5';
+import { S, save, exportJSON } from './state.js?v=0.14.5';
+import { STORES, BYID, FEAT, isFeat, isLib, placeWord, rarityOf, rarityText, stampSVG, stampInk, search, addCustom, hideStore, renameStore, lookupIsbn, DATA_DATE, pickOpen, bookTitle } from './data.js?v=0.14.5';
+import * as G from './game.js?v=0.14.5';
+import * as MAP from './map.js?v=0.14.5';
+import { POS, setPos, startWatch, setTrial, setFollow, hasPos, jumped } from './position.js?v=0.14.5';
+import { sfx, haptic, unlock } from './audio.js?v=0.14.5';
+import { stampImage, cardImage, shareBlob } from './share.js?v=0.14.5';
+import * as E from './events.js?v=0.14.5';
+import * as J from './journey.js?v=0.14.5';
+import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, on, emit, weekKey, gmapDir, gmapPlace, mobileOS } from './util.js?v=0.14.5';
 
 export let currentView = 'map';
 export let currentSub = 'stamps';
@@ -126,19 +126,23 @@ export function openSheet(id, quiet) {
   const hist = vs.length ? `<div class="muted small" style="margin-top:8px">${vs.slice(-3).reverse().map((v) => `${fmtDate(v.d)}${v.near ? '（スタンプ）' : '（記録）'}${v.memo ? '「' + esc(v.memo) + '」' : ''}`).join('<br>')}</div>` : '';
   const distText = d == null ? '現在地なし' : jumped() ? '位置が大きく飛んだので、少し待ってから（1分）' : near ? `射程内（約${fmtDist(d)}）` : `ここから約${fmtDist(d)}（あと${fmtDist(d - RANGE_M)}で射程内）`;
   const srcLine = `情報：${st.x ? 'チェーンの公式店舗一覧' : 'OpenStreetMap'}${st.c ? `・${st.c.slice(0, 4)}年${Number(st.c.slice(5))}月に確認` : ''}${st.cf || st.x ? '' : '（古いことがあります）'}`;
+  // いちばん大きいボタン（v0.14.5）：射程内＝スタンプ／離れている＝道順（Googleマップ）／お試し歩き＝ワープ。「来た記録だけ」は下の段へ
+  const main = near ? `<button class="btn primary wide" data-act="checkin">${stamp ? `${icon('stamp')}もう一度押す（来店）` : `${icon('stamp')}スタンプを押す${feat ? `（+${PG.feat}ページ）` : ''}`}</button>`
+    : POS.fake ? `<button class="btn primary wide" data-act="warp">${icon('warp')}この店へワープ</button>`
+    : st.demo ? '<button class="btn primary wide" data-act="checkin">来た記録だけ（スタンプなし）</button>'
+    : `<a class="btn primary wide" href="${gmapDir(st)}" target="_blank" rel="noopener">${icon('map')}道順を見る</a>`;
   $('#sheet-body').innerHTML = `
     <div class="sheet-head"><div class="stamp-sm">${stampSVG(st, !!stamp, 72, { rank: reg.rank, ev: stamp ? E.storeFrame(st.i) : null })}</div><div style="min-width:0"><h2>${esc(st.n)}</h2><div class="stars">${stars(r)} <span class="muted small">${esc(rarityText(st))}</span></div></div></div>
     <div style="margin-top:8px">${b.join('')}</div>
     <div class="muted small">${esc(distText)}</div>
-    <div class="actions">
-      <button class="btn primary wide" data-act="checkin">${near ? (stamp ? `${icon('stamp')}もう一度押す（来店）` : `${icon('stamp')}スタンプを押す${feat ? `（+${PG.feat}ページ）` : ''}`) : '来た記録だけ（スタンプなし）'}</button>
-    </div>${rec}
+    <div class="actions">${main}</div>${rec}
     <div class="actions">
       <button class="btn" data-act="card">${icon('barcode')}本と出会った</button>
       <button class="btn" data-act="want">${icon('heart')}${want ? '行きたいを外す' : '行きたい'}</button>
       ${stamp ? `<button class="btn" data-act="share">${icon('share')}シェア</button>` : ''}${reg.rank >= 2 ? `<button class="btn" data-act="regshare">${icon('crown')}常連度シェア</button>` : ''}
-      ${st.demo ? '' : `<a class="btn" href="${gmapPlace(st)}" target="_blank" rel="noopener">${icon('search')}営業時間</a><a class="btn" href="${gmapDir(st)}" target="_blank" rel="noopener">${icon('map')}道順</a><div class="muted small" style="grid-column:1/-1;width:100%">どちらもGoogleマップが開きます</div>`}
-      ${POS.fake && !near ? `<button class="btn wide" data-act="warp">${icon('warp')}この店へワープ</button>` : ''}
+      ${st.demo ? '' : `<a class="btn" href="${gmapPlace(st)}" target="_blank" rel="noopener">${icon('search')}営業時間</a>${near || POS.fake ? `<a class="btn" href="${gmapDir(st)}" target="_blank" rel="noopener">${icon('map')}道順</a>` : ''}`}
+      ${!near && (POS.fake || !st.demo) ? '<button class="btn" data-act="checkin">来た記録だけ（スタンプなし）</button>' : ''}
+      ${st.demo ? '' : '<div class="muted small" style="grid-column:1/-1;width:100%">営業時間・道順は、Googleマップが開きます</div>'}
     </div>${st.demo ? '' : `<div class="reg"><div class="reg-h"><span class="badge ${reg.rank >= 3 ? 'shu' : reg.rank >= 2 ? 'gold' : ''}">常連度 ${reg.rank ? esc(reg.name) : 'まだ'}</span><span class="muted small">来店 ${reg.days}日${reg.next ? `・あと${reg.toNext}日で「${esc(reg.next.name)}」` : '・最高位'}</span></div><div class="rally" role="img" aria-label="常連度 ${G.REGULAR_NAMES.length}段階のうち${reg.rank}">${G.REGULAR_NAMES.map((nm, k) => `<i class="${k < reg.rank ? (k === G.REGULAR_NAMES.length - 1 ? 'top' : 'on') : ''}" title="${esc(nm)}">${k < reg.rank ? icon('check') : ''}</i>`).join('')}</div><div class="rally-l"><span>${esc(G.REGULAR_NAMES[0])}</span><span>${esc(G.REGULAR_NAMES[G.REGULAR_NAMES.length - 1])}</span></div></div>`}${hist}
     <div class="muted small" style="margin-top:10px">${esc(st.a || (st.custom ? '' : '住所の情報なし（地図データより）'))}　${esc(prefOf(st))}</div>${st.demo || st.custom ? '' : `<div class="muted small">${esc(srcLine)}</div>`}
     ${st.demo || st.custom ? '' : `<div class="actions"><button class="btn ghost" data-act="report">${isLib(st) ? '閉館している' : '閉店している'}</button><button class="btn ghost" data-act="rename">名前が違う</button></div>`}

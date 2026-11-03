@@ -1,6 +1,6 @@
 // 地図（MapLibre）。店はピンの絵で表示し、固まり（クラスタ）でまとめ、状態は feature-state で軽く更新する
-import { STYLE_LIGHT, STYLE_DARK, TERRITORY_M, RANGE_M } from './config.js?v=0.14.4';
-import { circlePoly, emit } from './util.js?v=0.14.4';
+import { STYLE_LIGHT, STYLE_DARK, TERRITORY_M, RANGE_M } from './config.js?v=0.14.5';
+import { circlePoly, emit } from './util.js?v=0.14.5';
 
 export const M = { map: null, ready: false, theme: 'light' };
 let storesGeo = { type: 'FeatureCollection', features: [] };
@@ -29,8 +29,13 @@ export function pinCanvas(kind, s = 2) {
   if (kind === 'stamped') { g.strokeStyle = glyph; g.lineWidth = 3.2; g.beginPath(); g.moveTo(cx - 6.5, cy + 0.5); g.lineTo(cx - 1.5, cy + 5.5); g.lineTo(cx + 7, cy - 4.5); g.stroke(); }
   else if (kind === 'rare') { g.fillStyle = glyph; g.beginPath(); starPath(g, cx, cy + 0.5, 8, 3.6); g.fill(); }
   else if (kind === 'lib') { g.fillStyle = glyph; g.beginPath(); g.moveTo(cx - 8, cy - 2); g.lineTo(cx, cy - 7.5); g.lineTo(cx + 8, cy - 2); g.lineTo(cx + 8, cy - 0.5); g.lineTo(cx - 8, cy - 0.5); g.closePath(); g.fill(); g.fillRect(cx - 7, cy + 1, 2.6, 6.5); g.fillRect(cx - 1.3, cy + 1, 2.6, 6.5); g.fillRect(cx + 4.4, cy + 1, 2.6, 6.5); g.fillRect(cx - 8, cy + 8, 16, 1.6); }
-  else { g.fillStyle = glyph; g.fillRect(cx - 7, cy - 6, 6, 12); g.fillRect(cx + 1, cy - 6, 6, 12); } // 開いた本（2つの白い四角）
+  else { g.fillStyle = glyph; bookPath(g, cx, cy); g.fill(); } // 開いた本（v0.14.5：2つの四角だと一時停止の印に見えたので、ページが外へ反った形に）
   return c;
+}
+// 開いた本の形：真ん中の背に少しすきま、上のふちは背から外へ反り上がり、下のふちは背で下がる
+function bookPath(g, cx, cy) {
+  g.beginPath();
+  for (const s of [-1, 1]) { g.moveTo(cx + s * 0.9, cy - 3.6); g.quadraticCurveTo(cx + s * 4.6, cy - 7, cx + s * 8.6, cy - 5.6); g.lineTo(cx + s * 8.6, cy + 5.4); g.quadraticCurveTo(cx + s * 4.6, cy + 4, cx + s * 0.9, cy + 7); g.closePath(); }
 }
 const pinImage = (kind) => { const c = pinCanvas(kind); return c.getContext('2d').getImageData(0, 0, c.width, c.height); };
 export const pinDataURL = (kind, s = 3) => pinCanvas(kind, s).toDataURL();
