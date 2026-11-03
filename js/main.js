@@ -1,29 +1,29 @@
 // 起動：記録を読み、データを取り、地図を出し、部品をつなぐ
-import { APP_VER } from './config.js?v=0.17.2';
-import { $, on, $$, isStandalone, mobileOS, emit } from './util.js?v=0.17.2';
-import { load, S, save } from './state.js?v=0.17.2';
-import * as AUDIO from './audio.js?v=0.17.2';
-import { POS, setPos, setFollow, jumped } from './position.js?v=0.17.2';
-import { loadAll, STORES } from './data.js?v=0.17.2';
-import * as MAP from './map.js?v=0.17.2';
-import * as E from './events.js?v=0.17.2';
-import * as J from './journey.js?v=0.17.2';
-import * as R from './reading.js?v=0.17.2';
-import { toast, closeSheet, refreshHud, currentView, switchView, setSub, closeModal } from './ui.js?v=0.17.2';
-import { openSheet, refreshSheet, applyMapStates, updateNear, showWantAlerts, updateAreaChip, setupSearch, startAdd, locate, setTrialUI, warp } from './map_ui.js?v=0.17.2';
-import * as RU from './reading_ui.js?v=0.17.2';
-import { renderRadar } from './radar_ui.js?v=0.17.2';
-import { renderZukan } from './zukan_ui.js?v=0.17.2';
-import { renderMissions } from './mission_ui.js?v=0.17.2';
-import { joinNotice, privacyNotice, homeTip, renderSettings, applyTheme } from './settings_ui.js?v=0.17.2';
-import { showOnboarding } from './onboard_ui.js?v=0.17.2';
-import * as UI0 from './ui.js?v=0.17.2'; // 試す入口（__honya）用
-import * as MU from './map_ui.js?v=0.17.2'; // 試す入口（__honya）用
-import * as CU from './checkin_ui.js?v=0.17.2'; // 試す入口（__honya）用
-import * as KU from './card_ui.js?v=0.17.2'; // 試す入口（__honya）用
-import * as SU from './settings_ui.js?v=0.17.2'; // 試す入口（__honya）用
-import * as RAD from './radar_ui.js?v=0.17.2'; // 試す入口（__honya）用
-import * as ZU from './zukan_ui.js?v=0.17.2'; // 試す入口（__honya）用
+import { APP_VER } from './config.js?v=0.17.3';
+import { $, on, $$, isStandalone, mobileOS, emit } from './util.js?v=0.17.3';
+import { load, S, save } from './state.js?v=0.17.3';
+import * as AUDIO from './audio.js?v=0.17.3';
+import { POS, setPos, setFollow, jumped } from './position.js?v=0.17.3';
+import { loadAll, STORES } from './data.js?v=0.17.3';
+import * as MAP from './map.js?v=0.17.3';
+import * as E from './events.js?v=0.17.3';
+import * as J from './journey.js?v=0.17.3';
+import * as R from './reading.js?v=0.17.3';
+import { toast, closeSheet, refreshHud, currentView, switchView, setSub, closeModal } from './ui.js?v=0.17.3';
+import { openSheet, refreshSheet, applyMapStates, updateNear, showWantAlerts, updateAreaChip, setupSearch, startAdd, locate, setTrialUI, warp } from './map_ui.js?v=0.17.3';
+import * as RU from './reading_ui.js?v=0.17.3';
+import { renderRadar } from './radar_ui.js?v=0.17.3';
+import { renderZukan } from './zukan_ui.js?v=0.17.3';
+import { renderMissions } from './mission_ui.js?v=0.17.3';
+import { joinNotice, privacyNotice, homeTip, renderSettings, applyTheme } from './settings_ui.js?v=0.17.3';
+import { showOnboarding } from './onboard_ui.js?v=0.17.3';
+import * as UI0 from './ui.js?v=0.17.3'; // 試す入口（__honya）用
+import * as MU from './map_ui.js?v=0.17.3'; // 試す入口（__honya）用
+import * as CU from './checkin_ui.js?v=0.17.3'; // 試す入口（__honya）用
+import * as KU from './card_ui.js?v=0.17.3'; // 試す入口（__honya）用
+import * as SU from './settings_ui.js?v=0.17.3'; // 試す入口（__honya）用
+import * as RAD from './radar_ui.js?v=0.17.3'; // 試す入口（__honya）用
+import * as ZU from './zukan_ui.js?v=0.17.3'; // 試す入口（__honya）用
 
 async function boot() {
   load(); applyTheme(); // 見た目（明・暗）と着せ替え。地図はまだないので、地図の色は決めておくだけ

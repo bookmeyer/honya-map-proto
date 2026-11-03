@@ -167,6 +167,10 @@ textarea{min-height:76px;resize:vertical}
 .rp b{display:block;margin-bottom:2px}
 .rp-send{display:flex;gap:8px;align-items:flex-start;margin:10px 0 4px;font-size:14px;line-height:1.5}
 .rp-send input{margin-top:3px;flex:none}
+.ob-howto{margin:8px 0 0;text-align:center;font-size:14px}.ob-howto a{color:inherit;font-weight:700}
+.evbonus{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;margin:8px 0;padding:10px 12px;border:2px solid var(--edge);border-radius:var(--r-s);background:var(--paper);font-size:15px}
+.evbonus b{font-size:20px}
+.evbonus .muted{flex-basis:100%}
 .pick-wait{padding:10px 12px;border:2px dashed var(--line-2);border-radius:var(--r-s);font-size:13px;line-height:1.6;background:var(--paper);color:var(--ink-2)}
 #radar-picks h3 .muted{font-family:var(--body)}
 /* v0.13 ブラッシュアップ */

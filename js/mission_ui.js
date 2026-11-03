@@ -1,14 +1,14 @@
 // ラリー（view-mission）：イベント・今日と今週のお題・推し店
-import { PG, PREFS } from './config.js?v=0.17.2';
-import { esc, icon, $, $$, dist, fmtDist, weekKey, todayISO, fmtDate } from './util.js?v=0.17.2';
-import { S } from './state.js?v=0.17.2';
-import { hasPos, POS } from './position.js?v=0.17.2';
-import { BYID, stampSVG, STORES, RALLIES } from './data.js?v=0.17.2';
-import * as MAP from './map.js?v=0.17.2';
-import * as G from './game.js?v=0.17.2';
-import * as E from './events.js?v=0.17.2';
-import { switchView, toast, emptyBox } from './ui.js?v=0.17.2';
-import { openSheet } from './map_ui.js?v=0.17.2';
+import { PG, PREFS } from './config.js?v=0.17.3';
+import { esc, icon, $, $$, dist, fmtDist, weekKey, todayISO, fmtDate } from './util.js?v=0.17.3';
+import { S } from './state.js?v=0.17.3';
+import { hasPos, POS } from './position.js?v=0.17.3';
+import { BYID, stampSVG, STORES, RALLIES } from './data.js?v=0.17.3';
+import * as MAP from './map.js?v=0.17.3';
+import * as G from './game.js?v=0.17.3';
+import * as E from './events.js?v=0.17.3';
+import { switchView, toast, emptyBox } from './ui.js?v=0.17.3';
+import { openSheet } from './map_ui.js?v=0.17.3';
 
 // ---------- ラリー（view-mission）：今日・今週のお題、推し店、ご当地ラリー、実績 ----------
 // ---------- イベント（ラリーの画面の一番上。設定はサーバーの管理画面から） ----------
@@ -23,6 +23,7 @@ function eventCard(e, kind) {
     <div class="evtop"><span class="evwhen">${when}</span><span class="muted small">${fmtDT(e.starts)} 〜 ${fmtDT(e.ends)}</span></div>
     <div class="evhead"><div class="evpv">${stampSVG(sample, true, 84, { ev: e.frame })}</div><div class="evtt"><h4>${esc(e.name)}</h4>${e.notice ? `<p class="evnotice">${esc(e.notice)}</p>` : ''}<p class="muted small">${esc(E.targetText(e))}スタンプを押すと、限定の枠${e.frame.label ? `「${esc(e.frame.label)}」` : ''}が付きます。</p></div></div>
     ${e.desc ? `<p class="evdesc">${esc(e.desc)}</p>` : ''}
+    ${e.bonus ? `<div class="evbonus"><b>${n}店</b>めぐって <b>+${E.evPages(e.id)}ページ</b><span class="muted small">参加店で押すと、1店ごとに +${e.bonus}ページ（同じ店は1回）</span></div>` : ''}
     ${e.special ? `<div class="evspecial">${stampSVG({ i: 'event-sp-' + e.id, n: e.special.label || '参加店', k: 5 }, true, 58, { ev: e.special })}<span>参加店（${E.EV.permitted.size}店）で押すと、特別な枠${e.special.label ? `「${esc(e.special.label)}」` : ''}になります。地図では輪が付いています。</span></div>` : ''}
     ${g ? `<div class="evgoal ${done ? 'done' : ''}"><div class="h"><b>${done ? `記念の称号「${esc(g.title)}」をもらいました` : `${g.count}軒で、記念の称号「${esc(g.title)}」`}</b><span>${Math.min(n, g.count)}/${g.count}軒</span></div><div class="bar"><i style="width:${Math.min(100, Math.round((n / g.count) * 100))}%"></i></div></div>` : ''}
     ${stamps.length ? `<div class="evstamps">${stamps.slice(0, 12).map((s) => `<button class="evst" data-id="${esc(s.i)}" aria-label="${esc(s.n)}">${stampSVG(s, true, 58, { ev: E.frameIn(e.id, s.i) })}</button>`).join('')}${stamps.length > 12 ? `<span class="muted small">ほか${stamps.length - 12}軒</span>` : ''}</div>` : (kind === 'live' ? '<p class="muted small">お試し歩きで押したスタンプには、枠は付きません。</p>' : '')}

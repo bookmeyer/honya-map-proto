@@ -1,15 +1,15 @@
 // 設定の画面と、そこから開くもの：見た目・着せ替え・アイコン・ハンドルネーム・参加コード・送るもののお知らせ・記録を守る・Googleマップの★
-import { SKINS, MAP_SKINS, APP_VER } from './config.js?v=0.17.2';
-import { $, esc, fmtDist, icon, $$, mobileOS, isStandalone, emit, todayISO } from './util.js?v=0.17.2';
-import { S, save, parseImport, replace, reset, exportJSON } from './state.js?v=0.17.2';
-import { sfx } from './audio.js?v=0.17.2';
-import { POS } from './position.js?v=0.17.2';
-import { addCustom, STORES, DATA_DATE, rebuild, unhideAll } from './data.js?v=0.17.2';
-import * as MAP from './map.js?v=0.17.2';
-import * as E from './events.js?v=0.17.2';
-import * as GI from './gimport.js?v=0.17.2';
-import { openModal, closeModal, toast, refreshHud, switchView, confirmBox } from './ui.js?v=0.17.2';
-import { applyMapStates, updateNear, updateAreaChip, setTrialUI } from './map_ui.js?v=0.17.2';
+import { SKINS, MAP_SKINS, APP_VER } from './config.js?v=0.17.3';
+import { $, esc, fmtDist, icon, $$, mobileOS, isStandalone, emit, todayISO } from './util.js?v=0.17.3';
+import { S, save, parseImport, replace, reset, exportJSON } from './state.js?v=0.17.3';
+import { sfx } from './audio.js?v=0.17.3';
+import { POS } from './position.js?v=0.17.3';
+import { addCustom, STORES, DATA_DATE, rebuild, unhideAll } from './data.js?v=0.17.3';
+import * as MAP from './map.js?v=0.17.3';
+import * as E from './events.js?v=0.17.3';
+import * as GI from './gimport.js?v=0.17.3';
+import { openModal, closeModal, toast, refreshHud, switchView, confirmBox } from './ui.js?v=0.17.3';
+import { applyMapStates, updateNear, updateAreaChip, setTrialUI } from './map_ui.js?v=0.17.3';
 
 // ---------- Googleマップの★を読み込む ----------
 export function googleHelp() {
@@ -70,6 +70,7 @@ export function renderSettings() {
     <div class="setting"><div><div class="l">端末の確認</div><div class="s">位置・カメラ・保存が使えるか</div></div><button class="btn" id="st-diag">確認</button></div>
     <div id="st-diag-out"></div>
     <h3>このアプリについて</h3>
+    <div class="setting"><div><div class="l">使い方</div><div class="s">はじめての方へ。スタンプの押し方・本のカード・イベントなど</div></div><a class="btn" href="howto.html" target="_blank" rel="noopener">見る</a></div>
     <div class="about">本めぐり v${APP_VER}（試作）。本屋をめぐって、本とめぐりあう。本屋と図書館の位置ゲームです。<br>歩きながら画面を見ないでください。運転中は使わないでください。お店では、店の方やほかのお客さんの迷惑にならないようにお願いします。<br>位置（座標）は、この端末の中で距離を出すためだけに使い、送りません。参加の人数を数えるために、スタンプを押した店の番号・日時・店の近くで押したか・お試し歩きか・どのイベントかを、名前のない、ランダムな番号といっしょに、本をつなぐ（tsunagubooks.com）へ送ります（設定で止められます）。そのほかの記録は、この端末の中だけに残ります。<br>画面を出すために、Google Fonts（文字）・jsDelivr（地図のプログラム）・OpenFreeMap（地図の絵。見ている範囲）へ、本を調べるときは openBD（その本の番号）へつなぎます。このとき、端末のIPアドレスやブラウザの種類が相手に届きます。<br><br>
       店の位置：© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors（ODbL）。地図：<a href="https://openfreemap.org/" target="_blank" rel="noopener">OpenFreeMap</a>・<a href="https://openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a>。本の情報と表紙：<a href="https://openbd.jp/" target="_blank" rel="noopener">openBD</a>（表紙は紹介のための参照表示で、保存しません）。書名でさがす：<a href="https://ndlsearch.ndl.go.jp/" target="_blank" rel="noopener">国立国会図書館サーチ</a>の API（国立国会図書館の書誌データ・<a href="https://creativecommons.org/licenses/by/4.0/deed.ja" target="_blank" rel="noopener">CC BY 4.0</a>。著者名の表し方を整えて出しています。送るのは、さがす言葉だけです）。地図の描画：MapLibre GL JS。文字：Google Fonts。<br>
       店のデータは ${DATA_DATE} 時点の OpenStreetMap（有志が作る地図）で、閉店や名前の変更が反映されていない店があります。店のページの「閉店している」で外せ、「名前が違う」で直せます（この端末だけ。記録の書き出しに含まれます）。</div>`;

@@ -1,18 +1,18 @@
 // めぐり帳（view-zukan）：スタンプ・本・物語・月のふり返り・県
-import { pagesForVol, frameOf, PREFS } from './config.js?v=0.17.2';
-import { esc, icon, $, todayISO, $$, fmtDate, prefOf, fmtMin } from './util.js?v=0.17.2';
-import { S, save } from './state.js?v=0.17.2';
-import { BYID, rarityOf, STORES, stampSVG } from './data.js?v=0.17.2';
-import * as G from './game.js?v=0.17.2';
-import * as E from './events.js?v=0.17.2';
-import { storyImage, shareBlob, profileImage } from './share.js?v=0.17.2';
-import * as J from './journey.js?v=0.17.2';
-import * as R from './reading.js?v=0.17.2';
-import { toast, openModal, closeModal, currentSub, emptyBox } from './ui.js?v=0.17.2';
-import { openSheet } from './map_ui.js?v=0.17.2';
-import { openCard } from './card_ui.js?v=0.17.2';
-import { renderReading } from './reading_ui.js?v=0.17.2';
-import { nameModal } from './settings_ui.js?v=0.17.2';
+import { pagesForVol, frameOf, PREFS } from './config.js?v=0.17.3';
+import { esc, icon, $, todayISO, $$, fmtDate, prefOf, fmtMin } from './util.js?v=0.17.3';
+import { S, save } from './state.js?v=0.17.3';
+import { BYID, rarityOf, STORES, stampSVG } from './data.js?v=0.17.3';
+import * as G from './game.js?v=0.17.3';
+import * as E from './events.js?v=0.17.3';
+import { storyImage, shareBlob, profileImage } from './share.js?v=0.17.3';
+import * as J from './journey.js?v=0.17.3';
+import * as R from './reading.js?v=0.17.3';
+import { toast, openModal, closeModal, currentSub, emptyBox } from './ui.js?v=0.17.3';
+import { openSheet } from './map_ui.js?v=0.17.3';
+import { openCard } from './card_ui.js?v=0.17.3';
+import { renderReading } from './reading_ui.js?v=0.17.3';
+import { nameModal } from './settings_ui.js?v=0.17.3';
 
 // ---------- 今日の物語 ----------
 function chapterHTML(ch) {

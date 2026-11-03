@@ -3,10 +3,10 @@
 // 書店員さんの手書きのカードも、ここからサーバーに頼む（v0.16.1。その店で押した記録がある端末だけに渡る）
 // 店の情報の報告を送り、運営が直した閉店・名前を受け取る（v0.17.0）
 // サーバーに届かないときは、前回読んだ設定で動く。スタンプはいつでも押せる
-import { EVENTS_API, APP_VER } from './config.js?v=0.17.2';
-import { $, emit, prefOf, todayISO, on } from './util.js?v=0.17.2';
-import { S, save } from './state.js?v=0.17.2';
-import { isLib, setFixes } from './data.js?v=0.17.2';
+import { EVENTS_API, APP_VER } from './config.js?v=0.17.3';
+import { $, emit, prefOf, todayISO, on } from './util.js?v=0.17.3';
+import { S, save } from './state.js?v=0.17.3';
+import { isLib, setFixes } from './data.js?v=0.17.3';
 
 export const EV = { list: [], permitted: new Set(), cards: new Set(), ok: false, at: 0 };
 const CACHE_KEY = 'meguri_events_v1';
@@ -16,10 +16,15 @@ export function apiBase() { try { const o = localStorage.getItem('meguri_api'); 
 const tms = (s) => { const x = Date.parse(s); return Number.isNaN(x) ? 0 : x; };
 const STORE_ID = /^[A-Za-z0-9_.:-]{1,40}$/;
 const HEX = /^#[0-9A-Fa-f]{6}$/; // 色は #000000 の形だけ（style に入るため。v0.15.3）
-function valid(e) { return e && Number.isInteger(e.id) && typeof e.name === 'string' && tms(e.starts) && tms(e.ends) && e.frame && HEX.test(e.frame.color) && (!e.special || HEX.test(e.special.color)) && (!e.goal || (Number.isInteger(e.goal.count) && e.goal.count > 0 && typeof e.goal.title === 'string')); }
+function valid(e) { return e && Number.isInteger(e.id) && typeof e.name === 'string' && tms(e.starts) && tms(e.ends) && e.frame && HEX.test(e.frame.color) && (!e.special || HEX.test(e.special.color)) && (!e.goal || (Number.isInteger(e.goal.count) && e.goal.count > 0 && typeof e.goal.title === 'string')) && (e.bonus == null || (Number.isInteger(e.bonus) && e.bonus >= 0 && e.bonus <= 500)) && (e.targetLabel == null || typeof e.targetLabel === 'string'); }
+const prep = (e) => Object.assign({}, e, { _stores: new Set(e.stores || []), _prefs: new Set(e.prefs || []) });
+// アプリのデータに書いたイベント（v0.17.3：サーバーを置く前でも出せる。id はマイナスで、サーバーのイベントと重ならない）
+let STATIC = [], SERVER = [], staticP = null;
+const loadStatic = () => staticP || (staticP = fetch('data/events.json', { cache: 'no-cache' }).then((r) => (r.ok ? r.json() : null)).then((j) => { STATIC = j && Array.isArray(j.events) ? j.events.filter((e) => valid(e) && e.id < 0).map(prep) : []; }).catch(() => {}));
+const merge = () => { EV.list = [...STATIC, ...SERVER]; };
 function apply(j) {
   if (!j || !Array.isArray(j.events)) return;
-  EV.list = j.events.filter(valid).map((e) => Object.assign({}, e, { _stores: new Set(e.stores || []), _prefs: new Set(e.prefs || []) }));
+  SERVER = j.events.filter((e) => valid(e) && e.id > 0).map(prep); merge();
   EV.permitted = new Set(Array.isArray(j.permitted) ? j.permitted : []);
   EV.cards = new Set(Array.isArray(j.cards) ? j.cards.filter((x) => typeof x === 'string' && STORE_ID.test(x)) : []); // 手書きのカードがある店（v0.16.1）
   applyFixes(j.fixes);
@@ -44,6 +49,7 @@ export async function loadEvents() {
     const j = await r.json(); if (my !== evSeq) return; if (!j || !j.ok) throw new Error('ng');
     apply(j); EV.ok = true; try { localStorage.setItem(CACHE_KEY, JSON.stringify(j)); } catch (e) {}
   } catch (e) { if (my !== evSeq) return; EV.ok = false; }
+  await loadStatic(); if (my !== evSeq) return; merge();
   EV.at = Date.now(); emit('events');
 }
 export const isLive = (e, now = Date.now()) => tms(e.starts) <= now && now <= tms(e.ends);
@@ -71,23 +77,25 @@ export function isTarget(e, st) {
 export const narrow = (e) => e.target === 'permitted' || e.target === 'selected';
 export const frameFor = (e, st) => (e.special && EV.permitted.has(st.i) ? e.special : e.frame);
 export function targetText(e) {
+  if (e.targetLabel) return e.targetLabel.slice(0, 40);
   return { all: 'どの本屋・図書館でも', books: 'どの本屋でも', used: '古書店で', libs: '図書館で', permitted: `参加店（${EV.permitted.size}店）で`, selected: `選ばれた${e._stores.size}店で`, prefs: `${[...e._prefs].join('・')}の本屋・図書館で` }[e.target] || '';
 }
 // スタンプを押した・来た記録を残したとき。枠・お題の進み・称号を返す
 export function onCheckin(st, { near, trial }) {
-  const out = { frames: [], titles: [], progress: [] };
+  const out = { frames: [], titles: [], progress: [], bonus: [] };
   if (!st || st.demo || st.custom) return out;
   const evs = liveEvents().filter((e) => isTarget(e, st));
-  queueCheckin(st, near, trial, evs.map((e) => e.id));
+  queueCheckin(st, near, trial, evs.filter((e) => e.id > 0).map((e) => e.id)); // アプリのデータに書いたイベント（id がマイナス）は送らない
   if (!near || trial) return out; // 限定の枠は、店の射程内で押したスタンプだけ（お試し歩きでは付けない）
   S.evLog = S.evLog || {}; const d = todayISO();
   for (const e of evs) {
     const log = (S.evLog[e.id] = S.evLog[e.id] || { s: {} });
     Object.assign(log, { name: e.name, frame: e.frame, special: e.special || null, starts: e.starts, ends: e.ends, goal: e.goal || null, hashtag: e.hashtag || '' }); // 終わったあとも枠を出せるように覚えておく
-    const fr = frameFor(e, st);
-    if (!log.s[st.i]) log.s[st.i] = { d, sp: fr === e.special ? 1 : 0 };
+    const fr = frameFor(e, st); const first = !log.s[st.i];
+    if (first) log.s[st.i] = { d, sp: fr === e.special ? 1 : 0, b: e.bonus || 0 };
     out.frames.push(Object.assign({ ev: e.name, sp: fr === e.special ? 1 : 0 }, fr));
     const n = Object.keys(log.s).length;
+    if (first && e.bonus) out.bonus.push({ ev: e.name, pg: e.bonus, n, color: e.frame.color }); // まわればまわるほどたまる（同じ店は1回。v0.17.3）
     if (e.goal) {
       out.progress.push({ name: e.name, n, goal: e.goal.count });
       S.evTitles = S.evTitles || [];
@@ -110,6 +118,7 @@ export function storeFrame(id) {
 // そのイベントで押したときの枠（イベントのカードに並べる用）
 export function frameIn(evId, id) { const L = (S.evLog || {})[evId]; const x = L && L.s && L.s[id]; if (!x) return null; const fr = x.sp && L.special ? L.special : L.frame; return fr ? Object.assign({ ev: L.name }, fr) : null; }
 export const evCount = (id) => Object.keys(((S.evLog || {})[id] || {}).s || {}).length;
+export const evPages = (id) => Object.values(((S.evLog || {})[id] || {}).s || {}).reduce((t, x) => t + (Number.isFinite(x && x.b) ? x.b : 0), 0); // イベントでたまったページ
 // ---- 参加コード（お試しの人に渡すURLの ?join=） ----
 export function takeJoinParam() {
   const p = new URLSearchParams(location.search); const raw = p.get('join'); if (raw == null) return null;

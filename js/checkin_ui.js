@@ -1,18 +1,18 @@
 // スタンプを押す：チェックイン → スタンプの画面（道中のまとめ・読書）→ シェア・紙ふぶき
-import { PG, WALK } from './config.js?v=0.17.2';
-import { weekKey, stars, esc, $, fmtDist, icon, $$, emit, fmtMin } from './util.js?v=0.17.2';
-import { S } from './state.js?v=0.17.2';
-import { sfx, haptic } from './audio.js?v=0.17.2';
-import { POS } from './position.js?v=0.17.2';
-import { isFeat, placeWord, rarityOf, pickOpen, BYID, stampSVG, rarityText, stampInk } from './data.js?v=0.17.2';
-import * as G from './game.js?v=0.17.2';
-import * as E from './events.js?v=0.17.2';
-import { stampImage, shareBlob } from './share.js?v=0.17.2';
-import * as J from './journey.js?v=0.17.2';
-import * as R from './reading.js?v=0.17.2';
-import { openModal, closeModal, closeSheet, refreshHud, toast } from './ui.js?v=0.17.2';
-import { applyMapStates, openSheet } from './map_ui.js?v=0.17.2';
-import { startCard } from './card_ui.js?v=0.17.2';
+import { PG, WALK } from './config.js?v=0.17.3';
+import { weekKey, stars, esc, $, fmtDist, icon, $$, emit, fmtMin } from './util.js?v=0.17.3';
+import { S } from './state.js?v=0.17.3';
+import { sfx, haptic } from './audio.js?v=0.17.3';
+import { POS } from './position.js?v=0.17.3';
+import { isFeat, placeWord, rarityOf, pickOpen, BYID, stampSVG, rarityText, stampInk } from './data.js?v=0.17.3';
+import * as G from './game.js?v=0.17.3';
+import * as E from './events.js?v=0.17.3';
+import { stampImage, shareBlob } from './share.js?v=0.17.3';
+import * as J from './journey.js?v=0.17.3';
+import * as R from './reading.js?v=0.17.3';
+import { openModal, closeModal, closeSheet, refreshHud, toast } from './ui.js?v=0.17.3';
+import { applyMapStates, openSheet } from './map_ui.js?v=0.17.3';
+import { startCard } from './card_ui.js?v=0.17.3';
 
 // ---------- チェックイン → スタンプ ----------
 export function startCheckin(st, near) {
@@ -23,7 +23,7 @@ export function startCheckin(st, near) {
     <div class="note">位置（座標）は送りません。${S.settings.sendLog === false ? '参加の記録も送らない設定です。' : '送るのは、この店の番号と日時など（名前のない、ランダムな番号といっしょに。設定で止められます）。'}</div>
     <div class="actions"><button class="btn primary" id="ci-save">${near ? 'スタンプを押す' : '記録だけ残す'}</button><button class="btn ghost" id="ci-cancel">やめる</button></div>`);
   $('#ci-cancel').onclick = closeModal;
-  $('#ci-save').onclick = () => { const pkBefore = pickOpen(st); const volBefore = G.volume(); const seg = J.arrive(st, { near, trial: POS.fake }); /* 前の店からの道のり・読書（v0.14）。スタンプの記録より先に */ const res = G.checkin(st, { near, memo: $('#ci-memo').value.trim(), trial: POS.fake }); res.lv.before = Math.min(res.lv.before, volBefore); const evr = E.onCheckin(st, { near, trial: POS.fake }); closeModal(); closeSheet(); applyMapStates(); refreshHud(); showCapture(st, res, near, evr, seg); if (E.hasCard(st) && !pkBefore && pickOpen(st) && (st.demo || S.settings.sendLog !== false)) toast('📖 書店員さんの手書きのカードが見られるようになりました（店のページ）', 'ok'); };
+  $('#ci-save').onclick = () => { const pkBefore = pickOpen(st); const volBefore = G.volume(); const seg = J.arrive(st, { near, trial: POS.fake }); /* 前の店からの道のり・読書（v0.14）。スタンプの記録より先に */ const res = G.checkin(st, { near, memo: $('#ci-memo').value.trim(), trial: POS.fake }); res.lv.before = Math.min(res.lv.before, volBefore); const evr = E.onCheckin(st, { near, trial: POS.fake }); const evPg = evr.bonus.reduce((t, b) => t + b.pg, 0); if (evPg) res.lv.after = G.addPages(evPg).after; /* イベントの参加店で押したページ（v0.17.3） */ closeModal(); closeSheet(); applyMapStates(); refreshHud(); showCapture(st, res, near, evr, seg); if (E.hasCard(st) && !pkBefore && pickOpen(st) && (st.demo || S.settings.sendLog !== false)) toast('📖 書店員さんの手書きのカードが見られるようになりました（店のページ）', 'ok'); };
 }
 // 道中のまとめ（v0.14）：前の店からの距離・歩いたページ・読書・あいだにあった本屋
 function segHTML(st, g) {
@@ -34,13 +34,13 @@ function segHTML(st, g) {
   if (btw.length) rows.push(`<div class="ts-btw"><div class="muted small">あいだにあった本屋（まっすぐの線のそば）</div>${btw.map((s) => `<div class="b"><span>${esc(s.n)}</span><button class="btn" data-want="${esc(s.i)}">${S.wants.includes(s.i) ? '行きたい ✓' : '行きたい'}</button></div>`).join('')}</div>`);
   return rows.length ? `<div class="trip-sum">${rows.join('')}</div>` : '';
 }
-export function showCapture(st, res, near, evr = { frames: [], titles: [], progress: [] }, seg = null) {
+export function showCapture(st, res, near, evr = { frames: [], titles: [], progress: [], bonus: [] }, seg = null) {
   const { gain, isNew, lv, rewards, r, regUp } = res; const fr = evr.frames[0] || null;
   if (near) { sfx.stamp(); haptic([30, 30, 90]); if (isNew && r === 3) setTimeout(() => sfx.rare(), 250); } if (lv.after > lv.before) setTimeout(() => sfx.levelup(), 500); if (regUp) setTimeout(() => sfx.regular(), lv.after > lv.before ? 1500 : 800);
   $('#capture-box').innerHTML = `<div class="big">${stampSVG(st, near, 250, { rank: G.regularInfo(st.i).rank, ev: fr })}</div>
     <h2>${near ? (isNew ? `${esc(st.n)}のスタンプを押した！` : `${esc(st.n)}に、また来た`) : `${esc(st.n)}に来た（記録だけ）`}</h2>
     <div class="stars">${near ? stars(r) + ' ' + esc(rarityText(st)) : ''}</div>
-    <div class="gain">+${gain}ページ</div>
+    <div class="gain">+${gain}ページ</div>${(evr.bonus || []).map((b) => `<div class="evline" style="--evc:${esc(b.color)}">${esc(b.ev)}　+${b.pg}ページ（${b.n}店目）</div>`).join('')}
     ${fr ? `<div class="evline" style="--evc:${esc(fr.color)}">${esc(fr.ev)}の${fr.label ? `「${esc(fr.label)}」の` : ''}枠が付いた</div>` : ''}${evr.progress.map((p) => `<div class="lvup">${esc(p.name)}　${Math.min(p.n, p.goal)}/${p.goal}軒</div>`).join('')}${evr.titles.map((t) => `<div class="lvup">🏅 記念の称号「${esc(t)}」</div>`).join('')}
     ${lv.after > lv.before ? `<div class="lvup">📖 第${lv.after}巻に入った！</div>` : ''}${rewards.map((x) => `<div class="lvup">${esc(x)}</div>`).join('')}${segHTML(st, seg)}
     <div class="actions" style="margin-top:18px"><button class="btn primary wide" id="cp-card">${icon('barcode')}この${placeWord(st)}で本と出会った</button><div class="muted small" style="grid-column:1/-1;width:100%;text-align:center">買った本の裏のバーコードを読むと +${PG.card}ページ〜</div>${near && !POS.fake && !st.demo && !R.activeTrip() ? `<button class="btn wide" id="cp-read">📖 読書をはじめる</button><div class="muted small" style="width:100%;text-align:center">読んだ時間だけページが増えます（1分で1ページ）</div>` : ''}${near ? `<button class="btn wide" id="cp-share">${icon('share')}スタンプをシェア</button>` : ''}<button class="btn ghost wide" id="cp-close">閉じる</button></div>`;
