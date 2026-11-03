@@ -1,10 +1,10 @@
 // イベント（v0.10）：管理画面で作った設定をサーバーから読み、期間・対象の店・限定の枠・お題・称号を決める
 // サーバーに送るのは「匿名の番号・店番号・日時・射程内か・お試し歩きか・イベント」だけ。位置の座標・名前・メモは送らない
 // サーバーに届かないときは、前回読んだ設定で動く。スタンプはいつでも押せる
-import { APP_VER, EVENTS_API } from './config.js?v=0.14.8';
-import { S, save } from './state.js?v=0.14.8';
-import { isLib } from './data.js?v=0.14.8';
-import { prefOf, todayISO, emit } from './util.js?v=0.14.8';
+import { APP_VER, EVENTS_API } from './config.js?v=0.14.9';
+import { S, save } from './state.js?v=0.14.9';
+import { isLib } from './data.js?v=0.14.9';
+import { prefOf, todayISO, emit } from './util.js?v=0.14.9';
 
 export const EV = { list: [], permitted: new Set(), ok: false, at: 0 };
 const CACHE_KEY = 'meguri_events_v1';
