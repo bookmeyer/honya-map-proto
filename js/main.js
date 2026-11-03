@@ -1,16 +1,17 @@
 // 起動：記録を読み、データを取り、地図を出し、部品をつなぐ
-import { APP_VER } from './config.js?v=0.13.2';
-import { S, load, save } from './state.js?v=0.13.2';
-import { loadAll, STORES } from './data.js?v=0.13.2';
-import * as MAP from './map.js?v=0.13.2';
-import { POS, setPos, setFollow, jumped } from './position.js?v=0.13.2';
-import * as AUDIO from './audio.js?v=0.13.2';
-import * as UI from './ui.js?v=0.13.2';
-import * as J from './journey.js?v=0.13.2';
-import * as JU from './journey_ui.js?v=0.13.2';
-import * as E from './events.js?v=0.13.2';
-import { renderRadar, renderZukan, renderMissions, renderSettings, applyTheme, showOnboarding } from './screens.js?v=0.13.2';
-import { $, $$, on, emit, isStandalone, mobileOS } from './util.js?v=0.13.2';
+import { APP_VER } from './config.js?v=0.14.0';
+import { S, load, save } from './state.js?v=0.14.0';
+import { loadAll, STORES } from './data.js?v=0.14.0';
+import * as MAP from './map.js?v=0.14.0';
+import { POS, setPos, setFollow, jumped } from './position.js?v=0.14.0';
+import * as AUDIO from './audio.js?v=0.14.0';
+import * as UI from './ui.js?v=0.14.0';
+import * as J from './journey.js?v=0.14.0';
+import * as JU from './journey_ui.js?v=0.14.0';
+import * as RU from './reading_ui.js?v=0.14.0';
+import * as E from './events.js?v=0.14.0';
+import { renderRadar, renderZukan, renderMissions, renderSettings, applyTheme, showOnboarding } from './screens.js?v=0.14.0';
+import { $, $$, on, emit, isStandalone, mobileOS } from './util.js?v=0.14.0';
 
 async function boot() {
   load(); applyThemeEarly();
@@ -29,6 +30,8 @@ async function boot() {
   on('view', (v) => { if (v === 'radar') renderRadar(); if (v === 'zukan') renderZukan(); if (v === 'mission') renderMissions(); if (v === 'settings') renderSettings(); });
   on('near', () => { if (UI.currentView === 'radar') renderRadar(); });
   on('save-error', () => UI.toast('保存できませんでした（端末の空きを確かめてください）', 'warn'));
+  // 次の店へ・移動読書（v0.14）：スタンプのあと・カードのあと・店のページから。地図の下の帯は、次の1軒と移動読書中を映す
+  on('depart', (x) => RU.openDepart(x.st, x)); on('trip', () => UI.updateNear()); on('trip-open', () => RU.openTrip());
   // イベント：起動時・10分ごと・画面に戻ったとき（5分以上たっていたら）に設定を読む。記録はつながったときに送る
   on('events', () => { UI.applyMapStates(); UI.refreshHud(); if (UI.currentView === 'mission') renderMissions(); });
   E.loadEvents(); setInterval(() => { if (document.visibilityState === 'visible') E.loadEvents(); }, 10 * 60 * 1000);
@@ -72,7 +75,7 @@ async function boot() {
     else if (S.settings.geoOk) go();
   }
   emit('view', 'map');
-  window.__honya = { S, POS, STORES, UI, MAP, J, JU, E, audio: AUDIO, ver: APP_VER };
+  window.__honya = { S, POS, STORES, UI, MAP, J, JU, RU, E, audio: AUDIO, ver: APP_VER };
 }
 function applyThemeEarly() { const t = S.settings.theme; const dark = t === 'dark' || (t === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches); document.documentElement.dataset.theme = dark ? 'dark' : 'light'; }
 window.addEventListener('error', (e) => { console.error(e.error || e.message); });

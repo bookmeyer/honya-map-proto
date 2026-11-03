@@ -1,8 +1,8 @@
 // 遊びの仕組み：物語のページと巻・称号・実績・ミッション・ラリー・カード
-import { PG, TITLES, ACHIEVEMENTS, REGULAR, WALK, volOf } from './config.js?v=0.13.2';
-import { S, save } from './state.js?v=0.13.2';
-import { BYID, RALLIES, FEAT, isFeat, rarityOf } from './data.js?v=0.13.2';
-import { prefOf, todayISO, weekKey, weekStartISO, monthKey, emit } from './util.js?v=0.13.2';
+import { PG, TITLES, ACHIEVEMENTS, REGULAR, WALK, volOf } from './config.js?v=0.14.0';
+import { S, save } from './state.js?v=0.14.0';
+import { BYID, RALLIES, FEAT, isFeat, rarityOf } from './data.js?v=0.14.0';
+import { prefOf, todayISO, weekKey, weekStartISO, monthKey, emit } from './util.js?v=0.14.0';
 
 export const visitsOf = (id) => S.visits.filter((v) => v.s === id);
 export const cardsOf = (id) => S.cards.filter((c) => c.s === id);
@@ -48,7 +48,7 @@ export function dailyMissions() {
     { id: 'd1', name: '今日、スタンプを1つ', sub: '店の射程内でスタンプを押す', cur: dailyCount('stamp'), goal: 1 },
     { id: 'd2', name: '本屋のページを3つ見る', sub: '地図やさがすから、店のページを開く', cur: ((S.daily || {})[todayISO()] || {}).lookIds ? S.daily[todayISO()].lookIds.length : 0, goal: 3 },
     { id: 'd3', name: '行きたい店を1つ', sub: '店のページで☆を付ける', cur: dailyCount('want'), goal: 1 },
-    { id: 'd4', name: '今日、10ページ歩く', sub: '1km歩くと10ページ（現在地を追っているあいだだけ数えます）', cur: pagesToday(), goal: 10 },
+    { id: 'd4', name: '今日、10ページ歩く', sub: '1km歩くと10ページ（現在地を追っているあいだと、店と店のあいだ）', cur: pagesToday(), goal: 10 },
   ];
 }
 export function weeklyMissions() {
@@ -85,7 +85,7 @@ export function checkin(st, { near, memo, trial }) {
   const today = todayISO(); const stampedBefore = hasStamp(st.i); const visitedToday = visitsOf(st.i).some((v) => v.d === today);
   const feat = isFeat(st.i); const wk = weekKey(); const featGot = (S.featDone[wk] || []).includes(st.i);
   const regBefore = regularRank(regularDays(st.i)); let regUp = 0;
-  S.visits.push({ s: st.i, n: st.n, d: today, t: Date.now(), near, memo, trial: trial ? 1 : 0 });
+  S.visits.push({ s: st.i, n: st.n, d: today, t: Date.now(), near, memo, trial: trial ? 1 : 0, m: ((S.days || {})[today] || {}).m || 0 }); // m：この時点までに今日歩いた距離（v0.14）
   let gain = 0, isNew = false; const r = rarityOf(st); const extras = [];
   if (near) {
     if (!stampedBefore) { S.stamps[st.i] = { d: today, r, trial: trial ? 1 : 0 }; isNew = true; gain += PG.shuFirst + (r === 3 ? PG.rare3 : r === 2 ? PG.rare2 : 0); bump('stamp'); }

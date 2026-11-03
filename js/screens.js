@@ -1,16 +1,17 @@
 // 画面：ちかく（旧レーダー）・めぐり帳（旧図鑑）・ラリー（旧お題）・設定・最初の案内
-import { APP_VER, RANGE_M, PG, pagesForVol, frameOf, PREFS } from './config.js?v=0.13.2';
-import { S, save, exportJSON, parseImport, replace, reset } from './state.js?v=0.13.2';
-import { STORES, BYID, FEAT, RALLIES, isFeat, rarityOf, rarityText, stampSVG, unhideAll, rebuild, DATA_DATE, pickOpen, bookTitle } from './data.js?v=0.13.2';
-import * as G from './game.js?v=0.13.2';
-import * as MAP from './map.js?v=0.13.2';
-import { POS, hasPos } from './position.js?v=0.13.2';
-import { sfx, haptic } from './audio.js?v=0.13.2';
-import { profileImage, shareBlob } from './share.js?v=0.13.2';
-import { toast, openModal, closeModal, confirmBox, openSheet, openCard, switchView, setSub, refreshHud, applyMapStates, updateNear, locate, setTrialUI, warp, makeAvatar, nameModal, cleanHandle, joinModal, NEAR, currentSub, homeTip, exportFile } from './ui.js?v=0.13.2';
-import * as JU from './journey_ui.js?v=0.13.2';
-import * as E from './events.js?v=0.13.2';
-import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, weekKey, isStandalone, mobileOS } from './util.js?v=0.13.2';
+import { APP_VER, RANGE_M, PG, pagesForVol, frameOf, PREFS } from './config.js?v=0.14.0';
+import { S, save, exportJSON, parseImport, replace, reset } from './state.js?v=0.14.0';
+import { STORES, BYID, FEAT, RALLIES, isFeat, rarityOf, rarityText, stampSVG, unhideAll, rebuild, DATA_DATE, pickOpen, bookTitle } from './data.js?v=0.14.0';
+import * as G from './game.js?v=0.14.0';
+import * as MAP from './map.js?v=0.14.0';
+import { POS, hasPos } from './position.js?v=0.14.0';
+import { sfx, haptic } from './audio.js?v=0.14.0';
+import { profileImage, shareBlob } from './share.js?v=0.14.0';
+import { toast, openModal, closeModal, confirmBox, openSheet, openCard, switchView, setSub, refreshHud, applyMapStates, updateNear, locate, setTrialUI, warp, makeAvatar, nameModal, cleanHandle, joinModal, NEAR, currentSub, homeTip, exportFile } from './ui.js?v=0.14.0';
+import * as JU from './journey_ui.js?v=0.14.0';
+import { renderReading } from './reading_ui.js?v=0.14.0';
+import * as E from './events.js?v=0.14.0';
+import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, weekKey, isStandalone, mobileOS } from './util.js?v=0.14.0';
 
 const empty = (ic, text) => `<div class="empty">${icon(ic)}<div>${text}</div></div>`;
 
@@ -55,7 +56,8 @@ export function renderZukan() {
   const stamped = ids.map((id) => ({ st: BYID.get(id), d: S.stamps[id].d, trial: S.stamps[id].trial })).filter((x) => x.st).sort((a, b) => b.d.localeCompare(a.d));
   $('#stamp-grid').innerHTML = stamped.length ? `<div class="hint" style="grid-column:1/-1">${fr ? `第${lv}巻の額縁：${['', '銅', '銀', '金'][fr]}` : '第3巻になるとスタンプに額縁が付きます'}　スタンプは全部で ${STORES.length.toLocaleString()}種類</div>` + stamped.map(({ st, d, trial }) => { const reg = G.regularInfo(st.i); return `<div class="st f${fr}" data-id="${esc(st.i)}">${stampSVG(st, true, 76, { rank: reg.rank, ev: E.storeFrame(st.i) })}<div class="n">${esc(st.n)}</div>${reg.rank >= 2 ? `<div class="n reg">${esc(reg.name)}・${reg.days}日</div>` : `<div class="n">${fmtDate(d)}${trial ? '・体験' : ''}</div>`}</div>`; }).join('') : empty('stamp', '店の射程内（120m）で「スタンプを押す」と、ここに並びます。家で試すなら お試し歩き → ワープ。');
   $$('#stamp-grid .st').forEach((el) => el.addEventListener('click', () => openSheet(el.dataset.id)));
-  // カード
+  // 本：いま読んでいる本・読み終えた本（v0.14）と、出会った本のカード
+  renderReading();
   const g = $('#card-grid'); g.innerHTML = S.cards.length ? S.cards.slice().reverse().map((c) => `<div class="card" data-id="${esc(c.id)}"><div class="cover">${c.cover ? `<img src="${esc(c.cover)}" alt="" referrerpolicy="no-referrer" loading="lazy">` : `<div class="notitle">${esc(c.title)}</div>`}</div><div class="stampmark">出会</div><div class="meta"><b>${esc(c.title)}</b>${esc(c.sn)}<br>${fmtDate(c.d)}${c.pub ? '・公開' : ''}</div></div>`).join('') : empty('barcode', '店のページで「本と出会った」を押すと、ここに増えます。');
   $$('#card-grid .card').forEach((el) => el.addEventListener('click', () => openCard(el.dataset.id)));
   // 帳

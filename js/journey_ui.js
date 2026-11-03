@@ -1,14 +1,14 @@
 // 旅の記録の画面：行きたい店のお知らせ・この辺りの行きたい店・今日の物語・月のふり返り・投稿の記録・Googleマップの★の読み込み
-import { S, save } from './state.js?v=0.13.2';
-import { STORES, BYID, addCustom } from './data.js?v=0.13.2';
-import * as J from './journey.js?v=0.13.2';
-import * as G from './game.js?v=0.13.2';
-import * as MAP from './map.js?v=0.13.2';
-import { POS, hasPos } from './position.js?v=0.13.2';
-import { sfx, haptic } from './audio.js?v=0.13.2';
-import { storyImage, shareBlob } from './share.js?v=0.13.2';
-import { toast, openModal, closeModal, openSheet, applyMapStates, updateNear, refreshHud } from './ui.js?v=0.13.2';
-import { $, $$, esc, fmtDist, todayISO, icon, arrowOf, bearing, dist, gmapDir } from './util.js?v=0.13.2';
+import { S, save } from './state.js?v=0.14.0';
+import { STORES, BYID, addCustom } from './data.js?v=0.14.0';
+import * as J from './journey.js?v=0.14.0';
+import * as G from './game.js?v=0.14.0';
+import * as MAP from './map.js?v=0.14.0';
+import { POS, hasPos } from './position.js?v=0.14.0';
+import { sfx, haptic } from './audio.js?v=0.14.0';
+import { storyImage, shareBlob } from './share.js?v=0.14.0';
+import { toast, openModal, closeModal, openSheet, applyMapStates, updateNear, refreshHud } from './ui.js?v=0.14.0';
+import { $, $$, esc, fmtDist, todayISO, icon, arrowOf, bearing, dist, gmapDir } from './util.js?v=0.14.0';
 
 const dirLink = (st, label = '道順') => `<a class="btn" href="${gmapDir(st)}" target="_blank" rel="noopener" data-stop>${label}</a>`;
 const stopLinks = (root) => $$('[data-stop]', root).forEach((a) => a.addEventListener('click', (e) => e.stopPropagation()));
@@ -55,14 +55,14 @@ export function renderRadarWants() {
 function chapterHTML(ch) {
   const body = ch.empty ? `<p class="muted">${esc(ch.blank)}</p>` : ch.lines.map((l) => `<p>${esc(l.s)}${l.url ? ` <a href="${esc(l.url)}" target="_blank" rel="noopener">投稿を見る</a>` : ''}</p>`).join('');
   const walked = ch.m >= 100;
-  const stats = [`${icon('book')}この日 +${ch.earned}ページ`, walked ? `歩いて${ch.pages}ページ・${ch.km}km` : '', walked ? `歩数の目安 ${J.stepsOf(ch.m).toLocaleString()}歩` : '', ch.nStores ? `訪ねた場所 ${ch.nStores}か所` : '', ch.nCards ? `出会った本 ${ch.nCards}冊` : '', ch.v >= 1000 ? `乗り物 ${J.kmOf(ch.v)}km` : ''].filter(Boolean);
+  const stats = [`${icon('book')}この日 +${ch.earned}ページ`, walked ? `歩いて${ch.pages}ページ・${ch.km}km` : '', walked ? `歩数の目安 ${J.stepsOf(ch.m).toLocaleString()}歩` : '', ch.nStores ? `訪ねた場所 ${ch.nStores}か所` : '', ch.nCards ? `出会った本 ${ch.nCards}冊` : '', ch.nRead ? `移動読書 ${ch.nRead}回` : '', ch.v >= 1000 ? `乗り物 ${J.kmOf(ch.v)}km` : ''].filter(Boolean);
   return `<div class="story"><div class="ch-sub">本めぐり　${S.settings.handle ? esc(S.settings.handle) + 'の物語' : 'その日の物語'}</div><div class="ch-title">${esc(ch.title)}</div><div class="story-body">${body}</div><div class="story-stats">${stats.map((s) => `<span>${s}</span>`).join('')}</div></div>`;
 }
 async function shareChapter(date) { try { const ch = J.chapter(date); const blob = await storyImage(ch, S.settings.avatar, S.settings.handle); const r = await shareBlob(blob, `story-${date}.png`, ch.title, `${ch.title}　+${ch.earned}ページ・${ch.nStores}か所 #本めぐり`); if (r !== 'cancel') { G.noteShare('story', '', r); toast(r === 'saved' ? '画像を保存しました' : 'シェアしました', 'ok'); renderStory(); } } catch (e) { toast('画像にできませんでした', 'warn'); } }
 export function renderStory() {
   const box = $('#story-today'), list = $('#chapters'); if (!box) return;
   const ch = J.chapter(todayISO());
-  box.innerHTML = chapterHTML(ch) + `<div class="actions"><button class="btn primary" id="sy-share">${icon('share')}今日の物語をシェア</button><button class="btn" id="sy-post">${icon('pen')}Xの投稿を記録</button></div><div class="note">歩いた距離は、アプリを開いて現在地を追っているあいだだけ数えます（100mで1ページ）。歩数は距離からの目安です。</div>`;
+  box.innerHTML = chapterHTML(ch) + `<div class="actions"><button class="btn primary" id="sy-share">${icon('share')}今日の物語をシェア</button><button class="btn" id="sy-post">${icon('pen')}Xの投稿を記録</button></div><div class="note">歩いた距離は、現在地を追っているあいだと、店と店のあいだを数えます（100mで1ページ）。閉じて歩いた分は、次の店でスタンプを押したときに、前の店からのまっすぐの距離で足します。歩数は距離からの目安です。</div>`;
   $('#sy-share').onclick = () => shareChapter(todayISO()); $('#sy-post').onclick = postModal;
   const past = J.chapters(40).filter((c) => c.date !== todayISO());
   list.innerHTML = past.length ? past.map((c) => `<details class="chap"><summary><b>${esc(c.title)}</b><span class="muted small">${c.pages}ページ${c.nStores ? `・${c.nStores}か所` : ''}${c.nCards ? `・本${c.nCards}冊` : ''}</span></summary>${chapterHTML(c)}<div class="actions"><button class="btn" data-share="${c.date}">${icon('share')}この日の物語をシェア</button></div></details>`).join('') : '<div class="muted small">まだ前の章はありません。歩いた日・本屋に行った日ごとに、1章ずつ増えていきます。</div>';
