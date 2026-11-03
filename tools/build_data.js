@@ -41,7 +41,7 @@ console.log('上書き：屋号変更', renamed, '閉店', closedN);
 // 追加表（公式店舗一覧にあって OSM にない店。tools/chain_check.js → tools/apply_candidates.js --add で足す）
 const adds = must('additions.json');
 const have = new Set(out.map((r) => r.i)); let added = 0;
-for (const x of adds) { if (!x || !x.i || !x.n || x.la == null || x.lo == null || have.has(x.i) || (ov.closed && ov.closed[x.i])) continue; const rec = { i: x.i, n: x.n, la: +Number(x.la).toFixed(5), lo: +Number(x.lo).toFixed(5), x: 1 }; if (x.a) rec.a = x.a; if (x.p) rec.p = x.p; if (x.u) rec.u = 1; if (x.c) rec.c = x.c; out.push(rec); have.add(x.i); added++; }
+for (const x of adds) { if (!x || !x.i || !x.n || x.la == null || x.lo == null || have.has(x.i) || (ov.closed && ov.closed[x.i])) continue; const rec = { i: x.i, n: x.n, la: +Number(x.la).toFixed(5), lo: +Number(x.lo).toFixed(5), x: 1 }; if (x.a) rec.a = x.a; if (x.p) rec.p = x.p; if (x.u) rec.u = 1; if (x.c) rec.c = x.c; if (x.src && /^oshibon/.test(x.src)) rec.ob = 1; /* SNS推し本大賞の展開店舗一覧から足した店（2026-11） */ out.push(rec); have.add(x.i); added++; }
 // 確認表（公式店舗一覧で「ある」と確かめられた店 → 最終確認の月を更新）
 const confirmed = must('confirmed.json');
 let confN = 0; for (const r of out) { const m = confirmed[r.i]; if (m && (!r.c || m > r.c)) { r.c = m; r.cf = 1; confN++; } }

@@ -1,17 +1,17 @@
 // 地図の画面：現在地まわり（射程・いちばん近い店）・ピンの状態・現在地とお試し歩き・店のページ・さがす・店を足す・行きたい店のお知らせ
-import { RANGE_M, TERRITORY_M, PG } from './config.js?v=0.17.1';
-import { $, arrowOf, bearing, icon, fmtDist, esc, dist, $$, emit, fmtDate, gmapDir, stars, gmapPlace, prefOf } from './util.js?v=0.17.1';
-import { S, save } from './state.js?v=0.17.1';
-import { unlock, sfx } from './audio.js?v=0.17.1';
-import { hasPos, POS, startWatch, setTrial, setPos, jumped } from './position.js?v=0.17.1';
-import { STORES, BYID, isLib, isFeat, rarityOf, pickOpen, placeWord, bookTitle, stampSVG, rarityText, lookupIsbn, hideStore, renameStore, search, addCustom, FEAT } from './data.js?v=0.17.1';
-import * as MAP from './map.js?v=0.17.1';
-import * as G from './game.js?v=0.17.1';
-import * as E from './events.js?v=0.17.1';
-import * as J from './journey.js?v=0.17.1';
-import { dirLink, openModal, closeModal, stopLinks, toast, closeSheet, refreshHud, currentView, switchView } from './ui.js?v=0.17.1';
-import { startCheckin, shareStampUI } from './checkin_ui.js?v=0.17.1';
-import { startCard } from './card_ui.js?v=0.17.1';
+import { RANGE_M, TERRITORY_M, PG } from './config.js?v=0.17.2';
+import { $, arrowOf, bearing, icon, fmtDist, esc, dist, $$, emit, fmtDate, gmapDir, stars, gmapPlace, prefOf } from './util.js?v=0.17.2';
+import { S, save } from './state.js?v=0.17.2';
+import { unlock, sfx } from './audio.js?v=0.17.2';
+import { hasPos, POS, startWatch, setTrial, setPos, jumped } from './position.js?v=0.17.2';
+import { STORES, BYID, isLib, isFeat, rarityOf, pickOpen, placeWord, bookTitle, stampSVG, rarityText, lookupIsbn, hideStore, renameStore, search, addCustom, FEAT } from './data.js?v=0.17.2';
+import * as MAP from './map.js?v=0.17.2';
+import * as G from './game.js?v=0.17.2';
+import * as E from './events.js?v=0.17.2';
+import * as J from './journey.js?v=0.17.2';
+import { dirLink, openModal, closeModal, stopLinks, toast, closeSheet, refreshHud, currentView, switchView } from './ui.js?v=0.17.2';
+import { startCheckin, shareStampUI } from './checkin_ui.js?v=0.17.2';
+import { startCard } from './card_ui.js?v=0.17.2';
 
 // ---------- 行きたい店のお知らせ（地図の下に出る帯） ----------
 let waTimer = null;
@@ -135,7 +135,7 @@ export function openSheet(id, quiet) {
   const rec = st.rec ? pickHTML(st) : '';
   const hist = vs.length ? `<div class="muted small" style="margin-top:8px">${vs.slice(-3).reverse().map((v) => `${fmtDate(v.d)}${v.near ? '（スタンプ）' : '（記録）'}${v.memo ? '「' + esc(v.memo) + '」' : ''}`).join('<br>')}</div>` : '';
   const distText = st.closed ? '' : d == null ? '現在地なし' : jumped() ? '位置が大きく飛んだので、少し待ってから（1分）' : near ? `射程内（約${fmtDist(d)}）` : `ここから約${fmtDist(d)}（あと${fmtDist(d - RANGE_M)}で射程内）`;
-  const srcLine = `情報：${st.x ? 'チェーンの公式店舗一覧' : 'OpenStreetMap'}${st.c ? `・${st.c.slice(0, 4)}年${Number(st.c.slice(5))}月に確認` : ''}${st.cf || st.x ? '' : '（古いことがあります）'}`;
+  const srcLine = `情報：${st.ob ? 'SNS推し本大賞2026 展開店舗一覧' : st.x ? 'チェーンの公式店舗一覧' : 'OpenStreetMap'}${st.c ? `・${st.c.slice(0, 4)}年${Number(st.c.slice(5))}月に確認` : ''}${st.cf || st.x ? '' : '（古いことがあります）'}`;
   // いちばん大きいボタン（v0.14.5）：射程内＝スタンプ／離れている＝道順（Googleマップ）／お試し歩き＝ワープ。「来た記録だけ」は下の段へ
   const main = st.closed ? '<div class="note">この店は閉店しました。押したスタンプと記録は、めぐり帳に残っています。</div>'
     : near ? `<button class="btn primary wide" data-act="checkin">${stamp ? `${icon('stamp')}もう一度押す（来店）` : `${icon('stamp')}スタンプを押す${feat ? `（+${PG.feat}ページ）` : ''}`}</button>`
