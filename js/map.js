@@ -1,6 +1,6 @@
 // 地図（MapLibre）。店はピンの絵で表示し、固まり（クラスタ）でまとめ、状態は feature-state で軽く更新する
-import { STYLE_LIGHT, STYLE_DARK, TERRITORY_M, RANGE_M } from './config.js?v=0.13.0';
-import { circlePoly, emit } from './util.js?v=0.13.0';
+import { STYLE_LIGHT, STYLE_DARK, TERRITORY_M, RANGE_M } from './config.js?v=0.13.1';
+import { circlePoly, emit } from './util.js?v=0.13.1';
 
 export const M = { map: null, ready: false, theme: 'light' };
 let storesGeo = { type: 'FeatureCollection', features: [] };
@@ -8,7 +8,6 @@ let territoryGeo = { type: 'FeatureCollection', features: [] };
 let meGeo = { type: 'FeatureCollection', features: [] };
 const stateCache = new Map(); // id → 最後に送った状態
 let handlers = {};
-let pulseRaf = null, pulseOn = false;
 
 // ---- ピンの絵（canvasで描く。種類：plain ふつう／used 古書店／rare 秘境／stamped 押した／near 射程内／lib 図書館） ----
 // v0.9 ポップ・ラリー：白いふち＋墨の輪郭の「シール」。本屋＝朱／古書店＝茶／秘境＝墨に檸檬の星／図書館＝空／押した店＝若草にチェック／射程内＝朱に檸檬の光の輪
@@ -163,7 +162,6 @@ export function setStates(next) { // Map<id, {stamp, near, feat, want, st, ev}>
     if (prev && prev.stamp === st.stamp && prev.near === st.near && prev.feat === st.feat && prev.want === st.want && prev.st === st.st && prev.ev === st.ev) continue;
     stateCache.set(id, st); if (M.ready) M.map.setFeatureState({ source: 'stores', id }, st);
   }
-  const anyNear = [...stateCache.values()].some((s) => s.near); if (anyNear) startPulse(); else stopPulse();
 }
 // 押した店のまわりを塗る。常連度が高い店ほど広く・濃く（s.rad と s.rank）
 export function setTerritory(stores) { territoryGeo = { type: 'FeatureCollection', features: stores.map((s) => ({ type: 'Feature', geometry: { type: 'Polygon', coordinates: circlePoly(s.lo, s.la, s.rad || TERRITORY_M) }, properties: { rank: s.rank || 1 } })) }; if (M.ready) M.map.getSource('territory').setData(territoryGeo); }
@@ -174,8 +172,8 @@ export function setMe(POS) {
     { type: 'Feature', geometry: { type: 'Point', coordinates: [POS.lon, POS.lat] }, properties: { k: 'me', fake: POS.fake ? 1 : 0 } }] };
   if (M.ready) M.map.getSource('me').setData(meGeo);
 }
-function startPulse() { if (pulseRaf) return; const t0 = performance.now(); const loop = (t) => { if (!M.ready || !M.map.getLayer('near-pulse')) { pulseRaf = requestAnimationFrame(loop); return; } const s = (Math.sin((t - t0) / 320) + 1) / 2; M.map.setPaintProperty('near-pulse', 'circle-radius', 14 + s * 14); M.map.setPaintProperty('near-pulse', 'circle-opacity', ['*', 0.36 - s * 0.26, fs('near')]); pulseRaf = requestAnimationFrame(loop); }; pulseRaf = requestAnimationFrame(loop); pulseOn = true; }
-function stopPulse() { if (pulseRaf) cancelAnimationFrame(pulseRaf); pulseRaf = null; if (pulseOn && M.ready && M.map.getLayer('near-pulse')) { M.map.setPaintProperty('near-pulse', 'circle-radius', 16); M.map.setPaintProperty('near-pulse', 'circle-opacity', ['*', 0.3, fs('near')]); } pulseOn = false; }
+// 射程内の光の輪は動かさない（v0.13.1）。前は毎コマ setPaintProperty で feature-state の式を変えていて、そのたびに店のタイルが作り直しになり、
+// iPhone と同じ WebKit では作り直しが終わらずピンが出なかった（電池にもよくない）。光はいまの 'near-pulse' と 'stores-near' の止まった輪だけ
 export function flyTo(lon, lat, zoom, opts = {}) { if (!M.map) return; M.map.flyTo(Object.assign({ center: [lon, lat], zoom: Math.max(M.map.getZoom(), zoom), speed: 1.2 }, opts)); }
 export function jumpTo(lon, lat, zoom) { if (M.map) M.map.jumpTo({ center: [lon, lat], zoom }); }
 export function easeTo(lon, lat) { if (M.map) M.map.easeTo({ center: [lon, lat], duration: 600 }); }
