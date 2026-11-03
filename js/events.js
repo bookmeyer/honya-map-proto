@@ -1,19 +1,17 @@
 // イベント（v0.10）：管理画面で作った設定をサーバーから読み、期間・対象の店・限定の枠・お題・称号を決める
 // サーバーに送るのは「匿名の番号・店番号・日時・射程内か・お試し歩きか・イベント」だけ。位置の座標・名前・メモは送らない
 // サーバーに届かないときは、前回読んだ設定で動く。スタンプはいつでも押せる
-import { APP_VER, EVENTS_API } from './config.js?v=0.15.2';
-import { S, save } from './state.js?v=0.15.2';
-import { isLib } from './data.js?v=0.15.2';
-import { prefOf, todayISO, emit } from './util.js?v=0.15.2';
+import { EVENTS_API, APP_VER } from './config.js?v=0.16.0';
+import { $, emit, prefOf, todayISO, on } from './util.js?v=0.16.0';
+import { S, save } from './state.js?v=0.16.0';
+import { isLib } from './data.js?v=0.16.0';
 
 export const EV = { list: [], permitted: new Set(), ok: false, at: 0 };
 const CACHE_KEY = 'meguri_events_v1';
 const OUTBOX_MAX = 300;
-
 // 試すときだけ、別のサーバーを指せる（localStorage の meguri_api）
 export function apiBase() { try { const o = localStorage.getItem('meguri_api'); if (o && /^https?:\/\//.test(o) && /^(localhost|127\.0\.0\.1)$/.test(location.hostname)) return o; } catch (e) {} return EVENTS_API; } // 手元（localhost）だけ（v0.15.3）
 const tms = (s) => { const x = Date.parse(s); return Number.isNaN(x) ? 0 : x; };
-
 const HEX = /^#[0-9A-Fa-f]{6}$/; // 色は #000000 の形だけ（style に入るため。v0.15.3）
 function valid(e) { return e && Number.isInteger(e.id) && typeof e.name === 'string' && tms(e.starts) && tms(e.ends) && e.frame && HEX.test(e.frame.color) && (!e.special || HEX.test(e.special.color)) && (!e.goal || (Number.isInteger(e.goal.count) && e.goal.count > 0 && typeof e.goal.title === 'string')); }
 function apply(j) {
@@ -21,7 +19,6 @@ function apply(j) {
   EV.list = j.events.filter(valid).map((e) => Object.assign({}, e, { _stores: new Set(e.stores || []), _prefs: new Set(e.prefs || []) }));
   EV.permitted = new Set(Array.isArray(j.permitted) ? j.permitted : []);
 }
-
 export async function loadEvents() {
   if (!EV.at) { try { apply(JSON.parse(localStorage.getItem(CACHE_KEY) || 'null')); } catch (e) {} }
   try {
@@ -34,7 +31,6 @@ export async function loadEvents() {
   } catch (e) { EV.ok = false; }
   EV.at = Date.now(); emit('events');
 }
-
 export const isLive = (e, now = Date.now()) => tms(e.starts) <= now && now <= tms(e.ends);
 export const isSoon = (e, now = Date.now()) => now < tms(e.starts);
 export const liveEvents = () => EV.list.filter((e) => isLive(e));
@@ -42,7 +38,6 @@ export const soonEvents = () => EV.list.filter((e) => isSoon(e));
 export const endedEvents = () => EV.list.filter((e) => Date.now() > tms(e.ends));
 export const daysLeft = (e) => Math.max(0, Math.ceil((tms(e.ends) - Date.now()) / 86400000));
 export const daysUntil = (e) => Math.max(0, Math.ceil((tms(e.starts) - Date.now()) / 86400000));
-
 // この店が、このイベントの対象か
 export function isTarget(e, st) {
   if (!st || st.demo || st.custom) return false;
@@ -63,7 +58,6 @@ export const frameFor = (e, st) => (e.special && EV.permitted.has(st.i) ? e.spec
 export function targetText(e) {
   return { all: 'どの本屋・図書館でも', books: 'どの本屋でも', used: '古書店で', libs: '図書館で', permitted: `参加店（${EV.permitted.size}店）で`, selected: `選ばれた${e._stores.size}店で`, prefs: `${[...e._prefs].join('・')}の本屋・図書館で` }[e.target] || '';
 }
-
 // スタンプを押した・来た記録を残したとき。枠・お題の進み・称号を返す
 export function onCheckin(st, { near, trial }) {
   const out = { frames: [], titles: [], progress: [] };
@@ -88,7 +82,6 @@ export function onCheckin(st, { near, trial }) {
   out.frames.sort((a, b) => b.sp - a.sp); // 特別な枠を先に（めぐり帳と同じ選び方）
   save(); emit('records'); return out;
 }
-
 // この店のスタンプに付ける枠。いちばん新しい日のもの → 同じ日なら特別な枠 → 先に始まったイベント（押したときの画面と同じ選び方）
 export function storeFrame(id) {
   const logs = S.evLog || {}; let best = null;
@@ -102,7 +95,6 @@ export function storeFrame(id) {
 // そのイベントで押したときの枠（イベントのカードに並べる用）
 export function frameIn(evId, id) { const L = (S.evLog || {})[evId]; const x = L && L.s && L.s[id]; if (!x) return null; const fr = x.sp && L.special ? L.special : L.frame; return fr ? Object.assign({ ev: L.name }, fr) : null; }
 export const evCount = (id) => Object.keys(((S.evLog || {})[id] || {}).s || {}).length;
-
 // ---- 参加コード（お試しの人に渡すURLの ?join=） ----
 export function takeJoinParam() {
   const p = new URLSearchParams(location.search); const raw = p.get('join'); if (raw == null) return null;
@@ -111,7 +103,6 @@ export function takeJoinParam() {
   const isNew = S.settings.joinCode !== code; S.settings.joinCode = code; save(); return { code, isNew };
 }
 export function setJoinCode(code) { S.settings.joinCode = code; save(); return loadEvents(); }
-
 // ---- 送る（匿名） ----
 function uuid() {
   if (crypto.randomUUID) return crypto.randomUUID();

@@ -1,17 +1,29 @@
 // 起動：記録を読み、データを取り、地図を出し、部品をつなぐ
-import { APP_VER } from './config.js?v=0.15.2';
-import { S, load, save } from './state.js?v=0.15.2';
-import { loadAll, STORES } from './data.js?v=0.15.2';
-import * as MAP from './map.js?v=0.15.2';
-import { POS, setPos, setFollow, jumped } from './position.js?v=0.15.2';
-import * as AUDIO from './audio.js?v=0.15.2';
-import * as UI from './ui.js?v=0.15.2';
-import * as J from './journey.js?v=0.15.2';
-import * as JU from './journey_ui.js?v=0.15.2';
-import * as RU from './reading_ui.js?v=0.15.2';
-import * as E from './events.js?v=0.15.2';
-import { renderRadar, renderZukan, renderMissions, renderSettings, applyTheme, applySkin, showOnboarding } from './screens.js?v=0.15.2';
-import { $, $$, on, emit, isStandalone, mobileOS } from './util.js?v=0.15.2';
+import { APP_VER } from './config.js?v=0.16.0';
+import { $, on, $$, isStandalone, mobileOS, emit } from './util.js?v=0.16.0';
+import { load, S, save } from './state.js?v=0.16.0';
+import * as AUDIO from './audio.js?v=0.16.0';
+import { POS, setPos, setFollow, jumped } from './position.js?v=0.16.0';
+import { loadAll, STORES } from './data.js?v=0.16.0';
+import * as MAP from './map.js?v=0.16.0';
+import * as E from './events.js?v=0.16.0';
+import * as J from './journey.js?v=0.16.0';
+import * as R from './reading.js?v=0.16.0';
+import { toast, closeSheet, refreshHud, currentView, switchView, setSub, closeModal } from './ui.js?v=0.16.0';
+import { openSheet, applyMapStates, updateNear, showWantAlerts, updateAreaChip, setupSearch, startAdd, locate, setTrialUI, warp } from './map_ui.js?v=0.16.0';
+import * as RU from './reading_ui.js?v=0.16.0';
+import { renderRadar } from './radar_ui.js?v=0.16.0';
+import { renderZukan } from './zukan_ui.js?v=0.16.0';
+import { renderMissions } from './mission_ui.js?v=0.16.0';
+import { joinNotice, privacyNotice, homeTip, applySkin, renderSettings, applyTheme } from './settings_ui.js?v=0.16.0';
+import { showOnboarding } from './onboard_ui.js?v=0.16.0';
+import * as UI0 from './ui.js?v=0.16.0'; // 試す入口（__honya）用
+import * as MU from './map_ui.js?v=0.16.0'; // 試す入口（__honya）用
+import * as CU from './checkin_ui.js?v=0.16.0'; // 試す入口（__honya）用
+import * as KU from './card_ui.js?v=0.16.0'; // 試す入口（__honya）用
+import * as SU from './settings_ui.js?v=0.16.0'; // 試す入口（__honya）用
+import * as RAD from './radar_ui.js?v=0.16.0'; // 試す入口（__honya）用
+import * as ZU from './zukan_ui.js?v=0.16.0'; // 試す入口（__honya）用
 
 async function boot() {
   load(); applyThemeEarly(); applySkin(); // 着せ替え（v0.15.2）
@@ -19,38 +31,38 @@ async function boot() {
   const join = E.takeJoinParam(); // お試しの人に渡すURLの ?join=参加コード
   const lp = S.lastPos; const center = lp ? [lp.lon, lp.lat] : [137.5, 37.3]; const zoom = lp ? 14 : 5;
   MAP.initMap({ center, zoom, theme: document.documentElement.dataset.theme || 'light',
-    onStoreClick: (id) => UI.openSheet(id),
-    onReadClick: (p) => UI.toast(`📖 ${p.label}`), // 読んだ場所の印（v0.15.0）
-    onMapClick: (lngLat) => { if (POS.fake) { setPos(lngLat.lat, lngLat.lng, 15, true); UI.toast('ここにいることにしました'); } else UI.closeSheet(); },
+    onStoreClick: (id) => openSheet(id),
+    onReadClick: (p) => toast(`📖 ${p.label}`), // 読んだ場所の印（v0.15.0）
+    onMapClick: (lngLat) => { if (POS.fake) { setPos(lngLat.lat, lngLat.lng, 15, true); toast('ここにいることにしました'); } else closeSheet(); },
     onDrag: () => { setFollow(false); $('#btn-locate').classList.remove('on'); } });
-  on('map-ready', () => { MAP.setStores(STORES); UI.applyMapStates(); MAP.setMe(POS); MAP.setReads(J.readSpots()); if (S.settings.avatar) MAP.setAvatar(S.settings.avatar); });
-  on('pos', () => { MAP.setMe(POS); if (POS.follow && !POS.fake) MAP.easeTo(POS.lon, POS.lat); UI.updateNear(); J.track(POS, jumped()); JU.showWantAlerts(J.checkWanted(POS)); UI.refreshHud(); });
-  on('volume', (v) => { UI.toast(`📖 歩いたページで、第${v.after}巻に入りました`, 'ok'); AUDIO.sfx.levelup(); UI.refreshHud(); });
-  let areaBound = false; on('map-ready', () => { if (!areaBound) { areaBound = true; MAP.M.map.on('moveend', JU.updateAreaChip); } JU.updateAreaChip(); });
-  on('records', () => { UI.refreshHud(); JU.updateAreaChip(); RU.renderReadBtn(); MAP.setReads(J.readSpots()); if (UI.currentView === 'zukan') renderZukan(); if (UI.currentView === 'mission') renderMissions(); });
+  on('map-ready', () => { MAP.setStores(STORES); applyMapStates(); MAP.setMe(POS); MAP.setReads(R.readSpots()); if (S.settings.avatar) MAP.setAvatar(S.settings.avatar); });
+  on('pos', () => { MAP.setMe(POS); if (POS.follow && !POS.fake) MAP.easeTo(POS.lon, POS.lat); updateNear(); J.track(POS, jumped()); showWantAlerts(J.checkWanted(POS)); refreshHud(); });
+  on('volume', (v) => { toast(`📖 歩いたページで、第${v.after}巻に入りました`, 'ok'); AUDIO.sfx.levelup(); refreshHud(); });
+  let areaBound = false; on('map-ready', () => { if (!areaBound) { areaBound = true; MAP.M.map.on('moveend', updateAreaChip); } updateAreaChip(); });
+  on('records', () => { refreshHud(); updateAreaChip(); RU.renderReadBtn(); MAP.setReads(R.readSpots()); if (currentView === 'zukan') renderZukan(); if (currentView === 'mission') renderMissions(); });
   on('view', (v) => { if (v === 'radar') renderRadar(); if (v === 'zukan') renderZukan(); if (v === 'mission') renderMissions(); if (v === 'settings') renderSettings(); });
-  on('near', () => { if (UI.currentView === 'radar') renderRadar(); });
-  on('save-error', () => UI.toast('保存できませんでした（端末の空きを確かめてください）', 'warn'));
+  on('near', () => { if (currentView === 'radar') renderRadar(); });
+  on('save-error', () => toast('保存できませんでした（端末の空きを確かめてください）', 'warn'));
   // 移動読書（v0.14.1）：地図の大きなボタン「今から移動読書」／移動読書中。スタンプのあと・カードのあとからも同じ画面へ
   on('read-start', (x) => RU.openReadStart(x || {})); on('trip', RU.renderReadBtn); on('trial', RU.renderReadBtn);
   // イベント：起動時・10分ごと・画面に戻ったとき（5分以上たっていたら）に設定を読む。記録はつながったときに送る
-  on('events', () => { UI.applyMapStates(); UI.refreshHud(); if (UI.currentView === 'mission') renderMissions(); });
+  on('events', () => { applyMapStates(); refreshHud(); if (currentView === 'mission') renderMissions(); });
   E.loadEvents(); setInterval(() => { if (document.visibilityState === 'visible') E.loadEvents(); }, 10 * 60 * 1000);
   document.addEventListener('visibilitychange', () => { if (document.visibilityState !== 'visible') return; if (Date.now() - E.EV.at > 5 * 60 * 1000) E.loadEvents(); E.flushSoon(1000); });
   window.addEventListener('online', () => E.flushSoon(500)); E.flushSoon(4000);
-  UI.setupSearch(); UI.refreshHud(); RU.renderReadBtn();
-  $$('#tabs button').forEach((b) => b.addEventListener('click', () => { AUDIO.unlock(); UI.switchView(b.dataset.view); }));
-  $$('.segmented button').forEach((b) => b.addEventListener('click', () => UI.setSub(b.dataset.sub)));
-  $('#sheet-close').onclick = UI.closeSheet;
-  $('#modal').addEventListener('click', (e) => { if (e.target.id === 'modal') UI.closeModal(); });
-  $('#btn-add').onclick = UI.startAdd; $('#btn-locate').onclick = UI.locate; $('#btn-trial').onclick = () => { AUDIO.unlock(); UI.setTrialUI(!POS.fake); }; $('#btn-warp').onclick = () => UI.warp();
-  $('#btn-settings').onclick = () => UI.switchView('settings'); $('#lv-btn').onclick = () => UI.switchView('zukan');
+  setupSearch(); refreshHud(); RU.renderReadBtn();
+  $$('#tabs button').forEach((b) => b.addEventListener('click', () => { AUDIO.unlock(); switchView(b.dataset.view); }));
+  $$('.segmented button').forEach((b) => b.addEventListener('click', () => setSub(b.dataset.sub)));
+  $('#sheet-close').onclick = closeSheet;
+  $('#modal').addEventListener('click', (e) => { if (e.target.id === 'modal') closeModal(); });
+  $('#btn-add').onclick = startAdd; $('#btn-locate').onclick = locate; $('#btn-trial').onclick = () => { AUDIO.unlock(); setTrialUI(!POS.fake); }; $('#btn-warp').onclick = () => warp();
+  $('#btn-settings').onclick = () => switchView('settings'); $('#lv-btn').onclick = () => switchView('zukan');
   document.addEventListener('pointerdown', AUDIO.unlock, { once: true });
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
   window.addEventListener('online', () => { $('#offline').hidden = true; }); window.addEventListener('offline', () => { $('#offline').hidden = false; }); if (!navigator.onLine) $('#offline').hidden = false;
-  if (!res.ok) UI.toast('店のデータが読み込めませんでした。つながったら、もう一度開いてください', 'warn');
+  if (!res.ok) toast('店のデータが読み込めませんでした。つながったら、もう一度開いてください', 'warn');
   // シートを下に引いて閉じる
-  let sy = null; const sheet = $('#sheet'); sheet.addEventListener('touchstart', (e) => { sy = e.touches[0].clientY; }, { passive: true }); sheet.addEventListener('touchmove', (e) => { if (sy != null && sheet.scrollTop === 0 && e.touches[0].clientY - sy > 70) { UI.closeSheet(); sy = null; } }, { passive: true });
+  let sy = null; const sheet = $('#sheet'); sheet.addEventListener('touchstart', (e) => { sy = e.touches[0].clientY; }, { passive: true }); sheet.addEventListener('touchmove', (e) => { if (sy != null && sheet.scrollTop === 0 && e.touches[0].clientY - sy > 70) { closeSheet(); sy = null; } }, { passive: true });
   // 更新の案内（サービスワーカー）
   if ('serviceWorker' in navigator && location.protocol === 'https:') {
     // 更新の流れ：新しい sw.js が入った（待機中）→ 帯を出す → 「更新」で待機中のものを有効に → 入れ替わったら読み直す
@@ -66,17 +78,19 @@ async function boot() {
   }
   // ホーム画面のアイコンから開いているときは、記録を消さないよう端末に頼む（ふつうのタブでは頼まない。確かめる窓を出すブラウザがあるため）
   if (isStandalone() && navigator.storage && navigator.storage.persist) navigator.storage.persisted().then((p) => p || navigator.storage.persist()).catch(() => {});
-  const afterIntro = () => { if (join && join.isNew) UI.joinNotice(join.code); else if (!S.settings.privacyV10) UI.privacyNotice(); else if (!S.settings.homeTip && mobileOS() && !isStandalone()) UI.homeTip(); };
-  if (!S.seen) showOnboarding((mode) => { S.seen = 1; S.settings.privacyV10 = join && join.isNew ? 0 : 1; save(); UI.refreshHud(); if (mode === 'geo') UI.locate(); if (mode === 'trial') { UI.setTrialUI(true); UI.warp(); } if (join && join.isNew) UI.joinNotice(join.code); });
+  const afterIntro = () => { if (join && join.isNew) joinNotice(join.code); else if (!S.settings.privacyV10) privacyNotice(); else if (!S.settings.homeTip && mobileOS() && !isStandalone()) homeTip(); };
+  if (!S.seen) showOnboarding((mode) => { S.seen = 1; S.settings.privacyV10 = join && join.isNew ? 0 : 1; save(); refreshHud(); if (mode === 'geo') locate(); if (mode === 'trial') { setTrialUI(true); warp(); } if (join && join.isNew) joinNotice(join.code); });
   else afterIntro();
   // 2回目からは、開いたときに自分のいる場所から始める（v0.13.2）。位置の許可がもうある人か、前に現在地を使った人だけ。断られている人には聞かない
   if (S.seen && !POS.fake) {
-    const go = () => UI.locate();
+    const go = () => locate();
     if (navigator.permissions && navigator.permissions.query) navigator.permissions.query({ name: 'geolocation' }).then((p) => { if (p.state === 'granted' || (p.state === 'prompt' && S.settings.geoOk)) go(); }).catch(() => { if (S.settings.geoOk) go(); });
     else if (S.settings.geoOk) go();
   }
   emit('view', 'map');
-  window.__honya = { S, POS, STORES, UI, MAP, J, JU, RU, E, audio: AUDIO, ver: APP_VER };
+  // 試す入口（テストで使う）。v0.16.0 でファイルを分けたので、いくつかをまとめて見せる。S と STORES は入れかわるので、いつも今のものを返す
+  const live = (...ms) => new Proxy({}, { get: (_, k) => { const x = ms.find((n) => k in n); return x ? x[k] : undefined; } });
+  window.__honya = { get S() { return S; }, POS, get STORES() { return STORES; }, UI: live(UI0, MU, CU, KU, SU), MAP, J: live(J, R), JU: live(MU, RAD, ZU, SU), RU, E, audio: AUDIO, ver: APP_VER };
 }
 function applyThemeEarly() { const t = S.settings.theme; const dark = t === 'dark' || (t === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches); document.documentElement.dataset.theme = dark ? 'dark' : 'light'; }
 window.addEventListener('error', (e) => { console.error(e.error || e.message); });

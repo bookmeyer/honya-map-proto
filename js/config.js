@@ -1,16 +1,15 @@
 // 設定値（数字はここだけで変える）
-export const APP_VER = '0.15.2';
+
+export const APP_VER = '0.16.0';
 export const STORAGE_KEY = 'honya_map_v3';
 // イベントの設定を読み、参加の記録（店番号・日時・射程内か・お試しか・イベント＋名前のないランダムな端末の番号）を送る先
 export const EVENTS_API = 'https://tsunagubooks.com/meguri/api/';
 export const LEGACY_KEYS = ['honya_map_v2'];
-
 export const RANGE_M = 120;        // 射程（m）
 export const SENSE_M = 400;        // 近づく演出が始まる距離（m）
 export const TERRITORY_M = 200;    // スタンプを押した店のまわりを塗る半径（m）
 export const JUMP_MPS = 60;        // これより速く位置が飛んだら「飛んだ」と見なす（m/秒）
 export const JUMP_COOLDOWN_MS = 60000;
-
 // 歩いた距離：100mで1ページ（歩いて約1分半）。歩数は距離からの目安（ブラウザは端末の歩数計を読めない）
 export const WALK = { pageM: 100, stepM: 0.7, minMoveM: 12, maxAccM: 60, walkMaxMps: 2.8, rideMaxMps: 45, gapS: 600, wantNearM: 500 };
 // 店と店のあいだ（v0.14）：次の店でスタンプを押したとき、前の店からのまっすぐの距離のうち、まだ数えていない分を歩いたページに足す（同じ日・3kmまで・歩く速さまで）
@@ -19,7 +18,6 @@ export const SEG = { maxM: 3000, minM: 100, betweenM: 100 };
 export const READ = { pgPerMin: 1, maxPg: 60, maxMin: 180 };
 // 常連度：同じ店でスタンプを押した「日数」で上がる（たくさんの店に行けない人の楽しみ）
 export const REGULAR = [{ n: 1, name: 'はじめまして' }, { n: 3, name: '顔なじみ' }, { n: 5, name: '常連' }, { n: 10, name: 'ぬし' }, { n: 20, name: '名物客' }, { n: 50, name: '殿堂入り' }];
-
 // 物語のページ：スタンプ・本との出会い・お題などで増える（歩いた道のりも 100m＝1ページで足される）
 export const PG = {
   shuFirst: 30, shuRepeat: 6, sumiFirst: 10, sumiRepeat: 2,
@@ -32,10 +30,8 @@ export const PG = {
 export const volOf = (pages) => Math.floor(Math.sqrt(Math.max(pages, 0) / 15)) + 1;
 export const pagesForVol = (v) => (v - 1) ** 2 * 15;
 export const frameOf = (v) => (v >= 8 ? 3 : v >= 5 ? 2 : v >= 3 ? 1 : 0);
-
 export const STYLE_LIGHT = 'https://tiles.openfreemap.org/styles/liberty';
 export const STYLE_DARK = 'https://tiles.openfreemap.org/styles/dark';
-
 export const PREFS = [
   ['北海道',43.064,141.347],['青森県',40.824,140.740],['岩手県',39.704,141.153],['宮城県',38.269,140.872],['秋田県',39.719,140.102],
   ['山形県',38.240,140.363],['福島県',37.750,140.468],['茨城県',36.342,140.447],['栃木県',36.566,139.884],['群馬県',36.391,139.061],
@@ -48,10 +44,8 @@ export const PREFS = [
   ['佐賀県',33.249,130.299],['長崎県',32.745,129.874],['熊本県',32.790,130.742],['大分県',33.238,131.613],['宮崎県',31.911,131.424],
   ['鹿児島県',31.560,130.558],['沖縄県',26.212,127.681],
 ];
-
 export const DEMO_STORE = { i: 'demo1', n: '【見本】架空の本屋', la: 35.6812, lo: 139.7671, a: '（実在しません。公認店のページの見え方の見本）', p: '東京都', demo: 1, k: 0,
   rec: { who: '書店員 Aさん（見本）', title: '（見本）ここに書名が入ります', author: '（見本）著者名', say: '（見本）取材でうかがった書店員さんのひとことが、ご本人の言葉のまま入ります。', shelf: '文庫の新刊台（見本）', photo: 'demo' } };
-
 // 称号（ゆるやかに増える）と実績（細かく増える）
 export const TITLES = [
   { id: 't_s1', name: 'はじめの一押し', kind: 'stamps', n: 1 }, { id: 't_s3', name: '本屋あるき', kind: 'stamps', n: 3 }, { id: 't_s10', name: '本屋通', kind: 'stamps', n: 10 },
@@ -79,7 +73,6 @@ export const ACHIEVEMENTS = [
   { id: 'a_book1', name: '一冊ぶん歩いた', desc: '歩いて300ページ（30km）', kind: 'pages', n: 300 },
   { id: 'a_share', name: '見せびらかし', desc: 'スタンプをシェアする', kind: 'share', n: 1 },
 ];
-
 // 着せ替え（v0.15.2 ぶっくまさん「テスト的に着せ替えできるようにできる？ 地図の色もいろいろ変えたい」→ v0.15.3「お試しじゃなくて正式な機能でよい」）
 // 画面の色＝色の変数を上書き（明るい見た目のときだけ）。sw は選ぶ丸の2色。ピン・スタンプの色は変えない（種類の見分けのため）
 export const SKINS = {

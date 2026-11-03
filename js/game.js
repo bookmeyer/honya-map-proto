@@ -1,8 +1,8 @@
 // 遊びの仕組み：物語のページと巻・称号・実績・ミッション・ラリー・カード
-import { PG, TITLES, ACHIEVEMENTS, REGULAR, WALK, volOf } from './config.js?v=0.15.2';
-import { S, save } from './state.js?v=0.15.2';
-import { BYID, RALLIES, FEAT, isFeat, rarityOf } from './data.js?v=0.15.2';
-import { prefOf, todayISO, weekKey, weekStartISO, monthKey, emit } from './util.js?v=0.15.2';
+import { REGULAR, WALK, volOf, TITLES, ACHIEVEMENTS, PG } from './config.js?v=0.16.0';
+import { todayISO, emit, prefOf, weekKey, weekStartISO, monthKey } from './util.js?v=0.16.0';
+import { S, save } from './state.js?v=0.16.0';
+import { BYID, rarityOf, RALLIES, isFeat } from './data.js?v=0.16.0';
 
 export const visitsOf = (id) => S.visits.filter((v) => v.s === id);
 export const cardsOf = (id) => S.cards.filter((c) => c.s === id);
@@ -21,7 +21,6 @@ export const volume = () => volOf(storyPages());
 export function addPages(n) { const before = volume(); S.pg = (S.pg || 0) + n; const d = todayISO(); S.pgDay = S.pgDay || {}; S.pgDay[d] = (S.pgDay[d] || 0) + n; const after = volume(); save(); emit('pages', { n, before, after }); return { before, after }; }
 function bump(kind, n = 1) { const d = todayISO(); S.daily = S.daily || {}; S.daily[d] = S.daily[d] || {}; S.daily[d][kind] = (S.daily[d][kind] || 0) + n; }
 const dailyCount = (kind) => ((S.daily || {})[todayISO()] || {})[kind] || 0;
-
 // ---- 集計 ----
 export function stats() {
   const ids = Object.keys(S.stamps); const sts = ids.map((id) => BYID.get(id)).filter(Boolean);
@@ -41,7 +40,6 @@ export function streakWeeks() {
 export function titles() { const st = stats(); const LBL = { stamps: 'スタンプ', prefs: '県', used: '古書店', rare: '秘境スタンプ' }; return TITLES.map((t) => ({ ...t, ok: (st[t.kind] ?? 0) >= t.n, need: t.kind === 'regMax' ? `同じ店に${t.n}日` : `${LBL[t.kind] || ''}${t.n}` })).concat(RALLIES.map((r) => ({ id: 'r_' + r.id, name: r.title, ok: !!S.rallyDone[r.id], need: r.name }))); }
 export function currentTitle() { const t = titles().filter((x) => x.ok); return t.length ? t[t.length - 1].name : ''; }
 export function achievements() { const st = stats(); return ACHIEVEMENTS.map((a) => { const cur = st[a.kind] ?? 0; return { ...a, cur: Math.min(cur, a.n), ok: cur >= a.n }; }); }
-
 // ---- ミッション ----
 export function dailyMissions() {
   return [
@@ -79,7 +77,6 @@ export function checkRewards() {
   if (rewards.length) save(); return rewards;
 }
 export function rallyProgress() { return RALLIES.map((r) => ({ ...r, got: r.stores.filter((id) => hasStamp(id)).length, done: !!S.rallyDone[r.id] })); }
-
 // ---- チェックイン（スタンプ） ----
 export function checkin(st, { near, memo, trial }) {
   const today = todayISO(); const stampedBefore = hasStamp(st.i); const visitedToday = visitsOf(st.i).some((v) => v.d === today);
@@ -98,7 +95,6 @@ export function checkin(st, { near, memo, trial }) {
   emit('records'); return { gain, isNew, lv, rewards, r, regUp };
 }
 export function toggleWant(id) { const i = S.wants.indexOf(id); if (i >= 0) S.wants.splice(i, 1); else { S.wants.push(id); bump('want'); } save(); const rewards = checkRewards(); emit('records'); return { on: i < 0, rewards }; }
-
 // ---- カード（本との出会い） ----
 export function cardBonus(st) { const today = todayISO(); const inStore = !!(S.stamps[st.i] && S.stamps[st.i].d === today) || visitsOf(st.i).some((v) => v.d === today && v.near); return { inStore, total: PG.card + (inStore ? PG.cardInStore : 0) }; }
 export function noteLook(id) { const st = BYID.get(id); if (!st || st.demo) return []; const d = todayISO(); S.daily = S.daily || {}; S.daily[d] = S.daily[d] || {}; const a = (S.daily[d].lookIds = S.daily[d].lookIds || []); S.looks = S.looks || {}; if (!S.looks[id]) S.looks[id] = d; if (!a.includes(id)) { a.push(id); save(); return checkRewards(); } return []; }
@@ -108,5 +104,4 @@ export function makeCard(st, book, why, pub) {
   bump('card'); const lv = addPages(total); save(); const rewards = checkRewards(); lv.after = volume(); emit('records'); return { total, lv, rewards };
 }
 export function deleteCard(id) { S.cards = S.cards.filter((x) => x.id !== id); save(); emit('records'); }
-
 export function noteShare(kind = '', sid = '', r = 'shared') { S.shareCount = (S.shareCount || 0) + 1; S.shares = S.shares || []; S.shares.push({ t: Date.now(), d: todayISO(), kind, s: sid, r }); if (S.shares.length > 500) S.shares.splice(0, S.shares.length - 500); save(); checkRewards(); emit('records'); }

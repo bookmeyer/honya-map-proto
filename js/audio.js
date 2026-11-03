@@ -1,12 +1,11 @@
 // 音（部品ファイルなしで、その場で合成）。振動は使わない（2026-10-17 ぶっくまさんの指示）
 // 材料：マリンバ風の打音（mallet）・鐘（bell）・弦をはじく音（pluck）・低い打音（thump）・小さな「ぽ」（pop）。
 // すべて残響（convolver）とコンプレッサーを通すので、安っぽい電子音にならない
-import { S } from './state.js?v=0.15.2';
+import { S } from './state.js?v=0.16.0';
 
 let ctx = null, bus = null;
 function ac() { if (!ctx) { try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { ctx = null; } } if (ctx && ctx.state === 'suspended') ctx.resume().catch(() => {}); return ctx; }
 export function unlock() { const c = ac(); if (!c) return; try { const o = c.createOscillator(); const g = c.createGain(); g.gain.value = 0; o.connect(g).connect(c.destination); o.start(); o.stop(c.currentTime + 0.01); } catch (e) {} }
-
 // 残響の種（短く減衰する雑音）
 function impulse(c, sec = 1.6, decay = 3.2) { const n = Math.floor(c.sampleRate * sec); const buf = c.createBuffer(2, n, c.sampleRate); for (let ch = 0; ch < 2; ch++) { const d = buf.getChannelData(ch); for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, decay); } return buf; }
 function makeBus(c) {
@@ -64,7 +63,6 @@ export const NAMES = ['click', 'tick', 'enter', 'stamp', 'rare', 'levelup', 'reg
 export const sfx = {};
 for (const n of NAMES) sfx[n] = (...a) => { if (!S.settings.sound) return; const e = engine(); if (!e) return; try { e[n](...a); } catch (err) {} };
 export function haptic() {} // 振動はしない（呼び出し側はそのまま残しても鳴らない）
-
 // 確認用：鳴らさずに波形を計算して、大きさと長さを測る（試作の点検で使う）
 export async function renderOffline(name, sec = 2.5) {
   const OC = window.OfflineAudioContext || window.webkitOfflineAudioContext; if (!OC) return null;

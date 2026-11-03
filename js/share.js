@@ -1,9 +1,9 @@
 // シェア用の画像（スタンプ・常連度・カード・プレイヤーカード）
-import { S } from './state.js?v=0.15.2';
-import { stampSVG, stampInk, rarityOf, rarityText } from './data.js?v=0.15.2';
-import { snapshotAt } from './map.js?v=0.15.2';
-import { regularInfo } from './game.js?v=0.15.2';
-import { stars, prefOf, fmtDate, todayISO } from './util.js?v=0.15.2';
+import { prefOf, stars, fmtDate, todayISO } from './util.js?v=0.16.0';
+import { S } from './state.js?v=0.16.0';
+import { stampInk, stampSVG, rarityOf, rarityText } from './data.js?v=0.16.0';
+import { snapshotAt } from './map.js?v=0.16.0';
+import { regularInfo } from './game.js?v=0.16.0';
 
 const PAPER = '#FFF8EA', INK = '#1B1B1B', INK2 = '#5A554D', SHU = '#FF6A48', LINE = '#1B1B1B';
 const DISP = '"Mochiy Pop P One","Zen Maru Gothic","Hiragino Sans",sans-serif', BODY = '"Zen Maru Gothic","Hiragino Sans",sans-serif';
@@ -11,7 +11,6 @@ function svgToImage(svg) { return new Promise((res, rej) => { const im = new Ima
 function wrap(g, text, max) { const lines = []; let cur = ''; for (const ch of String(text)) { if (g.measureText(cur + ch).width > max) { lines.push(cur); cur = ch; } else cur += ch; } if (cur) lines.push(cur); return lines; }
 function rrect(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
 function footer(g, W, H, tags = '#本めぐり') { g.textAlign = 'left'; g.fillStyle = SHU; g.font = `28px ${DISP}`; g.fillText('本めぐり', 60, H - 56); g.textAlign = 'right'; g.fillStyle = INK2; g.font = `22px ${BODY}`; g.fillText(`${S.settings.handle ? S.settings.handle + '　' : ''}${tags}`, W - 60, H - 56); g.textAlign = 'left'; }
-
 // スタンプ（地図の切り抜き＋スタンプ）。常連度があれば、その帯も
 export async function stampImage(st, opts = {}) {
   const W = 1080, H = 1350, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
@@ -67,7 +66,6 @@ export async function shareBlob(blob, filename, title, text) {
   if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) { try { await navigator.share({ files: [file], title, text }); return 'shared'; } catch (e) { if (e && e.name === 'AbortError') return 'cancel'; } }
   const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 5000); return 'saved';
 }
-
 // その日の物語（本のページの形）
 export async function storyImage(ch, avatar, handle) {
   const W = 1080, H = 1350, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');

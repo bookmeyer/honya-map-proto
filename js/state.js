@@ -1,6 +1,6 @@
 // 記録（この端末の中だけ）。版の違いを吸収して読み込み、まとめて書き込む
-import { STORAGE_KEY, LEGACY_KEYS, APP_VER, SKINS, MAP_SKINS } from './config.js?v=0.15.2';
-import { debounce, emit } from './util.js?v=0.15.2';
+import { SKINS, MAP_SKINS, STORAGE_KEY, LEGACY_KEYS, APP_VER } from './config.js?v=0.16.0';
+import { $, emit, debounce } from './util.js?v=0.16.0';
 
 export const empty = () => ({
   v: 4, visits: [], cards: [], wants: [], custom: [], stamps: {}, pg: 0, pgDay: {},
@@ -9,7 +9,6 @@ export const empty = () => ({
   settings: { theme: 'light', sound: true, haptic: true, avatar: '', handle: '', wantAlert: true, wantAlertM: 2000, dev: '', joinCode: '', sendLog: true, privacyV10: 0 }, createdAt: Date.now(),
 });
 export let S = empty();
-
 // 読み込んだ記録の確かめ（v0.15.3 セキュリティ）：__proto__ などの名前は入れない・入れ物の型・日付・数・アイコン・URL・座標・着せ替えの名前
 const BAD_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
 const plain = (x) => { if (!x || typeof x !== 'object' || Array.isArray(x)) return {}; const o = {}; for (const k of Object.keys(x)) if (!BAD_KEYS.has(k)) o[k] = x[k]; return o; };
@@ -76,4 +75,3 @@ export function replace(data) { S = ensure(data); saveNow(); emit('replaced'); r
 export function reset() { const seen = S.seen, settings = S.settings; S = empty(); S.seen = seen; S.settings = settings; try { localStorage.removeItem('meguri_events_v1'); localStorage.removeItem('meguri_api'); } catch (e) {} saveNow(); emit('replaced'); return S; } // イベントの控え・試しの受け口も消す（v0.15.3）
 export function exportJSON() { return JSON.stringify({ app: 'honya-map', ver: APP_VER, at: new Date().toISOString(), data: S }, null, 1); }
 export function parseImport(text) { const j = JSON.parse(text); const d = j.data || j; if (!d || !Array.isArray(d.visits)) throw new Error('bad'); return d; }
-

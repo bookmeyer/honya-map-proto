@@ -1,6 +1,7 @@
 // 地図（MapLibre）。店はピンの絵で表示し、固まり（クラスタ）でまとめ、状態は feature-state で軽く更新する
-import { STYLE_LIGHT, STYLE_DARK, TERRITORY_M, RANGE_M, MAP_SKINS } from './config.js?v=0.15.2';
-import { circlePoly, emit } from './util.js?v=0.15.2';
+import { MAP_SKINS, STYLE_DARK, STYLE_LIGHT, TERRITORY_M, RANGE_M } from './config.js?v=0.16.0';
+import { emit, circlePoly } from './util.js?v=0.16.0';
+import { POS } from './position.js?v=0.16.0';
 
 export const M = { map: null, ready: false, theme: 'light' };
 let storesGeo = { type: 'FeatureCollection', features: [] };
@@ -9,7 +10,6 @@ let meGeo = { type: 'FeatureCollection', features: [] };
 let readsGeo = { type: 'FeatureCollection', features: [] }; // 読んだ場所（v0.15.0）
 const stateCache = new Map(); // id → 最後に送った状態
 let handlers = {};
-
 // ---- ピンの絵（canvasで描く。種類：plain ふつう／used 古書店／rare 秘境／stamped 押した／near 射程内／lib 図書館） ----
 // v0.9 ポップ・ラリー：白いふち＋墨の輪郭の「シール」。本屋＝朱／古書店＝茶／秘境＝墨に檸檬の星／図書館＝空／押した店＝若草にチェック／射程内＝朱に檸檬の光の輪
 const PIN = { plain: ['#FF6A48', '#FFFFFF'], used: ['#B9794A', '#FFFFFF'], rare: ['#1B1B1B', '#FFD447'], stamped: ['#4FC07A', '#FFFFFF'], near: ['#FF6A48', '#FFFFFF'], lib: ['#2F9BFF', '#FFFFFF'] };
@@ -63,7 +63,6 @@ const fs = (k, def = 0) => ['coalesce', ['feature-state', k], def];
 // イベントの対象の店の輪の色（開催中のイベントの枠の色）
 let evRingColor = '#FFD447';
 export function setEventRingColor(c) { if (!c || c === evRingColor) return; evRingColor = c; if (M.ready && M.map.getLayer('event-ring')) M.map.setPaintProperty('event-ring', 'circle-color', c); }
-
 // ---- 自分のアイコン（現在地に出す。写真は端末の中だけ） ----
 let avatar = null; // { blue: ImageData, purple: ImageData }
 const loadImg = (src) => new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = src; });
@@ -85,7 +84,6 @@ export async function setAvatar(dataUrl) {
   try { const im = await loadImg(dataUrl); avatar = { blue: ringImage(im, '#2F9BFF'), purple: ringImage(im, '#A86CFF') }; } catch (e) { avatar = null; return; }
   if (M.ready) avatarLayer(M.map);
 }
-
 function addLayers() {
   const map = M.map;
   for (const k of Object.keys(PIN)) if (!map.hasImage('pin-' + k)) map.addImage('pin-' + k, pinImage(k), { pixelRatio: 2 });
@@ -134,7 +132,6 @@ function addLayers() {
   // 保存していた状態を入れ直す（スタイルを替えたときも）
   for (const [id, st] of stateCache) map.setFeatureState({ source: 'stores', id }, st);
 }
-
 // 地図にもともと出ている店・お寺などの印は消す（本屋・図書館のピンと紛れるため）。駅とバス停の印は残す
 function hideBasePoi() { for (const id of ['poi_r1', 'poi_r7', 'poi_r20']) { try { if (M.map.getLayer(id)) M.map.setLayoutProperty(id, 'visibility', 'none'); } catch (e) {} } }
 // 地図の下地を「ポップ」に合わせる（明るいときだけ）：ふつうはクリームの地・白い細い道・檸檬の大通り・空色の水・若草の公園。着せ替え（v0.15.2）で色を選べる（MAP_SKINS）

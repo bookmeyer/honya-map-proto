@@ -1,5 +1,5 @@
 // 小さな道具
-import { PREFS } from './config.js?v=0.15.2';
+import { PREFS } from './config.js?v=0.16.0';
 
 export const $ = (s, el = document) => el.querySelector(s);
 export const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
@@ -28,7 +28,6 @@ export const stars = (r) => '★'.repeat(r) + '☆'.repeat(3 - r);
 export const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
 // スマホの種類（ホーム画面への追加のしかたを出し分ける）。パソコンは ''
 export const mobileOS = () => { const ua = navigator.userAgent || ''; if (/iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) return 'ios'; return /Android/.test(ua) ? 'android' : ''; };
-
 // 小さな出来事の配信（画面の部品どうしをゆるくつなぐ）
 const subs = new Map();
 export const on = (ev, fn) => { (subs.get(ev) || subs.set(ev, []).get(ev)).push(fn); return () => { const a = subs.get(ev); const i = a.indexOf(fn); if (i >= 0) a.splice(i, 1); }; };

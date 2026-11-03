@@ -1,14 +1,13 @@
 // 本屋・図書館・ラリーのデータ。スタンプ（その店だけの絵柄）の見た目もここ
-import { DEMO_STORE } from './config.js?v=0.15.2';
-import { S } from './state.js?v=0.15.2';
-import { esc, hash32, prefOf, weekKey, sleep } from './util.js?v=0.15.2';
+import { DEMO_STORE } from './config.js?v=0.16.0';
+import { sleep, $, weekKey, prefOf, hash32, esc } from './util.js?v=0.16.0';
+import { S } from './state.js?v=0.16.0';
 
 export let STORES = [];
 export let RALLIES = [];
 export const BYID = new Map();
 export const FEAT = new Map(); // 県 → 今週の推し店の id
 let baseLoaded = false;
-
 async function fetchJSON(url, tries = 3) {
   for (let i = 0; i < tries; i++) {
     try { const r = await fetch(url, { cache: 'no-cache' }); if (r.ok) return await r.json(); } catch (e) {}
@@ -61,12 +60,10 @@ export function hideStore(st) { S.hidden[st.i] = { d: new Date().toISOString().s
 export function unhideAll() { S.hidden = {}; S.renames = {}; rebuild(); }
 export function renameStore(st, name) { S.renames[st.i] = { n: name, old: st.n, d: new Date().toISOString().slice(0, 10) }; rebuild(); }
 export const DATA_DATE = '2026-10-12';
-
 // ---- レア度（秘境度） ----
 export function rarityOf(st) { if (st.demo) return 3; const k = st.k == null ? 3 : st.k; return k === 0 ? 3 : k <= 6 ? 2 : 1; }
 export function rarityText(st) { const r = rarityOf(st); if (st.demo) return 'めったにないスタンプ（見本）'; if (st.k == null) return '街のスタンプ'; const w = isLib(st) ? '図書館' : '本屋', u = isLib(st) ? '館' : '店'; return r === 3 ? `秘境スタンプ（周り5kmに${w}なし）` : r === 2 ? `街のスタンプ（周り5kmに${w} ${st.k}${u}）` : `ふつうのスタンプ（周り5kmに${w} ${st.k}${u}）`; }
 export const rarityName = (r) => (r === 3 ? '秘境' : r === 2 ? '街' : '並');
-
 // ---- スタンプの見た目 ----
 // 店ごとに、形（角丸・丸・六角）・地の色（6色）・絵柄（本にまつわる12種）が決まる。白いふち＋墨の輪郭の「シール」（v0.9 ポップ・ラリー）
 const INKS = [['#FF6A48', '#1B1B1B'], ['#2F9BFF', '#FFFFFF'], ['#4FC07A', '#1B1B1B'], ['#FFD447', '#1B1B1B'], ['#A86CFF', '#FFFFFF'], ['#FF7AB6', '#1B1B1B']]; // 地の色・絵柄の色
@@ -147,7 +144,6 @@ export function stampSVG(st, collected, size = 96, opts = {}) {
   const evLabel = ef && ef.label ? (() => { const lw = Math.min(76, Math.max(30, widthOf(ef.label) * 8.6 + 14)); return `<rect x="${50 - lw / 2}" y="0.8" width="${lw}" height="15" rx="7.5" fill="${ef.color}" stroke="${EDGE}" stroke-width="1.5"/><text x="50" y="8.4" text-anchor="middle" dominant-baseline="central" font-size="8.4" font-family="'Mochiy Pop P One','Zen Maru Gothic','Hiragino Sans',sans-serif" fill="${EDGE}">${esc(ef.label)}</text>`; })() : '';
   return `<svg viewBox="0 0 100 100" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg" aria-label="${esc(st.n)}のスタンプ"><defs><clipPath id="c${id}">${outer}</clipPath></defs>${ef ? '<g transform="translate(50 52) scale(.86) translate(-50 -50)">' : ''}${ring}${evBand}<g fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linejoin="round">${outer}</g><g fill="${fill}" stroke="${edge}" stroke-width="2.5" stroke-linejoin="round"${collected ? '' : ' stroke-dasharray="5 3"'}>${outer}</g><ellipse cx="38" cy="22" rx="22" ry="9" fill="#fff" opacity="${collected ? '.22' : '.3'}" clip-path="url(#c${id})"/><g transform="translate(30 ${two ? 13 : 15})" fill="none" stroke="${pic}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">${pict}</g>${label}${marks}${pkMark}${ef ? '</g>' : ''}${evLabel}</svg>`;
 }
-
 // ---- 本（openBD） ----
 const bookCache = new Map();
 export async function lookupIsbn(isbn) {

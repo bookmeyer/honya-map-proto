@@ -20,4 +20,7 @@ for (const f of fs.readdirSync(path.join(root, 'js')).filter((x) => x.endsWith('
 edit('js/config.js', (s) => s.replace(/APP_VER = '[^']*'/, `APP_VER = '${ver}'`));
 edit('index.html', (s) => s.replace(/\?v=\d+\.\d+\.\d+/g, `?v=${ver}`));
 edit('sw.js', (s) => s.replace(/const V = '[^']*'/, `const V = '${ver}'`));
+// sw.js の部品の一覧（MODS）を、js/ にあるファイルから作り直す（v0.16.0：ファイルを分けたり足したりしても、一覧がずれない。ずれると先に覚えるのが全部止まる）
+const mods = fs.readdirSync(path.join(root, 'js')).filter((x) => x.endsWith('.js')).map((x) => x.slice(0, -3)).sort((a, b) => (a === 'main' ? -1 : b === 'main' ? 1 : a.localeCompare(b)));
+edit('sw.js', (s) => s.replace(/const MODS = \[[^\]]*\];/, `const MODS = [${mods.map((x) => `'${x}'`).join(', ')}];`));
 console.log(n ? `版 ${ver} にしました（${n}ファイル）` : `すでに版 ${ver} です`);
