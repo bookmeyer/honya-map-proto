@@ -1,11 +1,11 @@
 // 読書・いま読んでいる本の画面（v0.14。v0.14.7 で「移動読書」から「読書」に：止まって読む人もいるので）
 // 地図の大きなボタン「今から移動読書」で時間を計りはじめ（本も読みかたも選ばない）、読み終えたら「おわる」で止める（v0.14.4）。読んだ時間だけページが増える
 // アプリは閉じてよい（時刻で計る）。読んでいる本は、移動読書中のボタンを押したときに、えらびたい人だけえらぶ
-import { S, save } from './state.js?v=0.15.0';
-import * as J from './journey.js?v=0.15.0';
-import { POS } from './position.js?v=0.15.0';
-import { toast, openModal, closeModal, confirmBox, scanIsbn, manualIsbn, stopScan } from './ui.js?v=0.15.0';
-import { $, $$, esc, fmtDate, icon } from './util.js?v=0.15.0';
+import { S, save } from './state.js?v=0.15.1';
+import * as J from './journey.js?v=0.15.1';
+import { POS } from './position.js?v=0.15.1';
+import { toast, openModal, closeModal, confirmBox, scanIsbn, manualIsbn, stopScan } from './ui.js?v=0.15.1';
+import { $, $$, esc, fmtDate, icon } from './util.js?v=0.15.1';
 
 const cover = (b) => `<div class="rcover">${b.cover ? `<img src="${esc(b.cover)}" alt="" referrerpolicy="no-referrer" loading="lazy">` : icon('book')}</div>`;
 const hm = (t) => { const d = new Date(t); return `${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`; };
@@ -20,7 +20,7 @@ export function renderReadBtn() {
   if (POS.fake) { el.hidden = true; return; } // お試し歩きでは出さない
   el.hidden = false; const m = J.tripMin(tr);
   // 2行目：読んでいる本。えらんでいないときは「本をえらぶ ›」（v0.14.6：本をどこでえらぶのか、わかるように）
-  el.innerHTML = tr ? `<button class="rb-main" id="rb-main"><span class="rb-i">📖</span><span class="rb-t"><b>読書中</b><span class="rb-b${b ? '' : ' pick'}">${b ? `『${esc(b.title)}』` : '本をえらぶ ›'}</span></span><span class="rb-s">${m < 1 ? 'はじめたところ' : J.fmtMin(m)}</span></button><button class="rb-end" id="rb-end">おわる</button>` : '<button class="rb-go" id="rb-go"><span class="rb-i">📖</span><span class="rb-t">読書をはじめる</span></button>';
+  el.innerHTML = tr ? `<button class="rb-main" id="rb-main"><span class="rb-i">📖</span><span class="rb-t"><b>読書中</b><span class="rb-b${b ? '' : ' pick'}">${b ? `『${esc(b.title)}』 ›` : '本をえらぶ ›'}</span></span><span class="rb-s">${m < 1 ? 'はじめたところ' : J.fmtMin(m)}</span></button><button class="rb-end" id="rb-end">おわる</button>` : '<button class="rb-go" id="rb-go"><span class="rb-i">📖</span><span class="rb-t">読書をはじめる</span></button>';
   if (tr) { $('#rb-main').onclick = openTrip; $('#rb-end').onclick = finishTrip; } else $('#rb-go').onclick = () => openReadStart();
 }
 // 「おわる」：読んだ時間を記録して、ページを足す
@@ -31,7 +31,7 @@ export function finishTrip() {
 
 // ---------- 今から移動読書：押すだけで始まる。はじめての時だけ、使い方を1回 ----------
 export function openReadStart({ book = '' } = {}) {
-  const go = () => { J.startTrip(book); closeModal(); toast('📖 読書をはじめました。読み終えたら「おわる」を押してください', 'ok'); };
+  const go = () => { J.startTrip(book); closeModal(); const b = tripBook(J.activeTrip()); toast(b ? `📖『${b.title}』の読書をはじめました（本を変えるときは、読書中のボタンを押す）` : '📖 読書をはじめました。読み終えたら「おわる」を押してください', 'ok'); };
   if (S.settings.readTip) { go(); return; }
   openModal(`<h2>読書をはじめる</h2><ul class="plain"><li>本を読む時間を計ります。電車の中でも、カフェでも。耳で聞くのも</li><li>読み終えたら「おわる」を押します。読んだ時間だけページが増えます（1分で1ページ）</li><li>読んでいる本は、読書中のボタンの「本をえらぶ」から（えらばなくても大丈夫です）</li><li>歩くあいだは、しまってください。アプリは閉じて大丈夫です</li></ul>
     <div class="actions"><button class="btn primary wide" id="rs-go">📖 はじめる</button><button class="btn ghost wide" id="rs-close">やめる</button></div>`);
@@ -44,10 +44,12 @@ export function openTrip() {
   openModal(`<h2>読書中</h2><div class="muted small">${tr.fn ? `${esc(tr.fn)}から・` : ''}${hm(tr.t)}〜（${m < 1 ? 'はじめたところ' : J.fmtMin(m)}）</div>
     <h3>読んでいる本</h3><p class="hint">えらばなくても大丈夫です。えらぶと、本ごとに読んだ時間が残ります。</p>
     ${books.length ? `<div class="list rlist">${books.map((x) => `<div class="item rbook${b && b.id === x.id ? ' sel' : ''}" data-b="${esc(x.id)}">${cover(x)}<div class="main"><div class="name">${esc(x.title)}</div>${b && b.id === x.id ? '<div class="sub">この本を読んでいます（もう一度押すと外す）</div>' : ''}</div></div>`).join('')}</div>` : ''}
+    ${b ? `<div class="actions"><button class="btn wide" id="tp-done">📕『${esc(b.title)}』を読み終えた</button></div><p class="hint">ここまでの時間を残して、めぐり帳の「読み終えた本」に入れます。物語にも残ります</p>` : ''}
     <div class="actions"><button class="btn wide" id="tp-add">${icon('barcode')}${books.length ? 'ほかの本を足す' : '読んでいる本を足す'}</button></div>
     <div class="note">読み終えたら「おわる」を押してください。読んだ時間だけページが増えます（1分で1ページ）。歩くあいだは、しまってください。</div>
     <div class="actions"><button class="btn primary wide" id="tp-end">おわる（記録する）</button><button class="btn danger" id="tp-stop">記録せずにやめる</button><button class="btn ghost" id="tp-close">閉じる</button></div>`);
   $('#tp-close').onclick = closeModal; $('#tp-end').onclick = finishTrip; $('#tp-stop').onclick = () => { J.cancelTrip(); closeModal(); toast('読書をやめました（記録していません）'); };
+  if ($('#tp-done')) $('#tp-done').onclick = () => { const n0 = (S.reads || []).length; const fb = J.finishReading(b.id); closeModal(); const r = (S.reads || []).length > n0 ? S.reads[S.reads.length - 1] : null; if (fb) toast(`📕『${fb.title}』を読み終えた本に入れました${r ? `（読書 ${J.fmtMin(r.min)} +${r.pg}ページ）` : ''}。物語にも書きました`, 'ok'); }; // 読み終えた（v0.15.1：読書中の画面からも）
   $('#tp-add').onclick = () => startReadingAdd((nb) => { J.setTripBook(nb.id); toast(`『${nb.title}』を読んでいます`, 'ok'); });
   $$('#modal-box [data-b]').forEach((el) => el.addEventListener('click', () => { const id = b && b.id === el.dataset.b ? '' : el.dataset.b; J.setTripBook(id); closeModal(); }));
 }
@@ -86,7 +88,7 @@ export function renderReading() {
   const now = J.reading().slice().sort((x, y) => (y.t || 0) - (x.t || 0)), done = J.finished(), tr = J.activeTrip();
   const reads = (b) => (J.readTimes(b.id) ? `読書${J.readTimes(b.id)}回${J.readMinOf(b.id) ? `・${J.fmtMin(J.readMinOf(b.id))}` : ''}` : '');
   const meta = (b) => [b.sn ? `${b.sn}で出会った` : '', `${fmtDate(b.d)}から`, reads(b), tr && tr.book === b.id ? '読書中' : ''].filter(Boolean).join('・');
-  el.innerHTML = `<h3>いま読んでいる本</h3>${now.length ? `<div class="list rlist">${now.map((b) => `<div class="item rbook">${cover(b)}<div class="main"><div class="name">${esc(b.title)}</div><div class="sub">${esc(meta(b))}</div><div class="ract"><button class="btn" data-done="${esc(b.id)}">読み終わった</button><button class="btn ghost" data-drop="${esc(b.id)}">外す</button></div></div></div>`).join('')}</div>` : '<p class="muted small">まだありません。読み終わったら、めぐり帳の物語に残ります。</p>'}
+  el.innerHTML = `<h3>いま読んでいる本</h3>${now.length ? `<p class="hint">読み終えたら「読み終わった」を押すと「読み終えた本」に入り、どこで出会って何回読んだかが物語に残ります</p>` : ''}${now.length ? `<div class="list rlist">${now.map((b) => `<div class="item rbook">${cover(b)}<div class="main"><div class="name">${esc(b.title)}</div><div class="sub">${esc(meta(b))}</div><div class="ract"><button class="btn" data-done="${esc(b.id)}">読み終わった</button><button class="btn ghost" data-drop="${esc(b.id)}">外す</button></div></div></div>`).join('')}</div>` : '<p class="muted small">まだありません。読み終わったら、めぐり帳の物語に残ります。</p>'}
     <div class="actions"><button class="btn" id="rd-add">${icon('barcode')}いま読んでいる本を登録</button></div><div id="rd-out"></div>
     ${done.length ? `<details class="chap rdone"><summary><b>読み終えた本</b><span class="muted small">${done.length}冊</span></summary><div class="list rlist">${done.map((b) => `<div class="item rbook">${cover(b)}<div class="main"><div class="name">${esc(b.title)}</div><div class="sub">${esc([`${fmtDate(b.done)}に読み終えた`, b.sn ? `${b.sn}で出会った` : '', reads(b)].filter(Boolean).join('・'))}</div><div class="ract"><button class="btn ghost" data-undone="${esc(b.id)}">読みかけに戻す</button></div></div></div>`).join('')}</div></details>` : ''}
     <h3>出会った本（カード）</h3>`;

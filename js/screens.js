@@ -1,17 +1,17 @@
 // 画面：ちかく（旧レーダー）・めぐり帳（旧図鑑）・ラリー（旧お題）・設定・最初の案内
-import { APP_VER, RANGE_M, PG, pagesForVol, frameOf, PREFS } from './config.js?v=0.15.0';
-import { S, save, exportJSON, parseImport, replace, reset } from './state.js?v=0.15.0';
-import { STORES, BYID, FEAT, RALLIES, isFeat, rarityOf, rarityText, stampSVG, unhideAll, rebuild, DATA_DATE, pickOpen, bookTitle } from './data.js?v=0.15.0';
-import * as G from './game.js?v=0.15.0';
-import * as MAP from './map.js?v=0.15.0';
-import { POS, hasPos } from './position.js?v=0.15.0';
-import { sfx, haptic } from './audio.js?v=0.15.0';
-import { profileImage, shareBlob } from './share.js?v=0.15.0';
-import { toast, openModal, closeModal, confirmBox, openSheet, openCard, switchView, setSub, refreshHud, applyMapStates, updateNear, locate, setTrialUI, warp, makeAvatar, nameModal, cleanHandle, joinModal, NEAR, currentSub, homeTip, exportFile } from './ui.js?v=0.15.0';
-import * as JU from './journey_ui.js?v=0.15.0';
-import { renderReading } from './reading_ui.js?v=0.15.0';
-import * as E from './events.js?v=0.15.0';
-import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, weekKey, isStandalone, mobileOS, emit } from './util.js?v=0.15.0';
+import { APP_VER, RANGE_M, PG, pagesForVol, frameOf, PREFS } from './config.js?v=0.15.1';
+import { S, save, exportJSON, parseImport, replace, reset } from './state.js?v=0.15.1';
+import { STORES, BYID, FEAT, RALLIES, isFeat, rarityOf, rarityText, stampSVG, unhideAll, rebuild, DATA_DATE, pickOpen, bookTitle } from './data.js?v=0.15.1';
+import * as G from './game.js?v=0.15.1';
+import * as MAP from './map.js?v=0.15.1';
+import { POS, hasPos } from './position.js?v=0.15.1';
+import { sfx, haptic } from './audio.js?v=0.15.1';
+import { profileImage, shareBlob } from './share.js?v=0.15.1';
+import { toast, openModal, closeModal, confirmBox, openSheet, openCard, switchView, setSub, refreshHud, applyMapStates, updateNear, locate, setTrialUI, warp, makeAvatar, nameModal, cleanHandle, joinModal, NEAR, currentSub, homeTip, exportFile } from './ui.js?v=0.15.1';
+import * as JU from './journey_ui.js?v=0.15.1';
+import { renderReading } from './reading_ui.js?v=0.15.1';
+import * as E from './events.js?v=0.15.1';
+import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, weekKey, isStandalone, mobileOS, emit } from './util.js?v=0.15.1';
 
 const empty = (ic, text) => `<div class="empty">${icon(ic)}<div>${text}</div></div>`;
 
