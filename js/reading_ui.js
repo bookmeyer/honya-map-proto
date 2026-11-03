@@ -1,65 +1,72 @@
-// 次の店へ・移動読書・いま読んでいる本の画面（v0.14）
-// 移動のあいだは画面を見なくていい作り：店を出るときに次の1軒と読む本を選び、次の店でスタンプを押すと記録される。ページ数は聞かない
-import { READ, NEXT } from './config.js?v=0.14.0';
-import { S } from './state.js?v=0.14.0';
-import { BYID } from './data.js?v=0.14.0';
-import * as J from './journey.js?v=0.14.0';
-import { toast, openModal, closeModal, confirmBox, openSheet, scanIsbn, manualIsbn, stopScan } from './ui.js?v=0.14.0';
-import { $, $$, esc, fmtDist, fmtDate, todayISO, icon, gmapDir } from './util.js?v=0.14.0';
+// 移動読書・いま読んでいる本の画面（v0.14）
+// 地図の大きなボタン「今から移動読書」→ 読む本を選んで「はじめる」→ アプリは閉じてよい → 次の本屋でスタンプを押すと記録（v0.14.1）。ページ数は聞かない
+import { READ } from './config.js?v=0.14.1';
+import { S } from './state.js?v=0.14.1';
+import * as J from './journey.js?v=0.14.1';
+import { POS } from './position.js?v=0.14.1';
+import { toast, openModal, closeModal, confirmBox, scanIsbn, manualIsbn, stopScan } from './ui.js?v=0.14.1';
+import { $, $$, esc, fmtDate, todayISO, icon } from './util.js?v=0.14.1';
 
 const cover = (b) => `<div class="rcover">${b.cover ? `<img src="${esc(b.cover)}" alt="" referrerpolicy="no-referrer" loading="lazy">` : icon('book')}</div>`;
-const hm = (t) => { const d = new Date(t); return `${d.getHours()}時${String(d.getMinutes()).padStart(2, '0')}分`; };
+const hm = (t) => { const d = new Date(t); return `${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`; };
+const RULE = `乗り物の中や、座れるところで読みます。歩くあいだは、しまってください（耳で聞くのは、歩きながらでも）。アプリは閉じて大丈夫です。次の本屋でスタンプを押すと記録され、5分以上なら +${READ.pages}ページ。`;
 
-// ---------- 次の店へ（スタンプのあと・カードを作ったあと・店のページから） ----------
+// ---------- 地図の大きなボタン：「今から移動読書」／移動読書中 ----------
+export function renderReadBtn() {
+  const el = $('#read-btn'); if (!el) return;
+  if (POS.fake) { el.hidden = true; return; } // お試し歩きでは数えないので出さない
+  const tr = J.activeTrip(); const b = tr ? (S.reading || []).find((x) => x.id === tr.book) : null;
+  el.hidden = false; el.classList.toggle('on', !!b);
+  el.innerHTML = b ? `<span class="rb-i">📖</span><span class="rb-t"><b>移動読書中</b>『${esc(b.title)}』</span><span class="rb-s">${hm(tr.t)}〜</span>` : '<span class="rb-i">📖</span><span class="rb-t">今から移動読書</span>';
+  el.setAttribute('aria-label', b ? `移動読書中：${b.title}` : '今から移動読書');
+  el.onclick = () => (b ? openTrip() : openReadStart());
+}
+
+// ---------- 今から移動読書：読む本と読みかたを選ぶ ----------
 // 読む本の候補：いま読んでいる本と、今日出会った本（まだ入れていないもの）。'b:本のid' か 'c:カードのid'
 function bookChoices() {
   const out = J.reading().slice().sort((x, y) => (y.t || 0) - (x.t || 0)).map((b) => ({ key: 'b:' + b.id, title: b.title, cover: b.cover, sub: b.sn ? `${b.sn}で出会った` : `${fmtDate(b.d)}から` }));
   for (const c of S.cards.filter((x) => x.d === todayISO()).reverse()) if (!J.inReading(c)) out.push({ key: 'c:' + c.id, title: c.title, cover: c.cover, sub: `今日、${c.sn}で出会った` });
   return out;
 }
-export function openDepart(st, { book } = {}) {
-  const cands = J.nextCandidates(st); const books = bookChoices(); const tr = J.activeTrip();
-  const want = book ? 'b:' + book : tr ? 'b:' + tr.book : ''; const pick = books.some((x) => x.key === want) ? want : books.length ? books[0].key : '';
+export function openReadStart({ book } = {}) {
+  const books = bookChoices();
+  if (!books.length) { startReadingAdd((b) => openReadStart({ book: b.id }), null, { title: '今から移動読書', hint: 'まず、読む本を登録してください。次からは、選ぶだけではじめられます。' }); return; }
+  const want = book ? 'b:' + book : ''; const pick = books.some((x) => x.key === want) ? want : books[0].key;
   let mode = S.settings.readMode === 'ear' ? 'ear' : 'eye';
-  openModal(`<h2>次の店へ</h2>
-    <h3 class="dp-h">次の1軒 <span class="muted small">${esc(st.n)}から</span></h3>
-    ${cands.length ? `<div class="list dp-next">${cands.map((c) => `<div class="item${S.next === c.st.i ? ' sel' : ''}" data-id="${esc(c.st.i)}"><div class="main"><div class="name">${esc(c.st.n)}</div><div class="sub">${esc(c.labels.join('・'))}　${fmtDist(c.d)}・歩いて約${c.min}分</div></div><a class="btn" href="${gmapDir(c.st)}" target="_blank" rel="noopener" data-stop>道順</a></div>`).join('')}</div><p class="hint">店の名前を押すと「次の1軒」になり、地図の下に向きと距離が出ます。</p>` : `<p class="muted small">${NEXT.maxM / 1000}kmの中に、まだスタンプのない店・行きたい店はありません。</p>`}
-    <h3 class="dp-h">移動読書</h3>
-    <div class="note">乗り物の中や、座れるところで読みます。歩くあいだは、しまってください（耳で聞くのは、歩きながらでも）。次の店でスタンプを押すと記録され、5分以上の移動で +${READ.pages}ページ。</div>
-    ${books.length ? `<div class="list dp-books">${books.map((b) => `<label class="item rbook"><input type="radio" name="dp-book" value="${esc(b.key)}"${b.key === pick ? ' checked' : ''}>${cover(b)}<div class="main"><div class="name">${esc(b.title)}</div><div class="sub">${esc(b.sub)}</div></div></label>`).join('')}</div>` : '<p class="muted small">読む本がまだありません。</p>'}
-    <button class="linkish" id="dp-add">＋ ${books.length ? 'ほかの本を登録' : '読む本を登録'}</button>
+  openModal(`<h2>今から移動読書</h2><p class="hint">読む本</p>
+    <div class="list dp-books">${books.map((b) => `<label class="item rbook"><input type="radio" name="rs-book" value="${esc(b.key)}"${b.key === pick ? ' checked' : ''}>${cover(b)}<div class="main"><div class="name">${esc(b.title)}</div><div class="sub">${esc(b.sub)}</div></div></label>`).join('')}</div>
+    <button class="linkish" id="rs-add">＋ ほかの本を登録</button>
     <div class="mode-sw" role="group" aria-label="読みかた"><button data-m="eye" class="${mode === 'eye' ? 'on' : ''}">本で読む</button><button data-m="ear" class="${mode === 'ear' ? 'on' : ''}">耳で聞く</button></div>
-    <div class="actions"><button class="btn primary wide" id="dp-go"${books.length ? '' : ' disabled'}>📖 移動読書で行く</button><button class="btn ghost wide" id="dp-close">閉じる</button></div>
-    <p class="muted small dp-foot">アプリは閉じて大丈夫です。次の店で開いてスタンプを押すと、あいだの道のりもページになります。</p>`);
-  $$('#modal-box [data-stop]').forEach((a) => a.addEventListener('click', (e) => e.stopPropagation()));
-  $$('.dp-next .item').forEach((el) => el.addEventListener('click', () => { J.setNext(S.next === el.dataset.id ? '' : el.dataset.id); $$('.dp-next .item').forEach((x) => x.classList.toggle('sel', x.dataset.id === S.next)); }));
-  $$('.mode-sw button').forEach((b) => b.addEventListener('click', () => { mode = b.dataset.m; $$('.mode-sw button').forEach((x) => x.classList.toggle('on', x === b)); }));
-  $('#dp-add').onclick = () => startReadingAdd((b) => openDepart(st, { book: b.id }), () => openDepart(st, { book }));
-  $('#dp-close').onclick = closeModal;
-  $('#dp-go').onclick = () => {
-    const r = $('#modal-box input[name="dp-book"]:checked'); if (!r) { toast('読む本を選んでください', 'warn'); return; }
+    <div class="actions"><button class="btn primary wide" id="rs-go">📖 はじめる</button><button class="btn ghost wide" id="rs-close">やめる</button></div>
+    <div class="note">${RULE}</div>`);
+  $$('.mode-sw button').forEach((x) => x.addEventListener('click', () => { mode = x.dataset.m; $$('.mode-sw button').forEach((y) => y.classList.toggle('on', y === x)); }));
+  $('#rs-add').onclick = () => startReadingAdd((b) => openReadStart({ book: b.id }), () => openReadStart({ book }));
+  $('#rs-close').onclick = closeModal;
+  $('#rs-go').onclick = () => {
+    const r = $('#modal-box input[name="rs-book"]:checked'); if (!r) { toast('読む本を選んでください', 'warn'); return; }
     const [k, id] = r.value.split(':'); let b = k === 'b' ? J.reading().find((x) => x.id === id) : null;
     if (k === 'c') { const c = S.cards.find((x) => x.id === id); if (c) b = J.readingFromCard(c); }
-    if (!b) return; J.startTrip(st, b.id, mode); closeModal();
-    toast(`📖 移動読書：『${b.title}』。次の店でスタンプを押すと記録されます`, 'ok');
+    if (!b) return; J.startTrip(b.id, mode); closeModal();
+    toast(`📖 移動読書をはじめました。次の本屋でスタンプを押してください`, 'ok');
   };
 }
-// 移動読書中（地図の下の帯を押したとき）
+// 移動読書中（地図のボタンを押したとき）
 export function openTrip() {
-  const tr = J.activeTrip(); if (!tr) return; const b = (S.reading || []).find((x) => x.id === tr.book); if (!b) return; const nx = S.next ? BYID.get(S.next) : null;
-  openModal(`<h2>移動読書中</h2><div class="rbook-one">${cover(b)}<div style="min-width:0"><b>${esc(b.title)}</b><div class="muted small">${esc(tr.fn)}から・${hm(tr.t)}〜・${tr.mode === 'ear' ? '耳で聞く' : '本で読む'}</div>${nx ? `<div class="muted small">次の1軒：${esc(nx.n)}</div>` : ''}</div></div>
-    <div class="note">次の店でスタンプを押すと記録されます（5分以上の移動で +${READ.pages}ページ）。</div>
-    <div class="actions">${nx ? '<button class="btn" id="tp-store">次の1軒の店のページ</button>' : ''}<button class="btn danger" id="tp-stop">移動読書をやめる</button><button class="btn ghost wide" id="tp-close">閉じる</button></div>`);
+  const tr = J.activeTrip(); if (!tr) return; const b = (S.reading || []).find((x) => x.id === tr.book); if (!b) return;
+  openModal(`<h2>移動読書中</h2><div class="rbook-one">${cover(b)}<div style="min-width:0"><b>${esc(b.title)}</b><div class="muted small">${tr.fn ? `${esc(tr.fn)}から・` : ''}${hm(tr.t)}〜・${tr.mode === 'ear' ? '耳で聞く' : '本で読む'}</div></div></div>
+    <div class="note">次の本屋でスタンプを押すと記録されます（5分以上なら +${READ.pages}ページ）。アプリは閉じて大丈夫です。</div>
+    <div class="actions"><button class="btn" id="tp-change">本を変える</button><button class="btn danger" id="tp-stop">やめる</button><button class="btn ghost wide" id="tp-close">閉じる</button></div>`);
   $('#tp-close').onclick = closeModal; $('#tp-stop').onclick = () => { J.cancelTrip(); closeModal(); toast('移動読書をやめました'); };
-  if (nx) $('#tp-store').onclick = () => { closeModal(); openSheet(nx.i); };
+  $('#tp-change').onclick = () => openReadStart({ book: tr.book });
 }
 
 // ---------- いま読んでいる本の登録 ----------
-// after(b)：登録できたあと。back()：やめたとき（次の店への画面から来たときは、そこへ戻る）
-export function startReadingAdd(after, back) {
+// after(b)：登録できたあと。back()：やめたとき（移動読書の画面から来たときは、そこへ戻る）
+export function startReadingAdd(after, back, { title = 'いま読んでいる本を登録', hint = '登録した本は、移動読書で選べます。記録はこの端末の中だけです。' } = {}) {
   const cands = S.cards.slice().reverse().filter((c) => !J.inReading(c)).slice(0, 12);
   const cancel = () => { stopScan(); if (back) back(); else closeModal(); };
-  openModal(`<h2>いま読んでいる本を登録</h2><p class="hint">登録した本は、移動読書で選べます。記録はこの端末の中だけです。</p>
+  openModal(`<h2>${esc(title)}</h2><p class="hint">${esc(hint)}</p>
     <div class="actions"><button class="btn primary wide" id="cd-scan">${icon('camera')}本の裏のバーコードを読む</button><button class="btn" id="cd-manual">ISBNを入力</button><button class="btn" id="cd-free">名前を自分で書く</button>${cands.length ? '<button class="btn wide" id="ra-cards">出会った本（カード）から選ぶ</button>' : ''}<button class="btn ghost wide" id="cd-cancel">やめる</button></div><div id="cd-area"></div>`);
   const found = (b) => { stopScan(); if (b && b.title) confirmAdd(b, after, cancel); else freeTitle(after, b); };
   $('#cd-cancel').onclick = cancel; $('#cd-scan').onclick = () => scanIsbn(found); $('#cd-manual').onclick = () => manualIsbn(found); $('#cd-free').onclick = () => freeTitle(after, null);

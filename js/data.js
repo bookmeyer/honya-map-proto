@@ -1,7 +1,7 @@
 // 本屋・図書館・ラリーのデータ。スタンプ（その店だけの絵柄）の見た目もここ
-import { DEMO_STORE } from './config.js?v=0.14.0';
-import { S } from './state.js?v=0.14.0';
-import { esc, hash32, prefOf, weekKey, sleep } from './util.js?v=0.14.0';
+import { DEMO_STORE } from './config.js?v=0.14.1';
+import { S } from './state.js?v=0.14.1';
+import { esc, hash32, prefOf, weekKey, sleep } from './util.js?v=0.14.1';
 
 export let STORES = [];
 export let RALLIES = [];
@@ -43,7 +43,7 @@ export function rebuild(base) {
   computeFeatured();
 }
 // 支店名のない店（「TSUTAYA」「未来屋書店」だけの名前）は、今週の推し店に選ばない（どの店か分からないため。v0.13）
-export const BRAND_ONLY = /^(TSUTAYA|TSUTAYA BOOKSTORE|蔦屋書店|BOOKOFF|ブックオフ|未来屋書店|くまざわ書店|紀伊國屋書店|紀伊国屋書店|今井書店|平安堂|宮脇書店|明屋書店|文教堂|ゲオ|GEO|古本市場|ふるいち|WonderGOO|ヴィレッジヴァンガード|コーチャンフォー|リブロ|三省堂書店|有隣堂|精文館書店|喜久屋書店|ブックファースト|丸善|ジュンク堂書店|明林堂書店|田村書店|啓文堂書店|メロンブックス|とらのあな|BOOKS|Books|本屋|書店|古本屋|古書店)$/i;
+const BRAND_ONLY = /^(TSUTAYA|TSUTAYA BOOKSTORE|蔦屋書店|BOOKOFF|ブックオフ|未来屋書店|くまざわ書店|紀伊國屋書店|紀伊国屋書店|今井書店|平安堂|宮脇書店|明屋書店|文教堂|ゲオ|GEO|古本市場|ふるいち|WonderGOO|ヴィレッジヴァンガード|コーチャンフォー|リブロ|三省堂書店|有隣堂|精文館書店|喜久屋書店|ブックファースト|丸善|ジュンク堂書店|明林堂書店|田村書店|啓文堂書店|メロンブックス|とらのあな|BOOKS|Books|本屋|書店|古本屋|古書店)$/i;
 export function computeFeatured() {
   const wk = weekKey(); const byPref = {};
   // 今週の推し店は本屋だけ（図書館・見本・自分で足した店は入れない）

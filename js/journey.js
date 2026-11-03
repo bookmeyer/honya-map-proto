@@ -1,10 +1,10 @@
 // 旅の記録：歩いた距離（ページ）・その日の物語・月のふり返り・行きたい店のお知らせ・投稿の記録・Googleマップの★の読み込み・店と店のあいだ・移動読書・いま読んでいる本
 // 位置は、アプリを開いて現在地を追っているあいだだけ使う（ブラウザの決まりで、閉じているあいだは測れない）。閉じていたあいだの道のりは、次の店でスタンプを押したときに、前の店からのまっすぐの距離で足す（v0.14）
-import { WALK, RANGE_M, SEG, READ, NEXT } from './config.js?v=0.14.0';
-import { S, save } from './state.js?v=0.14.0';
-import { STORES, BYID, rarityOf, BRAND_ONLY } from './data.js?v=0.14.0';
-import * as G from './game.js?v=0.14.0';
-import { dist, todayISO, prefOf, hash32, fmtDist, monthKey, emit } from './util.js?v=0.14.0';
+import { WALK, RANGE_M, SEG, READ } from './config.js?v=0.14.1';
+import { S, save } from './state.js?v=0.14.1';
+import { STORES, BYID, rarityOf } from './data.js?v=0.14.1';
+import * as G from './game.js?v=0.14.1';
+import { dist, todayISO, prefOf, hash32, fmtDist, monthKey, emit } from './util.js?v=0.14.1';
 
 function dayRec(d = todayISO()) { S.days = S.days || {}; const r = (S.days[d] = S.days[d] || { m: 0, v: 0 }); r.pass = r.pass || {}; r.alert = r.alert || {}; return r; }
 export const pagesOf = (m) => Math.floor((m || 0) / WALK.pageM);
@@ -64,7 +64,6 @@ const SHARE_LBL = { stamp: 'スタンプの画像をシェアした。', regular
 export function arrive(st, { near, trial }) {
   if (!near || trial || st.demo) return null;
   const now = Date.now(), today = todayISO();
-  S.next = ''; // 次の1軒は、どこかの店に着いたら役目を終える（次は、また店を出るときに選ぶ）
   if (S.trip && S.trip.d !== today) S.trip = null; // 前の日の移動読書は流す
   let pv = null; for (let i = S.visits.length - 1; i >= 0; i--) { const v = S.visits[i]; if (v.d !== today) break; if (v.near && !v.trial) { pv = v; break; } }
   const a = pv && pv.s !== st.i ? BYID.get(pv.s) : null; const trip = S.trip && S.trip.from !== st.i ? S.trip : null;
@@ -97,21 +96,6 @@ export function betweenStores(a, b) {
   }
   return out.sort((x, y) => x.t - y.t).map((x) => x.s);
 }
-// 次の1軒：まだスタンプのない店・行きたい店・書店員さんの1冊の店から、近いものを1つずつ（支店名のない店は出さない）
-const walkMin = (d) => Math.max(1, Math.round((d * NEXT.roadK) / NEXT.mpm));
-export function nextCandidates(st) {
-  const kLat = NEXT.maxM / 110540, kLon = NEXT.maxM / (111320 * Math.cos((st.la * Math.PI) / 180));
-  const kinds = [['まだスタンプのない店', (s) => !G.hasStamp(s.i) && !BRAND_ONLY.test(String(s.n).normalize('NFKC').trim())], ['行きたい店', (s) => S.wants.includes(s.i)], ['書店員さんの1冊', (s) => !!s.rec]];
-  const out = [];
-  for (const [label, ok] of kinds) {
-    let best = null, bd = Infinity;
-    for (const s of STORES) { if (s.i === st.i || s.demo || Math.abs(s.la - st.la) > kLat || Math.abs(s.lo - st.lo) > kLon || !ok(s)) continue; const d = dist(st.la, st.lo, s.la, s.lo); if (d <= NEXT.maxM && d < bd) { best = s; bd = d; } }
-    if (!best) continue; const ex = out.find((o) => o.st.i === best.i);
-    if (ex) ex.labels.push(label); else out.push({ st: best, d: bd, labels: [label], min: walkMin(bd) });
-  }
-  if (S.next && S.next !== st.i && !out.some((o) => o.st.i === S.next)) { const s = BYID.get(S.next); if (s) { const d = dist(st.la, st.lo, s.la, s.lo); out.unshift({ st: s, d, labels: ['えらんだ店'], min: walkMin(d) }); } }
-  return out;
-}
 // いま読んでいる本（何冊でも）。カードから入れると「どこで出会ったか」がつながる
 const sameTitle = (a, b) => String(a || '').normalize('NFKC').replace(/\s/g, '') === String(b || '').normalize('NFKC').replace(/\s/g, '');
 export const reading = () => (S.reading || []).filter((b) => !b.done);
@@ -130,9 +114,13 @@ export function finishReading(id) { const b = (S.reading || []).find((x) => x.id
 export function unfinishReading(id) { const b = (S.reading || []).find((x) => x.id === id); if (!b) return; b.done = ''; b.tDone = 0; save(); emit('records'); }
 export function dropReading(id) { S.reading = (S.reading || []).filter((x) => x.id !== id); if (S.trip && S.trip.book === id) S.trip = null; save(); emit('records'); }
 export const activeTrip = () => (S.trip && S.trip.d === todayISO() ? S.trip : null);
-export function startTrip(st, bookId, mode) { S.trip = { from: st.i, fn: st.n, d: todayISO(), t: Date.now(), book: bookId, mode: mode === 'ear' ? 'ear' : 'eye' }; S.settings.readMode = S.trip.mode; save(); emit('trip'); }
+// 移動読書をはじめる（地図のボタンから、どこでも）。出発した店＝今日さいごにスタンプを押した店（2時間以内）。同じ店でもう一度押しても数えないため。本を変えたときは、はじめた時刻をそのままに
+export function startTrip(bookId, mode) {
+  const cur = activeTrip(), today = todayISO(); let from = cur ? cur.from : '', fn = cur ? cur.fn : '';
+  if (!cur) for (let i = S.visits.length - 1; i >= 0; i--) { const v = S.visits[i]; if (v.d !== today) break; if (v.near && !v.trial) { if (Date.now() - v.t < 2 * 3600 * 1000) { from = v.s; fn = (BYID.get(v.s) || v).n || ''; } break; } }
+  S.trip = { from, fn, d: today, t: cur ? cur.t : Date.now(), book: bookId, mode: mode === 'ear' ? 'ear' : 'eye' }; S.settings.readMode = S.trip.mode; save(); emit('trip');
+}
 export function cancelTrip() { S.trip = null; save(); emit('trip'); }
-export function setNext(id) { S.next = id || ''; save(); emit('trip'); }
 
 // ---- その日の物語 ----
 function activeDates() {

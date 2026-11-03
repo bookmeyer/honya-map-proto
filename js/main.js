@@ -1,17 +1,17 @@
 // 起動：記録を読み、データを取り、地図を出し、部品をつなぐ
-import { APP_VER } from './config.js?v=0.14.0';
-import { S, load, save } from './state.js?v=0.14.0';
-import { loadAll, STORES } from './data.js?v=0.14.0';
-import * as MAP from './map.js?v=0.14.0';
-import { POS, setPos, setFollow, jumped } from './position.js?v=0.14.0';
-import * as AUDIO from './audio.js?v=0.14.0';
-import * as UI from './ui.js?v=0.14.0';
-import * as J from './journey.js?v=0.14.0';
-import * as JU from './journey_ui.js?v=0.14.0';
-import * as RU from './reading_ui.js?v=0.14.0';
-import * as E from './events.js?v=0.14.0';
-import { renderRadar, renderZukan, renderMissions, renderSettings, applyTheme, showOnboarding } from './screens.js?v=0.14.0';
-import { $, $$, on, emit, isStandalone, mobileOS } from './util.js?v=0.14.0';
+import { APP_VER } from './config.js?v=0.14.1';
+import { S, load, save } from './state.js?v=0.14.1';
+import { loadAll, STORES } from './data.js?v=0.14.1';
+import * as MAP from './map.js?v=0.14.1';
+import { POS, setPos, setFollow, jumped } from './position.js?v=0.14.1';
+import * as AUDIO from './audio.js?v=0.14.1';
+import * as UI from './ui.js?v=0.14.1';
+import * as J from './journey.js?v=0.14.1';
+import * as JU from './journey_ui.js?v=0.14.1';
+import * as RU from './reading_ui.js?v=0.14.1';
+import * as E from './events.js?v=0.14.1';
+import { renderRadar, renderZukan, renderMissions, renderSettings, applyTheme, showOnboarding } from './screens.js?v=0.14.1';
+import { $, $$, on, emit, isStandalone, mobileOS } from './util.js?v=0.14.1';
 
 async function boot() {
   load(); applyThemeEarly();
@@ -26,18 +26,18 @@ async function boot() {
   on('pos', () => { MAP.setMe(POS); if (POS.follow && !POS.fake) MAP.easeTo(POS.lon, POS.lat); UI.updateNear(); J.track(POS, jumped()); JU.showWantAlerts(J.checkWanted(POS)); UI.refreshHud(); });
   on('volume', (v) => { UI.toast(`📖 歩いたページで、第${v.after}巻に入りました`, 'ok'); AUDIO.sfx.levelup(); UI.refreshHud(); });
   let areaBound = false; on('map-ready', () => { if (!areaBound) { areaBound = true; MAP.M.map.on('moveend', JU.updateAreaChip); } JU.updateAreaChip(); });
-  on('records', () => { UI.refreshHud(); JU.updateAreaChip(); if (UI.currentView === 'zukan') renderZukan(); if (UI.currentView === 'mission') renderMissions(); });
+  on('records', () => { UI.refreshHud(); JU.updateAreaChip(); RU.renderReadBtn(); if (UI.currentView === 'zukan') renderZukan(); if (UI.currentView === 'mission') renderMissions(); });
   on('view', (v) => { if (v === 'radar') renderRadar(); if (v === 'zukan') renderZukan(); if (v === 'mission') renderMissions(); if (v === 'settings') renderSettings(); });
   on('near', () => { if (UI.currentView === 'radar') renderRadar(); });
   on('save-error', () => UI.toast('保存できませんでした（端末の空きを確かめてください）', 'warn'));
-  // 次の店へ・移動読書（v0.14）：スタンプのあと・カードのあと・店のページから。地図の下の帯は、次の1軒と移動読書中を映す
-  on('depart', (x) => RU.openDepart(x.st, x)); on('trip', () => UI.updateNear()); on('trip-open', () => RU.openTrip());
+  // 移動読書（v0.14.1）：地図の大きなボタン「今から移動読書」／移動読書中。スタンプのあと・カードのあとからも同じ画面へ
+  on('read-start', (x) => RU.openReadStart(x || {})); on('trip', RU.renderReadBtn); on('trial', RU.renderReadBtn);
   // イベント：起動時・10分ごと・画面に戻ったとき（5分以上たっていたら）に設定を読む。記録はつながったときに送る
   on('events', () => { UI.applyMapStates(); UI.refreshHud(); if (UI.currentView === 'mission') renderMissions(); });
   E.loadEvents(); setInterval(() => { if (document.visibilityState === 'visible') E.loadEvents(); }, 10 * 60 * 1000);
   document.addEventListener('visibilitychange', () => { if (document.visibilityState !== 'visible') return; if (Date.now() - E.EV.at > 5 * 60 * 1000) E.loadEvents(); E.flushSoon(1000); });
   window.addEventListener('online', () => E.flushSoon(500)); E.flushSoon(4000);
-  UI.setupSearch(); UI.refreshHud();
+  UI.setupSearch(); UI.refreshHud(); RU.renderReadBtn();
   $$('#tabs button').forEach((b) => b.addEventListener('click', () => { AUDIO.unlock(); UI.switchView(b.dataset.view); }));
   $$('.segmented button').forEach((b) => b.addEventListener('click', () => UI.setSub(b.dataset.sub)));
   $('#sheet-close').onclick = UI.closeSheet;

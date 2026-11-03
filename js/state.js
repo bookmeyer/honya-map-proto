@@ -1,11 +1,11 @@
 // 記録（この端末の中だけ）。版の違いを吸収して読み込み、まとめて書き込む
-import { STORAGE_KEY, LEGACY_KEYS, APP_VER } from './config.js?v=0.14.0';
-import { debounce, emit } from './util.js?v=0.14.0';
+import { STORAGE_KEY, LEGACY_KEYS, APP_VER } from './config.js?v=0.14.1';
+import { debounce, emit } from './util.js?v=0.14.1';
 
 export const empty = () => ({
   v: 4, visits: [], cards: [], wants: [], custom: [], stamps: {}, pg: 0, pgDay: {},
   claimedW: {}, claimedD: {}, rallyDone: {}, featDone: {}, looks: {},
-  hidden: {}, renames: {}, days: {}, posts: [], shares: [], reading: [], trips: [], trip: null, next: '', seen: 0, lastPos: null, shareCount: 0, evLog: {}, evTitles: [], outbox: [],
+  hidden: {}, renames: {}, days: {}, posts: [], shares: [], reading: [], trips: [], trip: null, seen: 0, lastPos: null, shareCount: 0, evLog: {}, evTitles: [], outbox: [],
   settings: { theme: 'light', sound: true, haptic: true, avatar: '', handle: '', wantAlert: true, wantAlertM: 2000, dev: '', joinCode: '', sendLog: true, privacyV10: 0 }, createdAt: Date.now(),
 });
 export let S = empty();
