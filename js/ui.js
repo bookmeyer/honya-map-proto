@@ -1,14 +1,14 @@
 // 画面の部品：見出し帯・タブ・店のシート・モーダル・スタンプの演出・カード・さがす・追加
-import { RANGE_M, SENSE_M, TERRITORY_M, PG, pagesForVol } from './config.js?v=0.13.1';
-import { S, save, exportJSON } from './state.js?v=0.13.1';
-import { STORES, BYID, FEAT, isFeat, isLib, placeWord, rarityOf, rarityText, stampSVG, stampInk, search, addCustom, hideStore, renameStore, lookupIsbn, DATA_DATE, pickOpen, bookTitle } from './data.js?v=0.13.1';
-import * as G from './game.js?v=0.13.1';
-import * as MAP from './map.js?v=0.13.1';
-import { POS, setPos, startWatch, setTrial, setFollow, hasPos, jumped } from './position.js?v=0.13.1';
-import { sfx, haptic, unlock } from './audio.js?v=0.13.1';
-import { stampImage, cardImage, shareBlob } from './share.js?v=0.13.1';
-import * as E from './events.js?v=0.13.1';
-import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, on, emit, weekKey, gmapDir, gmapPlace, mobileOS } from './util.js?v=0.13.1';
+import { RANGE_M, SENSE_M, TERRITORY_M, PG, pagesForVol } from './config.js?v=0.13.2';
+import { S, save, exportJSON } from './state.js?v=0.13.2';
+import { STORES, BYID, FEAT, isFeat, isLib, placeWord, rarityOf, rarityText, stampSVG, stampInk, search, addCustom, hideStore, renameStore, lookupIsbn, DATA_DATE, pickOpen, bookTitle } from './data.js?v=0.13.2';
+import * as G from './game.js?v=0.13.2';
+import * as MAP from './map.js?v=0.13.2';
+import { POS, setPos, startWatch, setTrial, setFollow, hasPos, jumped } from './position.js?v=0.13.2';
+import { sfx, haptic, unlock } from './audio.js?v=0.13.2';
+import { stampImage, cardImage, shareBlob } from './share.js?v=0.13.2';
+import * as E from './events.js?v=0.13.2';
+import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, on, emit, weekKey, gmapDir, gmapPlace, mobileOS } from './util.js?v=0.13.2';
 
 export let currentView = 'map';
 export let currentSub = 'stamps';
@@ -87,7 +87,7 @@ export function applyMapStates() {
 export function locate() {
   unlock();
   if (POS.fake) { setTrialUI(false); }
-  const ok = startWatch({ onFirst: (p) => { MAP.flyTo(p.lon, p.lat, 15); toast(`現在地（誤差 約${Math.round(p.acc)}m）`); }, onError: (err) => { $('#btn-locate').classList.remove('on'); toast(err && err.code === 1 ? '位置の許可がありません。ブラウザの設定で許可できます。「お試し歩き」でも試せます' : '位置が取れませんでした。「お試し歩き」でも試せます', 'warn'); } });
+  const ok = startWatch({ onFirst: (p) => { if (!S.settings.geoOk) { S.settings.geoOk = 1; save(); } MAP.flyTo(p.lon, p.lat, 15); toast(`現在地（誤差 約${Math.round(p.acc)}m）`); }, onError: (err) => { $('#btn-locate').classList.remove('on'); toast(err && err.code === 1 ? '位置の許可がありません。ブラウザの設定で許可できます。「お試し歩き」でも試せます' : '位置が取れませんでした。「お試し歩き」でも試せます', 'warn'); } });
   if (!ok) { toast('この端末では位置が使えません。「お試し歩き」で試せます', 'warn'); return; }
   $('#btn-locate').classList.add('on'); if (hasPos()) MAP.flyTo(POS.lon, POS.lat, 15); else toast('現在地を確かめています…');
 }

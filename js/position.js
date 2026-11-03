@@ -1,8 +1,8 @@
 // 現在地：本物（端末の位置）と、お試し歩き（地図を押した場所）
 // 位置はこの端末の中で距離を出すためだけに使う。保存するのは最後の場所（丸めた値）だけ
-import { JUMP_MPS, JUMP_COOLDOWN_MS } from './config.js?v=0.13.1';
-import { S, save } from './state.js?v=0.13.1';
-import { dist, emit } from './util.js?v=0.13.1';
+import { JUMP_MPS, JUMP_COOLDOWN_MS } from './config.js?v=0.13.2';
+import { S, save } from './state.js?v=0.13.2';
+import { dist, emit } from './util.js?v=0.13.2';
 
 export const POS = { lat: null, lon: null, acc: null, heading: null, fake: false, watchId: null, at: 0, follow: false, jumpUntil: 0, lastErr: null };
 
@@ -10,7 +10,7 @@ export function setPos(lat, lon, acc, fake, heading = null) {
   const prev = POS.lat != null ? { lat: POS.lat, lon: POS.lon, at: POS.at } : null;
   if (!fake && prev && POS.at) { const dt = (Date.now() - prev.at) / 1000; const d = dist(prev.lat, prev.lon, lat, lon); if (dt > 0.5 && d / dt > JUMP_MPS && d > 300) POS.jumpUntil = Date.now() + JUMP_COOLDOWN_MS; }
   POS.lat = lat; POS.lon = lon; POS.acc = acc; POS.fake = fake; POS.heading = heading; POS.at = Date.now();
-  S.lastPos = { lat: +lat.toFixed(4), lon: +lon.toFixed(4) }; save();
+  if (!fake) { S.lastPos = { lat: +lat.toFixed(4), lon: +lon.toFixed(4) }; save(); } // 次に開いたときの最初の地図は、本当にいた場所から（お試し歩きの場所は覚えない。v0.13.2）
   emit('pos', POS);
 }
 export const hasPos = () => POS.lat != null;

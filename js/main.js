@@ -1,16 +1,16 @@
 // 起動：記録を読み、データを取り、地図を出し、部品をつなぐ
-import { APP_VER } from './config.js?v=0.13.1';
-import { S, load, save } from './state.js?v=0.13.1';
-import { loadAll, STORES } from './data.js?v=0.13.1';
-import * as MAP from './map.js?v=0.13.1';
-import { POS, setPos, setFollow, jumped } from './position.js?v=0.13.1';
-import * as AUDIO from './audio.js?v=0.13.1';
-import * as UI from './ui.js?v=0.13.1';
-import * as J from './journey.js?v=0.13.1';
-import * as JU from './journey_ui.js?v=0.13.1';
-import * as E from './events.js?v=0.13.1';
-import { renderRadar, renderZukan, renderMissions, renderSettings, applyTheme, showOnboarding } from './screens.js?v=0.13.1';
-import { $, $$, on, emit, isStandalone, mobileOS } from './util.js?v=0.13.1';
+import { APP_VER } from './config.js?v=0.13.2';
+import { S, load, save } from './state.js?v=0.13.2';
+import { loadAll, STORES } from './data.js?v=0.13.2';
+import * as MAP from './map.js?v=0.13.2';
+import { POS, setPos, setFollow, jumped } from './position.js?v=0.13.2';
+import * as AUDIO from './audio.js?v=0.13.2';
+import * as UI from './ui.js?v=0.13.2';
+import * as J from './journey.js?v=0.13.2';
+import * as JU from './journey_ui.js?v=0.13.2';
+import * as E from './events.js?v=0.13.2';
+import { renderRadar, renderZukan, renderMissions, renderSettings, applyTheme, showOnboarding } from './screens.js?v=0.13.2';
+import { $, $$, on, emit, isStandalone, mobileOS } from './util.js?v=0.13.2';
 
 async function boot() {
   load(); applyThemeEarly();
@@ -65,6 +65,12 @@ async function boot() {
   const afterIntro = () => { if (join && join.isNew) UI.joinNotice(join.code); else if (!S.settings.privacyV10) UI.privacyNotice(); else if (!S.settings.homeTip && mobileOS() && !isStandalone()) UI.homeTip(); };
   if (!S.seen) showOnboarding((mode) => { S.seen = 1; S.settings.privacyV10 = join && join.isNew ? 0 : 1; save(); UI.refreshHud(); if (mode === 'geo') UI.locate(); if (mode === 'trial') { UI.setTrialUI(true); UI.warp(); } if (join && join.isNew) UI.joinNotice(join.code); });
   else afterIntro();
+  // 2回目からは、開いたときに自分のいる場所から始める（v0.13.2）。位置の許可がもうある人か、前に現在地を使った人だけ。断られている人には聞かない
+  if (S.seen && !POS.fake) {
+    const go = () => UI.locate();
+    if (navigator.permissions && navigator.permissions.query) navigator.permissions.query({ name: 'geolocation' }).then((p) => { if (p.state === 'granted' || (p.state === 'prompt' && S.settings.geoOk)) go(); }).catch(() => { if (S.settings.geoOk) go(); });
+    else if (S.settings.geoOk) go();
+  }
   emit('view', 'map');
   window.__honya = { S, POS, STORES, UI, MAP, J, JU, E, audio: AUDIO, ver: APP_VER };
 }
