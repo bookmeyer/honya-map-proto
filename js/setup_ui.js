@@ -2,13 +2,13 @@
 // ぶっくまさん 11/4「ハンドルネームとプロフィール、アイコン設定後にアプリが使えるようにしてほしい。そうしないと入れないはず」
 // → アイコンは絵（12）から選ぶか写真。プロフィールは9問すべて必須（性別だけ「答えない」あり）。もう使っている人も、次に開いたときに（記録はそのまま）
 // ハンドルネームとアイコンは、この端末の中だけ（送らない）。プロフィールは名前以外の答えを統計データとして送る（profile_ui.js・events.js queueProfile）
-import { $, esc, todayISO } from './util.js?v=0.21.0';
-import { S, save } from './state.js?v=0.21.0';
-import * as E from './events.js?v=0.21.0';
-import * as MAP from './map.js?v=0.21.0';
-import { toast, refreshHud, openModal, closeModal } from './ui.js?v=0.21.0';
-import { cleanHandle, makeAvatar } from './settings_ui.js?v=0.21.0';
-import { profileFields, bindProfileFields, readProfileFields, missingOf, profileComplete, shortTitle, pointMissing, STAT_NOTE } from './profile_ui.js?v=0.21.0';
+import { $, esc, todayISO } from './util.js?v=0.21.1';
+import { S, save } from './state.js?v=0.21.1';
+import * as E from './events.js?v=0.21.1';
+import * as MAP from './map.js?v=0.21.1';
+import { toast, refreshHud, openModal, closeModal } from './ui.js?v=0.21.1';
+import { cleanHandle, makeAvatar } from './settings_ui.js?v=0.21.1';
+import { profileFields, bindProfileFields, readProfileFields, missingOf, profileComplete, shortTitle, pointMissing, STAT_NOTE } from './profile_ui.js?v=0.21.1';
 
 // ---- アイコンの絵（12）：アプリの見た目と同じ、太い墨のふち・べた塗り。選んだら PNG にして持つ ----
 const ST = 'stroke="#1B1B1B" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"';
@@ -34,21 +34,21 @@ const svgPng = (s, N = 160) => new Promise((res, rej) => {
   im.onerror = rej; im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(s);
 });
 function avatarGrid(cur) {
-  return `<div class="av-grid">${AVATARS.map((a) => `<button type="button" class="av-opt${cur === a.id ? ' on' : ''}" data-av="${a.id}" aria-label="${esc(a.n)}" aria-pressed="${cur === a.id}">${a.svg}</button>`).join('')}<label class="av-opt av-photo${cur === 'photo' ? ' on' : ''}" aria-label="写真から選ぶ"><input type="file" accept="image/*" hidden class="av-file"><span>写真</span></label></div>`;
+  return `<div class="av-grid">${AVATARS.map((a) => `<button type="button" class="av-opt${cur === a.id ? ' on' : ''}" data-av="${a.id}" aria-label="${esc(a.n)}" aria-pressed="${cur === a.id}">${a.svg}</button>`).join('')}<label class="av-opt av-photo${cur === 'photo' ? ' on' : ''}" aria-label="画像から選ぶ"><input type="file" accept="image/*" hidden class="av-file"><span>画像</span></label></div>`;
 }
 // 選んだら onPick({ kind：絵の名前か photo, url：PNG・JPEG のデータ })
 function bindAvatarGrid(root, onPick) {
   const mark = (el) => root.querySelectorAll('.av-opt').forEach((x) => { x.classList.toggle('on', x === el); if (x.dataset.av) x.setAttribute('aria-pressed', String(x === el)); });
   root.querySelectorAll('.av-opt[data-av]').forEach((b) => b.addEventListener('click', async () => {
     const a = AVATARS.find((x) => x.id === b.dataset.av); if (!a) return;
-    try { onPick({ kind: a.id, url: await svgPng(a.svg) }); mark(b); } catch (e) { toast('アイコンを作れませんでした。ほかの絵か写真で', 'warn'); }
+    try { onPick({ kind: a.id, url: await svgPng(a.svg) }); mark(b); } catch (e) { toast('アイコンを作れませんでした。ほかの絵か画像で', 'warn'); }
   }));
   const f = root.querySelector('.av-file');
-  if (f) f.addEventListener('change', async (e) => { const file = e.target.files[0]; if (!file) return; try { onPick({ kind: 'photo', url: await makeAvatar(file) }); mark(f.closest('.av-opt')); } catch (err) { toast('写真を読めませんでした。ほかの写真か絵で', 'warn'); } });
+  if (f) f.addEventListener('change', async (e) => { const file = e.target.files[0]; if (!file) return; try { onPick({ kind: 'photo', url: await makeAvatar(file) }); mark(f.closest('.av-opt')); } catch (err) { toast('画像を読めませんでした。ほかの画像か絵で', 'warn'); } });
 }
 // ---- 設定から：アイコンを替える ----
 export function openAvatarPicker(after) {
-  openModal(`<h2>自分のアイコン</h2><p class="hint">地図の現在地に出ます。絵から選ぶか、写真にします。この端末の中だけに置き、どこにも送りません。</p>${avatarGrid(S.settings.avatarKind || (S.settings.avatar ? 'photo' : ''))}<div class="actions"><button class="btn ghost wide" id="avp-close">閉じる</button></div>`);
+  openModal(`<h2>自分のアイコン</h2><p class="hint">地図の現在地に出ます。絵から選ぶか、画像にします。この端末の中だけに置き、どこにも送りません。</p>${avatarGrid(S.settings.avatarKind || (S.settings.avatar ? 'photo' : ''))}<div class="actions"><button class="btn ghost wide" id="avp-close">閉じる</button></div>`);
   $('#avp-close').onclick = closeModal;
   bindAvatarGrid($('#modal-box'), ({ kind, url }) => { S.settings.avatar = url; S.settings.avatarKind = kind; save(); MAP.setAvatar(url); refreshHud(); closeModal(); toast('アイコンを替えました', 'ok'); if (after) after(); });
 }
@@ -69,7 +69,7 @@ export function showSetup(cb) {
       <input type="text" id="su-name" maxlength="20" placeholder="例：本の虫" autocomplete="nickname" value="${esc(s.handle || '')}">
       <p class="muted small">見出しや、その日の物語に出ます。この端末の中だけに残し、運営には送りません。</p></section>
     <section class="setup-sec" data-sec="icon"><h3>2. 自分のアイコン<span class="req">必須</span></h3>
-      <p class="muted small">地図の現在地に出ます。絵から選ぶか、写真にします。この端末の中だけに残し、運営には送りません。</p>${avatarGrid(av ? av.kind : '')}</section>
+      <p class="muted small">地図の現在地に出ます。絵から選ぶか、画像にします。この端末の中だけに残し、運営には送りません。</p>${avatarGrid(av ? av.kind : '')}</section>
     <section class="setup-sec" data-sec="profile"><h3>3. プロフィール<span class="req">必須</span></h3>${STAT_NOTE}${profileFields(a)}</section>
     <div class="actions"><button class="btn primary wide" id="su-go">はじめる</button></div>
   </div>`;

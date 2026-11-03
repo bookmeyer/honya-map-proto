@@ -1,17 +1,17 @@
 // 設定の画面と、そこから開くもの：見た目・着せ替え・アイコン・ハンドルネーム・参加コード・送るもののお知らせ・記録を守る・Googleマップの★
-import { SKINS, MAP_SKINS, APP_VER, TRIAL_ON, PROFILE_ON, POLICY_VER } from './config.js?v=0.21.0';
-import { openProfile, profileSummary } from './profile_ui.js?v=0.21.0';
-import { openAvatarPicker } from './setup_ui.js?v=0.21.0';
-import { $, esc, fmtDist, icon, $$, mobileOS, isStandalone, emit, todayISO } from './util.js?v=0.21.0';
-import { S, save, parseImport, replace, reset, exportJSON } from './state.js?v=0.21.0';
-import { sfx } from './audio.js?v=0.21.0';
-import { POS } from './position.js?v=0.21.0';
-import { addCustom, STORES, DATA_DATE, rebuild, unhideAll } from './data.js?v=0.21.0';
-import * as MAP from './map.js?v=0.21.0';
-import * as E from './events.js?v=0.21.0';
-import * as GI from './gimport.js?v=0.21.0';
-import { openModal, closeModal, toast, refreshHud, switchView, confirmBox } from './ui.js?v=0.21.0';
-import { applyMapStates, updateNear, updateAreaChip, setTrialUI } from './map_ui.js?v=0.21.0';
+import { SKINS, MAP_SKINS, APP_VER, TRIAL_ON, PROFILE_ON, POLICY_VER } from './config.js?v=0.21.1';
+import { openProfile, profileSummary } from './profile_ui.js?v=0.21.1';
+import { openAvatarPicker } from './setup_ui.js?v=0.21.1';
+import { $, esc, fmtDist, icon, $$, mobileOS, isStandalone, emit, todayISO } from './util.js?v=0.21.1';
+import { S, save, parseImport, replace, reset, exportJSON } from './state.js?v=0.21.1';
+import { sfx } from './audio.js?v=0.21.1';
+import { POS } from './position.js?v=0.21.1';
+import { addCustom, STORES, DATA_DATE, rebuild, unhideAll } from './data.js?v=0.21.1';
+import * as MAP from './map.js?v=0.21.1';
+import * as E from './events.js?v=0.21.1';
+import * as GI from './gimport.js?v=0.21.1';
+import { openModal, closeModal, toast, refreshHud, switchView, confirmBox } from './ui.js?v=0.21.1';
+import { applyMapStates, updateNear, updateAreaChip, setTrialUI } from './map_ui.js?v=0.21.1';
 
 // ---------- Googleマップの★を読み込む ----------
 export function googleHelp() {
@@ -53,7 +53,7 @@ export function renderSettings() {
     <div class="setting"><div><div class="l">ハンドルネーム</div><div class="s">${S.settings.handle ? esc(S.settings.handle) : 'まだありません。見出し・プロフィール・シェアする画像に出ます'}</div></div><button class="btn" id="st-name">${S.settings.handle ? '変える' : '付ける'}</button></div>
     <div class="setting"><div><div class="l">参加コード</div><div class="s">${s.joinCode ? `「${esc(s.joinCode)}」で参加中（お試しの人だけのイベントが見えます）` : 'お試しなどで渡されたコードを入れると、その人たちだけのイベントが見えます'}</div></div><button class="btn" id="st-join">${s.joinCode ? '変える' : '入れる'}</button></div>
     <div class="setting"><div><div class="l">参加の記録を送る</div><div class="s">参加の人数を数えるのと、書店員さんの手書きのカードを開くための記録を送ります。位置・名前・メモは送りません${(S.outbox || []).length ? `（まだ送っていない記録 ${S.outbox.length}件）` : ''}<details class="more"><summary>くわしく</summary>送るのは、スタンプを押した店の番号・日時・店の近くで押したか・お試し歩きか・どのイベントかと、名前のない、ランダムな番号です。手書きのカードを開くときは、店の番号とランダムな番号を送ります（その店で押した記録と照らし合わせるため）。本のカードは送りません。止めても、イベントの枠は付きます（手書きのカードは見られなくなります）。</details></div></div><button class="switch ${s.sendLog !== false ? 'on' : ''}" id="st-send" role="switch" aria-checked="${s.sendLog !== false}" aria-label="参加の記録を送る"></button></div>
-    <div class="setting"><div><div class="l">自分のアイコン</div><div class="s">地図の現在地に出ます。写真はこの端末の中だけに置き、どこにも送りません</div></div><div class="avatar-ctl">${s.avatar ? `<img class="avatar" src="${esc(s.avatar)}" alt="">` : ''}<button class="btn" id="st-avatar">${s.avatar ? '替える' : '選ぶ'}</button></div></div>
+    <div class="setting"><div><div class="l">自分のアイコン</div><div class="s">地図の現在地に出ます。画像はこの端末の中だけに置き、どこにも送りません</div></div><div class="avatar-ctl">${s.avatar ? `<img class="avatar" src="${esc(s.avatar)}" alt="">` : ''}<button class="btn" id="st-avatar">${s.avatar ? '替える' : '選ぶ'}</button></div></div>
     <div class="setting"><div><div class="l">図書館も地図に出す</div><div class="s">全国の公共図書館（約3,500館）。大学・学校の図書館は入っていません</div></div><button class="switch ${s.showLib !== false ? 'on' : ''}" id="st-lib" role="switch" aria-checked="${s.showLib !== false}" aria-label="図書館も地図に出す"></button></div>
     <div class="setting"><div><div class="l">行きたい店のお知らせ</div><div class="s">行きたい店に近づくと、地図の下でお知らせします（アプリを開いて現在地を追っているあいだ）</div></div><button class="switch ${s.wantAlert !== false ? 'on' : ''}" id="st-want" role="switch" aria-checked="${s.wantAlert !== false}" aria-label="行きたい店のお知らせ"></button></div>
     ${s.wantAlert !== false ? `<div class="setting"><div><div class="l">お知らせする距離</div><div class="s">この距離に入ったときと、500mに入ったとき</div></div><div class="seg3" id="st-want-m">${[1000, 2000, 5000].map((m) => `<button data-m="${m}" class="${(s.wantAlertM || 2000) === m ? 'active' : ''}">${m / 1000}km</button>`).join('')}</div></div>` : ''}
@@ -82,7 +82,7 @@ export function renderSettings() {
       店のデータは ${DATA_DATE} 時点の OpenStreetMap（有志が作る地図）で、閉店や名前の変更が反映されていない店があります。店のページの「閉店している」で外せ、「名前が違う」で直せます（この端末だけ。記録の書き出しに含まれます）。</div>`;
   $('#st-back').onclick = () => switchView('map');
   $$('#st-theme button').forEach((b) => b.addEventListener('click', () => { s.theme = b.dataset.t; save(); applyTheme(); renderSettings(); }));
-  $('#st-avatar').onclick = () => openAvatarPicker(renderSettings); // 絵か写真から（v0.21.0。アイコンは必須なので外さない）
+  $('#st-avatar').onclick = () => openAvatarPicker(renderSettings); // 絵か画像から（v0.21.0。アイコンは必須なので外さない）
   $('#st-lib').onclick = () => { s.showLib = s.showLib === false; save(); rebuild(); MAP.setStores(STORES); applyMapStates(); updateNear(); refreshHud(); toast(s.showLib ? '図書館を地図に出しました' : '図書館を地図から隠しました'); renderSettings(); };
   $('#st-want').onclick = () => { s.wantAlert = s.wantAlert === false; save(); renderSettings(); };
   $$('#st-want-m button').forEach((b) => b.addEventListener('click', () => { s.wantAlertM = +b.dataset.m; save(); renderSettings(); }));
