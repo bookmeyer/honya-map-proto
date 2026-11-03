@@ -1,9 +1,9 @@
 // シェア用の画像（スタンプ・常連度・カード・プレイヤーカード）
-import { prefOf, stars, fmtDate, todayISO } from './util.js?v=0.20.2';
-import { S } from './state.js?v=0.20.2';
-import { stampInk, stampSVG, rarityOf, rarityText } from './data.js?v=0.20.2';
-import { snapshotAt } from './map.js?v=0.20.2';
-import { regularInfo } from './game.js?v=0.20.2';
+import { prefOf, stars, fmtDate, todayISO } from './util.js?v=0.21.0';
+import { S } from './state.js?v=0.21.0';
+import { stampInk, stampSVG, rarityOf, rarityText } from './data.js?v=0.21.0';
+import { snapshotAt } from './map.js?v=0.21.0';
+import { regularInfo } from './game.js?v=0.21.0';
 
 const PAPER = '#FFF8EA', INK = '#1B1B1B', INK2 = '#5A554D', SHU = '#FF6A48', LINE = '#1B1B1B';
 const DISP = '"Mochiy Pop P One","Zen Maru Gothic","Hiragino Sans",sans-serif', BODY = '"Zen Maru Gothic","Hiragino Sans",sans-serif';

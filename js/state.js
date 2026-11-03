@@ -1,6 +1,6 @@
 // 記録（この端末の中だけ）。版の違いを吸収して読み込み、まとめて書き込む
-import { SKINS, MAP_SKINS, STORAGE_KEY, LEGACY_KEYS, APP_VER, PROFILE_Q } from './config.js?v=0.20.2';
-import { $, emit, debounce } from './util.js?v=0.20.2';
+import { SKINS, MAP_SKINS, STORAGE_KEY, LEGACY_KEYS, APP_VER, PROFILE_Q } from './config.js?v=0.21.0';
+import { $, emit, debounce } from './util.js?v=0.21.0';
 
 export const empty = () => ({
   v: 4, visits: [], cards: [], wants: [], custom: [], stamps: {}, pg: 0, pgDay: {},
@@ -57,6 +57,7 @@ function sanitize(o) {
   const s = o.settings;
   s.avatar = typeof s.avatar === 'string' && s.avatar.length < 400000 && AVATAR_RE.test(s.avatar) ? s.avatar : '';
   s.handle = typeof s.handle === 'string' ? s.handle.slice(0, 20) : '';
+  if (s.avatarKind != null && !(typeof s.avatarKind === 'string' && /^[a-z]{1,12}$/.test(s.avatarKind))) delete s.avatarKind; // アイコンの種類（v0.21.0）
   s.joinCode = typeof s.joinCode === 'string' && /^[a-z0-9_-]{2,40}$/.test(s.joinCode) ? s.joinCode : '';
   s.wantAlertM = num(s.wantAlertM, 2000);
   if (!['light', 'dark', 'auto'].includes(s.theme)) s.theme = 'light';

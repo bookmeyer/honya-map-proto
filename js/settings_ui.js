@@ -1,16 +1,17 @@
 // 設定の画面と、そこから開くもの：見た目・着せ替え・アイコン・ハンドルネーム・参加コード・送るもののお知らせ・記録を守る・Googleマップの★
-import { SKINS, MAP_SKINS, APP_VER, TRIAL_ON, PROFILE_ON, POLICY_VER } from './config.js?v=0.20.2';
-import { openProfile, profileSummary } from './profile_ui.js?v=0.20.2';
-import { $, esc, fmtDist, icon, $$, mobileOS, isStandalone, emit, todayISO } from './util.js?v=0.20.2';
-import { S, save, parseImport, replace, reset, exportJSON } from './state.js?v=0.20.2';
-import { sfx } from './audio.js?v=0.20.2';
-import { POS } from './position.js?v=0.20.2';
-import { addCustom, STORES, DATA_DATE, rebuild, unhideAll } from './data.js?v=0.20.2';
-import * as MAP from './map.js?v=0.20.2';
-import * as E from './events.js?v=0.20.2';
-import * as GI from './gimport.js?v=0.20.2';
-import { openModal, closeModal, toast, refreshHud, switchView, confirmBox } from './ui.js?v=0.20.2';
-import { applyMapStates, updateNear, updateAreaChip, setTrialUI } from './map_ui.js?v=0.20.2';
+import { SKINS, MAP_SKINS, APP_VER, TRIAL_ON, PROFILE_ON, POLICY_VER } from './config.js?v=0.21.0';
+import { openProfile, profileSummary } from './profile_ui.js?v=0.21.0';
+import { openAvatarPicker } from './setup_ui.js?v=0.21.0';
+import { $, esc, fmtDist, icon, $$, mobileOS, isStandalone, emit, todayISO } from './util.js?v=0.21.0';
+import { S, save, parseImport, replace, reset, exportJSON } from './state.js?v=0.21.0';
+import { sfx } from './audio.js?v=0.21.0';
+import { POS } from './position.js?v=0.21.0';
+import { addCustom, STORES, DATA_DATE, rebuild, unhideAll } from './data.js?v=0.21.0';
+import * as MAP from './map.js?v=0.21.0';
+import * as E from './events.js?v=0.21.0';
+import * as GI from './gimport.js?v=0.21.0';
+import { openModal, closeModal, toast, refreshHud, switchView, confirmBox } from './ui.js?v=0.21.0';
+import { applyMapStates, updateNear, updateAreaChip, setTrialUI } from './map_ui.js?v=0.21.0';
 
 // ---------- Googleマップの★を読み込む ----------
 export function googleHelp() {
@@ -52,7 +53,7 @@ export function renderSettings() {
     <div class="setting"><div><div class="l">ハンドルネーム</div><div class="s">${S.settings.handle ? esc(S.settings.handle) : 'まだありません。見出し・プロフィール・シェアする画像に出ます'}</div></div><button class="btn" id="st-name">${S.settings.handle ? '変える' : '付ける'}</button></div>
     <div class="setting"><div><div class="l">参加コード</div><div class="s">${s.joinCode ? `「${esc(s.joinCode)}」で参加中（お試しの人だけのイベントが見えます）` : 'お試しなどで渡されたコードを入れると、その人たちだけのイベントが見えます'}</div></div><button class="btn" id="st-join">${s.joinCode ? '変える' : '入れる'}</button></div>
     <div class="setting"><div><div class="l">参加の記録を送る</div><div class="s">参加の人数を数えるのと、書店員さんの手書きのカードを開くための記録を送ります。位置・名前・メモは送りません${(S.outbox || []).length ? `（まだ送っていない記録 ${S.outbox.length}件）` : ''}<details class="more"><summary>くわしく</summary>送るのは、スタンプを押した店の番号・日時・店の近くで押したか・お試し歩きか・どのイベントかと、名前のない、ランダムな番号です。手書きのカードを開くときは、店の番号とランダムな番号を送ります（その店で押した記録と照らし合わせるため）。本のカードは送りません。止めても、イベントの枠は付きます（手書きのカードは見られなくなります）。</details></div></div><button class="switch ${s.sendLog !== false ? 'on' : ''}" id="st-send" role="switch" aria-checked="${s.sendLog !== false}" aria-label="参加の記録を送る"></button></div>
-    <div class="setting"><div><div class="l">自分のアイコン</div><div class="s">地図の現在地に出ます。写真はこの端末の中だけに置き、どこにも送りません</div></div><div class="avatar-ctl">${s.avatar ? `<img class="avatar" src="${esc(s.avatar)}" alt="">` : ''}<label class="btn">${s.avatar ? '替える' : '選ぶ'}<input type="file" id="st-avatar" accept="image/*" hidden></label>${s.avatar ? '<button class="btn ghost" id="st-avatar-del">外す</button>' : ''}</div></div>
+    <div class="setting"><div><div class="l">自分のアイコン</div><div class="s">地図の現在地に出ます。写真はこの端末の中だけに置き、どこにも送りません</div></div><div class="avatar-ctl">${s.avatar ? `<img class="avatar" src="${esc(s.avatar)}" alt="">` : ''}<button class="btn" id="st-avatar">${s.avatar ? '替える' : '選ぶ'}</button></div></div>
     <div class="setting"><div><div class="l">図書館も地図に出す</div><div class="s">全国の公共図書館（約3,500館）。大学・学校の図書館は入っていません</div></div><button class="switch ${s.showLib !== false ? 'on' : ''}" id="st-lib" role="switch" aria-checked="${s.showLib !== false}" aria-label="図書館も地図に出す"></button></div>
     <div class="setting"><div><div class="l">行きたい店のお知らせ</div><div class="s">行きたい店に近づくと、地図の下でお知らせします（アプリを開いて現在地を追っているあいだ）</div></div><button class="switch ${s.wantAlert !== false ? 'on' : ''}" id="st-want" role="switch" aria-checked="${s.wantAlert !== false}" aria-label="行きたい店のお知らせ"></button></div>
     ${s.wantAlert !== false ? `<div class="setting"><div><div class="l">お知らせする距離</div><div class="s">この距離に入ったときと、500mに入ったとき</div></div><div class="seg3" id="st-want-m">${[1000, 2000, 5000].map((m) => `<button data-m="${m}" class="${(s.wantAlertM || 2000) === m ? 'active' : ''}">${m / 1000}km</button>`).join('')}</div></div>` : ''}
@@ -81,8 +82,7 @@ export function renderSettings() {
       店のデータは ${DATA_DATE} 時点の OpenStreetMap（有志が作る地図）で、閉店や名前の変更が反映されていない店があります。店のページの「閉店している」で外せ、「名前が違う」で直せます（この端末だけ。記録の書き出しに含まれます）。</div>`;
   $('#st-back').onclick = () => switchView('map');
   $$('#st-theme button').forEach((b) => b.addEventListener('click', () => { s.theme = b.dataset.t; save(); applyTheme(); renderSettings(); }));
-  $('#st-avatar').addEventListener('change', async (e) => { const f = e.target.files[0]; if (!f) return; try { const url = await makeAvatar(f); s.avatar = url; save(); await MAP.setAvatar(url); toast('アイコンを設定しました。地図の現在地に出ます', 'ok'); } catch (err) { toast('この画像は使えませんでした（別の写真でお試しください）', 'warn'); } e.target.value = ''; renderSettings(); });
-  if ($('#st-avatar-del')) $('#st-avatar-del').onclick = () => { s.avatar = ''; save(); MAP.setAvatar(null); renderSettings(); toast('アイコンを外しました'); };
+  $('#st-avatar').onclick = () => openAvatarPicker(renderSettings); // 絵か写真から（v0.21.0。アイコンは必須なので外さない）
   $('#st-lib').onclick = () => { s.showLib = s.showLib === false; save(); rebuild(); MAP.setStores(STORES); applyMapStates(); updateNear(); refreshHud(); toast(s.showLib ? '図書館を地図に出しました' : '図書館を地図から隠しました'); renderSettings(); };
   $('#st-want').onclick = () => { s.wantAlert = s.wantAlert === false; save(); renderSettings(); };
   $$('#st-want-m button').forEach((b) => b.addEventListener('click', () => { s.wantAlertM = +b.dataset.m; save(); renderSettings(); }));
@@ -135,12 +135,11 @@ export function nameModal(after) {
   const cur = S.settings.handle || '';
   openModal(`<h2>ハンドルネーム</h2><p class="hint">見出し・プロフィール・その日の物語・シェアする画像に出ます。この端末の中だけに残ります。</p>
     <div class="field"><label for="nm-in">名前（20字まで）</label><input type="text" id="nm-in" maxlength="20" value="${esc(cur)}" placeholder="例：本の虫" autocomplete="nickname"></div>
-    <div class="actions"><button class="btn primary" id="nm-ok">決める</button>${cur ? '<button class="btn ghost" id="nm-clear">外す</button>' : '<button class="btn ghost" id="nm-cancel">やめる</button>'}</div>`);
+    <div class="actions"><button class="btn primary" id="nm-ok">決める</button><button class="btn ghost" id="nm-cancel">やめる</button></div>`);
   const inp = $('#nm-in'); inp.focus(); inp.select();
   const finish = (v) => { S.settings.handle = v; save(); closeModal(); refreshHud(); if (after) after(); toast(v ? `「${v}」にしました` : '名前を外しました', 'ok'); };
   $('#nm-ok').onclick = () => { const v = cleanHandle(inp.value); if (!v) { toast('名前を入れてください', 'warn'); return; } finish(v); };
   inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') $('#nm-ok').click(); });
-  if ($('#nm-clear')) $('#nm-clear').onclick = () => finish('');
   if ($('#nm-cancel')) $('#nm-cancel').onclick = closeModal;
 }
 // ---------- 参加コード・送るもののお知らせ（v0.10） ----------
@@ -156,9 +155,10 @@ export function privacyNotice() {
   $('#pv-ok').onclick = closeModal; $('#pv-set').onclick = () => { closeModal(); switchView('settings'); };
 }
 // ---------- プライバシーポリシーのお知らせ（v0.20.1）：もう使っている人に一度だけ。「わかった」で同意（送りたくない人は設定で止められる） ----------
-export function policyNotice() {
-  openModal(`<h2>プライバシーポリシーを載せました</h2><p>運営に届くもの（参加の記録・店の情報の報告・プロフィール）と、その使い方・持つ期間・消し方をまとめました。使い続けると、同意したことになります。</p><p class="muted small">名前・メールアドレス・位置は、これまでどおり送りません。参加の記録を送りたくないときは、設定の「参加の記録を送る」をオフにできます。</p><div class="actions"><a class="btn" href="privacy.html" target="_blank" rel="noopener">読む</a><button class="btn primary" id="pol-ok">わかった</button></div>`);
-  $('#pol-ok').onclick = () => { S.settings.policy = POLICY_VER; save(); closeModal(); };
+export function policyNotice(after) {
+  const changed = !!S.settings.policy; // 前の版に同意している人には「変えました」
+  openModal(`<h2>プライバシーポリシーを${changed ? '変えました' : '載せました'}</h2><p>${changed ? 'はじめるときに、ハンドルネーム・アイコン・プロフィールを決めていただくようにしました。プロフィールは、名前以外の答えを統計データとして使います。' : '運営に届くもの（参加の記録・店の情報の報告・プロフィール）と、その使い方・持つ期間・消し方をまとめました。'}使い続けると、同意したことになります。</p><p class="muted small">名前・メールアドレス・位置は、これまでどおり送りません。参加の記録を送りたくないときは、設定の「参加の記録を送る」をオフにできます。</p><div class="actions"><a class="btn" href="privacy.html" target="_blank" rel="noopener">読む</a><button class="btn primary" id="pol-ok">わかった</button></div>`);
+  $('#pol-ok').onclick = () => { S.settings.policy = POLICY_VER; save(); closeModal(); if (after) after(); };
 }
 // ---------- 記録を守る：ホーム画面に追加（v0.10.1） ----------
 // iPhone の Safari は、しばらく開かないサイトの記録を消すことがある。ホーム画面のアイコンから開けば消えにくい
