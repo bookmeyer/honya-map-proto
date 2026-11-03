@@ -1,12 +1,12 @@
 // 移動読書・いま読んでいる本の画面（v0.14）
 // 地図の大きなボタン「今から移動読書」を押すだけで始まる（本も読みかたも選ばない。v0.14.2）→ アプリは閉じてよい → 次の本屋でスタンプを押すと記録
 // 読んでいる本は、移動読書中のボタンを押したときに、えらびたい人だけえらぶ
-import { READ } from './config.js?v=0.14.2';
-import { S, save } from './state.js?v=0.14.2';
-import * as J from './journey.js?v=0.14.2';
-import { POS } from './position.js?v=0.14.2';
-import { toast, openModal, closeModal, confirmBox, scanIsbn, manualIsbn, stopScan } from './ui.js?v=0.14.2';
-import { $, $$, esc, fmtDate, todayISO, icon } from './util.js?v=0.14.2';
+import { READ } from './config.js?v=0.14.3';
+import { S, save } from './state.js?v=0.14.3';
+import * as J from './journey.js?v=0.14.3';
+import { POS } from './position.js?v=0.14.3';
+import { toast, openModal, closeModal, confirmBox, scanIsbn, manualIsbn, stopScan } from './ui.js?v=0.14.3';
+import { $, $$, esc, fmtDate, todayISO, icon } from './util.js?v=0.14.3';
 
 const cover = (b) => `<div class="rcover">${b.cover ? `<img src="${esc(b.cover)}" alt="" referrerpolicy="no-referrer" loading="lazy">` : icon('book')}</div>`;
 const hm = (t) => { const d = new Date(t); return `${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`; };
@@ -73,10 +73,11 @@ function freeTitle(b0) {
 export function renderReading() {
   const el = $('#reading'); if (!el) return;
   const now = J.reading().slice().sort((x, y) => (y.t || 0) - (x.t || 0)), done = J.finished(), tr = J.activeTrip();
-  const meta = (b) => [b.sn ? `${b.sn}で出会った` : '', `${fmtDate(b.d)}から`, J.readTimes(b.id) ? `移動読書${J.readTimes(b.id)}回` : '', tr && tr.book === b.id ? '移動読書中' : ''].filter(Boolean).join('・');
+  const reads = (b) => (J.readTimes(b.id) ? `移動読書${J.readTimes(b.id)}回${J.readMinOf(b.id) ? `・${J.fmtMin(J.readMinOf(b.id))}` : ''}` : '');
+  const meta = (b) => [b.sn ? `${b.sn}で出会った` : '', `${fmtDate(b.d)}から`, reads(b), tr && tr.book === b.id ? '移動読書中' : ''].filter(Boolean).join('・');
   el.innerHTML = `<h3>いま読んでいる本</h3>${now.length ? `<div class="list rlist">${now.map((b) => `<div class="item rbook">${cover(b)}<div class="main"><div class="name">${esc(b.title)}</div><div class="sub">${esc(meta(b))}</div><div class="ract"><button class="btn" data-done="${esc(b.id)}">読み終わった</button><button class="btn ghost" data-drop="${esc(b.id)}">外す</button></div></div></div>`).join('')}</div>` : '<p class="muted small">まだありません。読み終わったら、めぐり帳の物語に残ります。</p>'}
     <div class="actions"><button class="btn" id="rd-add">${icon('barcode')}いま読んでいる本を登録</button></div><div id="rd-out"></div>
-    ${done.length ? `<details class="chap rdone"><summary><b>読み終えた本</b><span class="muted small">${done.length}冊</span></summary><div class="list rlist">${done.map((b) => `<div class="item rbook">${cover(b)}<div class="main"><div class="name">${esc(b.title)}</div><div class="sub">${esc([`${fmtDate(b.done)}に読み終えた`, b.sn ? `${b.sn}で出会った` : '', J.readTimes(b.id) ? `移動読書${J.readTimes(b.id)}回` : ''].filter(Boolean).join('・'))}</div><div class="ract"><button class="btn ghost" data-undone="${esc(b.id)}">読みかけに戻す</button></div></div></div>`).join('')}</div></details>` : ''}
+    ${done.length ? `<details class="chap rdone"><summary><b>読み終えた本</b><span class="muted small">${done.length}冊</span></summary><div class="list rlist">${done.map((b) => `<div class="item rbook">${cover(b)}<div class="main"><div class="name">${esc(b.title)}</div><div class="sub">${esc([`${fmtDate(b.done)}に読み終えた`, b.sn ? `${b.sn}で出会った` : '', reads(b)].filter(Boolean).join('・'))}</div><div class="ract"><button class="btn ghost" data-undone="${esc(b.id)}">読みかけに戻す</button></div></div></div>`).join('')}</div></details>` : ''}
     <h3>出会った本（カード）</h3>`;
   $('#rd-add').onclick = startReadingAdd;
   $$('#reading [data-done]').forEach((x) => x.addEventListener('click', () => { const b = J.finishReading(x.dataset.done); if (b) toast(`『${b.title}』を読み終えた本に入れました（今日の物語にも書きました）`, 'ok'); }));

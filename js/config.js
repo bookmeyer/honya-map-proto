@@ -1,5 +1,5 @@
 // 設定値（数字はここだけで変える）
-export const APP_VER = '0.14.2';
+export const APP_VER = '0.14.3';
 export const STORAGE_KEY = 'honya_map_v3';
 // イベントの設定を読み、参加の記録（店番号・日時・射程内か・お試しか・イベント＋名前のないランダムな端末の番号）を送る先。管理画面は同じ場所の /meguri/admin/
 export const EVENTS_API = 'https://tsunagubooks.com/meguri/api/';
@@ -16,7 +16,7 @@ export const WALK = { pageM: 100, stepM: 0.7, minMoveM: 12, maxAccM: 60, walkMax
 // 店と店のあいだ（v0.14）：次の店でスタンプを押したとき、前の店からのまっすぐの距離のうち、まだ数えていない分を歩いたページに足す（同じ日・3kmまで・歩く速さまで）
 export const SEG = { maxM: 3000, minM: 100, betweenM: 100 };
 // 移動読書（v0.14）：地図の「今から移動読書」を押すだけ（本も読みかたも選ばない）→ 次の本屋でスタンプを押すと記録。5分以上で +20ページ。ページ数は聞かない
-export const READ = { pages: 20, minS: 300 };
+export const READ = { pages: 20, minS: 300, maxMin: 180 }; // maxMin：移動読書の時間は3時間まで（押したまま忘れた日のため）
 // 常連度：同じ店でスタンプを押した「日数」で上がる（たくさんの店に行けない人の楽しみ）
 export const REGULAR = [{ n: 1, name: 'はじめまして' }, { n: 3, name: '顔なじみ' }, { n: 5, name: '常連' }, { n: 10, name: 'ぬし' }, { n: 20, name: '名物客' }, { n: 50, name: '殿堂入り' }];
 

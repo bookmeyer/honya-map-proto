@@ -1,10 +1,10 @@
 // 旅の記録：歩いた距離（ページ）・その日の物語・月のふり返り・行きたい店のお知らせ・投稿の記録・Googleマップの★の読み込み・店と店のあいだ・移動読書・いま読んでいる本
 // 位置は、アプリを開いて現在地を追っているあいだだけ使う（ブラウザの決まりで、閉じているあいだは測れない）。閉じていたあいだの道のりは、次の店でスタンプを押したときに、前の店からのまっすぐの距離で足す（v0.14）
-import { WALK, RANGE_M, SEG, READ } from './config.js?v=0.14.2';
-import { S, save } from './state.js?v=0.14.2';
-import { STORES, BYID, rarityOf } from './data.js?v=0.14.2';
-import * as G from './game.js?v=0.14.2';
-import { dist, todayISO, prefOf, hash32, fmtDist, monthKey, emit } from './util.js?v=0.14.2';
+import { WALK, RANGE_M, SEG, READ } from './config.js?v=0.14.3';
+import { S, save } from './state.js?v=0.14.3';
+import { STORES, BYID, rarityOf } from './data.js?v=0.14.3';
+import * as G from './game.js?v=0.14.3';
+import { dist, todayISO, prefOf, hash32, fmtDist, monthKey, emit } from './util.js?v=0.14.3';
 
 function dayRec(d = todayISO()) { S.days = S.days || {}; const r = (S.days[d] = S.days[d] || { m: 0, v: 0 }); r.pass = r.pass || {}; r.alert = r.alert || {}; return r; }
 export const pagesOf = (m) => Math.floor((m || 0) / WALK.pageM);
@@ -76,7 +76,7 @@ export function arrive(st, { near, trial }) {
     Object.assign(g, { from: a.i, fn: a.n, m: Math.round(m), ride: ride ? 1 : 0, add, walked: (tracked || 0) + add });
   }
   if (trip) {
-    if ((now - trip.t) / 1000 >= READ.minS) { const bk = trip.book ? (S.reading || []).find((b) => b.id === trip.book) : null; Object.assign(g, { book: bk ? bk.id : '', title: bk ? bk.title : '', mode: trip.mode || '', read: 1, pg: READ.pages }); G.addPages(READ.pages); S.trip = null; } // 本はえらばなくても数える（v0.14.2）
+    if ((now - trip.t) / 1000 >= READ.minS) { const bk = trip.book ? (S.reading || []).find((b) => b.id === trip.book) : null; Object.assign(g, { book: bk ? bk.id : '', title: bk ? bk.title : '', mode: trip.mode || '', read: 1, pg: READ.pages, min: Math.min(READ.maxMin, Math.round((now - trip.t) / 60000)) }); G.addPages(READ.pages); S.trip = null; } // 本はえらばなくても数える（v0.14.2）
     else g.early = 1; // 5分より短い移動では数えない（移動読書は、その次の店まで続く）
   }
   if (g.from || g.read) { S.trips = S.trips || []; S.trips.push(g); if (S.trips.length > 600) S.trips.splice(0, S.trips.length - 600); }
@@ -101,6 +101,9 @@ const sameTitle = (a, b) => String(a || '').normalize('NFKC').replace(/\s/g, '')
 export const reading = () => (S.reading || []).filter((b) => !b.done);
 export const finished = () => (S.reading || []).filter((b) => b.done).sort((x, y) => (y.tDone || 0) - (x.tDone || 0));
 export const readTimes = (id) => (S.trips || []).filter((g) => g.book === id && g.read).length;
+// 移動読書の時間：「今から移動読書」を押してから、次の本屋でスタンプを押すまで（何も入れなくてよい。v0.14.3）
+export const readMinOf = (id) => (S.trips || []).filter((g) => g.book === id && g.read).reduce((a, g) => a + (g.min || 0), 0);
+export const fmtMin = (m) => (m >= 60 ? `${Math.floor(m / 60)}時間${m % 60 ? `${m % 60}分` : ''}` : `${m}分`);
 export const inReading = (c) => reading().some((b) => b.card === c.id || (c.isbn && b.isbn === c.isbn) || sameTitle(b.title, c.title));
 export function addReading(book) {
   S.reading = S.reading || [];
@@ -148,7 +151,7 @@ export function chapter(date = todayISO()) {
   for (const v of vis) {
     const st = BYID.get(v.s); const name = st ? st.n : v.n; const h = new Date(v.t).getHours();
     const g = v.near ? (S.trips || []).find((x) => x.read && x.to === v.s && Math.abs(x.t - v.t) < 5000) : null; // 移動読書で着いた
-    let s = g ? `${h}時、${g.title ? `『${g.title}』を` : '本を'}${g.mode === 'ear' ? '耳で聞きながら' : '読みながら'}、${name}${rnd(['へ。', 'に着いた。'], v.t)}` : `${h}時、${name}${v.near ? rnd(['へ。', 'の扉をくぐる。', 'に着いた。'], v.t) : 'に立ち寄った（記録だけ）。'}`;
+    let s = g ? `${h}時、${g.title ? `『${g.title}』を` : '本を'}${g.mode === 'ear' ? '耳で聞きながら' : '読みながら'}、${name}${rnd(['へ', 'に着いた'], v.t)}${g.min ? `（移動読書${fmtMin(g.min)}）` : ''}。` : `${h}時、${name}${v.near ? rnd(['へ。', 'の扉をくぐる。', 'に着いた。'], v.t) : 'に立ち寄った（記録だけ）。'}`;
     if (v.near && st) {
       const firstToday = vis.find((x) => x.s === v.s && x.near) === v;
       if (firstToday && S.stamps[v.s] && S.stamps[v.s].d === date) s += rarityOf(st) === 3 ? '周りに本屋のない、秘境の一軒。はじめてのスタンプを押した。' : 'はじめてのスタンプを押した。';
@@ -171,7 +174,7 @@ export function chapter(date = todayISO()) {
   const isEmpty = !lines.length;
   if (!isEmpty) lines.push({ s: rnd(['続きは、また明日。', '今日のしおりは、ここに。', 'また次のページへ。'], 'close') });
   const [y, mo, dd] = date.split('-').map(Number); const dow = new Date(y, mo - 1, dd).getDay();
-  return { no, date, title: `第${no}章　${mo}月${dd}日（${WD[dow]}）`, lines, empty: isEmpty, blank: date === todayISO() ? 'まだ白紙のページ。現在地を追って歩くと、歩いた分だけページが増え、本屋に寄ると物語が書き足されます。' : 'この日は白紙のページ。', m: rec.m || 0, v: rec.v || 0, pages: pagesOf(rec.m), earned: ((S.pgDay || {})[date] || 0) + pagesOf(rec.m), km: kmOf(rec.m), steps: stepsOf(rec.m), nVisits: vis.length, nStores: visited.size, nCards: cards.length, nRead: (S.trips || []).filter((g) => g.d === date && g.read).length };
+  return { no, date, title: `第${no}章　${mo}月${dd}日（${WD[dow]}）`, lines, empty: isEmpty, blank: date === todayISO() ? 'まだ白紙のページ。現在地を追って歩くと、歩いた分だけページが増え、本屋に寄ると物語が書き足されます。' : 'この日は白紙のページ。', m: rec.m || 0, v: rec.v || 0, pages: pagesOf(rec.m), earned: ((S.pgDay || {})[date] || 0) + pagesOf(rec.m), km: kmOf(rec.m), steps: stepsOf(rec.m), nVisits: vis.length, nStores: visited.size, nCards: cards.length, nRead: (S.trips || []).filter((g) => g.d === date && g.read).length, readMin: (S.trips || []).filter((g) => g.d === date && g.read).reduce((a, g) => a + (g.min || 0), 0) };
 }
 export function chapters(limit = 30) { return activeDates().reverse().slice(0, limit).map((d) => chapter(d)); }
 
@@ -185,7 +188,8 @@ export function periodStats(prefix) {
   let act = 0; for (const [d, n] of Object.entries(S.pgDay || {})) if (d.startsWith(prefix)) act += n || 0;
   const per = {}; vis.forEach((v) => { (per[v.s] = per[v.s] || new Set()).add(v.d); });
   const top = Object.entries(per).map(([id, s]) => ({ st: BYID.get(id), days: s.size, reg: G.regularInfo(id) })).filter((x) => x.st).sort((a, b) => b.days - a.days).slice(0, 3);
-  return { prefix, visitDays: days.size, visits: vis.length, stores: stores.size, stampsNew, cards, m, pages: pagesOf(m), earned: act + pagesOf(m), top };
+  const reads = (S.trips || []).filter((g) => g.read && g.d.startsWith(prefix));
+  return { prefix, visitDays: days.size, visits: vis.length, stores: stores.size, stampsNew, cards, m, pages: pagesOf(m), earned: act + pagesOf(m), top, readN: reads.length, readMin: reads.reduce((a, g) => a + (g.min || 0), 0) };
 }
 export function monthsBack(n) { const out = []; const d = new Date(); d.setDate(1); for (let i = 0; i < n; i++) { out.unshift(monthKey(d)); d.setMonth(d.getMonth() - 1); } return out; }
 
