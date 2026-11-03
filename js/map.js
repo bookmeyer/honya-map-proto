@@ -139,7 +139,7 @@ function addLayers() {
 function hideBasePoi() { for (const id of ['poi_r1', 'poi_r7', 'poi_r20']) { try { if (M.map.getLayer(id)) M.map.setLayoutProperty(id, 'visibility', 'none'); } catch (e) {} } }
 // 地図の下地を「ポップ」に合わせる（明るいときだけ）：ふつうはクリームの地・白い細い道・檸檬の大通り・空色の水・若草の公園。着せ替え（v0.15.2）で色を選べる（MAP_SKINS）
 let mapSkin = MAP_SKINS.cream;
-export function setMapSkin(name) { mapSkin = MAP_SKINS[name] || MAP_SKINS.cream; if (M.ready) tintBase(); }
+export function setMapSkin(name) { mapSkin = Object.hasOwn(MAP_SKINS, name || '') ? MAP_SKINS[name] : MAP_SKINS.cream; if (M.ready) tintBase(); }
 function tintBase() {
   if (M.theme !== 'light') return; const map = M.map, c = mapSkin; const set = (id, prop, v) => { try { if (map.getLayer(id)) map.setPaintProperty(id, prop, v); } catch (e) {} };
   set('background', 'background-color', c.bg); set('landuse_residential', 'fill-color', c.res); set('building', 'fill-color', c.bld); set('building-3d', 'fill-extrusion-color', c.bld);
@@ -204,5 +204,15 @@ export function flyTo(lon, lat, zoom, opts = {}) { if (!M.map) return; M.map.fly
 export function jumpTo(lon, lat, zoom) { if (M.map) M.map.jumpTo({ center: [lon, lat], zoom }); }
 export function easeTo(lon, lat) { if (M.map) M.map.easeTo({ center: [lon, lat], duration: 600 }); }
 export function center() { return M.map ? M.map.getCenter() : { lat: 35.68, lng: 139.77 }; }
-export function snapshot() { try { return M.ready ? M.map.getCanvas() : null; } catch (e) { return null; } }
+// シェア画像の地図（v0.15.3）：自分の位置・顔写真・読んだ場所を隠し、店のまわりを写してから元に戻す（前は今の画面をそのまま使い、家のまわりや現在地が写ることがあった）
+const PRIVATE_LAYERS = ['me-acc', 'me-range', 'me-dot', 'me-avatar', 'reads', 'reads-line'];
+export async function snapshotAt(lon, lat, zoom = 15) {
+  if (!M.ready) return null; const map = M.map; const cam = { center: map.getCenter(), zoom: map.getZoom(), bearing: map.getBearing(), pitch: map.getPitch() };
+  const vis = PRIVATE_LAYERS.filter((id) => map.getLayer(id)).map((id) => [id, map.getLayoutProperty(id, 'visibility') || 'visible']);
+  try {
+    vis.forEach(([id]) => map.setLayoutProperty(id, 'visibility', 'none')); map.jumpTo({ center: [lon, lat], zoom, bearing: 0, pitch: 0 });
+    await new Promise((res) => { let done = false; const fin = () => { if (!done) { done = true; res(); } }; map.once('idle', fin); setTimeout(fin, 2500); });
+    const src = map.getCanvas(); const c = document.createElement('canvas'); c.width = src.width; c.height = src.height; c.getContext('2d').drawImage(src, 0, 0); return c;
+  } catch (e) { return null; } finally { vis.forEach(([id, v]) => { try { map.setLayoutProperty(id, 'visibility', v); } catch (e) {} }); map.jumpTo(cam); }
+}
 export function resize() { if (!M.map) return; const r = () => { try { M.map.resize(); } catch (e) {} }; r(); setTimeout(r, 60); setTimeout(r, 400); }

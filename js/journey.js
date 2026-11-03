@@ -127,7 +127,7 @@ export const tripMin = (tr = S.trip) => (tr ? Math.floor((Date.now() - tr.t) / 6
 // 本屋・図書館のそば（100m）＝「○○のそばで」／はじめとおわりが1km以上＝「移動しながら」／ほか＝「その場で」。場所は端末の中だけ。設定で止められる（S.settings.readPlace）
 const PLACE = { nearM: 100, moveM: 1000 };
 const placeOn = () => S.settings.readPlace !== false;
-function herePos(maxAge = 120000) { return placeOn() && !POS.fake && POS.lat != null && Date.now() - POS.at < maxAge ? [+POS.lat.toFixed(5), +POS.lon.toFixed(5)] : null; }
+function herePos(maxAge = 120000) { return placeOn() && !POS.fake && POS.lat != null && Date.now() - POS.at < maxAge ? [+POS.lat.toFixed(4), +POS.lon.toFixed(4)] : null; }
 function nearStore(p) { if (!p) return null; let best = null, bd = PLACE.nearM; for (const s of STORES) { if (s.demo) continue; const d = dist(p[0], p[1], s.la, s.lo); if (d <= bd) { bd = d; best = s; } } return best; }
 export function placeOf(p0, p1) {
   if (!p0 && !p1) return null;

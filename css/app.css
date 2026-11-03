@@ -436,9 +436,12 @@ ul.plain,ol.plain{padding-left:1.2em;margin:8px 0;line-height:1.7;font-size:14px
 .read-btn .rb-b.pick{text-decoration:underline;text-underline-offset:3px}
 .read-btn .rb-main .rb-s{flex:none;font-size:13px}
 
-/* 着せ替え（ためし・v0.15.2） */
+/* 着せ替え（v0.15.2） */
 .skins{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 .skins .sk-h{width:100%;font-size:13px;font-weight:700;color:var(--ink-2);margin-top:6px}
 .skin{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:5px 12px 5px 6px;border:2px solid var(--line-2);border-radius:999px;background:var(--card);color:var(--ink);font-size:14px;font-weight:700}
 .skin i{width:24px;height:24px;border-radius:50%;border:2px solid var(--edge);display:inline-block;flex:none}
 .skin.on{border-color:var(--edge);background:var(--gold-soft);box-shadow:var(--hard-s)}
+/* 最初の案内の1枚目：名前とひとこと（v0.15.3） */
+.ob-catch{text-align:center;margin:0 0 10px;color:var(--ink-2);font-weight:700;font-size:14px}
+.ob-catch b{display:block;font-family:var(--display);font-weight:400;font-size:26px;color:var(--ink);line-height:1.3}

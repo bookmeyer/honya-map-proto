@@ -4,19 +4,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <title>本めぐり</title>
-<meta name="description" content="本屋と図書館をめぐる位置ゲーム。近づくとピンが光り、その場所だけのスタンプが押せる。歩いた道のりと本との出会いが、物語のページになる。">
+<meta name="description" content="本屋をめぐって、本とめぐりあう。本屋と図書館の位置ゲーム。その場所だけのスタンプを押し、歩いた道のりと本との出会い、読んだ時間が物語のページになる。">
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#FFF8EA">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1B1A1F">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="本めぐり">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://tiles.openfreemap.org https://api.openbd.jp https://tsunagubooks.com http://localhost:* http://127.0.0.1:*; worker-src 'self' blob:; child-src blob:; media-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <link rel="icon" href="icon-192.png?v=3">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+P+One&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" integrity="sha384-MinO0mNliZ3vwppuPOUnGa+iq619pfMhLVUXfC4LHwSCvF9H+6P/KO4Q7qBOYV5V" crossorigin="anonymous">
 <link rel="stylesheet" href="css/app.css?v=0.15.2">
 </head>
 <body>
@@ -140,7 +141,7 @@
 <div id="banners"><div id="offline" class="banner" hidden><svg class="ic"><use href="#i-alert"></use></svg>ネットにつながっていません。地図と本の情報は後で読み込みます</div><div id="update" class="banner action" hidden><svg class="ic"><use href="#i-refresh"></use></svg>新しい版があります<button id="btn-update">更新</button></div></div>
 <div id="toasts" aria-live="polite"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js" integrity="sha384-SYKAG6cglRMN0RVvhNeBY0r3FYKNOJtznwA0v7B5Vp9tr31xAHsZC0DqkQ/pZDmj" crossorigin="anonymous"></script>
 <script type="module" src="js/main.js?v=0.15.2"></script>
 </body>
 </html>

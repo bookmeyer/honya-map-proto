@@ -1,7 +1,7 @@
 // 設定値（数字はここだけで変える）
 export const APP_VER = '0.15.2';
 export const STORAGE_KEY = 'honya_map_v3';
-// イベントの設定を読み、参加の記録（店番号・日時・射程内か・お試しか・イベント＋名前のないランダムな端末の番号）を送る先。管理画面は同じ場所の /meguri/admin/
+// イベントの設定を読み、参加の記録（店番号・日時・射程内か・お試しか・イベント＋名前のないランダムな端末の番号）を送る先
 export const EVENTS_API = 'https://tsunagubooks.com/meguri/api/';
 export const LEGACY_KEYS = ['honya_map_v2'];
 
@@ -80,7 +80,7 @@ export const ACHIEVEMENTS = [
   { id: 'a_share', name: '見せびらかし', desc: 'スタンプをシェアする', kind: 'share', n: 1 },
 ];
 
-// 着せ替え（ためし・v0.15.2 ぶっくまさん「テスト的に着せ替えできるようにできる？ 地図の色もいろいろ変えたい」）
+// 着せ替え（v0.15.2 ぶっくまさん「テスト的に着せ替えできるようにできる？ 地図の色もいろいろ変えたい」→ v0.15.3「お試しじゃなくて正式な機能でよい」）
 // 画面の色＝色の変数を上書き（明るい見た目のときだけ）。sw は選ぶ丸の2色。ピン・スタンプの色は変えない（種類の見分けのため）
 export const SKINS = {
   remon: { name: '檸檬（いま）', sw: ['#FFD447', '#FF6A48'], v: {} },

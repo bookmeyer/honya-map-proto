@@ -8,7 +8,7 @@ const MODS = ['main', 'config', 'util', 'state', 'audio', 'position', 'data', 'm
 const SHELL = ['./', './index.html', `./css/app.css?v=${V}`, ...MODS.map((m) => `./js/${m}.js?v=${V}`), './manifest.webmanifest', './icon-192.png?v=3', './icon-512.png?v=3', './icon-maskable-512.png?v=3', './apple-touch-icon.png?v=3']; // アイコンは v0.14.8 で「本の中の地図」に。v0.14.9 で Android 用の絵を小さく（?v=3）
 
 self.addEventListener('install', (e) => { e.waitUntil(caches.open(VER).then((c) => c.addAll(SHELL).catch(() => {}))); });
-self.addEventListener('activate', (e) => { e.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((k) => k !== VER).map((k) => caches.delete(k)))).then(() => self.clients.claim())); });
+self.addEventListener('activate', (e) => { e.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((k) => k.startsWith('honya-map-') && k !== VER).map((k) => caches.delete(k)))).then(() => self.clients.claim())); });
 self.addEventListener('message', (e) => { if (e.data === 'skip') self.skipWaiting(); });
 
 const remember = (req, r) => { if (r && r.ok) { const copy = r.clone(); caches.open(VER).then((c) => c.put(req, copy)); } return r; };

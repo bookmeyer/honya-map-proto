@@ -11,10 +11,11 @@ const CACHE_KEY = 'meguri_events_v1';
 const OUTBOX_MAX = 300;
 
 // 試すときだけ、別のサーバーを指せる（localStorage の meguri_api）
-export function apiBase() { try { const o = localStorage.getItem('meguri_api'); if (o && /^https?:\/\//.test(o)) return o; } catch (e) {} return EVENTS_API; }
+export function apiBase() { try { const o = localStorage.getItem('meguri_api'); if (o && /^https?:\/\//.test(o) && /^(localhost|127\.0\.0\.1)$/.test(location.hostname)) return o; } catch (e) {} return EVENTS_API; } // 手元（localhost）だけ（v0.15.3）
 const tms = (s) => { const x = Date.parse(s); return Number.isNaN(x) ? 0 : x; };
 
-function valid(e) { return e && Number.isInteger(e.id) && typeof e.name === 'string' && tms(e.starts) && tms(e.ends) && e.frame && typeof e.frame.color === 'string'; }
+const HEX = /^#[0-9A-Fa-f]{6}$/; // 色は #000000 の形だけ（style に入るため。v0.15.3）
+function valid(e) { return e && Number.isInteger(e.id) && typeof e.name === 'string' && tms(e.starts) && tms(e.ends) && e.frame && HEX.test(e.frame.color) && (!e.special || HEX.test(e.special.color)) && (!e.goal || (Number.isInteger(e.goal.count) && e.goal.count > 0 && typeof e.goal.title === 'string')); }
 function apply(j) {
   if (!j || !Array.isArray(j.events)) return;
   EV.list = j.events.filter(valid).map((e) => Object.assign({}, e, { _stores: new Set(e.stores || []), _prefs: new Set(e.prefs || []) }));

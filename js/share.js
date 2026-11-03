@@ -1,7 +1,7 @@
 // シェア用の画像（スタンプ・常連度・カード・プレイヤーカード）
 import { S } from './state.js?v=0.15.2';
 import { stampSVG, stampInk, rarityOf, rarityText } from './data.js?v=0.15.2';
-import { snapshot } from './map.js?v=0.15.2';
+import { snapshotAt } from './map.js?v=0.15.2';
 import { regularInfo } from './game.js?v=0.15.2';
 import { stars, prefOf, fmtDate, todayISO } from './util.js?v=0.15.2';
 
@@ -17,7 +17,7 @@ export async function stampImage(st, opts = {}) {
   const W = 1080, H = 1350, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
   const reg = regularInfo(st.i); const ink = stampInk(st);
   g.fillStyle = PAPER; g.fillRect(0, 0, W, H);
-  let mapDrawn = false; const mc = snapshot();
+  let mapDrawn = false; const mc = await snapshotAt(st.lo, st.la);
   if (mc) { try { const side = Math.min(mc.width, mc.height); g.save(); rrect(g, 60, 60, W - 120, W - 120, 36); g.clip(); g.drawImage(mc, (mc.width - side) / 2, (mc.height - side) / 2, side, side, 60, 60, W - 120, W - 120); g.restore(); mapDrawn = true; } catch (e) { mapDrawn = false; } }
   if (!mapDrawn) { g.fillStyle = '#FBEFD6'; rrect(g, 60, 60, W - 120, W - 120, 36); g.fill(); }
   g.strokeStyle = LINE; g.lineWidth = 4; rrect(g, 60, 60, W - 120, W - 120, 36); g.stroke();

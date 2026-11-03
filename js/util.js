@@ -6,7 +6,7 @@ export const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
 export const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 export const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 export const todayISO = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-export const fmtDate = (iso) => { const [y, m, d] = String(iso).split('-'); return `${y}年${+m}月${+d}日`; };
+export const fmtDate = (iso) => { const [y, m, d] = String(iso).split('-').map((x) => parseInt(x, 10)); return Number.isFinite(y) && Number.isFinite(m) && Number.isFinite(d) ? `${y}年${m}月${d}日` : ''; }; // 数だけを出す（v0.15.3：読み込んだ記録の日付に文字が入っていても画面に出さない）
 export const fmtDist = (m) => (m < 1000 ? `${Math.round(m)}m` : `${(m / 1000).toFixed(m < 10000 ? 1 : 0)}km`);
 export function dist(lat1, lon1, lat2, lon2) { const R = 6371000, t = Math.PI / 180; const dLat = (lat2 - lat1) * t, dLon = (lon2 - lon1) * t; const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * t) * Math.cos(lat2 * t) * Math.sin(dLon / 2) ** 2; return 2 * R * Math.asin(Math.sqrt(a)); }
 export function bearing(lat1, lon1, lat2, lon2) { const t = Math.PI / 180; const y = Math.sin((lon2 - lon1) * t) * Math.cos(lat2 * t); const x = Math.cos(lat1 * t) * Math.sin(lat2 * t) - Math.sin(lat1 * t) * Math.cos(lat2 * t) * Math.cos((lon2 - lon1) * t); return ((Math.atan2(y, x) / t) + 360) % 360; }
@@ -20,7 +20,7 @@ export function circlePoly(lon, lat, m, n = 28) { const pts = []; const dLat = m
 export function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
 export function cleanAuthor(a) { return String(a).split(/\s+/).map((t) => t.replace(/,?\s*\d{4}-?(\d{4})?/g, '').replace(/,/g, '').trim()).filter(Boolean).join('、'); }
 export const icon = (name, cls = '') => `<svg class="ic ${cls}" aria-hidden="true"><use href="#i-${name}"></use></svg>`;
-export const gmapDir = (st) => `https://www.google.com/maps/dir/?api=1&destination=${st.la},${st.lo}&travelmode=walking`;
+export const gmapDir = (st) => `https://www.google.com/maps/dir/?api=1&destination=${(+st.la).toFixed(6)},${(+st.lo).toFixed(6)}&travelmode=walking`;
 // Googleマップでお店そのものを開く（営業時間・定休日を見るため。店名＋住所か県で探す。Google の情報を取り込むのではなく開くだけ）
 export const gmapPlace = (st) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([st.n, st.a || prefOf(st)].filter(Boolean).join(' '))}`;
 export const stars = (r) => '★'.repeat(r) + '☆'.repeat(3 - r);

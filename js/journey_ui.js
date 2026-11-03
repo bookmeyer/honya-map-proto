@@ -53,7 +53,7 @@ export function renderRadarWants() {
 
 // ---------- 今日の物語 ----------
 function chapterHTML(ch) {
-  const body = ch.empty ? `<p class="muted">${esc(ch.blank)}</p>` : ch.lines.map((l) => `<p>${esc(l.s)}${l.url ? ` <a href="${esc(l.url)}" target="_blank" rel="noopener">投稿を見る</a>` : ''}</p>`).join('');
+  const body = ch.empty ? `<p class="muted">${esc(ch.blank)}</p>` : ch.lines.map((l) => `<p>${esc(l.s)}${l.url && /^https?:\/\/(www\.|mobile\.)?(x|twitter)\.com\//i.test(l.url) ? ` <a href="${esc(l.url)}" target="_blank" rel="noopener">投稿を見る</a>` : ''}</p>`).join('');
   const walked = ch.m >= 100;
   const stats = [`${icon('book')}この日 +${ch.earned}ページ`, walked ? `歩いて${ch.pages}ページ・${ch.km}km` : '', walked ? `歩数の目安 ${J.stepsOf(ch.m).toLocaleString()}歩` : '', ch.nStores ? `訪ねた場所 ${ch.nStores}か所` : '', ch.nCards ? `出会った本 ${ch.nCards}冊` : '', ch.nRead ? `読書 ${ch.nRead}回${ch.readMin ? `・${J.fmtMin(ch.readMin)}` : ''}` : '', ch.v >= 1000 ? `乗り物 ${J.kmOf(ch.v)}km` : ''].filter(Boolean);
   return `<div class="story"><div class="ch-sub">本めぐり　${S.settings.handle ? esc(S.settings.handle) + 'の物語' : 'その日の物語'}</div><div class="ch-title">${esc(ch.title)}</div><div class="story-body">${body}</div><div class="story-stats">${stats.map((s) => `<span>${s}</span>`).join('')}</div></div>`;
@@ -65,7 +65,7 @@ export function renderStory() {
   box.innerHTML = chapterHTML(ch) + `<div class="actions"><button class="btn primary" id="sy-share">${icon('share')}今日の物語をシェア</button><button class="btn" id="sy-post">${icon('pen')}Xの投稿を記録</button></div><div class="note">歩いた距離は、現在地を追っているあいだと、店と店のあいだを数えます（100mで1ページ）。閉じて歩いた分は、次の店でスタンプを押したときに、前の店からのまっすぐの距離で足します。歩数は距離からの目安です。</div>`;
   $('#sy-share').onclick = () => shareChapter(todayISO()); $('#sy-post').onclick = postModal;
   const past = J.chapters(40).filter((c) => c.date !== todayISO());
-  list.innerHTML = past.length ? past.map((c) => `<details class="chap"><summary><b>${esc(c.title)}</b><span class="muted small">${c.pages}ページ${c.nStores ? `・${c.nStores}か所` : ''}${c.nCards ? `・本${c.nCards}冊` : ''}</span></summary>${chapterHTML(c)}<div class="actions"><button class="btn" data-share="${c.date}">${icon('share')}この日の物語をシェア</button></div></details>`).join('') : '<div class="muted small">まだ前の章はありません。歩いた日・本屋に行った日ごとに、1章ずつ増えていきます。</div>';
+  list.innerHTML = past.length ? past.map((c) => `<details class="chap"><summary><b>${esc(c.title)}</b><span class="muted small">${c.pages}ページ${c.nStores ? `・${c.nStores}か所` : ''}${c.nCards ? `・本${c.nCards}冊` : ''}</span></summary>${chapterHTML(c)}<div class="actions"><button class="btn" data-share="${esc(c.date)}">${icon('share')}この日の物語をシェア</button></div></details>`).join('') : '<div class="muted small">まだ前の章はありません。歩いた日・本屋に行った日ごとに、1章ずつ増えていきます。</div>';
   $$('#chapters [data-share]').forEach((b) => b.addEventListener('click', () => shareChapter(b.dataset.share)));
 }
 function postModal() {
