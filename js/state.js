@@ -1,11 +1,11 @@
 // 記録（この端末の中だけ）。版の違いを吸収して読み込み、まとめて書き込む
-import { SKINS, MAP_SKINS, STORAGE_KEY, LEGACY_KEYS, APP_VER } from './config.js?v=0.16.2';
-import { $, emit, debounce } from './util.js?v=0.16.2';
+import { SKINS, MAP_SKINS, STORAGE_KEY, LEGACY_KEYS, APP_VER } from './config.js?v=0.17.0';
+import { $, emit, debounce } from './util.js?v=0.17.0';
 
 export const empty = () => ({
   v: 4, visits: [], cards: [], wants: [], custom: [], stamps: {}, pg: 0, pgDay: {},
   claimedW: {}, claimedD: {}, rallyDone: {}, featDone: {}, looks: {},
-  hidden: {}, renames: {}, days: {}, posts: [], shares: [], reading: [], trips: [], trip: null, seen: 0, lastPos: null, shareCount: 0, evLog: {}, evTitles: [], outbox: [],
+  hidden: {}, renames: {}, days: {}, posts: [], shares: [], reading: [], trips: [], trip: null, seen: 0, lastPos: null, shareCount: 0, evLog: {}, evTitles: [], outbox: [], repOut: [],
   settings: { theme: 'light', sound: true, avatar: '', handle: '', wantAlert: true, wantAlertM: 2000, dev: '', joinCode: '', sendLog: true, privacyV10: 0 }, createdAt: Date.now(),
 });
 export let S = empty();
@@ -19,7 +19,7 @@ const HEX = /^#[0-9A-Fa-f]{6}$/;
 const POST_RE = /^https?:\/\/(www\.|mobile\.)?(x|twitter)\.com\//i;
 const AVATAR_RE = /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/;
 function sanitize(o) {
-  for (const k of ['visits', 'cards', 'wants', 'custom', 'posts', 'shares', 'reading', 'trips', 'reads', 'evTitles', 'outbox']) if (!Array.isArray(o[k])) o[k] = [];
+  for (const k of ['visits', 'cards', 'wants', 'custom', 'posts', 'shares', 'reading', 'trips', 'reads', 'evTitles', 'outbox', 'repOut']) if (!Array.isArray(o[k])) o[k] = [];
   for (const k of ['stamps', 'pgDay', 'claimedW', 'claimedD', 'rallyDone', 'featDone', 'looks', 'hidden', 'renames', 'days', 'evLog']) o[k] = plain(o[k]);
   for (const k of ['pg', 'seen', 'shareCount']) o[k] = num(o[k]);
   const ok = (x) => x && typeof x === 'object';
@@ -31,6 +31,8 @@ function sanitize(o) {
   o.reads = o.reads.filter((r) => ok(r) && isDay(r.d)).map((r) => Object.assign(r, { min: num(r.min), pg: num(r.pg), t0: num(r.t0), t1: num(r.t1), p0: isPt(r.p0) ? r.p0 : null, p1: isPt(r.p1) ? r.p1 : null, pl: ok(r.pl) && ['store', 'move', 'stay'].includes(r.pl.k) ? { k: r.pl.k, s: String(r.pl.s || ''), n: String(r.pl.n || ''), m: num(r.pl.m) } : null }));
   o.trips = o.trips.filter((g) => ok(g) && isDay(g.d)).map((g) => Object.assign(g, { min: num(g.min), m: num(g.m) }));
   o.evTitles = o.evTitles.filter((x) => ok(x) && isDay(x.d));
+  const str = (x, n) => (typeof x === 'string' ? x.slice(0, n) : ''); // まだ送れていない店の報告（v0.17.0）
+  o.repOut = o.repOut.filter((r) => ok(r) && ['closed', 'rename', 'add'].includes(r.kind) && typeof r.store === 'string').slice(-50).map((r) => ({ kind: r.kind, store: str(r.store, 40), orig: str(r.orig, 80), name: str(r.name, 80), note: str(r.note, 200), lat: num(r.lat, null), lon: num(r.lon, null), place: str(r.place, 8), at: str(r.at, 40) }));
   for (const [k, v] of Object.entries(o.stamps)) if (!ok(v) || !isDay(v.d)) delete o.stamps[k];
   for (const [k, v] of Object.entries(o.days)) if (!isDay(k) || !ok(v)) delete o.days[k]; else { v.m = num(v.m); v.v = num(v.v); }
   for (const [k, v] of Object.entries(o.pgDay)) if (!isDay(k)) delete o.pgDay[k]; else o.pgDay[k] = num(v);

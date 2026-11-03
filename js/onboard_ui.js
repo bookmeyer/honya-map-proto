@@ -1,9 +1,9 @@
 // 最初の案内（はじめて開いたとき）
-import { mobileOS, isStandalone, $, esc, icon } from './util.js?v=0.16.2';
-import { S, save } from './state.js?v=0.16.2';
-import { stampSVG, STORES } from './data.js?v=0.16.2';
-import * as MAP from './map.js?v=0.16.2';
-import { cleanHandle } from './settings_ui.js?v=0.16.2';
+import { mobileOS, isStandalone, $, esc, icon } from './util.js?v=0.17.0';
+import { S, save } from './state.js?v=0.17.0';
+import { stampSVG, STORES } from './data.js?v=0.17.0';
+import * as MAP from './map.js?v=0.17.0';
+import { cleanHandle } from './settings_ui.js?v=0.17.0';
 
 // ---------- 最初の案内 ----------
 export function showOnboarding(onDone) {

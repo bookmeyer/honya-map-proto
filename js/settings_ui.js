@@ -1,15 +1,15 @@
 // 設定の画面と、そこから開くもの：見た目・着せ替え・アイコン・ハンドルネーム・参加コード・送るもののお知らせ・記録を守る・Googleマップの★
-import { SKINS, MAP_SKINS, APP_VER } from './config.js?v=0.16.2';
-import { $, esc, fmtDist, icon, $$, mobileOS, isStandalone, emit, todayISO } from './util.js?v=0.16.2';
-import { S, save, parseImport, replace, reset, exportJSON } from './state.js?v=0.16.2';
-import { sfx } from './audio.js?v=0.16.2';
-import { POS } from './position.js?v=0.16.2';
-import { addCustom, STORES, DATA_DATE, rebuild, unhideAll } from './data.js?v=0.16.2';
-import * as MAP from './map.js?v=0.16.2';
-import * as E from './events.js?v=0.16.2';
-import * as GI from './gimport.js?v=0.16.2';
-import { openModal, closeModal, toast, refreshHud, switchView, confirmBox } from './ui.js?v=0.16.2';
-import { applyMapStates, updateNear, updateAreaChip, setTrialUI } from './map_ui.js?v=0.16.2';
+import { SKINS, MAP_SKINS, APP_VER } from './config.js?v=0.17.0';
+import { $, esc, fmtDist, icon, $$, mobileOS, isStandalone, emit, todayISO } from './util.js?v=0.17.0';
+import { S, save, parseImport, replace, reset, exportJSON } from './state.js?v=0.17.0';
+import { sfx } from './audio.js?v=0.17.0';
+import { POS } from './position.js?v=0.17.0';
+import { addCustom, STORES, DATA_DATE, rebuild, unhideAll } from './data.js?v=0.17.0';
+import * as MAP from './map.js?v=0.17.0';
+import * as E from './events.js?v=0.17.0';
+import * as GI from './gimport.js?v=0.17.0';
+import { openModal, closeModal, toast, refreshHud, switchView, confirmBox } from './ui.js?v=0.17.0';
+import { applyMapStates, updateNear, updateAreaChip, setTrialUI } from './map_ui.js?v=0.17.0';
 
 // ---------- Googleマップの★を読み込む ----------
 export function googleHelp() {
@@ -63,7 +63,7 @@ export function renderSettings() {
     ${mobileOS() ? `<div class="setting"><div><div class="l">記録を守る</div><div class="s">${isStandalone() ? 'ホーム画面のアイコンから開いています。記録が消えにくい開き方です' : 'ホーム画面に追加して、アイコンから開くと、記録が消えにくくなります'}</div></div>${isStandalone() ? '' : '<button class="btn" id="st-home">やり方</button>'}</div>` : ''}
     <div class="setting"><div><div class="l">書き出す</div><div class="s">（読んだ場所・最後にいた場所も入ります。人に渡さないでください）スタンプ・カード・ページをファイルに</div></div><button class="btn" id="st-export">書き出す</button></div>
     <div class="setting"><div><div class="l">読み込む</div><div class="s">書き出したファイルから置き換え</div></div><label class="btn">読み込む<input type="file" id="st-import" accept="application/json" hidden></label></div>
-    <div class="setting"><div><div class="l">店の情報の報告</div><div class="s">${hid.length || Object.keys(S.renames || {}).length ? `閉店 ${hid.length}件・名前の直し ${Object.keys(S.renames || {}).length}件（書き出しに含まれます）` : 'まだありません（店のページの「閉店している」「名前が違う」から）'}</div></div><button class="btn" id="st-unhide" ${hid.length || Object.keys(S.renames || {}).length ? '' : 'disabled'}>戻す</button></div>
+    <div class="setting"><div><div class="l">店の情報の直し</div><div class="s">${hid.length || Object.keys(S.renames || {}).length ? `閉店 ${hid.length}件・名前の直し ${Object.keys(S.renames || {}).length}件（この端末の地図。書き出しに含まれます）` : 'まだありません（店のページの「閉店している」「名前が違う」から）'}。「運営にも知らせる」を選ぶと、確かめてから、みんなの地図も直します${(S.repOut || []).length ? `（まだ送れていない報告 ${S.repOut.length}件）` : ''}</div></div><button class="btn" id="st-unhide" ${hid.length || Object.keys(S.renames || {}).length ? '' : 'disabled'}>戻す</button></div>
     <div class="setting"><div><div class="l">すべて消す</div><div class="s">この端末の記録を消します。戻せません</div></div><button class="btn danger" id="st-clear">消す</button></div>
     <div id="st-area"></div>
     <h3>試作のための道具</h3>
@@ -136,7 +136,7 @@ export function nameModal(after) {
   if ($('#nm-cancel')) $('#nm-cancel').onclick = closeModal;
 }
 // ---------- 参加コード・送るもののお知らせ（v0.10） ----------
-const SEND_TEXT = '<ul class="plain"><li><b>送るもの</b>：スタンプを押した店の番号と日時、店の近くで押したか・お試し歩きか・どのイベントか（参加の人数を数えるため。名前のない、ランダムな番号といっしょに）</li><li><b>手書きのカードを開くとき</b>：店の番号と、ランダムな番号（その店で押した記録と照らし合わせるため）</li><li><b>送らないもの</b>：位置の座標・移動の記録・読んだ場所・名前・メモ・本のカード</li><li>設定の「参加の記録を送る」で、いつでも止められます</li></ul>';
+const SEND_TEXT = '<ul class="plain"><li><b>送るもの</b>：スタンプを押した店の番号と日時、店の近くで押したか・お試し歩きか・どのイベントか（参加の人数を数えるため。名前のない、ランダムな番号といっしょに）</li><li><b>手書きのカードを開くとき</b>：店の番号と、ランダムな番号（その店で押した記録と照らし合わせるため）</li><li><b>店の情報を知らせるとき</b>（「運営にも知らせる」を選んだときだけ）：店の番号・名前・ひとこと（地図にない店は、その店の場所）と、ランダムな番号</li><li><b>送らないもの</b>：位置の座標・移動の記録・読んだ場所・名前・メモ・本のカード</li><li>設定の「参加の記録を送る」で、いつでも止められます</li></ul>';
 export function joinNotice(code) {
   S.settings.privacyV10 = 1; save();
   openModal(`<h2>お試しに参加しました</h2><p>参加コード「${esc(code)}」が入りました。お試しの人だけのイベントが、ラリーの画面と地図に出ます。</p>${SEND_TEXT}<div class="actions"><button class="btn primary wide" id="jn-ok">はじめる</button></div>`);

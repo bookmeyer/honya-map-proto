@@ -1,12 +1,12 @@
 // 旅の記録：歩いた距離（ページ）・その日の物語・月のふり返り・行きたい店のお知らせ・投稿の記録・Googleマップの★の読み込み・店と店のあいだ・読書・いま読んでいる本
 // 位置は、アプリを開いて現在地を追っているあいだだけ使う（ブラウザの決まりで、閉じているあいだは測れない）。閉じていたあいだの道のりは、次の店でスタンプを押したときに、前の店からのまっすぐの距離で足す（v0.14）
-import { WALK, RANGE_M, SEG } from './config.js?v=0.16.2';
-import { todayISO, dist, emit, hash32, prefOf, fmtDist, monthKey, fmtMin } from './util.js?v=0.16.2';
-import { S, save } from './state.js?v=0.16.2';
-import { POS } from './position.js?v=0.16.2';
-import { BYID, STORES, rarityOf } from './data.js?v=0.16.2';
-import * as G from './game.js?v=0.16.2';
-import { activeTrip, endTrip, readTimes, readMinOf, allReads } from './reading.js?v=0.16.2';
+import { WALK, RANGE_M, SEG } from './config.js?v=0.17.0';
+import { todayISO, dist, emit, hash32, prefOf, fmtDist, monthKey, fmtMin } from './util.js?v=0.17.0';
+import { S, save } from './state.js?v=0.17.0';
+import { POS } from './position.js?v=0.17.0';
+import { BYID, STORES, rarityOf } from './data.js?v=0.17.0';
+import * as G from './game.js?v=0.17.0';
+import { activeTrip, endTrip, readTimes, readMinOf, allReads } from './reading.js?v=0.17.0';
 
 function dayRec(d = todayISO()) { S.days = S.days || {}; const r = (S.days[d] = S.days[d] || { m: 0, v: 0 }); r.pass = r.pass || {}; r.alert = r.alert || {}; return r; }
 export const pagesOf = (m) => Math.floor((m || 0) / WALK.pageM);
@@ -49,8 +49,8 @@ export function checkWanted(POS) {
   if (changed) save();
   return out.sort((a, b) => a.d - b.d);
 }
-export const wantsInBounds = (b) => S.wants.map((id) => BYID.get(id)).filter((st) => st && st.la >= b.s && st.la <= b.n && st.lo >= b.w && st.lo <= b.e);
-export const wantsSorted = (lat, lon) => S.wants.map((id) => BYID.get(id)).filter(Boolean).map((st) => ({ st, d: dist(lat, lon, st.la, st.lo) })).sort((a, b) => a.d - b.d);
+export const wantsInBounds = (b) => S.wants.map((id) => BYID.get(id)).filter((st) => st && !st.closed && st.la >= b.s && st.la <= b.n && st.lo >= b.w && st.lo <= b.e);
+export const wantsSorted = (lat, lon) => S.wants.map((id) => BYID.get(id)).filter((st) => st && !st.closed).map((st) => ({ st, d: dist(lat, lon, st.la, st.lo) })).sort((a, b) => a.d - b.d);
 // ---- 投稿・シェアの記録 ----
 export function addPost({ url, text, sid }) { S.posts = S.posts || []; const t = Date.now(); S.posts.push({ id: 'p' + t, t, d: todayISO(), url: url || '', text: text || '', s: sid || '' }); save(); }
 export function deletePost(id) { S.posts = (S.posts || []).filter((p) => p.id !== id); save(); }

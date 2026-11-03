@@ -1,7 +1,7 @@
 // 本屋・図書館・ラリーのデータ。スタンプ（その店だけの絵柄）の見た目もここ
-import { DEMO_STORE } from './config.js?v=0.16.2';
-import { sleep, $, weekKey, prefOf, hash32, esc, todayISO } from './util.js?v=0.16.2';
-import { S } from './state.js?v=0.16.2';
+import { DEMO_STORE } from './config.js?v=0.17.0';
+import { sleep, $, weekKey, prefOf, hash32, esc, todayISO } from './util.js?v=0.17.0';
+import { S } from './state.js?v=0.17.0';
 
 export let STORES = [];
 export let RALLIES = [];
@@ -24,6 +24,13 @@ export async function loadAll() {
   return { ok: baseLoaded, count: STORES.length };
 }
 let BASE = [], LIBS = [];
+// ---- みんなの地図への直し（v0.17.0）：運営が報告を確かめて直した閉店・名前（サーバーの events.php の fixes。events.js が渡す）----
+// 閉店した店は地図・さがす・近くから外す。ただしスタンプや来た記録の表示のために BYID には残す（closed: 1）
+let FIX = { closed: new Set(), rename: new Map(), key: '' };
+export function setFixes(closed, rename) {
+  const key = JSON.stringify([closed, [...rename]]); if (key === FIX.key) return false;
+  FIX = { closed: new Set(closed), rename, key }; rebuild(); return true;
+}
 // ---- 書店員さんの1冊（v0.11）。お店に確かめて、許可をいただいた店だけ data/picks.json に書く ----
 // 書名・著者・ひとことは誰でも見られる。スタンプの本の印は、その店の射程内で押した人だけ（お試し歩きは入らない。見本の店は入る）
 // 手書きのカード（写真）は picks.json にも GitHub にも置かない。サーバーの管理画面から入れ、押した記録がある端末にだけ渡す（v0.16.1。events.js loadCard）
@@ -38,8 +45,12 @@ export const placeWord = (st) => (isLib(st) ? '図書館' : '店');
 export function rebuild(base) {
   if (base) BASE = base;
   const libs = S.settings.showLib === false ? [] : LIBS;
-  STORES = [DEMO_STORE, ...BASE, ...libs, ...S.custom.map((c) => Object.assign({}, c, { custom: 1 }))].filter((s) => !S.hidden[s.i]).map((s) => (S.renames && S.renames[s.i] ? Object.assign({}, s, { n: S.renames[s.i].n, fix: 1 }) : s));
+  const all = [DEMO_STORE, ...BASE, ...libs, ...S.custom.map((c) => Object.assign({}, c, { custom: 1 }))].filter((s) => !S.hidden[s.i]);
+  // 名前：この端末で直した名前 → 運営が直した名前（「名前を確認ずみ」）→ 地図データの名前
+  const named = (s) => { const own = S.renames && S.renames[s.i]; const fx = FIX.rename.get(s.i); return own ? Object.assign({}, s, { n: own.n, fix: 1 }) : fx ? Object.assign({}, s, { n: fx, ov: 1 }) : s; };
+  STORES = all.filter((s) => !FIX.closed.has(s.i)).map(named);
   BYID.clear(); STORES.forEach((s) => BYID.set(s.i, s));
+  for (const s of all) if (FIX.closed.has(s.i)) BYID.set(s.i, Object.assign(named(s), { closed: 1 })); // 閉店：記録の表示のためだけに残す
   computeFeatured();
 }
 // 支店名のない店（「TSUTAYA」「未来屋書店」だけの名前）は、今週の推し店に選ばない（どの店か分からないため。v0.13）

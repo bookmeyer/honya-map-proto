@@ -1,11 +1,11 @@
 // 読書：いま読んでいる本・読書の時間（はじめる〜おわる）・どこで読んだか・前回の本。画面は reading_ui.js
 // 中の名前は v0.14 の「移動読書」のなごり：S.trip＝いま計っている読書／S.reads＝おわった読書／S.trips の read=1＝v0.14.0〜0.14.3 の読書の記録（allReads でいっしょに数える）
-import { READ } from './config.js?v=0.16.2';
-import { emit, todayISO, dist, fmtDist, on, fmtDate, fmtMin } from './util.js?v=0.16.2';
-import { S, save } from './state.js?v=0.16.2';
-import { POS } from './position.js?v=0.16.2';
-import { STORES, BYID } from './data.js?v=0.16.2';
-import * as G from './game.js?v=0.16.2';
+import { READ } from './config.js?v=0.17.0';
+import { emit, todayISO, dist, fmtDist, on, fmtDate, fmtMin } from './util.js?v=0.17.0';
+import { S, save } from './state.js?v=0.17.0';
+import { POS } from './position.js?v=0.17.0';
+import { STORES, BYID } from './data.js?v=0.17.0';
+import * as G from './game.js?v=0.17.0';
 
 // 読書を取り消す（「読んでいなかった」）。v0.14.3 までの記録（店と店のあいだに入れていた分）にも使える
 export function undoRead(id) {

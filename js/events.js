@@ -1,11 +1,12 @@
 // イベント（v0.10）：管理画面で作った設定をサーバーから読み、期間・対象の店・限定の枠・お題・称号を決める
 // サーバーに送るのは「匿名の番号・店番号・日時・射程内か・お試し歩きか・イベント」だけ。位置の座標・名前・メモは送らない
 // 書店員さんの手書きのカードも、ここからサーバーに頼む（v0.16.1。その店で押した記録がある端末だけに渡る）
+// 店の情報の報告を送り、運営が直した閉店・名前を受け取る（v0.17.0）
 // サーバーに届かないときは、前回読んだ設定で動く。スタンプはいつでも押せる
-import { EVENTS_API, APP_VER } from './config.js?v=0.16.2';
-import { $, emit, prefOf, todayISO, on } from './util.js?v=0.16.2';
-import { S, save } from './state.js?v=0.16.2';
-import { isLib } from './data.js?v=0.16.2';
+import { EVENTS_API, APP_VER } from './config.js?v=0.17.0';
+import { $, emit, prefOf, todayISO, on } from './util.js?v=0.17.0';
+import { S, save } from './state.js?v=0.17.0';
+import { isLib, setFixes } from './data.js?v=0.17.0';
 
 export const EV = { list: [], permitted: new Set(), cards: new Set(), ok: false, at: 0 };
 const CACHE_KEY = 'meguri_events_v1';
@@ -21,6 +22,15 @@ function apply(j) {
   EV.list = j.events.filter(valid).map((e) => Object.assign({}, e, { _stores: new Set(e.stores || []), _prefs: new Set(e.prefs || []) }));
   EV.permitted = new Set(Array.isArray(j.permitted) ? j.permitted : []);
   EV.cards = new Set(Array.isArray(j.cards) ? j.cards.filter((x) => typeof x === 'string' && STORE_ID.test(x)) : []); // 手書きのカードがある店（v0.16.1）
+  applyFixes(j.fixes);
+}
+// 運営が報告を確かめて直した閉店・名前（v0.17.0）。形を確かめてから data.js に渡し、変わったときだけ地図を描き直す（main.js の 'fixes'）
+function applyFixes(f) {
+  const ok = f && typeof f === 'object';
+  const closed = ok && Array.isArray(f.closed) ? f.closed.filter((x) => typeof x === 'string' && STORE_ID.test(x)).slice(0, 5000) : [];
+  const rename = new Map(); // Map にする（"__proto__" などの名前で、ふつうの入れ物を壊さないように）
+  if (ok && f.rename && typeof f.rename === 'object' && !Array.isArray(f.rename)) for (const [k, v] of Object.entries(f.rename)) if (STORE_ID.test(k) && typeof v === 'string' && v.trim() && rename.size < 5000) rename.set(k, v.trim().slice(0, 80));
+  if (setFixes(closed, rename)) emit('fixes');
 }
 let evSeq = 0; // 読むのが重なったら、いちばん新しい返事だけ使う（v0.16.0：参加コードを変えた直後に、前の返事で上書きされることがあった）
 export async function loadEvents() {
@@ -45,7 +55,7 @@ export const daysLeft = (e) => Math.max(0, Math.ceil((tms(e.ends) - Date.now()) 
 export const daysUntil = (e) => Math.max(0, Math.ceil((tms(e.starts) - Date.now()) / 86400000));
 // この店が、このイベントの対象か
 export function isTarget(e, st) {
-  if (!st || st.demo || st.custom) return false;
+  if (!st || st.demo || st.custom || st.closed) return false; // 閉店した店はイベントの対象にしない（v0.17.0）
   switch (e.target) {
     case 'all': return true;
     case 'books': return !isLib(st);
@@ -123,24 +133,37 @@ function queueCheckin(st, near, trial, ids) {
 }
 let flushP = null, ftimer = null, retryMs = 60000;
 export function flushSoon(ms = 1500) { clearTimeout(ftimer); ftimer = setTimeout(flush, ms); }
-// まとめて送る。つながらなかったときは、1分 → 2分 → … 10分おきに送り直す（アプリを開いているあいだ）。送っている途中に呼ばれたら、その終わりを待つ（v0.16.1）
+// まとめて送る（参加の記録と、店の報告）。つながらなかったときは、1分 → 2分 → … 10分おきに送り直す（アプリを開いているあいだ）。送っている途中に呼ばれたら、その終わりを待つ（v0.16.1）
 export function flush() { if (!flushP) flushP = sendOutbox().finally(() => { flushP = null; }); return flushP; }
 async function sendOutbox() {
-  if (!S.outbox || !S.outbox.length || S.settings.sendLog === false) return;
+  const logs = S.settings.sendLog !== false && (S.outbox || []).length > 0, reps = (S.repOut || []).length > 0; // 報告は、その人が「運営にも知らせる」を選んだものなので、参加の記録を送らない設定でも送る
+  if (!logs && !reps) return;
   if (!navigator.onLine) { flushSoon(retryMs); return; }
   let failed = false;
+  if (logs && !(await sendQueue(S.outbox, 'checkin.php', 50))) failed = true;
+  if (reps && !(await sendQueue(S.repOut, 'report.php', 20))) failed = true;
+  if (failed && ((S.outbox || []).length || (S.repOut || []).length)) { flushSoon(retryMs); retryMs = Math.min(retryMs * 2, 600000); } else retryMs = 60000;
+}
+// 1つの入れ物をまとめて送る。形のまちがい（400）は送り直しても通らないので捨てる。ほかのまちがいは残して、あとで送り直す
+async function sendQueue(q, file, n) {
   try {
-    while (S.outbox.length) {
-      const batch = S.outbox.slice(0, 50);
+    while (q.length) {
+      const batch = q.slice(0, n);
       const ctl = new AbortController(); const tm = setTimeout(() => ctl.abort(), 10000);
-      const r = await fetch(new URL('checkin.php', apiBase()).toString(), { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ device: deviceId(), ver: APP_VER, items: batch }), signal: ctl.signal });
+      const r = await fetch(new URL(file, apiBase()).toString(), { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ device: deviceId(), ver: APP_VER, items: batch }), signal: ctl.signal });
       clearTimeout(tm);
-      if (r.status === 400) { S.outbox.splice(0, batch.length); save(); continue; } // 形のまちがい：送り直しても通らない
-      if (!r.ok) { failed = true; break; }
-      S.outbox.splice(0, batch.length); save();
+      if (r.status !== 400 && !r.ok) return false;
+      q.splice(0, batch.length); save();
     }
-  } catch (e) { failed = true; }
-  if (failed && S.outbox.length) { flushSoon(retryMs); retryMs = Math.min(retryMs * 2, 600000); } else retryMs = 60000;
+    return true;
+  } catch (e) { return false; }
+}
+// ---- 店の情報の報告（v0.17.0）：閉店している・名前が違う・地図にない店を、運営に知らせる ----
+// 送るのは、店の番号・報告の種類・名前・ひとこと・（地図にない店だけ）その店の場所と、ランダムな番号。自分の位置は送らない
+export function queueReport(r) {
+  S.repOut = S.repOut || []; S.repOut.push(Object.assign({ at: new Date().toISOString() }, r));
+  if (S.repOut.length > 50) S.repOut.splice(0, S.repOut.length - 50);
+  save(); flushSoon(500);
 }
 export function setSendLog(on) { S.settings.sendLog = !!on; if (!on) S.outbox = []; CARD_ERR.clear(); save(); if (on) flushSoon(); }
 // ---- 書店員さんの手書きのカード（v0.16.1） ----
