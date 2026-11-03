@@ -409,6 +409,12 @@ ul.plain,ol.plain{padding-left:1.2em;margin:8px 0;line-height:1.7;font-size:14px
 .trip-sum .nw{white-space:nowrap}
 .ts-read .linkish{margin-left:0;font-size:12px}
 .rlist .item.sel{background:var(--gold-soft);border-radius:var(--r-s)}
+#bk-out > .hint{margin-top:14px}
+.bk-list{margin-top:4px}
+.bk-use{display:block;margin:12px 0 6px;font-size:14px;text-align:left;line-height:1.5}
+.bk-src{margin-top:4px}
+.bk-src a{color:inherit}
+.bk-wait{margin-top:8px}
 .rlist .item .name{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .ract{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
 .ract .btn{flex:none;min-height:34px;padding:2px 12px;font-size:13px}

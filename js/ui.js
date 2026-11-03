@@ -1,12 +1,12 @@
-// 画面の共通の部品：トースト・モーダル・確かめの箱・タブの切りかえ・見出し帯・地図の下のチケット・バーコード／ISBNの読み取り・道順のボタン
-import { pagesForVol } from './config.js?v=0.16.1';
-import { gmapDir, $$, icon, $, esc, emit } from './util.js?v=0.16.1';
-import { S } from './state.js?v=0.16.1';
-import { haptic } from './audio.js?v=0.16.1';
-import { lookupIsbn } from './data.js?v=0.16.1';
-import * as MAP from './map.js?v=0.16.1';
-import * as G from './game.js?v=0.16.1';
-import * as E from './events.js?v=0.16.1';
+// 画面の共通の部品：トースト・モーダル・確かめの箱・タブの切りかえ・見出し帯・地図の下のチケット・バーコードの読み取り・書名でさがす・道順のボタン
+import { pagesForVol } from './config.js?v=0.16.2';
+import { gmapDir, $$, icon, $, esc, emit } from './util.js?v=0.16.2';
+import { S } from './state.js?v=0.16.2';
+import { haptic } from './audio.js?v=0.16.2';
+import { lookupIsbn, lookupBook, searchBooks, coversOf } from './data.js?v=0.16.2';
+import * as MAP from './map.js?v=0.16.2';
+import * as G from './game.js?v=0.16.2';
+import * as E from './events.js?v=0.16.2';
 
 export const dirLink = (st, label = '道順') => `<a class="btn" href="${gmapDir(st)}" target="_blank" rel="noopener" data-stop>${label}</a>`;
 export const stopLinks = (root) => $$('[data-stop]', root).forEach((a) => a.addEventListener('click', (e) => e.stopPropagation()));
@@ -52,14 +52,42 @@ export function renderMissionChip() {
   el.onclick = () => switchView('mission');
 }
 export function closeSheet() { const s = $('#sheet'); s.hidden = true; s.dataset.id = ''; }
-// バーコード・ISBNの読み取りは、カードといま読んでいる本の登録で使う（見つかった本を done に渡す。v0.14）
+// バーコードの読み取り・書名でさがすは、カードといま読んでいる本の登録で使う（見つかった本を done に渡す。v0.14）
 export function stopScan() { if (scanStopper) { try { scanStopper(); } catch (e) {} scanStopper = null; } }
-export function manualIsbn(done) {
+// 書名でさがす（v0.16.2。ISBN を打たせない）：書名・著者名で国立国会図書館サーチをさがし、選んだ本を done に渡す。ISBN を入れても引ける。見つからないときは、書いた名前のまま使える
+export function searchBook(done) {
   stopScan(); // カメラで読んでいる途中なら止める（v0.16.0）
-  $('#cd-area').innerHTML = `<div class="field"><label for="cd-isbn">ISBN（978か979で始まる13桁。ハイフンは省いてよい）</label><input type="text" id="cd-isbn" inputmode="numeric" placeholder="9784..."></div><div class="actions"><button class="btn primary wide" id="cd-look">本をさがす</button></div><div id="cd-msg" class="muted small"></div>`;
-  $('#cd-isbn').focus();
-  const go = async () => { const isbn = $('#cd-isbn').value.replace(/[^0-9Xx]/g, ''); if (!/^97[89]\d{10}$/.test(isbn)) { $('#cd-msg').textContent = '13桁のISBNを入れてください'; return; } $('#cd-msg').textContent = 'openBDに問い合わせています…'; const b = await lookupIsbn(isbn); if ($('#modal').hidden) return; if (!b) { $('#cd-msg').textContent = 'この本の情報が見つかりませんでした。「名前を自分で書く」で続けられます。'; return; } done(b); };
-  $('#cd-look').onclick = go; $('#cd-isbn').addEventListener('keydown', (e) => { if (e.key === 'Enter') go(); });
+  $('#cd-area').innerHTML = `<div class="field"><label for="bk-q">書名や著者名</label><input type="search" id="bk-q" maxlength="80" enterkeyhint="search" autocomplete="off" placeholder="例：成瀬は天下を取りにいく"></div><div class="actions"><button class="btn primary wide" id="bk-go">${icon('search')}さがす</button></div><div id="bk-out"></div>`;
+  const inp = $('#bk-q'); inp.focus(); let seq = 0;
+  const chosen = (b) => { if (!$('#modal').hidden) done(b); };
+  const go = async () => {
+    const t = inp.value.trim(); const out = $('#bk-out'); if (!t) { inp.focus(); return; }
+    const my = ++seq; inp.blur(); /* キーボードを閉じて結果を見やすく */ out.innerHTML = '<div class="muted small bk-wait">国立国会図書館サーチでさがしています…</div>';
+    const tail = `<button class="linkish bk-use" id="bk-use">見つからないときは、「${esc(t)}」のまま使う</button>`;
+    const src = '<div class="muted small bk-src">出典：<a href="https://ndlsearch.ndl.go.jp/" target="_blank" rel="noopener">国立国会図書館サーチ</a>（国立国会図書館の書誌データ・CC BY 4.0）</div>';
+    const bind = (items) => {
+      $('#bk-use').onclick = () => chosen({ isbn: '', title: t, author: '', publisher: '', cover: '' });
+      $$('#bk-out [data-k]').forEach((el) => el.addEventListener('click', async () => {
+        const b = items[+el.dataset.k]; const ob = b.isbn ? await lookupIsbn(b.isbn) : null; // 書名・著者は一覧で見たとおりに。表紙だけ openBD から
+        chosen({ isbn: b.isbn, title: b.title, author: b.author || (ob && ob.author) || '', publisher: b.publisher || (ob && ob.publisher) || '', pubdate: b.year ? String(b.year) : '', cover: (ob && ob.cover) || '' });
+      }));
+      const isb = items.map((b) => b.isbn).filter(Boolean);
+      if (isb.length) coversOf(isb).then((m) => $$('#bk-out .rcover[data-isbn]').forEach((c) => { const u = m.get(c.dataset.isbn); if (u && c.isConnected && !c.querySelector('img')) c.innerHTML = `<img src="${esc(u)}" alt="" referrerpolicy="no-referrer" loading="lazy">`; }));
+    };
+    const render = (items, more) => {
+      if (my !== seq || !out.isConnected) return;
+      out.innerHTML = `<p class="hint">この本ですか？（押すと選べます）</p><div class="list rlist bk-list">${items.map((b, k) => `<div class="item rbook" data-k="${k}"><div class="rcover" data-isbn="${esc(b.isbn)}">${icon('book')}</div><div class="main"><div class="name">${esc(b.title)}</div><div class="sub">${esc([b.author, b.publisher, b.year ? b.year + '年' : ''].filter(Boolean).join('・'))}</div></div></div>`).join('')}</div>`
+        + (more ? '<div class="muted small bk-wait">まだ さがしています…</div>' : '') + tail + src;
+      bind(items);
+    };
+    const r = await searchBooks(t, render);
+    if (my !== seq || !out.isConnected) return;
+    if (r.isbn) { if (r.items.length) { chosen(r.items[0]); return; } out.innerHTML = '<div class="muted small">この ISBN の本は見つかりませんでした。「名前を自分で書く」で続けられます。</div>'; return; }
+    if (r.items.length) { render(r.items, false); return; }
+    out.innerHTML = (r.ok ? '<div class="muted small">見つかりませんでした。書名を短くするか、著者名でさがしてみてください。</div>' : '<div class="muted small">さがせませんでした（国立国会図書館サーチが混んでいるか、電波が弱いようです）。少しあとで、もう一度さがしてください。</div>') + tail + (r.ok ? src : '');
+    bind([]);
+  };
+  $('#bk-go').onclick = go; inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); go(); } });
 }
 export async function scanIsbn(done) {
   stopScan(); // 2回押したときに、前のカメラが残らないように（v0.16.0）
@@ -67,11 +95,11 @@ export async function scanIsbn(done) {
   const video = $('#scanner'); const msg = $('#cd-msg'); let stopped = false, stream = null, reader = null;
   const stop = () => { stopped = true; try { if (reader && reader.reset) reader.reset(); } catch (e) {} if (stream) stream.getTracks().forEach((t) => t.stop()); };
   scanStopper = stop; $('#cd-stop').onclick = () => { stop(); area.innerHTML = ''; };
-  const onCode = async (code) => { code = String(code).replace(/[^0-9]/g, ''); if (!/^97[89]\d{10}$/.test(code)) return false; stop(); haptic(40); msg.textContent = `読み取り：${code}。openBDに問い合わせています…`; const b = await lookupIsbn(code); if ($('#modal').hidden) return true; done(b || { isbn: code, title: '', author: '', publisher: '', cover: '' }); return true; };
+  const onCode = async (code) => { code = String(code).replace(/[^0-9]/g, ''); if (!/^97[89]\d{10}$/.test(code)) return false; stop(); haptic(40); msg.textContent = `読み取り：${code}。本の情報をさがしています…`; const b = await lookupBook(code); if ($('#modal').hidden) return true; done(b || { isbn: code, title: '', author: '', publisher: '', cover: '' }); return true; };
   try { stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } }, audio: false }); video.srcObject = stream; await video.play(); }
-  catch (e) { msg.textContent = 'カメラが使えませんでした（https でないか、許可されていません）。ISBNの入力で続けられます。'; return; }
+  catch (e) { msg.textContent = 'カメラが使えませんでした（https でないか、許可されていません）。「書名でさがす」で続けられます。'; return; }
   if ('BarcodeDetector' in window) { try { const det = new window.BarcodeDetector({ formats: ['ean_13'] }); const loop = async () => { if (stopped) return; try { const codes = await det.detect(video); for (const c of codes) { if (await onCode(c.rawValue)) return; } } catch (e) {} requestAnimationFrame(loop); }; loop(); return; } catch (e) {} }
   try { if (!window.ZXing) await new Promise((res, rej) => { const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js'; s.integrity = 'sha384-BzBxP10ZE72aitqj5UMmUsbKFliP/DZqA8Wq+BNNhlIJDGoEd1tpkMYXOg9+n6sB'; s.crossOrigin = 'anonymous'; s.onload = res; s.onerror = rej; document.head.appendChild(s); });
     const hints = new Map(); hints.set(window.ZXing.DecodeHintType.POSSIBLE_FORMATS, [window.ZXing.BarcodeFormat.EAN_13]); reader = new window.ZXing.BrowserMultiFormatReader(hints, 300); reader.decodeFromStream(stream, video, (result) => { if (result && !stopped) onCode(result.getText()); });
-  } catch (e) { msg.textContent = '読み取りの部品を読み込めませんでした。ISBNの入力で続けられます。'; }
+  } catch (e) { msg.textContent = '読み取りの部品を読み込めませんでした。「書名でさがす」で続けられます。'; }
 }

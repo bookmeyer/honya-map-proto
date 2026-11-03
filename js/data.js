@@ -1,7 +1,7 @@
 // 本屋・図書館・ラリーのデータ。スタンプ（その店だけの絵柄）の見た目もここ
-import { DEMO_STORE } from './config.js?v=0.16.1';
-import { sleep, $, weekKey, prefOf, hash32, esc, todayISO } from './util.js?v=0.16.1';
-import { S } from './state.js?v=0.16.1';
+import { DEMO_STORE } from './config.js?v=0.16.2';
+import { sleep, $, weekKey, prefOf, hash32, esc, todayISO } from './util.js?v=0.16.2';
+import { S } from './state.js?v=0.16.2';
 
 export let STORES = [];
 export let RALLIES = [];
@@ -146,12 +146,94 @@ export function stampSVG(st, collected, size = 96, opts = {}) {
 }
 // ---- 本（openBD） ----
 const bookCache = new Map();
+const fromOpenbd = (isbn, s) => ({ isbn, title: s.title || '', author: cleanAuthor(s.author || ''), publisher: s.publisher || '', pubdate: s.pubdate || '', cover: s.cover || '' });
 export async function lookupIsbn(isbn) {
   if (bookCache.has(isbn)) return bookCache.get(isbn);
   try {
     const r = await fetch(`https://api.openbd.jp/v1/get?isbn=${isbn}`); const j = await r.json(); const s = j && j[0] && j[0].summary; if (!s) { bookCache.set(isbn, null); return null; }
-    const b = { isbn, title: s.title || '', author: cleanAuthor(s.author || ''), publisher: s.publisher || '', pubdate: s.pubdate || '', cover: s.cover || '' };
-    bookCache.set(isbn, b); return b;
+    const b = fromOpenbd(isbn, s); bookCache.set(isbn, b); return b;
   } catch (e) { return null; }
+}
+// 表紙をまとめて（openBD に1回で聞く）。見つかった本は覚えておき、選んだときにそのまま使う
+export async function coversOf(isbns) {
+  const need = [...new Set(isbns.filter((i) => i && !bookCache.has(i)))].slice(0, 50);
+  if (need.length) { try { const r = await fetch(`https://api.openbd.jp/v1/get?isbn=${need.join(',')}`); const j = await r.json(); need.forEach((i, k) => { const s = Array.isArray(j) && j[k] && j[k].summary; bookCache.set(i, s ? fromOpenbd(i, s) : null); }); } catch (e) {} }
+  return new Map(isbns.map((i) => [i, (bookCache.get(i) || {}).cover || '']));
+}
+// ---- 書名でさがす（v0.16.2）：国立国会図書館サーチ ----
+// 国立国会図書館の蔵書（dpid=iss-ndl-opac）だけを使う：CC BY 4.0 で、会社で使っても申請は要らない。出典は「このアプリについて」とさがした画面に
+// 送るのは、さがす言葉だけ。返ってくるのは書名の順なので、ここで近いものを上にする（同じ書名 → 書名のはじめ → 言葉が書名に入っている → 著者・出版社に入っている → 新しい）
+const NDL_API = 'https://ndlsearch.ndl.go.jp/api/opensearch';
+const nz = (s) => String(s || '').normalize('NFKC').toLowerCase().replace(/[\s・･、。，,.:;!?！？"'“”‘’「」『』()（）\[\]［］【】〈〉《》\-‐‑–—―~〜]/g, '');
+export function toIsbn13(s) {
+  const d = String(s || '').replace(/[^0-9Xx]/g, '').toUpperCase();
+  if (/^97[89]\d{10}$/.test(d)) return d;
+  if (!/^\d{9}[\dX]$/.test(d)) return '';
+  const b = '978' + d.slice(0, 9); let sum = 0; for (let i = 0; i < 12; i++) sum += +b[i] * (i % 2 ? 3 : 1);
+  return b + ((10 - (sum % 10)) % 10);
+}
+function ndlName(s) { // 「宮島, 未奈, 1983-」→「宮島未奈」、「Rowling, J. K, 1965-」→「J. K Rowling」
+  const p = String(s || '').split(/,\s*/).map((x) => x.trim()).filter((x) => x && !/^(生没年不詳|\d{3,4}\??-?(\d{3,4}\??)?)$/.test(x));
+  if (p.length < 2) return p.join('');
+  return /[^\x00-\x7F]/.test(p[0]) ? p[0] + p[1] : `${p[1]} ${p[0]}`;
+}
+async function ndlQuery(params, ms = 12000) { // { total（あてはまる数）, items（cnt まで） }
+  const u = new URL(NDL_API); Object.entries(Object.assign({ dpid: 'iss-ndl-opac', mediatype: 'books', cnt: '20' }, params)).forEach(([k, v]) => u.searchParams.set(k, v));
+  const ctl = new AbortController(); const tm = setTimeout(() => ctl.abort(), ms);
+  try {
+    const r = await fetch(u.toString(), { signal: ctl.signal }); if (!r.ok) throw new Error('http ' + r.status);
+    const doc = new DOMParser().parseFromString(await r.text(), 'application/xml');
+    const total = +((doc.getElementsByTagName('openSearch:totalResults')[0] || {}).textContent || 0);
+    const items = [...doc.getElementsByTagName('item')].map((it) => {
+      const one = (n) => { const e = it.getElementsByTagName(n)[0]; return e ? e.textContent.trim() : ''; };
+      const isbn = [...it.getElementsByTagName('dc:identifier')].filter((e) => e.getAttribute('xsi:type') === 'dcndl:ISBN').map((e) => toIsbn13(e.textContent)).find(Boolean) || '';
+      const title = one('dc:title') || one('title'); const vol = one('dcndl:volume');
+      const year = +(((one('dcterms:issued') || one('dc:date')).match(/\d{4}/) || [0])[0]);
+      const author = [...new Set([...it.getElementsByTagName('dc:creator')].map((e) => ndlName(e.textContent)).filter(Boolean))].slice(0, 3).join('、');
+      return { isbn, title: vol && !title.includes(vol) ? `${title} ${vol}` : title, base: title.split(' : ')[0], author, publisher: one('dc:publisher'), year };
+    }).filter((b) => b.title);
+    return { total, items };
+  } finally { clearTimeout(tm); }
+}
+// ISBN から本の情報：openBD → なければ国立国会図書館サーチ（バーコードで読んだのに名前が出ない、を減らす）
+export async function lookupBook(isbn) {
+  const b = await lookupIsbn(isbn); if (b) return b;
+  try { const r = (await ndlQuery({ isbn, cnt: '1' })).items[0]; if (r) { const nb = { isbn, title: r.title, author: r.author, publisher: r.publisher, pubdate: r.year ? String(r.year) : '', cover: '' }; bookCache.set(isbn, nb); return nb; } } catch (e) {}
+  return null;
+}
+// 近い順に12冊（同じ書名 → 書名のはじめ → 言葉が書名に入っている → 著者・出版社に入っている → ISBN がある → 新しい）
+function rankBooks(list, q) {
+  const qn = nz(q), words = q.split(' ').map(nz).filter(Boolean); const seen = new Set(); const items = [];
+  for (const b of list) {
+    const k = b.isbn || `${nz(b.title)}|${nz(b.author)}|${b.year}`; if (seen.has(k)) continue; seen.add(k);
+    const t = nz(b.title), tb = nz(b.base), hay = t + nz(b.author) + nz(b.publisher);
+    const inT = words.filter((w) => t.includes(w)).length, inAll = words.filter((w) => hay.includes(w)).length;
+    if (!inAll) continue; // 中身の説明にだけ言葉があった本は出さない
+    items.push(Object.assign({}, b, { full: inAll === words.length, score: (tb === qn || t === qn ? 1000 : tb.startsWith(qn) ? 600 : t.includes(qn) ? 400 : 0) + (inT === words.length ? 200 : inAll === words.length ? 150 + inT * 20 : inAll * 10) + (b.isbn ? 40 : 0) + Math.max(0, Math.min(30, b.year - 1995)) }));
+  }
+  return items.sort((a, b) => b.score - a.score || b.year - a.year).slice(0, 12);
+}
+// 書名・著者名でさがす。国立国会図書館サーチは同時に何本も聞くと順番待ちで遅くなるので、1本ずつ聞き、
+// 言葉が全部、書名か著者に入っている本が見つかったところでやめる（途中の結果は onPart で先に見せる）
+//  ①書名 →（言葉が2つ以上なら）②「書名＋著者」③「著者＋書名」 → ④著者 → ⑤どこかに入っている
+//  ①で書名に入っている本が多すぎるときは、その中の最近4年も見て終わり
+//  待つのは全体で20秒まで。断られた（混んでいる）・時間切れで1冊もないときは「見つからない」ではなく ok:false（もう一度さがしてもらう）
+export async function searchBooks(text, onPart) {
+  const q = String(text || '').normalize('NFKC').trim().replace(/\s+/g, ' ').slice(0, 80);
+  const isbn = /^[\d\s-]+[\dXx]?$/.test(q) ? toIsbn13(q) : '';
+  if (isbn) { const b = await lookupBook(isbn); return { ok: true, isbn: true, items: b ? [b] : [] }; }
+  const ws = q.split(' '); const got = []; let failed = 0; const until = Date.now() + 20000;
+  const ask = async (a) => { const left = until - Date.now(); if (left < 1500) { failed++; return null; } try { const r = await ndlQuery(a, Math.min(12000, left)); got.push(...r.items); return r; } catch (e) { failed++; return null; } };
+  const plan = [{ title: q }];
+  if (ws.length > 1) plan.push({ title: ws.slice(0, -1).join(' '), creator: ws[ws.length - 1] }, { creator: ws[0], title: ws.slice(1).join(' ') });
+  plan.push({ creator: q }, { any: q, cnt: '30' });
+  for (let i = 0; i < plan.length; i++) {
+    const r = await ask(plan[i]); const ranked = rankBooks(got, q); const full = ranked.some((b) => b.full);
+    if (i === 0 && r && full && r.total > r.items.length) { if (onPart) onPart(ranked, true); await ask({ title: q, from: String(new Date().getFullYear() - 4) }); break; }
+    if (full) break;
+    if (ranked.length && onPart) onPart(ranked, true);
+  }
+  const items = rankBooks(got, q);
+  return items.length || !failed ? { ok: true, items } : { ok: false, items: [] };
 }
 function cleanAuthor(a) { return String(a).split(/\s+/).map((t) => t.replace(/,?\s*\d{4}-?(\d{4})?/g, '').replace(/,/g, '').trim()).filter(Boolean).join('、'); }

@@ -1,11 +1,11 @@
 // 読書・いま読んでいる本の画面（v0.14。v0.14.7 で「移動読書」から「読書」に：止まって読む人もいるので）
 // 地図の大きなボタン「読書をはじめる」で時間を計りはじめ（本も読みかたも選ばない）、読み終えたら「おわる」で止める（v0.14.4）。読んだ時間だけページが増える
 // アプリは閉じてよい（時刻で計る）。読んでいる本は、読書中のボタンを押したときに、えらびたい人だけえらぶ
-import { esc, icon, $, $$, fmtDate, fmtMin } from './util.js?v=0.16.1';
-import { S, save } from './state.js?v=0.16.1';
-import { POS } from './position.js?v=0.16.1';
-import * as R from './reading.js?v=0.16.1';
-import { closeModal, toast, openModal, stopScan, scanIsbn, manualIsbn, confirmBox } from './ui.js?v=0.16.1';
+import { esc, icon, $, $$, fmtDate, fmtMin } from './util.js?v=0.16.2';
+import { S, save } from './state.js?v=0.16.2';
+import { POS } from './position.js?v=0.16.2';
+import * as R from './reading.js?v=0.16.2';
+import { closeModal, toast, openModal, stopScan, scanIsbn, searchBook, confirmBox } from './ui.js?v=0.16.2';
 
 const cover = (b) => `<div class="rcover">${b.cover ? `<img src="${esc(b.cover)}" alt="" referrerpolicy="no-referrer" loading="lazy">` : icon('book')}</div>`;
 const hm = (t) => { const d = new Date(t); return `${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`; };
@@ -58,9 +58,9 @@ export function startReadingAdd(onAdded = null) {
   const cands = S.cards.slice().reverse().filter((c) => !R.inReading(c)).slice(0, 12);
   const cancel = () => { stopScan(); closeModal(); };
   openModal(`<h2>いま読んでいる本を登録</h2><p class="hint">記録はこの端末の中だけです。読み終わったら、めぐり帳の物語に残ります。</p>
-    <div class="actions"><button class="btn primary wide" id="cd-scan">${icon('camera')}本の裏のバーコードを読む</button><button class="btn" id="cd-manual">ISBNを入力</button><button class="btn" id="cd-free">名前を自分で書く</button>${cands.length ? '<button class="btn wide" id="ra-cards">出会った本（カード）から選ぶ</button>' : ''}<button class="btn ghost wide" id="cd-cancel">やめる</button></div><div id="cd-area"></div>`);
+    <div class="actions"><button class="btn primary wide" id="cd-scan">${icon('camera')}本の裏のバーコードを読む</button><button class="btn" id="cd-search">${icon('search')}書名でさがす</button><button class="btn" id="cd-free">名前を自分で書く</button>${cands.length ? '<button class="btn wide" id="ra-cards">出会った本（カード）から選ぶ</button>' : ''}<button class="btn ghost wide" id="cd-cancel">やめる</button></div><div id="cd-area"></div>`);
   const found = (b) => { stopScan(); if (b && b.title) confirmAdd(b, cancel); else freeTitle(b); };
-  $('#cd-cancel').onclick = cancel; $('#cd-scan').onclick = () => scanIsbn(found); $('#cd-manual').onclick = () => manualIsbn(found); $('#cd-free').onclick = () => freeTitle(null);
+  $('#cd-cancel').onclick = cancel; $('#cd-scan').onclick = () => scanIsbn(found); $('#cd-search').onclick = () => searchBook(found); $('#cd-free').onclick = () => freeTitle(null);
   if ($('#ra-cards')) $('#ra-cards').onclick = () => {
     stopScan();
     $('#cd-area').innerHTML = `<div class="list rlist">${cands.map((c) => `<div class="item rbook" data-c="${esc(c.id)}">${cover(c)}<div class="main"><div class="name">${esc(c.title)}</div><div class="sub">${esc(c.sn)}・${fmtDate(c.d)}</div></div></div>`).join('')}</div>`;

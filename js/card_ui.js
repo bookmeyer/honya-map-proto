@@ -1,22 +1,22 @@
-// 本のカード：本と出会った（バーコード・ISBN・名前）→ カードの画面
-import { PG } from './config.js?v=0.16.1';
-import { esc, icon, $, fmtDate, todayISO, emit } from './util.js?v=0.16.1';
-import { S } from './state.js?v=0.16.1';
-import { sfx, haptic } from './audio.js?v=0.16.1';
-import { POS } from './position.js?v=0.16.1';
-import { placeWord, isLib } from './data.js?v=0.16.1';
-import * as G from './game.js?v=0.16.1';
-import { cardImage, shareBlob } from './share.js?v=0.16.1';
-import * as R from './reading.js?v=0.16.1';
-import { openModal, closeModal, manualIsbn, scanIsbn, stopScan, toast, refreshHud, setSub, switchView, confirmBox } from './ui.js?v=0.16.1';
-import { applyMapStates, openSheet } from './map_ui.js?v=0.16.1';
+// 本のカード：本と出会った（バーコード・書名でさがす・名前）→ カードの画面
+import { PG } from './config.js?v=0.16.2';
+import { esc, icon, $, fmtDate, todayISO, emit } from './util.js?v=0.16.2';
+import { S } from './state.js?v=0.16.2';
+import { sfx, haptic } from './audio.js?v=0.16.2';
+import { POS } from './position.js?v=0.16.2';
+import { placeWord, isLib } from './data.js?v=0.16.2';
+import * as G from './game.js?v=0.16.2';
+import { cardImage, shareBlob } from './share.js?v=0.16.2';
+import * as R from './reading.js?v=0.16.2';
+import { openModal, closeModal, searchBook, scanIsbn, stopScan, toast, refreshHud, setSub, switchView, confirmBox } from './ui.js?v=0.16.2';
+import { applyMapStates, openSheet } from './map_ui.js?v=0.16.2';
 
 // ---------- カード ----------
 export function startCard(st) {
   openModal(`<h2>この${placeWord(st)}で本と出会った</h2><p class="hint">${esc(st.n)}${isLib(st) ? '　借りた本も、裏のバーコードで読めます' : ''}</p>
     <div class="note">カードは +${PG.card}ページ。今日この店でスタンプを押していれば「店で出会った」+${PG.cardInStore}ページ。</div>
-    <div class="actions"><button class="btn primary wide" id="cd-scan">${icon('camera')}本の裏のバーコードを読む</button><button class="btn" id="cd-manual">ISBNを入力</button><button class="btn" id="cd-free">名前を自分で書く</button><button class="btn ghost wide" id="cd-cancel">やめる</button></div><div id="cd-area"></div>`);
-  $('#cd-cancel').onclick = closeModal; $('#cd-manual').onclick = () => manualIsbn((b) => cardForm(st, b)); $('#cd-free').onclick = () => cardForm(st, null); $('#cd-scan').onclick = () => scanIsbn((b) => cardForm(st, b));
+    <div class="actions"><button class="btn primary wide" id="cd-scan">${icon('camera')}本の裏のバーコードを読む</button><button class="btn" id="cd-search">${icon('search')}書名でさがす</button><button class="btn" id="cd-free">名前を自分で書く</button><button class="btn ghost wide" id="cd-cancel">やめる</button></div><div id="cd-area"></div>`);
+  $('#cd-cancel').onclick = closeModal; $('#cd-search').onclick = () => searchBook((b) => cardForm(st, b)); $('#cd-free').onclick = () => cardForm(st, null); $('#cd-scan').onclick = () => scanIsbn((b) => cardForm(st, b));
 }
 function cardForm(st, b) {
   stopScan();

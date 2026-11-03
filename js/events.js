@@ -2,10 +2,10 @@
 // サーバーに送るのは「匿名の番号・店番号・日時・射程内か・お試し歩きか・イベント」だけ。位置の座標・名前・メモは送らない
 // 書店員さんの手書きのカードも、ここからサーバーに頼む（v0.16.1。その店で押した記録がある端末だけに渡る）
 // サーバーに届かないときは、前回読んだ設定で動く。スタンプはいつでも押せる
-import { EVENTS_API, APP_VER } from './config.js?v=0.16.1';
-import { $, emit, prefOf, todayISO, on } from './util.js?v=0.16.1';
-import { S, save } from './state.js?v=0.16.1';
-import { isLib } from './data.js?v=0.16.1';
+import { EVENTS_API, APP_VER } from './config.js?v=0.16.2';
+import { $, emit, prefOf, todayISO, on } from './util.js?v=0.16.2';
+import { S, save } from './state.js?v=0.16.2';
+import { isLib } from './data.js?v=0.16.2';
 
 export const EV = { list: [], permitted: new Set(), cards: new Set(), ok: false, at: 0 };
 const CACHE_KEY = 'meguri_events_v1';
