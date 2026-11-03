@@ -15,7 +15,7 @@ import * as RU from './reading_ui.js?v=0.16.0';
 import { renderRadar } from './radar_ui.js?v=0.16.0';
 import { renderZukan } from './zukan_ui.js?v=0.16.0';
 import { renderMissions } from './mission_ui.js?v=0.16.0';
-import { joinNotice, privacyNotice, homeTip, applySkin, renderSettings, applyTheme } from './settings_ui.js?v=0.16.0';
+import { joinNotice, privacyNotice, homeTip, renderSettings, applyTheme } from './settings_ui.js?v=0.16.0';
 import { showOnboarding } from './onboard_ui.js?v=0.16.0';
 import * as UI0 from './ui.js?v=0.16.0'; // 試す入口（__honya）用
 import * as MU from './map_ui.js?v=0.16.0'; // 試す入口（__honya）用
@@ -26,7 +26,7 @@ import * as RAD from './radar_ui.js?v=0.16.0'; // 試す入口（__honya）用
 import * as ZU from './zukan_ui.js?v=0.16.0'; // 試す入口（__honya）用
 
 async function boot() {
-  load(); applyThemeEarly(); applySkin(); // 着せ替え（v0.15.2）
+  load(); applyTheme(); // 見た目（明・暗）と着せ替え。地図はまだないので、地図の色は決めておくだけ
   const res = await loadAll();
   const join = E.takeJoinParam(); // お試しの人に渡すURLの ?join=参加コード
   const lp = S.lastPos; const center = lp ? [lp.lon, lp.lat] : [137.5, 37.3]; const zoom = lp ? 14 : 5;
@@ -40,10 +40,11 @@ async function boot() {
   on('volume', (v) => { toast(`📖 歩いたページで、第${v.after}巻に入りました`, 'ok'); AUDIO.sfx.levelup(); refreshHud(); });
   let areaBound = false; on('map-ready', () => { if (!areaBound) { areaBound = true; MAP.M.map.on('moveend', updateAreaChip); } updateAreaChip(); });
   on('records', () => { refreshHud(); updateAreaChip(); RU.renderReadBtn(); MAP.setReads(R.readSpots()); if (currentView === 'zukan') renderZukan(); if (currentView === 'mission') renderMissions(); });
+  on('replaced', () => { applyTheme(); MAP.setAvatar(S.settings.avatar || null); setTimeout(() => { updateNear(); emit('records'); }, 0); }); // 読み込み・すべて消すのあと（v0.16.0：地図・読書のボタン・読んだ場所が前のままだった）。店の作り直しは呼んだほうが先にする
   on('view', (v) => { if (v === 'radar') renderRadar(); if (v === 'zukan') renderZukan(); if (v === 'mission') renderMissions(); if (v === 'settings') renderSettings(); });
   on('near', () => { if (currentView === 'radar') renderRadar(); });
   on('save-error', () => toast('保存できませんでした（端末の空きを確かめてください）', 'warn'));
-  // 移動読書（v0.14.1）：地図の大きなボタン「今から移動読書」／移動読書中。スタンプのあと・カードのあとからも同じ画面へ
+  // 読書（v0.14.1）：地図の大きなボタン「読書をはじめる」／読書中。スタンプのあと・カードのあとからも同じ画面へ
   on('read-start', (x) => RU.openReadStart(x || {})); on('trip', RU.renderReadBtn); on('trial', RU.renderReadBtn);
   // イベント：起動時・10分ごと・画面に戻ったとき（5分以上たっていたら）に設定を読む。記録はつながったときに送る
   on('events', () => { applyMapStates(); refreshHud(); if (currentView === 'mission') renderMissions(); });
@@ -92,6 +93,5 @@ async function boot() {
   const live = (...ms) => new Proxy({}, { get: (_, k) => { const x = ms.find((n) => k in n); return x ? x[k] : undefined; } });
   window.__honya = { get S() { return S; }, POS, get STORES() { return STORES; }, UI: live(UI0, MU, CU, KU, SU), MAP, J: live(J, R), JU: live(MU, RAD, ZU, SU), RU, E, audio: AUDIO, ver: APP_VER };
 }
-function applyThemeEarly() { const t = S.settings.theme; const dark = t === 'dark' || (t === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches); document.documentElement.dataset.theme = dark ? 'dark' : 'light'; }
 window.addEventListener('error', (e) => { console.error(e.error || e.message); });
 boot().catch((e) => { console.error(e); const t = document.getElementById('toasts'); if (t) { const d = document.createElement('div'); d.className = 'toast warn'; d.textContent = '起動に失敗しました。読み込み直してください'; t.appendChild(d); } });

@@ -4,7 +4,7 @@ import { $, arrowOf, bearing, icon, fmtDist, esc, dist, $$, emit, fmtDate, gmapD
 import { S, save } from './state.js?v=0.16.0';
 import { unlock, sfx } from './audio.js?v=0.16.0';
 import { hasPos, POS, startWatch, setTrial, setPos, jumped } from './position.js?v=0.16.0';
-import { STORES, BYID, isLib, isFeat, rarityOf, pickOpen, placeWord, bookTitle, stampSVG, rarityText, lookupIsbn, hideStore, renameStore, search, addCustom } from './data.js?v=0.16.0';
+import { STORES, BYID, isLib, isFeat, rarityOf, pickOpen, placeWord, bookTitle, stampSVG, rarityText, lookupIsbn, hideStore, renameStore, search, addCustom, FEAT } from './data.js?v=0.16.0';
 import * as MAP from './map.js?v=0.16.0';
 import * as G from './game.js?v=0.16.0';
 import * as E from './events.js?v=0.16.0';
@@ -44,28 +44,29 @@ export const NEAR = { list: [], inRange: new Set(), glow: new Set() };
 const GLOW_MAX = 3; // 地図で光の輪を付けるのは、射程内のうち近い3店まで（店の多い街で光が重なりすぎないように。v0.13）
 // ---------- 現在地まわりの表示（レーダーの帯・最初のクエスト・縁の光） ----------
 // 近づいたときの画面の縁の光・音・振動は使わない（2026-10-17 ぶっくまさんの指示）。射程に入ったらトーストで知らせるだけ
-function setGlow() { const g = $('#glow'); g.className = 'glow'; g.style.opacity = '0'; }
 export function updateNear() {
   const strip = $('#radar-items'), quest = $('#first-quest');
-  if (!hasPos()) { NEAR.list = []; NEAR.inRange = new Set(); NEAR.glow = new Set(); strip.innerHTML = ''; quest.hidden = true; setGlow(null); applyMapStates(); emit('near'); return; }
+  if (!hasPos()) { NEAR.list = []; NEAR.inRange = new Set(); NEAR.glow = new Set(); strip.innerHTML = ''; quest.hidden = true; applyMapStates(); emit('near'); return; }
   const cand = []; for (const s of STORES) { if (Math.abs(s.la - POS.lat) > 0.03 || Math.abs(s.lo - POS.lon) > 0.036) continue; cand.push({ s, d: dist(POS.lat, POS.lon, s.la, s.lo) }); }
   cand.sort((a, b) => a.d - b.d); NEAR.list = cand.slice(0, 30);
   const now = new Set(NEAR.list.filter((x) => x.d <= RANGE_M).map((x) => x.s.i));
   NEAR.glow = new Set(NEAR.list.filter((x) => x.d <= RANGE_M).slice(0, GLOW_MAX).map((x) => x.s.i));
   const entered = [...now].filter((id) => !NEAR.inRange.has(id)); NEAR.inRange = now;
   if (entered.length) { const first = BYID.get(entered[0]); toast(`📍 ${first.n}${entered.length > 1 ? ` ほか${entered.length - 1}店` : ''} が射程に入りました`, 'ok'); }
-  else { const nd = NEAR.list.find((x) => !G.hasStamp(x.s.i)); setGlow(nd ? nd.d : null); }
   const target = NEAR.list.find((x) => !G.hasStamp(x.s.i));
   if (target && !now.size) { quest.hidden = false; quest.innerHTML = `${icon('pin')}<span>いちばん近い${isLib(target.s) ? '図書館' : '本屋'} <b>${esc(target.s.n)}</b> まで あと${fmtDist(Math.max(0, target.d - RANGE_M))} ${arrowOf(bearing(POS.lat, POS.lon, target.s.la, target.s.lo))}</span>`; quest.onclick = () => openSheet(target.s.i); } else quest.hidden = true;
   strip.innerHTML = NEAR.list.slice(0, 8).map(({ s, d }) => `<div class="rchip ${d <= RANGE_M ? 'in' : ''}" data-id="${esc(s.i)}"><div class="n">${G.hasStamp(s.i) ? icon('check') : ''}${isFeat(s.i) ? '👑 ' : ''}${esc(s.n)}</div><div class="d"><span>${d <= RANGE_M ? '射程内！' : `あと${fmtDist(d - RANGE_M)} ${arrowOf(bearing(POS.lat, POS.lon, s.la, s.lo))}`}</span><span class="stars">${'★'.repeat(rarityOf(s))}</span></div></div>`).join('');
   $$('#radar-items .rchip').forEach((el) => el.addEventListener('click', () => openSheet(el.dataset.id)));
   applyMapStates(); emit('near');
-  const sheet = $('#sheet'); if (!sheet.hidden && sheet.dataset.id) openSheet(sheet.dataset.id, true);
+  const sheet = $('#sheet'); if (!sheet.hidden && sheet.dataset.id && !$('#sheet-extra').childElementCount) openSheet(sheet.dataset.id, true); // 名前の直し・閉店の確かめを開いているあいだは描き直さない（v0.16.0）
 }
 export function applyMapStates() {
   const states = new Map();
   const nev = E.liveEvents().filter(E.narrow); if (nev.length) MAP.setEventRingColor(nev[0].frame.color);
-  for (const s of STORES) states.set(s.i, { stamp: G.hasStamp(s.i) ? 1 : 0, near: NEAR.glow.has(s.i) ? 1 : 0, feat: isFeat(s.i) ? 1 : 0, want: S.wants.includes(s.i) ? 1 : 0, st: G.stateOf(s.i), ev: nev.length && nev.some((e) => E.isTarget(e, s)) ? 1 : 0 });
+  // 店ごとの記録の数・推し店・行きたいは、先に1回だけ数える（v0.16.0：位置が届くたびに 店×記録 を数え直していて、記録が増えると重くなった）
+  const cnt = new Map(); for (const v of S.visits) cnt.set(v.s, (cnt.get(v.s) || 0) + 1); for (const c of S.cards) cnt.set(c.s, (cnt.get(c.s) || 0) + 1);
+  const feat = new Set(FEAT.values()), wants = new Set(S.wants);
+  for (const s of STORES) { const n = cnt.get(s.i) || 0; states.set(s.i, { stamp: G.hasStamp(s.i) ? 1 : 0, near: NEAR.glow.has(s.i) ? 1 : 0, feat: feat.has(s.i) ? 1 : 0, want: wants.has(s.i) ? 1 : 0, st: n === 0 ? 0 : n >= 3 ? 2 : 1, ev: nev.length && nev.some((e) => E.isTarget(e, s)) ? 1 : 0 }); }
   MAP.setStates(states);
   MAP.setTerritory(Object.keys(S.stamps).map((id) => { const s = BYID.get(id); if (!s) return null; const rk = G.regularInfo(id).rank; return Object.assign({}, s, { rank: rk, rad: TERRITORY_M * (1 + 0.25 * Math.min(4, Math.max(0, rk - 1))) }); }).filter(Boolean));
 }

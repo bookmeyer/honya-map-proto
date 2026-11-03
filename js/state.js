@@ -6,7 +6,7 @@ export const empty = () => ({
   v: 4, visits: [], cards: [], wants: [], custom: [], stamps: {}, pg: 0, pgDay: {},
   claimedW: {}, claimedD: {}, rallyDone: {}, featDone: {}, looks: {},
   hidden: {}, renames: {}, days: {}, posts: [], shares: [], reading: [], trips: [], trip: null, seen: 0, lastPos: null, shareCount: 0, evLog: {}, evTitles: [], outbox: [],
-  settings: { theme: 'light', sound: true, haptic: true, avatar: '', handle: '', wantAlert: true, wantAlertM: 2000, dev: '', joinCode: '', sendLog: true, privacyV10: 0 }, createdAt: Date.now(),
+  settings: { theme: 'light', sound: true, avatar: '', handle: '', wantAlert: true, wantAlertM: 2000, dev: '', joinCode: '', sendLog: true, privacyV10: 0 }, createdAt: Date.now(),
 });
 export let S = empty();
 // 読み込んだ記録の確かめ（v0.15.3 セキュリティ）：__proto__ などの名前は入れない・入れ物の型・日付・数・アイコン・URL・座標・着せ替えの名前

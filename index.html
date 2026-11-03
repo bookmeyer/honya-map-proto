@@ -36,13 +36,10 @@
   <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4h7a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H4zM20 4h-7a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h7z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
   <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4m0 0h12l-2 4 2 4H5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></symbol>
   <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
-  <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.4l-5.7 3.1 1.2-6.4L2.8 9.7l6.4-.8z" fill="currentColor"/></symbol>
   <symbol id="i-crown" viewBox="0 0 24 24"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z" fill="currentColor"/></symbol>
-  <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M14 6v12" stroke="currentColor" stroke-width="1.8" stroke-dasharray="2 2"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3 2 21h20z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 9v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17.5" r="1.2" fill="currentColor"/></symbol>
   <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M20 4v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-  <symbol id="i-ink" viewBox="0 0 24 24"><path d="M12 3c3 4 6 7.5 6 11a6 6 0 0 1-12 0c0-3.5 3-7 6-11z" fill="currentColor"/></symbol>
   <symbol id="i-pen" viewBox="0 0 24 24"><path d="m4 20 4-1L19 8l-3-3L5 16z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
   <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></symbol>
   <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
@@ -63,7 +60,6 @@
 <main id="main">
   <section id="view-map" class="view active" aria-label="地図">
     <div id="map"></div>
-    <div id="glow" class="glow" aria-hidden="true"></div>
     <div id="search-box"><svg class="ic sicon"><use href="#i-search"></use></svg><input id="search" type="search" placeholder="店の名前や住所でさがす" autocomplete="off" aria-label="店をさがす"><div id="search-results" class="dropdown" hidden></div></div>
     <div class="map-ctl">
       <button id="btn-locate" class="fab" title="現在地を追う" aria-label="現在地を追う"><svg class="ic"><use href="#i-locate"></use></svg></button>
@@ -131,7 +127,7 @@
   <button data-view="map" class="active"><svg class="ic"><use href="#i-map"></use></svg><span>地図</span></button>
   <button data-view="radar"><svg class="ic"><use href="#i-radar"></use></svg><span>ちかく</span></button>
   <button data-view="zukan"><svg class="ic"><use href="#i-book"></use></svg><span>めぐり帳</span></button>
-  <button data-view="mission"><svg class="ic"><use href="#i-flag"></use></svg><span>ラリー</span><i id="tab-dot" class="dot" hidden></i></button>
+  <button data-view="mission"><svg class="ic"><use href="#i-flag"></use></svg><span>ラリー</span></button>
 </nav>
 
 <div id="sheet" class="sheet" hidden role="dialog" aria-label="店"><div class="handle"></div><button class="icon-btn close" id="sheet-close" aria-label="閉じる"><svg class="ic"><use href="#i-close"></use></svg></button><div id="sheet-body"></div></div>

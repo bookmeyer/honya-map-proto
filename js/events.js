@@ -19,16 +19,18 @@ function apply(j) {
   EV.list = j.events.filter(valid).map((e) => Object.assign({}, e, { _stores: new Set(e.stores || []), _prefs: new Set(e.prefs || []) }));
   EV.permitted = new Set(Array.isArray(j.permitted) ? j.permitted : []);
 }
+let evSeq = 0; // 読むのが重なったら、いちばん新しい返事だけ使う（v0.16.0：参加コードを変えた直後に、前の返事で上書きされることがあった）
 export async function loadEvents() {
+  const my = ++evSeq;
   if (!EV.at) { try { apply(JSON.parse(localStorage.getItem(CACHE_KEY) || 'null')); } catch (e) {} }
   try {
     const u = new URL('events.php', apiBase()); if (S.settings.joinCode) u.searchParams.set('code', S.settings.joinCode);
     const ctl = new AbortController(); const tm = setTimeout(() => ctl.abort(), 8000);
     const r = await fetch(u.toString(), { cache: 'no-cache', signal: ctl.signal }); clearTimeout(tm);
     if (!r.ok) throw new Error('http ' + r.status);
-    const j = await r.json(); if (!j || !j.ok) throw new Error('ng');
+    const j = await r.json(); if (my !== evSeq) return; if (!j || !j.ok) throw new Error('ng');
     apply(j); EV.ok = true; try { localStorage.setItem(CACHE_KEY, JSON.stringify(j)); } catch (e) {}
-  } catch (e) { EV.ok = false; }
+  } catch (e) { if (my !== evSeq) return; EV.ok = false; }
   EV.at = Date.now(); emit('events');
 }
 export const isLive = (e, now = Date.now()) => tms(e.starts) <= now && now <= tms(e.ends);

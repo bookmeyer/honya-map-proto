@@ -1,20 +1,18 @@
-// 旅の記録：歩いた距離（ページ）・その日の物語・月のふり返り・行きたい店のお知らせ・投稿の記録・Googleマップの★の読み込み・店と店のあいだ・移動読書・いま読んでいる本
+// 旅の記録：歩いた距離（ページ）・その日の物語・月のふり返り・行きたい店のお知らせ・投稿の記録・Googleマップの★の読み込み・店と店のあいだ・読書・いま読んでいる本
 // 位置は、アプリを開いて現在地を追っているあいだだけ使う（ブラウザの決まりで、閉じているあいだは測れない）。閉じていたあいだの道のりは、次の店でスタンプを押したときに、前の店からのまっすぐの距離で足す（v0.14）
 import { WALK, RANGE_M, SEG } from './config.js?v=0.16.0';
-import { todayISO, dist, emit, hash32, prefOf, fmtDist, monthKey } from './util.js?v=0.16.0';
+import { todayISO, dist, emit, hash32, prefOf, fmtDist, monthKey, fmtMin } from './util.js?v=0.16.0';
 import { S, save } from './state.js?v=0.16.0';
 import { POS } from './position.js?v=0.16.0';
 import { BYID, STORES, rarityOf } from './data.js?v=0.16.0';
 import * as G from './game.js?v=0.16.0';
-import { activeTrip, endTrip, fmtMin, readTimes, readMinOf, allReads } from './reading.js?v=0.16.0';
+import { activeTrip, endTrip, readTimes, readMinOf, allReads } from './reading.js?v=0.16.0';
 
 function dayRec(d = todayISO()) { S.days = S.days || {}; const r = (S.days[d] = S.days[d] || { m: 0, v: 0 }); r.pass = r.pass || {}; r.alert = r.alert || {}; return r; }
 export const pagesOf = (m) => Math.floor((m || 0) / WALK.pageM);
 export const stepsOf = (m) => Math.round((m || 0) / WALK.stepM);
 export const kmOf = (m) => ((m || 0) / 1000).toFixed((m || 0) < 10000 ? 1 : 0);
-export const todayWalk = () => ((S.days || {})[todayISO()] || {}).m || 0;
 export const totalWalk = () => Object.values(S.days || {}).reduce((a, r) => a + (r.m || 0), 0);
-export const totalPages = () => pagesOf(totalWalk());
 // ---- 歩いた距離 ----
 // 位置の揺れ（誤差）で増えないよう、精度が悪い点は使わず、一定以上動いたときだけ足す。速すぎる移動は「乗り物」として別に数える
 let last = null;
@@ -57,12 +55,12 @@ export const wantsSorted = (lat, lon) => S.wants.map((id) => BYID.get(id)).filte
 export function addPost({ url, text, sid }) { S.posts = S.posts || []; const t = Date.now(); S.posts.push({ id: 'p' + t, t, d: todayISO(), url: url || '', text: text || '', s: sid || '' }); save(); }
 export function deletePost(id) { S.posts = (S.posts || []).filter((p) => p.id !== id); save(); }
 const SHARE_LBL = { stamp: 'スタンプの画像をシェアした。', regular: '常連度をシェアした。', card: 'カードの画像をシェアした。', profile: 'プレイヤーカードをシェアした。', story: 'この日の物語をシェアした。' };
-// ---- 店と店のあいだ・移動読書・いま読んでいる本（v0.14） ----
-// 次の店でスタンプを押したときに呼ぶ（G.checkin より先）。前の店から、まだ数えていない道のりを歩いたページに足す。前の店からあとの移動読書も、まとめて見せる
+// ---- 店と店のあいだ・読書・いま読んでいる本（v0.14） ----
+// 次の店でスタンプを押したときに呼ぶ（G.checkin より先）。前の店から、まだ数えていない道のりを歩いたページに足す。前の店からあとの読書も、まとめて見せる
 export function arrive(st, { near, trial }) {
   if (!near || trial || st.demo) return null;
   const now = Date.now(), today = todayISO();
-  let pv = null; for (let i = S.visits.length - 1; i >= 0; i--) { const v = S.visits[i]; if (v.d !== today) break; if (v.near && !v.trial) { pv = v; break; } }
+  const pv = G.lastNearVisitToday();
   const a = pv && pv.s !== st.i ? BYID.get(pv.s) : null;
   const auto = activeTrip() && S.trip.from !== st.i ? endTrip(now, true, [st.la, st.lo]) : null; // 「おわる」を押し忘れたまま次の本屋に着いた → ここで終える（このときだけ、スタンプまでの時間）
   const g = { id: 'g' + now, d: today, t: now, to: st.i };
@@ -101,8 +99,8 @@ function activeDates() {
 }
 const WD = '日月火水木金土';
 function regRankAt(id, date, inclusive) { const days = new Set(S.visits.filter((v) => v.s === id && v.near && (inclusive ? v.d <= date : v.d < date)).map((v) => v.d)).size; return { rank: G.regularRank(days), days }; }
-export function chapter(date = todayISO()) {
-  const dates = activeDates(); let no = dates.indexOf(date) + 1; if (!no) no = dates.filter((d) => d < date).length + 1;
+export function chapter(date = todayISO(), dates = activeDates()) {
+  let no = dates.indexOf(date) + 1; if (!no) no = dates.filter((d) => d < date).length + 1;
   const rec = (S.days || {})[date] || { m: 0, v: 0, pass: {} };
   const vis = S.visits.filter((v) => v.d === date).sort((a, b) => a.t - b.t);
   const cards = S.cards.filter((c) => c.d === date).sort((a, b) => a.t - b.t);
@@ -142,7 +140,7 @@ export function chapter(date = todayISO()) {
   const [y, mo, dd] = date.split('-').map(Number); const dow = new Date(y, mo - 1, dd).getDay();
   return { no, date, title: `第${no}章　${mo}月${dd}日（${WD[dow]}）`, lines, empty: isEmpty, blank: date === todayISO() ? 'まだ白紙のページ。現在地を追って歩くと、歩いた分だけページが増え、本屋に寄ると物語が書き足されます。' : 'この日は白紙のページ。', m: rec.m || 0, v: rec.v || 0, pages: pagesOf(rec.m), earned: ((S.pgDay || {})[date] || 0) + pagesOf(rec.m), km: kmOf(rec.m), steps: stepsOf(rec.m), nVisits: vis.length, nStores: visited.size, nCards: cards.length, nRead: allReads().filter((r) => r.d === date).length, readMin: allReads().filter((r) => r.d === date).reduce((a, r) => a + (r.min || 0), 0) };
 }
-export function chapters(limit = 30) { return activeDates().reverse().slice(0, limit).map((d) => chapter(d)); }
+export function chapters(limit = 30) { const ds = activeDates(); return [...ds].reverse().slice(0, limit).map((d) => chapter(d, ds)); }
 // ---- 月・年のふり返り（prefix は 'YYYY-MM' か 'YYYY'） ----
 export function periodStats(prefix) {
   const vis = S.visits.filter((v) => v.d.startsWith(prefix));

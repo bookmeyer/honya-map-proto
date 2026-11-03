@@ -17,7 +17,7 @@ let scanStopper = null;
 // ---------- 小物 ----------
 export function toast(msg, kind = '') { const box = $('#toasts'); const t = document.createElement('div'); t.className = 'toast ' + kind; t.textContent = msg; box.appendChild(t); while (box.children.length > 1) box.firstChild.remove(); /* お知らせは同時に1つだけ（v0.13） */ setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity .3s'; setTimeout(() => t.remove(), 300); }, 2600); }
 export function openModal(html) { $('#modal-box').innerHTML = html; $('#modal').hidden = false; $('#modal-box').scrollTop = 0; }
-export function closeModal() { if (scanStopper) { try { scanStopper(); } catch (e) {} scanStopper = null; } $('#modal').hidden = true; $('#modal-box').innerHTML = ''; }
+export function closeModal() { stopScan(); $('#modal').hidden = true; $('#modal-box').innerHTML = ''; }
 export function confirmBox(container, msg, onYes, yesLabel = '消す') { container.innerHTML = `<div class="status-card sumi">${esc(msg)}</div><div class="actions"><button class="btn danger" id="cf-yes">${esc(yesLabel)}</button><button class="btn ghost" id="cf-no">やめる</button></div>`; $('#cf-no', container).onclick = () => { container.innerHTML = ''; }; $('#cf-yes', container).onclick = () => { container.innerHTML = ''; onYes(); }; }
 export function switchView(v) {
   currentView = v; if (v !== 'map') closeSheet();
@@ -31,7 +31,6 @@ export function refreshHud() {
   const vol = G.volume(), pg = G.storyPages(), cur = pagesForVol(vol), next = pagesForVol(vol + 1);
   $('#lv-label').textContent = `第${vol}巻`; $('#xp-fill').style.width = `${Math.round(((pg - cur) / (next - cur)) * 100)}%`; $('#lv-btn').title = `第${vol}巻 ${pg}ページ（あと${next - pg}ページで第${vol + 1}巻）`;
   $('#brand-title').textContent = S.settings.handle || G.currentTitle() || '本屋あるき見習い';
-  $('#tab-dot').hidden = true; // お題は達成と同時に受け取るので、赤い点はいまは使わない
   renderMissionChip(); renderEventChip();
 }
 // 開催中のイベントのチケット（地図の下）。押すとラリーの画面のイベントへ
@@ -56,17 +55,19 @@ export function closeSheet() { const s = $('#sheet'); s.hidden = true; s.dataset
 // バーコード・ISBNの読み取りは、カードといま読んでいる本の登録で使う（見つかった本を done に渡す。v0.14）
 export function stopScan() { if (scanStopper) { try { scanStopper(); } catch (e) {} scanStopper = null; } }
 export function manualIsbn(done) {
+  stopScan(); // カメラで読んでいる途中なら止める（v0.16.0）
   $('#cd-area').innerHTML = `<div class="field"><label for="cd-isbn">ISBN（978か979で始まる13桁。ハイフンは省いてよい）</label><input type="text" id="cd-isbn" inputmode="numeric" placeholder="9784..."></div><div class="actions"><button class="btn primary wide" id="cd-look">本をさがす</button></div><div id="cd-msg" class="muted small"></div>`;
   $('#cd-isbn').focus();
-  const go = async () => { const isbn = $('#cd-isbn').value.replace(/[^0-9Xx]/g, ''); if (!/^97[89]\d{10}$/.test(isbn)) { $('#cd-msg').textContent = '13桁のISBNを入れてください'; return; } $('#cd-msg').textContent = 'openBDに問い合わせています…'; const b = await lookupIsbn(isbn); if (!b) { $('#cd-msg').textContent = 'この本の情報が見つかりませんでした。「名前を自分で書く」で続けられます。'; return; } done(b); };
+  const go = async () => { const isbn = $('#cd-isbn').value.replace(/[^0-9Xx]/g, ''); if (!/^97[89]\d{10}$/.test(isbn)) { $('#cd-msg').textContent = '13桁のISBNを入れてください'; return; } $('#cd-msg').textContent = 'openBDに問い合わせています…'; const b = await lookupIsbn(isbn); if ($('#modal').hidden) return; if (!b) { $('#cd-msg').textContent = 'この本の情報が見つかりませんでした。「名前を自分で書く」で続けられます。'; return; } done(b); };
   $('#cd-look').onclick = go; $('#cd-isbn').addEventListener('keydown', (e) => { if (e.key === 'Enter') go(); });
 }
 export async function scanIsbn(done) {
+  stopScan(); // 2回押したときに、前のカメラが残らないように（v0.16.0）
   const area = $('#cd-area'); area.innerHTML = `<video id="scanner" playsinline muted autoplay></video><div id="cd-msg" class="muted small">バーコード（978か979で始まる方）をカメラに向けてください</div><div class="actions"><button class="btn ghost wide" id="cd-stop">カメラを止める</button></div>`;
   const video = $('#scanner'); const msg = $('#cd-msg'); let stopped = false, stream = null, reader = null;
   const stop = () => { stopped = true; try { if (reader && reader.reset) reader.reset(); } catch (e) {} if (stream) stream.getTracks().forEach((t) => t.stop()); };
   scanStopper = stop; $('#cd-stop').onclick = () => { stop(); area.innerHTML = ''; };
-  const onCode = async (code) => { code = String(code).replace(/[^0-9]/g, ''); if (!/^97[89]\d{10}$/.test(code)) return false; stop(); haptic(40); msg.textContent = `読み取り：${code}。openBDに問い合わせています…`; const b = await lookupIsbn(code); done(b || { isbn: code, title: '', author: '', publisher: '', cover: '' }); return true; };
+  const onCode = async (code) => { code = String(code).replace(/[^0-9]/g, ''); if (!/^97[89]\d{10}$/.test(code)) return false; stop(); haptic(40); msg.textContent = `読み取り：${code}。openBDに問い合わせています…`; const b = await lookupIsbn(code); if ($('#modal').hidden) return true; done(b || { isbn: code, title: '', author: '', publisher: '', cover: '' }); return true; };
   try { stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } }, audio: false }); video.srcObject = stream; await video.play(); }
   catch (e) { msg.textContent = 'カメラが使えませんでした（https でないか、許可されていません）。ISBNの入力で続けられます。'; return; }
   if ('BarcodeDetector' in window) { try { const det = new window.BarcodeDetector({ formats: ['ean_13'] }); const loop = async () => { if (stopped) return; try { const codes = await det.detect(video); for (const c of codes) { if (await onCode(c.rawValue)) return; } } catch (e) {} requestAnimationFrame(loop); }; loop(); return; } catch (e) {} }

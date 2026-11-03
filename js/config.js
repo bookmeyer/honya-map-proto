@@ -6,7 +6,6 @@ export const STORAGE_KEY = 'honya_map_v3';
 export const EVENTS_API = 'https://tsunagubooks.com/meguri/api/';
 export const LEGACY_KEYS = ['honya_map_v2'];
 export const RANGE_M = 120;        // 射程（m）
-export const SENSE_M = 400;        // 近づく演出が始まる距離（m）
 export const TERRITORY_M = 200;    // スタンプを押した店のまわりを塗る半径（m）
 export const JUMP_MPS = 60;        // これより速く位置が飛んだら「飛んだ」と見なす（m/秒）
 export const JUMP_COOLDOWN_MS = 60000;
@@ -14,7 +13,7 @@ export const JUMP_COOLDOWN_MS = 60000;
 export const WALK = { pageM: 100, stepM: 0.7, minMoveM: 12, maxAccM: 60, walkMaxMps: 2.8, rideMaxMps: 45, gapS: 600, wantNearM: 500 };
 // 店と店のあいだ（v0.14）：次の店でスタンプを押したとき、前の店からのまっすぐの距離のうち、まだ数えていない分を歩いたページに足す（同じ日・3kmまで・歩く速さまで）
 export const SEG = { maxM: 3000, minM: 100, betweenM: 100 };
-// 移動読書（v0.14.4）：地図の「今から移動読書」で時間を計りはじめ、「おわる」で止める（本も読みかたも選ばない・ページ数は聞かない）。読んだ時間だけページ（1分で1ページ・1回60ページまで）。時間は1回3時間まで（押したまま忘れたとき）
+// 読書（v0.14.4）：地図の「読書をはじめる」で時間を計りはじめ、「おわる」で止める（本も読みかたも選ばない・ページ数は聞かない）。読んだ時間だけページ（1分で1ページ・1回60ページまで）。時間は1回3時間まで（押したまま忘れたとき）
 export const READ = { pgPerMin: 1, maxPg: 60, maxMin: 180 };
 // 常連度：同じ店でスタンプを押した「日数」で上がる（たくさんの店に行けない人の楽しみ）
 export const REGULAR = [{ n: 1, name: 'はじめまして' }, { n: 3, name: '顔なじみ' }, { n: 5, name: '常連' }, { n: 10, name: 'ぬし' }, { n: 20, name: '名物客' }, { n: 50, name: '殿堂入り' }];
@@ -77,11 +76,11 @@ export const ACHIEVEMENTS = [
 // 画面の色＝色の変数を上書き（明るい見た目のときだけ）。sw は選ぶ丸の2色。ピン・スタンプの色は変えない（種類の見分けのため）
 export const SKINS = {
   remon: { name: '檸檬（いま）', sw: ['#FFD447', '#FF6A48'], v: {} },
-  sora: { name: '空', sw: ['#8CCBFF', '#2F9BFF'], v: { '--shu': '#2F9BFF', '--shu-2': '#1F7AE0', '--shu-soft': '#DCEEFF', '--gold': '#8CCBFF', '--gold-soft': '#E3F2FF', '--gold-ink': '#1F5E99', '--paper': '#F3F8FF', '--paper-2': '#E6F0FC', '--paper-3': '#D3E4F7', '--card-2': '#F3F8FF', '--line': '#D6E2F0', '--line-2': '#C2D3E6' } },
-  wakakusa: { name: '若草', sw: ['#A6E39A', '#2FA866'], v: { '--shu': '#2FA866', '--shu-2': '#1F8A50', '--shu-soft': '#DDF5E5', '--gold': '#A6E39A', '--gold-soft': '#E8F8E2', '--gold-ink': '#2E6B26', '--paper': '#F4FAF0', '--paper-2': '#E6F3DD', '--paper-3': '#D2E8C4', '--card-2': '#F4FAF0', '--line': '#D8E6CC', '--line-2': '#C3D8B3' } },
-  momo: { name: '桃', sw: ['#FFB3CB', '#FF5C8A'], v: { '--shu': '#FF5C8A', '--shu-2': '#E0406E', '--shu-soft': '#FFE0EA', '--gold': '#FFB3CB', '--gold-soft': '#FFE8F0', '--gold-ink': '#8A2F4D', '--paper': '#FFF5F8', '--paper-2': '#FCE6EE', '--paper-3': '#F6D0DE', '--card-2': '#FFF5F8', '--line': '#F0D9E1', '--line-2': '#E6C3D0' } },
-  murasaki: { name: '紫', sw: ['#C7AEFF', '#8F5BFF'], v: { '--shu': '#8F5BFF', '--shu-2': '#7442E0', '--shu-soft': '#EFE4FF', '--gold': '#C7AEFF', '--gold-soft': '#F1EAFF', '--gold-ink': '#4B2A8F', '--paper': '#F8F5FF', '--paper-2': '#ECE6FB', '--paper-3': '#DCD2F5', '--card-2': '#F8F5FF', '--line': '#E2DAF3', '--line-2': '#D0C4EC' } },
-  shu: { name: '朱', sw: ['#FFB38F', '#FF6A48'], v: { '--gold': '#FFB38F', '--gold-soft': '#FFE9DE', '--gold-ink': '#8A3A1C', '--paper': '#FFF6F0', '--paper-2': '#FCE7DC', '--paper-3': '#F6D2BF', '--card-2': '#FFF6F0' } },
+  sora: { name: '空', sw: ['#8CCBFF', '#2F9BFF'], v: { '--shu': '#2F9BFF', '--shu-2': '#1F7AE0', '--shu-soft': '#DCEEFF', '--gold': '#8CCBFF', '--gold-soft': '#E3F2FF', '--gold-ink': '#1F5E99', '--paper': '#F3F8FF', '--paper-2': '#E6F0FC', '--card-2': '#F3F8FF', '--line-2': '#C2D3E6' } },
+  wakakusa: { name: '若草', sw: ['#A6E39A', '#2FA866'], v: { '--shu': '#2FA866', '--shu-2': '#1F8A50', '--shu-soft': '#DDF5E5', '--gold': '#A6E39A', '--gold-soft': '#E8F8E2', '--gold-ink': '#2E6B26', '--paper': '#F4FAF0', '--paper-2': '#E6F3DD', '--card-2': '#F4FAF0', '--line-2': '#C3D8B3' } },
+  momo: { name: '桃', sw: ['#FFB3CB', '#FF5C8A'], v: { '--shu': '#FF5C8A', '--shu-2': '#E0406E', '--shu-soft': '#FFE0EA', '--gold': '#FFB3CB', '--gold-soft': '#FFE8F0', '--gold-ink': '#8A2F4D', '--paper': '#FFF5F8', '--paper-2': '#FCE6EE', '--card-2': '#FFF5F8', '--line-2': '#E6C3D0' } },
+  murasaki: { name: '紫', sw: ['#C7AEFF', '#8F5BFF'], v: { '--shu': '#8F5BFF', '--shu-2': '#7442E0', '--shu-soft': '#EFE4FF', '--gold': '#C7AEFF', '--gold-soft': '#F1EAFF', '--gold-ink': '#4B2A8F', '--paper': '#F8F5FF', '--paper-2': '#ECE6FB', '--card-2': '#F8F5FF', '--line-2': '#D0C4EC' } },
+  shu: { name: '朱', sw: ['#FFB38F', '#FF6A48'], v: { '--gold': '#FFB38F', '--gold-soft': '#FFE9DE', '--gold-ink': '#8A3A1C', '--paper': '#FFF6F0', '--paper-2': '#FCE7DC', '--card-2': '#FFF6F0' } },
 };
 // 地図の色（下地・家・建物・緑・林・砂・水・細い道とふち・大通りとふち・高速とふち・線路・文字・運動場・病院・学校）
 export const MAP_SKINS = {

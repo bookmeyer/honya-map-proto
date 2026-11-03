@@ -1,6 +1,6 @@
 // 本屋・図書館・ラリーのデータ。スタンプ（その店だけの絵柄）の見た目もここ
 import { DEMO_STORE } from './config.js?v=0.16.0';
-import { sleep, $, weekKey, prefOf, hash32, esc } from './util.js?v=0.16.0';
+import { sleep, $, weekKey, prefOf, hash32, esc, todayISO } from './util.js?v=0.16.0';
 import { S } from './state.js?v=0.16.0';
 
 export let STORES = [];
@@ -56,14 +56,13 @@ export function search(q, limit = 20) {
   return STORES.filter((s) => { const hay = (s.n || '') + ' ' + (s.a || '') + ' ' + prefOf(s); return words.every((w) => hay.includes(w)); }).slice(0, limit);
 }
 export function addCustom(st) { S.custom.push(st); const full = Object.assign({}, st, { custom: 1 }); STORES.push(full); BYID.set(st.i, full); }
-export function hideStore(st) { S.hidden[st.i] = { d: new Date().toISOString().slice(0, 10), n: st.n }; STORES = STORES.filter((s) => s.i !== st.i); BYID.delete(st.i); computeFeatured(); }
+export function hideStore(st) { S.hidden[st.i] = { d: todayISO(), n: st.n }; STORES = STORES.filter((s) => s.i !== st.i); BYID.delete(st.i); computeFeatured(); }
 export function unhideAll() { S.hidden = {}; S.renames = {}; rebuild(); }
-export function renameStore(st, name) { S.renames[st.i] = { n: name, old: st.n, d: new Date().toISOString().slice(0, 10) }; rebuild(); }
+export function renameStore(st, name) { S.renames[st.i] = { n: name, old: st.n, d: todayISO() }; rebuild(); }
 export const DATA_DATE = '2026-10-12';
 // ---- レア度（秘境度） ----
 export function rarityOf(st) { if (st.demo) return 3; const k = st.k == null ? 3 : st.k; return k === 0 ? 3 : k <= 6 ? 2 : 1; }
 export function rarityText(st) { const r = rarityOf(st); if (st.demo) return 'めったにないスタンプ（見本）'; if (st.k == null) return '街のスタンプ'; const w = isLib(st) ? '図書館' : '本屋', u = isLib(st) ? '館' : '店'; return r === 3 ? `秘境スタンプ（周り5kmに${w}なし）` : r === 2 ? `街のスタンプ（周り5kmに${w} ${st.k}${u}）` : `ふつうのスタンプ（周り5kmに${w} ${st.k}${u}）`; }
-export const rarityName = (r) => (r === 3 ? '秘境' : r === 2 ? '街' : '並');
 // ---- スタンプの見た目 ----
 // 店ごとに、形（角丸・丸・六角）・地の色（6色）・絵柄（本にまつわる12種）が決まる。白いふち＋墨の輪郭の「シール」（v0.9 ポップ・ラリー）
 const INKS = [['#FF6A48', '#1B1B1B'], ['#2F9BFF', '#FFFFFF'], ['#4FC07A', '#1B1B1B'], ['#FFD447', '#1B1B1B'], ['#A86CFF', '#FFFFFF'], ['#FF7AB6', '#1B1B1B']]; // 地の色・絵柄の色

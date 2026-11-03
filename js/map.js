@@ -7,6 +7,8 @@ export const M = { map: null, ready: false, theme: 'light' };
 let storesGeo = { type: 'FeatureCollection', features: [] };
 let territoryGeo = { type: 'FeatureCollection', features: [] };
 let meGeo = { type: 'FeatureCollection', features: [] };
+let bound = false;
+const HIT_LAYERS = ['stores', 'stores-stamped', 'stores-near', 'stores-pick', 'clusters', 'reads']; // 押せるもの（地図の下地より先に受ける）
 let readsGeo = { type: 'FeatureCollection', features: [] }; // 読んだ場所（v0.15.0）
 const stateCache = new Map(); // id → 最後に送った状態
 let handlers = {};
@@ -121,6 +123,7 @@ function addLayers() {
   map.addLayer({ id: 'stores-pick', type: 'symbol', source: 'stores', filter: ['all', unc, ['==', ['get', 'pk'], 1]], layout: { 'icon-image': 'mark-pick', 'icon-size': ['interpolate', ['linear'], ['zoom'], 8, 0.5, 15, 0.8], 'icon-anchor': 'bottom-right', 'icon-offset': [-10, -34], 'icon-allow-overlap': true, 'icon-ignore-placement': true } });
   map.addLayer({ id: 'me-dot', type: 'circle', source: 'me', filter: ['==', ['get', 'k'], 'me'], paint: { 'circle-radius': 9, 'circle-color': ['case', ['==', ['get', 'fake'], 1], '#A86CFF', '#FFFFFF'], 'circle-stroke-width': 2.5, 'circle-stroke-color': '#1B1B1B' } });
   avatarLayer(map); // 自分のアイコンがあれば、現在地の点の上に
+  if (!bound) { bound = true; // 押したときの受け口は1回だけ（v0.16.0：明・暗を切りかえるたびに増えていた）
   for (const id of ['stores', 'stores-stamped', 'stores-near', 'stores-pick']) {
     map.on('click', id, (e) => { if (e.originalEvent._hit) return; const f = e.features && e.features[0]; if (f) { e.originalEvent._hit = true; handlers.onStoreClick && handlers.onStoreClick(f.properties.id); } });
     map.on('mouseenter', id, () => { map.getCanvas().style.cursor = 'pointer'; }); map.on('mouseleave', id, () => { map.getCanvas().style.cursor = ''; });
@@ -129,6 +132,7 @@ function addLayers() {
   map.on('mouseenter', 'clusters', () => { map.getCanvas().style.cursor = 'pointer'; }); map.on('mouseleave', 'clusters', () => { map.getCanvas().style.cursor = ''; });
   // 読んだ場所の印を押したとき（店のピンと重なったら店を先に。だから店のあとに登録する）
   map.on('click', 'reads', (e) => { if (e.originalEvent._hit) return; const f = e.features && e.features[0]; if (!f) return; e.originalEvent._hit = true; handlers.onReadClick && handlers.onReadClick(f.properties); });
+  }
   // 保存していた状態を入れ直す（スタイルを替えたときも）
   for (const [id, st] of stateCache) map.setFeatureState({ source: 'stores', id }, st);
 }
@@ -160,7 +164,7 @@ export function initMap({ center, zoom, theme = 'light', onStoreClick, onMapClic
   M.map = map;
   map.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-left');
   map.on('load', () => { safeAddLayers(); M.ready = true; emit('map-ready'); });
-  map.on('click', (e) => { if (e.originalEvent._hit) return; handlers.onMapClick && handlers.onMapClick(e.lngLat); });
+  map.on('click', (e) => { const ls = HIT_LAYERS.filter((id) => map.getLayer(id)); if (ls.length && map.queryRenderedFeatures(e.point, { layers: ls }).length) return; handlers.onMapClick && handlers.onMapClick(e.lngLat); }); // ピンなどの上を押したときは、地図のほうの動きをしない（v0.16.0：お試し歩きでピンを押すと、そこへ移っていた）
   map.on('dragstart', () => { handlers.onDrag && handlers.onDrag(); });
   map.on('error', (e) => { console.warn('map', e && e.error && e.error.message); });
   return map;
@@ -182,7 +186,8 @@ export function setStates(next) { // Map<id, {stamp, near, feat, want, st, ev}>
   }
 }
 // 押した店のまわりを塗る。常連度が高い店ほど広く・濃く（s.rad と s.rank）
-export function setTerritory(stores) { territoryGeo = { type: 'FeatureCollection', features: stores.map((s) => ({ type: 'Feature', geometry: { type: 'Polygon', coordinates: circlePoly(s.lo, s.la, s.rad || TERRITORY_M) }, properties: { rank: s.rank || 1 } })) }; if (M.ready) M.map.getSource('territory').setData(territoryGeo); }
+let terrKey = '';
+export function setTerritory(stores) { const key = stores.map((s) => `${s.i}:${s.rank || 1}`).join(','); if (key === terrKey) return; terrKey = key; /* 変わっていなければ描き直さない（v0.16.0） */ territoryGeo = { type: 'FeatureCollection', features: stores.map((s) => ({ type: 'Feature', geometry: { type: 'Polygon', coordinates: circlePoly(s.lo, s.la, s.rad || TERRITORY_M) }, properties: { rank: s.rank || 1 } })) }; if (M.ready) M.map.getSource('territory').setData(territoryGeo); }
 // 読んだ場所（v0.15.0）：spots＝[{ id, p0:[lat,lon], p1, label }]
 export function setReads(spots) {
   readsGeo = { type: 'FeatureCollection', features: spots.flatMap((r) => [{ type: 'Feature', geometry: { type: 'Point', coordinates: [r.p0[1], r.p0[0]] }, properties: { id: r.id, label: r.label } }, ...(r.p1 ? [{ type: 'Feature', geometry: { type: 'LineString', coordinates: [[r.p0[1], r.p0[0]], [r.p1[1], r.p1[0]]] }, properties: { id: r.id } }] : [])]) };

@@ -9,7 +9,7 @@ export function setPos(lat, lon, acc, fake, heading = null) {
   const prev = POS.lat != null ? { lat: POS.lat, lon: POS.lon, at: POS.at } : null;
   if (!fake && prev && POS.at) { const dt = (Date.now() - prev.at) / 1000; const d = dist(prev.lat, prev.lon, lat, lon); if (dt > 0.5 && d / dt > JUMP_MPS && d > 300) POS.jumpUntil = Date.now() + JUMP_COOLDOWN_MS; }
   POS.lat = lat; POS.lon = lon; POS.acc = acc; POS.fake = fake; POS.heading = heading; POS.at = Date.now();
-  if (!fake) { S.lastPos = { lat: +lat.toFixed(4), lon: +lon.toFixed(4) }; save(); } // 次に開いたときの最初の地図は、本当にいた場所から（お試し歩きの場所は覚えない。v0.13.2）
+  if (!fake) { const lp = { lat: +lat.toFixed(4), lon: +lon.toFixed(4) }; if (!S.lastPos || S.lastPos.lat !== lp.lat || S.lastPos.lon !== lp.lon) { S.lastPos = lp; save(); } } // 約10m動いたときだけ書く（v0.16.0：位置が届くたびに全部の記録を書いていた） // 次に開いたときの最初の地図は、本当にいた場所から（お試し歩きの場所は覚えない。v0.13.2）
   emit('pos', POS);
 }
 export const hasPos = () => POS.lat != null;

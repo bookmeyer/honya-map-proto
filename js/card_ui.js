@@ -34,7 +34,7 @@ function cardForm(st, b) {
     const book = Object.assign({ isbn: '', author: '', publisher: '', cover: '' }, b || {}, { title }); const res = G.makeCard(st, book, $('#cd-why').value.trim(), $('#cd-pub').checked);
     closeModal(); applyMapStates(); refreshHud(); sfx.reveal(); haptic([30, 40, 30]); res.rewards.forEach((x) => toast(x, 'ok')); cardDone(st, S.cards[S.cards.length - 1], res, inStore); };
 }
-// カードができたあと（v0.14）：この本で移動読書／いま読んでいる本に入れる／めぐり帳で見る
+// カードができたあと（v0.14）：この本で読書をはじめる／いま読んでいる本に入れる／めぐり帳で見る
 function cardDone(st, c, res, inStore) {
   const go = inStore && !POS.fake && !st.demo && !R.activeTrip(); const inR = R.inReading(c);
   openModal(`<h2>カードができました</h2><div class="card-full"><div class="cover">${c.cover ? `<img src="${esc(c.cover)}" alt="" referrerpolicy="no-referrer">` : '<div class="notitle">表紙なし</div>'}</div><div style="flex:1;min-width:0"><div><b>${esc(c.title)}</b></div><div class="muted small">${esc(c.sn)}　${fmtDate(c.d)}</div><div class="gain-s">+${res.total}ページ${res.lv.after > res.lv.before ? `　📖 第${res.lv.after}巻に入った！` : ''}</div></div></div>

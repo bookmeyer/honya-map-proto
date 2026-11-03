@@ -1,9 +1,11 @@
 // 遊びの仕組み：物語のページと巻・称号・実績・ミッション・ラリー・カード
 import { REGULAR, WALK, volOf, TITLES, ACHIEVEMENTS, PG } from './config.js?v=0.16.0';
-import { todayISO, emit, prefOf, weekKey, weekStartISO, monthKey } from './util.js?v=0.16.0';
+import { todayISO, emit, prefOf, weekKey, weekStartISO } from './util.js?v=0.16.0';
 import { S, save } from './state.js?v=0.16.0';
 import { BYID, rarityOf, RALLIES, isFeat } from './data.js?v=0.16.0';
 
+// 今日さいごに、射程内で押したスタンプ（お試し歩きは入れない）。店と店のあいだ・読書のはじまりで使う（v0.16.0）
+export function lastNearVisitToday() { const today = todayISO(); for (let i = S.visits.length - 1; i >= 0; i--) { const v = S.visits[i]; if (v.d !== today) return null; if (v.near && !v.trial) return v; } return null; }
 export const visitsOf = (id) => S.visits.filter((v) => v.s === id);
 export const cardsOf = (id) => S.cards.filter((c) => c.s === id);
 export const hasStamp = (id) => !!S.stamps[id];
@@ -66,7 +68,7 @@ export function weeklyMissions() {
   ];
 }
 export function checkRewards() {
-  const rewards = []; const wk = weekKey(); const d = todayISO(); const mk = monthKey();
+  const rewards = []; const wk = weekKey(); const d = todayISO();
   S.claimedW[wk] = S.claimedW[wk] || []; S.claimedD[d] = S.claimedD[d] || [];
   for (const m of dailyMissions()) if (m.cur >= m.goal && !S.claimedD[d].includes(m.id)) { S.claimedD[d].push(m.id); addPages(PG.daily); rewards.push(`今日のお題「${m.name}」 +${PG.daily}ページ`); }
   for (const m of weeklyMissions()) if (m.cur >= m.goal && !S.claimedW[wk].includes(m.id)) { S.claimedW[wk].push(m.id); addPages(PG.weekly); rewards.push(`今週のお題「${m.name}」 +${PG.weekly}ページ`); }
