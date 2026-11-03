@@ -1,14 +1,14 @@
 // 画面の部品：見出し帯・タブ・店のシート・モーダル・スタンプの演出・カード・さがす・追加
-import { RANGE_M, SENSE_M, TERRITORY_M, PG, pagesForVol } from './config.js?v=0.11.0';
-import { S, save, exportJSON } from './state.js?v=0.11.0';
-import { STORES, BYID, FEAT, isFeat, isLib, placeWord, rarityOf, rarityText, stampSVG, stampInk, search, addCustom, hideStore, renameStore, lookupIsbn, DATA_DATE, pickOpen, bookTitle } from './data.js?v=0.11.0';
-import * as G from './game.js?v=0.11.0';
-import * as MAP from './map.js?v=0.11.0';
-import { POS, setPos, startWatch, setTrial, setFollow, hasPos, jumped } from './position.js?v=0.11.0';
-import { sfx, haptic, unlock } from './audio.js?v=0.11.0';
-import { stampImage, cardImage, shareBlob } from './share.js?v=0.11.0';
-import * as E from './events.js?v=0.11.0';
-import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, on, emit, weekKey, gmapDir, mobileOS } from './util.js?v=0.11.0';
+import { RANGE_M, SENSE_M, TERRITORY_M, PG, pagesForVol } from './config.js?v=0.12.0';
+import { S, save, exportJSON } from './state.js?v=0.12.0';
+import { STORES, BYID, FEAT, isFeat, isLib, placeWord, rarityOf, rarityText, stampSVG, stampInk, search, addCustom, hideStore, renameStore, lookupIsbn, DATA_DATE, pickOpen, bookTitle } from './data.js?v=0.12.0';
+import * as G from './game.js?v=0.12.0';
+import * as MAP from './map.js?v=0.12.0';
+import { POS, setPos, startWatch, setTrial, setFollow, hasPos, jumped } from './position.js?v=0.12.0';
+import { sfx, haptic, unlock } from './audio.js?v=0.12.0';
+import { stampImage, cardImage, shareBlob } from './share.js?v=0.12.0';
+import * as E from './events.js?v=0.12.0';
+import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, on, emit, weekKey, gmapDir, gmapPlace, mobileOS } from './util.js?v=0.12.0';
 
 export let currentView = 'map';
 export let currentSub = 'stamps';
@@ -133,7 +133,7 @@ export function openSheet(id, quiet) {
       <button class="btn" data-act="card">${icon('barcode')}本と出会った</button>
       <button class="btn" data-act="want">${icon('heart')}${want ? '行きたいを外す' : '行きたい'}</button>
       ${stamp ? `<button class="btn" data-act="share">${icon('share')}シェア</button>` : ''}${reg.rank >= 2 ? `<button class="btn" data-act="regshare">${icon('crown')}常連度シェア</button>` : ''}
-      ${st.demo ? '' : `<a class="btn wide" href="${gmapDir(st)}" target="_blank" rel="noopener">${icon('map')}Googleマップで道順</a>`}
+      ${st.demo ? '' : `<a class="btn" href="${gmapPlace(st)}" target="_blank" rel="noopener">${icon('search')}営業時間</a><a class="btn" href="${gmapDir(st)}" target="_blank" rel="noopener">${icon('map')}道順</a><div class="muted small" style="grid-column:1/-1;width:100%">どちらもGoogleマップが開きます</div>`}
       ${POS.fake && !near ? `<button class="btn wide" data-act="warp">${icon('warp')}この店へワープ</button>` : ''}
       ${st.demo || st.custom ? '' : `<button class="btn ghost" data-act="report">${isLib(st) ? '閉館している' : '閉店している'}</button><button class="btn ghost" data-act="rename">名前が違う</button>`}
     </div><div id="sheet-extra"></div>`;

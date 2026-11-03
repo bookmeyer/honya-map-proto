@@ -1,16 +1,16 @@
 // 起動：記録を読み、データを取り、地図を出し、部品をつなぐ
-import { APP_VER } from './config.js?v=0.11.0';
-import { S, load, save } from './state.js?v=0.11.0';
-import { loadAll, STORES } from './data.js?v=0.11.0';
-import * as MAP from './map.js?v=0.11.0';
-import { POS, setPos, setFollow, jumped } from './position.js?v=0.11.0';
-import * as AUDIO from './audio.js?v=0.11.0';
-import * as UI from './ui.js?v=0.11.0';
-import * as J from './journey.js?v=0.11.0';
-import * as JU from './journey_ui.js?v=0.11.0';
-import * as E from './events.js?v=0.11.0';
-import { renderRadar, renderZukan, renderMissions, renderSettings, applyTheme, showOnboarding } from './screens.js?v=0.11.0';
-import { $, $$, on, emit, isStandalone, mobileOS } from './util.js?v=0.11.0';
+import { APP_VER } from './config.js?v=0.12.0';
+import { S, load, save } from './state.js?v=0.12.0';
+import { loadAll, STORES } from './data.js?v=0.12.0';
+import * as MAP from './map.js?v=0.12.0';
+import { POS, setPos, setFollow, jumped } from './position.js?v=0.12.0';
+import * as AUDIO from './audio.js?v=0.12.0';
+import * as UI from './ui.js?v=0.12.0';
+import * as J from './journey.js?v=0.12.0';
+import * as JU from './journey_ui.js?v=0.12.0';
+import * as E from './events.js?v=0.12.0';
+import { renderRadar, renderZukan, renderMissions, renderSettings, applyTheme, showOnboarding } from './screens.js?v=0.12.0';
+import { $, $$, on, emit, isStandalone, mobileOS } from './util.js?v=0.12.0';
 
 async function boot() {
   load(); applyThemeEarly();

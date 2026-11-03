@@ -1,16 +1,16 @@
 // 画面：ちかく（旧レーダー）・めぐり帳（旧図鑑）・ラリー（旧お題）・設定・最初の案内
-import { APP_VER, RANGE_M, PG, pagesForVol, frameOf, PREFS } from './config.js?v=0.11.0';
-import { S, save, exportJSON, parseImport, replace, reset } from './state.js?v=0.11.0';
-import { STORES, BYID, FEAT, RALLIES, isFeat, rarityOf, rarityText, stampSVG, unhideAll, rebuild, DATA_DATE, pickOpen, bookTitle } from './data.js?v=0.11.0';
-import * as G from './game.js?v=0.11.0';
-import * as MAP from './map.js?v=0.11.0';
-import { POS, hasPos } from './position.js?v=0.11.0';
-import { sfx, haptic } from './audio.js?v=0.11.0';
-import { profileImage, shareBlob } from './share.js?v=0.11.0';
-import { toast, openModal, closeModal, confirmBox, openSheet, openCard, switchView, setSub, refreshHud, applyMapStates, updateNear, locate, setTrialUI, warp, makeAvatar, nameModal, cleanHandle, joinModal, NEAR, currentSub, homeTip, exportFile } from './ui.js?v=0.11.0';
-import * as JU from './journey_ui.js?v=0.11.0';
-import * as E from './events.js?v=0.11.0';
-import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, weekKey, isStandalone, mobileOS } from './util.js?v=0.11.0';
+import { APP_VER, RANGE_M, PG, pagesForVol, frameOf, PREFS } from './config.js?v=0.12.0';
+import { S, save, exportJSON, parseImport, replace, reset } from './state.js?v=0.12.0';
+import { STORES, BYID, FEAT, RALLIES, isFeat, rarityOf, rarityText, stampSVG, unhideAll, rebuild, DATA_DATE, pickOpen, bookTitle } from './data.js?v=0.12.0';
+import * as G from './game.js?v=0.12.0';
+import * as MAP from './map.js?v=0.12.0';
+import { POS, hasPos } from './position.js?v=0.12.0';
+import { sfx, haptic } from './audio.js?v=0.12.0';
+import { profileImage, shareBlob } from './share.js?v=0.12.0';
+import { toast, openModal, closeModal, confirmBox, openSheet, openCard, switchView, setSub, refreshHud, applyMapStates, updateNear, locate, setTrialUI, warp, makeAvatar, nameModal, cleanHandle, joinModal, NEAR, currentSub, homeTip, exportFile } from './ui.js?v=0.12.0';
+import * as JU from './journey_ui.js?v=0.12.0';
+import * as E from './events.js?v=0.12.0';
+import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, weekKey, isStandalone, mobileOS } from './util.js?v=0.12.0';
 
 const empty = (ic, text) => `<div class="empty">${icon(ic)}<div>${text}</div></div>`;
 
@@ -155,7 +155,7 @@ export function renderSettings() {
     <div class="setting"><div><div class="l">端末の確認</div><div class="s">位置・カメラ・保存が使えるか</div></div><button class="btn" id="st-diag">確認</button></div>
     <div id="st-diag-out"></div>
     <h3>このアプリについて</h3>
-    <div class="about">本めぐり v${APP_VER}（試作）。本屋と図書館をめぐる位置ゲーム。<br>位置（座標）は、この端末の中で距離を出すためだけに使い、送りません。参加の人数を数えるために、スタンプを押した店の番号・日時・店の近くで押したか・お試し歩きか・どのイベントかを、名前のない、ランダムな番号といっしょに、本をつなぐ（tsunagubooks.com）へ送ります（設定で止められます）。そのほかの記録は、この端末の中だけに残ります。<br>画面を出すために、Google Fonts（文字）・jsDelivr（地図のプログラム）・OpenFreeMap（地図の絵。見ている範囲）へ、本を調べるときは openBD（その本の番号）へつなぎます。このとき、端末のIPアドレスやブラウザの種類が相手に届きます。<br><br>
+    <div class="about">本めぐり v${APP_VER}（試作）。本屋と図書館をめぐる位置ゲーム。<br>歩きながら画面を見ないでください。運転中は使わないでください。お店では、店の方やほかのお客さんの迷惑にならないようにお願いします。<br>位置（座標）は、この端末の中で距離を出すためだけに使い、送りません。参加の人数を数えるために、スタンプを押した店の番号・日時・店の近くで押したか・お試し歩きか・どのイベントかを、名前のない、ランダムな番号といっしょに、本をつなぐ（tsunagubooks.com）へ送ります（設定で止められます）。そのほかの記録は、この端末の中だけに残ります。<br>画面を出すために、Google Fonts（文字）・jsDelivr（地図のプログラム）・OpenFreeMap（地図の絵。見ている範囲）へ、本を調べるときは openBD（その本の番号）へつなぎます。このとき、端末のIPアドレスやブラウザの種類が相手に届きます。<br><br>
       店の位置：© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors（ODbL）。地図：<a href="https://openfreemap.org/" target="_blank" rel="noopener">OpenFreeMap</a>・<a href="https://openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a>。本の情報と表紙：<a href="https://openbd.jp/" target="_blank" rel="noopener">openBD</a>（表紙は紹介のための参照表示で、保存しません）。地図の描画：MapLibre GL JS。文字：Google Fonts。<br>
       店のデータは ${DATA_DATE} 時点の OpenStreetMap（有志が作る地図）で、閉店や名前の変更が反映されていない店があります。店のページの「閉店している」で外せ、「名前が違う」で直せます（この端末だけ。記録の書き出しに含まれます）。</div>`;
   $('#st-back').onclick = () => switchView('map');
@@ -192,13 +192,15 @@ export function showOnboarding(onDone) {
     { art: `<svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="86" fill="#FBEFD6" stroke="#1B1B1B" stroke-width="2.5"/><rect x="62" y="52" width="76" height="100" rx="8" fill="#FFFFFF" stroke="#1B1B1B" stroke-width="2.5"/><rect x="74" y="66" width="52" height="54" rx="4" fill="#FF6A48" stroke="#1B1B1B" stroke-width="2"/><rect x="74" y="128" width="52" height="5" rx="2" fill="#1B1B1B"/><rect x="74" y="138" width="34" height="5" rx="2" fill="#8A8378"/></svg>`, h: '本と出会ったら、カードに', p: '買った本の裏のバーコードを読むと、表紙と店と日付が1枚のカードになります。読んだかどうかは問いません。' },
     { art: `<svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="92" fill="#FBEFD6" stroke="#1B1B1B" stroke-width="2.5"/><g transform="translate(100 106)"><path d="M-64 -46q32 -14 64 0v88q-32 -14 -64 0z" fill="#FFFFFF" stroke="#1B1B1B" stroke-width="3" stroke-linejoin="round"/><path d="M0 -46q32 -14 64 0v88q-32 -14 -64 0z" fill="#FFFFFF" stroke="#1B1B1B" stroke-width="3" stroke-linejoin="round"/><text x="-32" y="-8" text-anchor="middle" font-size="19" fill="#FF6A48" font-family="Mochiy Pop P One, Zen Maru Gothic, sans-serif">第1巻</text><path d="M-50 14h36M-50 27h28M14 -16h36M14 -3h36M14 10h28M14 23h32" stroke="#D9CDB4" stroke-width="3" stroke-linecap="round"/><path d="M42 -53v32l-7 -6-7 6v-32" fill="#FFD447" stroke="#1B1B1B" stroke-width="1.5" stroke-linejoin="round"/></g></svg>`, h: 'ページがたまると、次の巻へ', p: 'スタンプを押す、本と出会う、歩く（100mで1ページ）。どれもあなたの物語のページになり、ページがたまると巻が進みます。ほかのゲームでいうレベルです。' },
   ];
+  // 2枚目に、本めぐりの主役「書店員さんの1冊」（v0.12。開いてすぐ、ほかの地図との違いがわかるように）
+  pages.splice(1, 0, { art: `<svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="92" fill="#FBEFD6" stroke="#1B1B1B" stroke-width="2.5"/><rect x="40" y="50" width="62" height="90" rx="6" fill="#FF6A48" stroke="#1B1B1B" stroke-width="2.5"/><path d="M52 50v90" stroke="#1B1B1B" stroke-width="2"/><rect x="60" y="68" width="32" height="5" rx="2.5" fill="#FFFFFF"/><rect x="60" y="80" width="24" height="5" rx="2.5" fill="#FFFFFF"/><g transform="rotate(7 132 112)"><rect x="96" y="80" width="74" height="62" rx="5" fill="#FFFDF5" stroke="#1B1B1B" stroke-width="2"/><path d="M106 98h54M106 114h54M106 130h40" stroke="#E6DCC6" stroke-width="1.5"/><path d="M107 96q6-6 12 0t12 0t12 0t10-1M107 112q6-6 12 0t12 0t12 0M107 128q6-6 12 0t12 0" fill="none" stroke="#5A554D" stroke-width="2" stroke-linecap="round"/></g><g transform="translate(150 58)"><circle r="15" fill="#FFFFFF" stroke="#1B1B1B" stroke-width="2"/><path d="M-9.5-5.8q4.75-2.6 9.5 0v12q-4.75-2.6-9.5 0zM0-5.8q4.75-2.6 9.5 0v12q-4.75-2.6-9.5 0z" fill="#FF6A48" stroke="#1B1B1B" stroke-width="1.6" stroke-linejoin="round"/></g></svg>`, h: 'お店には、書店員さんの1冊が待っている', p: '本の印がついたお店には、書店員さんがすすめる1冊があります。書名とひとことは誰でも読めます。そのお店でスタンプを押すと、手書きのカードが見られます。' });
   // スマホのブラウザで開いているときだけ、最後の1枚の前に「ホーム画面に追加」を入れる（v0.10.1）。見た人には、あとで同じ案内を出さない
   const os = mobileOS();
   if (os && !isStandalone()) pages.splice(pages.length - 1, 0, { home: 1, art: `<svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="92" fill="#FBEFD6" stroke="#1B1B1B" stroke-width="2.5"/><rect x="64" y="34" width="72" height="132" rx="12" fill="#FFFFFF" stroke="#1B1B1B" stroke-width="2.5"/>${[76, 93, 110].map((x) => [50, 68, 86].map((y) => `<rect x="${x}" y="${y}" width="14" height="14" rx="4" fill="#D9CDB4"/>`).join('')).join('')}<rect x="85" y="106" width="30" height="30" rx="8" fill="#FF6A48" stroke="#1B1B1B" stroke-width="2"/><text x="100" y="128" text-anchor="middle" font-size="18" fill="#1B1B1B" font-family="Mochiy Pop P One, Zen Maru Gothic, sans-serif">本</text><circle cx="115" cy="106" r="9" fill="#FFD447" stroke="#1B1B1B" stroke-width="2"/><path d="M110.5 106h9M115 101.5v9" stroke="#1B1B1B" stroke-width="2.5" stroke-linecap="round"/><rect x="88" y="154" width="24" height="4" rx="2" fill="#1B1B1B"/></svg>`, h: 'ホーム画面に置くと、記録が消えにくい', p: os === 'ios' ? 'Safariで開いているだけだと、しばらく開かないうちに記録が消えることがあります。共有ボタン（四角に上向きの矢印）→「ホーム画面に追加」で、アイコンから開けるようにしてください。' : 'ブラウザで開いているだけだと、端末の空きが少ないときなどに記録が消えることがあります。右上のメニュー（︙）→「ホーム画面に追加」で、アイコンから開けるようにしてください。' });
   let i = 0; const box = $('#onboard-box');
   const draw = () => { const p = pages[i]; const last = i === pages.length - 1; if (p.home) { S.settings.homeTip = 1; save(); }
     box.innerHTML = `<div class="art">${p.art}</div><h2>${esc(p.h)}</h2><p>${esc(p.p)}</p><div class="dotsnav">${pages.map((_, k) => `<i class="${k === i ? 'on' : ''}"></i>`).join('')}</div>
-      ${last ? `<div class="field"><label for="ob-name">ハンドルネーム（あとで設定でも変えられます）</label><input type="text" id="ob-name" maxlength="20" placeholder="例：本の虫" autocomplete="nickname"></div><div class="note">位置（座標）は送りません。参加の人数を数えるために、スタンプを押した店の番号と日時などを、名前のない、ランダムな番号といっしょに送ります（設定で止められます。くわしくは設定の「このアプリについて」）。</div><div class="actions"><button class="btn primary wide" id="ob-geo">${icon('locate')}現在地から始める</button><button class="btn wide" id="ob-trial">${icon('foot')}お試し歩きで始める（家で試す）</button><button class="btn ghost wide" id="ob-later">あとで</button></div>` : `<div class="actions"><button class="btn primary wide" id="ob-next">つぎへ</button><button class="btn ghost wide" id="ob-skip">とばす</button></div>`}`;
+      ${last ? `<div class="field"><label for="ob-name">ハンドルネーム（あとで設定でも変えられます）</label><input type="text" id="ob-name" maxlength="20" placeholder="例：本の虫" autocomplete="nickname"></div><div class="note">歩きながら画面を見ない・運転中は使わない・お店では店の方の迷惑にならないように、お願いします。</div><div class="note">位置（座標）は送りません。参加の人数を数えるために、スタンプを押した店の番号と日時などを、名前のない、ランダムな番号といっしょに送ります（設定で止められます。くわしくは設定の「このアプリについて」）。</div><div class="actions"><button class="btn primary wide" id="ob-geo">${icon('locate')}現在地から始める</button><button class="btn wide" id="ob-trial">${icon('foot')}お試し歩きで始める（家で試す）</button><button class="btn ghost wide" id="ob-later">あとで</button></div>` : `<div class="actions"><button class="btn primary wide" id="ob-next">つぎへ</button><button class="btn ghost wide" id="ob-skip">とばす</button></div>`}`;
     if (!last) { $('#ob-next').onclick = () => { i++; draw(); }; $('#ob-skip').onclick = () => { i = pages.length - 1; draw(); }; }
     else { const done = (mode) => { const nm = cleanHandle($('#ob-name') ? $('#ob-name').value : ''); if (nm) { S.settings.handle = nm; save(); } $('#onboard').hidden = true; onDone(mode); }; $('#ob-geo').onclick = () => done('geo'); $('#ob-trial').onclick = () => done('trial'); $('#ob-later').onclick = () => done('later'); } };
   $('#onboard').hidden = false; draw();

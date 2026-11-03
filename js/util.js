@@ -1,5 +1,5 @@
 // 小さな道具
-import { PREFS } from './config.js?v=0.11.0';
+import { PREFS } from './config.js?v=0.12.0';
 
 export const $ = (s, el = document) => el.querySelector(s);
 export const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
@@ -21,6 +21,8 @@ export function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t 
 export function cleanAuthor(a) { return String(a).split(/\s+/).map((t) => t.replace(/,?\s*\d{4}-?(\d{4})?/g, '').replace(/,/g, '').trim()).filter(Boolean).join('、'); }
 export const icon = (name, cls = '') => `<svg class="ic ${cls}" aria-hidden="true"><use href="#i-${name}"></use></svg>`;
 export const gmapDir = (st) => `https://www.google.com/maps/dir/?api=1&destination=${st.la},${st.lo}&travelmode=walking`;
+// Googleマップでお店そのものを開く（営業時間・定休日を見るため。店名＋住所か県で探す。Google の情報を取り込むのではなく開くだけ）
+export const gmapPlace = (st) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([st.n, st.a || prefOf(st)].filter(Boolean).join(' '))}`;
 export const stars = (r) => '★'.repeat(r) + '☆'.repeat(3 - r);
 // ホーム画面のアイコンから開いているか（iPhone は navigator.standalone）
 export const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
