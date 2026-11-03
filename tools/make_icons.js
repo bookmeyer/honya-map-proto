@@ -1,4 +1,4 @@
-// アイコンの絵（SVG）を作る道具（v0.16.0）。いまのアイコン「本の中の地図」（大きさ大・ひらく角度150°・空色の地・檸檬の表紙）
+// アイコンの絵（SVG）を作る道具（v0.16.0）。いまのアイコン「本の中の地図」（大きさ大・ひらく角度150°・檸檬の地・朱の表紙）
 // 使い方：node tools/make_icons.js → tools/icon/icon.svg（ふつう・iPhone・タブの印）と tools/icon/icon-maskable.svg（Android の丸く切る用。絵を0.77倍にして、安全な範囲＝半径40%の内側に）
 // PNG（icon-192/512・apple-touch-icon 180・icon-maskable-512）は、この SVG をブラウザで開いて書き出す（字は使っていないので、どのブラウザでも同じ絵）。変えたら manifest・index.html・sw.js のアイコンの ?v= を上げる
 // 机に開いて置いた本を、ななめ上から見た形で描く。w：ページの幅、ang：2枚のページのあいだの角度（180＝平ら）。地図はページごとに、ゆがめてのせる
@@ -30,7 +30,7 @@ function make(w, ang, id, pal = {}) {
   body += `<path d="${pin(tip[0], tip[1] - 2.15 * pr, pr)}" fill="${SHU}"${st.replace(`"${ow}"`, `"${r1(7 * Math.sqrt(z))}"`)}/><circle cx="${r1(tip[0])}" cy="${r1(tip[1] - 2.15 * pr)}" r="${r1(pr / 3)}" fill="${W}" stroke="${E}" stroke-width="${r1(4 * Math.sqrt(z))}"/>`;
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs>${defs}</defs><rect width="512" height="512" fill="${pal.bg || GOLD}"/>${pal.inner === null ? '' : `<circle cx="256" cy="256" r="200" fill="${pal.inner || '#FFE07A'}"/>`}${body}</svg>`;
 }
-const PAL = { bg: '#2F9BFF', inner: '#5DB2FF', cover: '#FFD447' }; // 空（11/3 ぶっくまさん「空色で」）
+const PAL = { bg: GOLD, inner: '#FFE07A', cover: SHU }; // 檸檬の地・朱の表紙（11/3 夜 ぶっくまさん「アイコンは青じゃないですね。やっぱり」→ 12案の「1 檸檬」。その前は空色）
 const full = make(184, 150, 'm', PAL);
 const BG = `<circle cx="256" cy="256" r="200" fill="${PAL.inner}"/>`;
 const mask = full.replace(BG, `<g transform="translate(256 256) scale(.77) translate(-256 -256)">${BG}`).replace('</svg>', '</g></svg>');

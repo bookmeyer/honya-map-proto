@@ -1,6 +1,6 @@
 // 記録（この端末の中だけ）。版の違いを吸収して読み込み、まとめて書き込む
-import { SKINS, MAP_SKINS, STORAGE_KEY, LEGACY_KEYS, APP_VER } from './config.js?v=0.18.1';
-import { $, emit, debounce } from './util.js?v=0.18.1';
+import { SKINS, MAP_SKINS, STORAGE_KEY, LEGACY_KEYS, APP_VER } from './config.js?v=0.18.2';
+import { $, emit, debounce } from './util.js?v=0.18.2';
 
 export const empty = () => ({
   v: 4, visits: [], cards: [], wants: [], custom: [], stamps: {}, pg: 0, pgDay: {},
