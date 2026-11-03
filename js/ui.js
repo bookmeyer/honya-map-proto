@@ -1,15 +1,15 @@
 // 画面の部品：見出し帯・タブ・店のシート・モーダル・スタンプの演出・カード・さがす・追加
-import { RANGE_M, SENSE_M, TERRITORY_M, PG, WALK, pagesForVol } from './config.js?v=0.14.7';
-import { S, save, exportJSON } from './state.js?v=0.14.7';
-import { STORES, BYID, FEAT, isFeat, isLib, placeWord, rarityOf, rarityText, stampSVG, stampInk, search, addCustom, hideStore, renameStore, lookupIsbn, DATA_DATE, pickOpen, bookTitle } from './data.js?v=0.14.7';
-import * as G from './game.js?v=0.14.7';
-import * as MAP from './map.js?v=0.14.7';
-import { POS, setPos, startWatch, setTrial, setFollow, hasPos, jumped } from './position.js?v=0.14.7';
-import { sfx, haptic, unlock } from './audio.js?v=0.14.7';
-import { stampImage, cardImage, shareBlob } from './share.js?v=0.14.7';
-import * as E from './events.js?v=0.14.7';
-import * as J from './journey.js?v=0.14.7';
-import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, on, emit, weekKey, gmapDir, gmapPlace, mobileOS } from './util.js?v=0.14.7';
+import { RANGE_M, SENSE_M, TERRITORY_M, PG, WALK, pagesForVol } from './config.js?v=0.14.8';
+import { S, save, exportJSON } from './state.js?v=0.14.8';
+import { STORES, BYID, FEAT, isFeat, isLib, placeWord, rarityOf, rarityText, stampSVG, stampInk, search, addCustom, hideStore, renameStore, lookupIsbn, DATA_DATE, pickOpen, bookTitle } from './data.js?v=0.14.8';
+import * as G from './game.js?v=0.14.8';
+import * as MAP from './map.js?v=0.14.8';
+import { POS, setPos, startWatch, setTrial, setFollow, hasPos, jumped } from './position.js?v=0.14.8';
+import { sfx, haptic, unlock } from './audio.js?v=0.14.8';
+import { stampImage, cardImage, shareBlob } from './share.js?v=0.14.8';
+import * as E from './events.js?v=0.14.8';
+import * as J from './journey.js?v=0.14.8';
+import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, on, emit, weekKey, gmapDir, gmapPlace, mobileOS } from './util.js?v=0.14.8';
 
 export let currentView = 'map';
 export let currentSub = 'stamps';
