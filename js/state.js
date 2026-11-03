@@ -1,6 +1,6 @@
 // 記録（この端末の中だけ）。版の違いを吸収して読み込み、まとめて書き込む
-import { SKINS, MAP_SKINS, STORAGE_KEY, LEGACY_KEYS, APP_VER, PROFILE_Q } from './config.js?v=0.20.0';
-import { $, emit, debounce } from './util.js?v=0.20.0';
+import { SKINS, MAP_SKINS, STORAGE_KEY, LEGACY_KEYS, APP_VER, PROFILE_Q } from './config.js?v=0.20.1';
+import { $, emit, debounce } from './util.js?v=0.20.1';
 
 export const empty = () => ({
   v: 4, visits: [], cards: [], wants: [], custom: [], stamps: {}, pg: 0, pgDay: {},
@@ -27,7 +27,7 @@ function cleanProfile(p) {
     const codes = new Set(q.o.map((x) => x[0]));
     if (q.max) { if (Array.isArray(v)) { const arr = [...new Set(v.filter((x) => codes.has(x)))].slice(0, q.max); if (arr.length) a[q.k] = arr; } } else if (codes.has(v)) a[q.k] = v;
   }
-  return { a, d: isDay(p.d) ? p.d : '', send: p.send === true && Object.keys(a).length > 0 };
+  return { a, d: isDay(p.d) ? p.d : '', send: Object.keys(a).length > 0 }; // v0.20.1：答えがあれば、統計データとして送る
 }
 function sanitize(o) {
   for (const k of ['visits', 'cards', 'wants', 'custom', 'posts', 'shares', 'reading', 'trips', 'reads', 'evTitles', 'outbox', 'repOut']) if (!Array.isArray(o[k])) o[k] = [];

@@ -1,16 +1,16 @@
 // 設定の画面と、そこから開くもの：見た目・着せ替え・アイコン・ハンドルネーム・参加コード・送るもののお知らせ・記録を守る・Googleマップの★
-import { SKINS, MAP_SKINS, APP_VER, TRIAL_ON, PROFILE_ON } from './config.js?v=0.20.0';
-import { openProfile, profileSummary } from './profile_ui.js?v=0.20.0';
-import { $, esc, fmtDist, icon, $$, mobileOS, isStandalone, emit, todayISO } from './util.js?v=0.20.0';
-import { S, save, parseImport, replace, reset, exportJSON } from './state.js?v=0.20.0';
-import { sfx } from './audio.js?v=0.20.0';
-import { POS } from './position.js?v=0.20.0';
-import { addCustom, STORES, DATA_DATE, rebuild, unhideAll } from './data.js?v=0.20.0';
-import * as MAP from './map.js?v=0.20.0';
-import * as E from './events.js?v=0.20.0';
-import * as GI from './gimport.js?v=0.20.0';
-import { openModal, closeModal, toast, refreshHud, switchView, confirmBox } from './ui.js?v=0.20.0';
-import { applyMapStates, updateNear, updateAreaChip, setTrialUI } from './map_ui.js?v=0.20.0';
+import { SKINS, MAP_SKINS, APP_VER, TRIAL_ON, PROFILE_ON, POLICY_VER } from './config.js?v=0.20.1';
+import { openProfile, profileSummary } from './profile_ui.js?v=0.20.1';
+import { $, esc, fmtDist, icon, $$, mobileOS, isStandalone, emit, todayISO } from './util.js?v=0.20.1';
+import { S, save, parseImport, replace, reset, exportJSON } from './state.js?v=0.20.1';
+import { sfx } from './audio.js?v=0.20.1';
+import { POS } from './position.js?v=0.20.1';
+import { addCustom, STORES, DATA_DATE, rebuild, unhideAll } from './data.js?v=0.20.1';
+import * as MAP from './map.js?v=0.20.1';
+import * as E from './events.js?v=0.20.1';
+import * as GI from './gimport.js?v=0.20.1';
+import { openModal, closeModal, toast, refreshHud, switchView, confirmBox } from './ui.js?v=0.20.1';
+import { applyMapStates, updateNear, updateAreaChip, setTrialUI } from './map_ui.js?v=0.20.1';
 
 // ---------- Googleマップの★を読み込む ----------
 export function googleHelp() {
@@ -60,7 +60,7 @@ export function renderSettings() {
     <div class="setting stack"><div><div class="l">Googleマップの★</div><div class="s">Googleマップで★を付けた本屋を「行きたい」にまとめて入れます${S.gimport ? `（前回 ${S.gimport.n}店）` : ''}</div></div><div class="avatar-ctl"><button class="btn ghost" id="st-ghelp">読み込み方</button><label class="btn">読み込む<input type="file" id="st-gimport" accept=".json,.csv,application/json,text/csv" multiple hidden></label></div></div>
     <div class="setting"><div><div class="l">音</div><div class="s">スタンプを押したとき・巻が進んだとき（近づいたときは鳴りません）</div></div><button class="switch ${s.sound ? 'on' : ''}" id="st-sound" role="switch" aria-checked="${s.sound}" aria-label="音"></button></div>
     ${TRIAL_ON ? `<div class="setting"><div><div class="l">お試し歩き</div><div class="s">地図を押した場所に自分がいることにする（作る人が試す用）</div></div><button class="switch ${POS.fake ? 'on' : ''}" id="st-trial" role="switch" aria-checked="${POS.fake}" aria-label="お試し歩き"></button></div>` : ''}
-    ${PROFILE_ON ? `<h3>プロフィール</h3><div class="setting"><div><div class="l">プロフィール</div><div class="s">世代・性別・本の買い方など。答えなくても使えます。${esc(profileSummary())}</div></div><button class="btn" id="st-profile">入れる・変える</button></div><div class="setting"><div><div class="l">プライバシーポリシー</div><div class="s">運営に届くもの・使い方・消し方</div></div><a class="btn" href="privacy.html" target="_blank" rel="noopener">見る</a></div>` : ''}
+    ${PROFILE_ON ? `<h3>プロフィール</h3><div class="setting"><div><div class="l">プロフィール</div><div class="s">世代・性別・本の買い方など。答えなくても使えます。${esc(profileSummary())}</div></div><button class="btn" id="st-profile">入れる・変える</button></div>` : ''}
     <h3>記録</h3>
     ${mobileOS() ? `<div class="setting"><div><div class="l">記録を守る</div><div class="s">${isStandalone() ? 'ホーム画面のアイコンから開いています。記録が消えにくい開き方です' : 'ホーム画面に追加して、アイコンから開くと、記録が消えにくくなります'}</div></div>${isStandalone() ? '' : '<button class="btn" id="st-home">やり方</button>'}</div>` : ''}
     <div class="setting"><div><div class="l">書き出す</div><div class="s">（読んだ場所・最後にいた場所も入ります。人に渡さないでください）スタンプ・カード・ページをファイルに</div></div><button class="btn" id="st-export">書き出す</button></div>
@@ -74,7 +74,8 @@ export function renderSettings() {
     <h3>このアプリについて</h3>
     <div class="setting"><div><div class="l">画面の案内</div><div class="s">地図の画面のボタンを、順に指さして説明します</div></div><button class="btn" id="st-tour">もう一度見る</button></div>
     <div class="setting"><div><div class="l">使い方</div><div class="s">はじめての方へ。スタンプの押し方・本のカード・イベントなど</div></div><a class="btn" href="howto.html" target="_blank" rel="noopener">見る</a></div>
-    ${PROFILE_ON ? `<div class="setting"><div><div class="l">端末の番号</div><div class="s">名前のないランダムな番号です。送った記録やプロフィールを消してほしいときに、お問い合わせに添えてください：<span class="mono">${esc(E.deviceId())}</span></div></div></div>` : ''}
+    <div class="setting"><div><div class="l">プライバシーポリシー</div><div class="s">運営に届くもの・使い方・消し方</div></div><a class="btn" href="privacy.html" target="_blank" rel="noopener">見る</a></div>
+    <div class="setting"><div><div class="l">端末の番号</div><div class="s">名前のないランダムな番号です。送った記録やプロフィールを消してほしいときに、お問い合わせに添えてください：<span class="mono">${esc(E.deviceId())}</span></div></div></div>
     <div class="about">本めぐり v${APP_VER}（試作）。本屋をめぐって、本とめぐりあう。本屋と図書館の位置ゲームです。<br>歩きながら画面を見ないでください。運転中は使わないでください。お店では、店の方やほかのお客さんの迷惑にならないようにお願いします。<br>位置（座標）は、この端末の中で距離を出すためだけに使い、送りません。参加の人数を数えるために、スタンプを押した店の番号・日時・店の近くで押したか・お試し歩きか・どのイベントかを、名前のない、ランダムな番号といっしょに、本をつなぐ（tsunagubooks.com）へ送ります（設定で止められます）。そのほかの記録は、この端末の中だけに残ります。<br>画面を出すために、Google Fonts（文字）・jsDelivr（地図のプログラム）・OpenFreeMap（地図の絵。見ている範囲）へ、本を調べるときは openBD（その本の番号）へつなぎます。このとき、端末のIPアドレスやブラウザの種類が相手に届きます。<br><br>
       店の位置：© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors（ODbL）。地図：<a href="https://openfreemap.org/" target="_blank" rel="noopener">OpenFreeMap</a>・<a href="https://openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a>。本の情報と表紙：<a href="https://openbd.jp/" target="_blank" rel="noopener">openBD</a>（表紙は紹介のための参照表示で、保存しません）。書名でさがす：<a href="https://ndlsearch.ndl.go.jp/" target="_blank" rel="noopener">国立国会図書館サーチ</a>の API（国立国会図書館の書誌データ・<a href="https://creativecommons.org/licenses/by/4.0/deed.ja" target="_blank" rel="noopener">CC BY 4.0</a>。著者名の表し方を整えて出しています。送るのは、さがす言葉だけです）。地図の描画：MapLibre GL JS。文字：Google Fonts。<br>
       店のデータは ${DATA_DATE} 時点の OpenStreetMap（有志が作る地図）で、閉店や名前の変更が反映されていない店があります。店のページの「閉店している」で外せ、「名前が違う」で直せます（この端末だけ。記録の書き出しに含まれます）。</div>`;
@@ -153,6 +154,11 @@ export function privacyNotice() {
   S.settings.privacyV10 = 1; save();
   openModal(`<h2>お知らせ</h2><p>イベント（期間限定のスタンプの枠など）が始まるのにあわせて、参加の人数を数えるための記録を送るようになりました。</p>${SEND_TEXT}<div class="actions"><button class="btn primary" id="pv-ok">わかった</button><button class="btn ghost" id="pv-set">設定を見る</button></div>`);
   $('#pv-ok').onclick = closeModal; $('#pv-set').onclick = () => { closeModal(); switchView('settings'); };
+}
+// ---------- プライバシーポリシーのお知らせ（v0.20.1）：もう使っている人に一度だけ。「わかった」で同意（送りたくない人は設定で止められる） ----------
+export function policyNotice() {
+  openModal(`<h2>プライバシーポリシーを載せました</h2><p>運営に届くもの（参加の記録・店の情報の報告・プロフィール）と、その使い方・持つ期間・消し方をまとめました。使い続けると、同意したことになります。</p><p class="muted small">名前・メールアドレス・位置は、これまでどおり送りません。参加の記録を送りたくないときは、設定の「参加の記録を送る」をオフにできます。</p><div class="actions"><a class="btn" href="privacy.html" target="_blank" rel="noopener">読む</a><button class="btn primary" id="pol-ok">わかった</button></div>`);
+  $('#pol-ok').onclick = () => { S.settings.policy = POLICY_VER; save(); closeModal(); };
 }
 // ---------- 記録を守る：ホーム画面に追加（v0.10.1） ----------
 // iPhone の Safari は、しばらく開かないサイトの記録を消すことがある。ホーム画面のアイコンから開けば消えにくい

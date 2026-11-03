@@ -1,8 +1,8 @@
 // Googleマップの保存リスト（Googleデータエクスポートの CSV・JSON）を読み、本屋と照らし合わせる（v0.12）
-import { dist } from './util.js?v=0.20.0';
-import { S } from './state.js?v=0.20.0';
-import { STORES } from './data.js?v=0.20.0';
-import { center } from './map.js?v=0.20.0';
+import { dist } from './util.js?v=0.20.1';
+import { S } from './state.js?v=0.20.1';
+import { STORES } from './data.js?v=0.20.1';
+import { center } from './map.js?v=0.20.1';
 
 // ---- Googleマップの保存リスト（Googleデータエクスポートのファイル）を読む ----
 function csvRows(text) {

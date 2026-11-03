@@ -475,3 +475,5 @@ ul.plain,ol.plain{padding-left:1.2em;margin:8px 0;line-height:1.7;font-size:14px
 .pf-chip input:focus-visible+span{outline:3px solid var(--sora,#2F9BFF);outline-offset:2px}
 .pf-send{margin-top:14px;padding:10px 12px;border:2px dashed var(--line-2);border-radius:var(--r-m)}
 .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;word-break:break-all;font-size:12px}
+/* 最初の案内の同意（v0.20.1） */
+.ob-agree{font-size:13px;font-weight:700;text-align:center;margin:10px 0 4px}
