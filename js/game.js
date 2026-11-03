@@ -1,8 +1,8 @@
 // 遊びの仕組み：物語のページと巻・称号・実績・ミッション・ラリー・カード
-import { PG, TITLES, ACHIEVEMENTS, REGULAR, WALK, volOf } from './config.js?v=0.14.5';
-import { S, save } from './state.js?v=0.14.5';
-import { BYID, RALLIES, FEAT, isFeat, rarityOf } from './data.js?v=0.14.5';
-import { prefOf, todayISO, weekKey, weekStartISO, monthKey, emit } from './util.js?v=0.14.5';
+import { PG, TITLES, ACHIEVEMENTS, REGULAR, WALK, volOf } from './config.js?v=0.14.6';
+import { S, save } from './state.js?v=0.14.6';
+import { BYID, RALLIES, FEAT, isFeat, rarityOf } from './data.js?v=0.14.6';
+import { prefOf, todayISO, weekKey, weekStartISO, monthKey, emit } from './util.js?v=0.14.6';
 
 export const visitsOf = (id) => S.visits.filter((v) => v.s === id);
 export const cardsOf = (id) => S.cards.filter((c) => c.s === id);

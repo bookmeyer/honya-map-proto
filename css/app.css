@@ -431,4 +431,7 @@ ul.plain,ol.plain{padding-left:1.2em;margin:8px 0;line-height:1.7;font-size:14px
 .read-btn .rb-end{flex:none;background:var(--card);color:var(--ink);font-size:17px;font-weight:700;padding:6px 18px}
 .read-btn .rb-i{font-size:22px;line-height:1;flex:none}
 .read-btn .rb-t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.read-btn .rb-main .rb-t{display:flex;flex-direction:column;line-height:1.3}
+.read-btn .rb-b{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.read-btn .rb-b.pick{text-decoration:underline;text-underline-offset:3px}
 .read-btn .rb-main .rb-s{flex:none;font-size:13px}
