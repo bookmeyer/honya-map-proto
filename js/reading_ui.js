@@ -1,45 +1,50 @@
 // 移動読書・いま読んでいる本の画面（v0.14）
-// 地図の大きなボタン「今から移動読書」を押すだけで始まる（本も読みかたも選ばない。v0.14.2）→ アプリは閉じてよい → 次の本屋でスタンプを押すと記録
-// 読んでいる本は、移動読書中のボタンを押したときに、えらびたい人だけえらぶ
-import { READ } from './config.js?v=0.14.3';
-import { S, save } from './state.js?v=0.14.3';
-import * as J from './journey.js?v=0.14.3';
-import { POS } from './position.js?v=0.14.3';
-import { toast, openModal, closeModal, confirmBox, scanIsbn, manualIsbn, stopScan } from './ui.js?v=0.14.3';
-import { $, $$, esc, fmtDate, todayISO, icon } from './util.js?v=0.14.3';
+// 地図の大きなボタン「今から移動読書」で時間を計りはじめ（本も読みかたも選ばない）、読み終えたら「おわる」で止める（v0.14.4）。読んだ時間だけページが増える
+// アプリは閉じてよい（時刻で計る）。読んでいる本は、移動読書中のボタンを押したときに、えらびたい人だけえらぶ
+import { S, save } from './state.js?v=0.14.4';
+import * as J from './journey.js?v=0.14.4';
+import { POS } from './position.js?v=0.14.4';
+import { toast, openModal, closeModal, confirmBox, scanIsbn, manualIsbn, stopScan } from './ui.js?v=0.14.4';
+import { $, $$, esc, fmtDate, icon } from './util.js?v=0.14.4';
 
 const cover = (b) => `<div class="rcover">${b.cover ? `<img src="${esc(b.cover)}" alt="" referrerpolicy="no-referrer" loading="lazy">` : icon('book')}</div>`;
 const hm = (t) => { const d = new Date(t); return `${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`; };
 const tripBook = (tr) => (tr && tr.book ? (S.reading || []).find((x) => x.id === tr.book) : null);
 
-// ---------- 地図の大きなボタン：「今から移動読書」／移動読書中 ----------
+// ---------- 地図の大きなボタン：「今から移動読書」／移動読書中＋「おわる」 ----------
+let tick = null; // 移動読書中は、経った時間を30秒ごとに書きかえる（開いているときだけ）
 export function renderReadBtn() {
   const el = $('#read-btn'); if (!el) return;
-  if (POS.fake) { el.hidden = true; return; } // お試し歩きでは数えないので出さない
   const tr = J.activeTrip(); const b = tripBook(tr);
-  el.hidden = false; el.classList.toggle('on', !!tr);
-  el.innerHTML = tr ? `<span class="rb-i">📖</span><span class="rb-t"><b>移動読書中</b>${b ? `『${esc(b.title)}』` : ''}</span><span class="rb-s">${hm(tr.t)}〜</span>` : '<span class="rb-i">📖</span><span class="rb-t">今から移動読書</span>';
-  el.setAttribute('aria-label', tr ? '移動読書中' : '今から移動読書');
-  el.onclick = () => (tr ? openTrip() : openReadStart());
+  if (tr && !tick) tick = setInterval(() => { if (document.visibilityState === 'visible') renderReadBtn(); }, 30000); else if (!tr && tick) { clearInterval(tick); tick = null; }
+  if (POS.fake) { el.hidden = true; return; } // お試し歩きでは出さない
+  el.hidden = false; const m = J.tripMin(tr);
+  el.innerHTML = tr ? `<button class="rb-main" id="rb-main"><span class="rb-i">📖</span><span class="rb-t"><b>移動読書中</b>${b ? `『${esc(b.title)}』` : ''}</span><span class="rb-s">${m < 1 ? 'はじめたところ' : J.fmtMin(m)}</span></button><button class="rb-end" id="rb-end">おわる</button>` : '<button class="rb-go" id="rb-go"><span class="rb-i">📖</span><span class="rb-t">今から移動読書</span></button>';
+  if (tr) { $('#rb-main').onclick = openTrip; $('#rb-end').onclick = finishTrip; } else $('#rb-go').onclick = () => openReadStart();
+}
+// 「おわる」：読んだ時間を記録して、ページを足す
+export function finishTrip() {
+  const r = J.endTrip(); closeModal();
+  if (r && r.min >= 1) toast(`📖 移動読書 ${J.fmtMin(r.min)}　+${r.pg}ページ`, 'ok'); else toast('1分より短かったので、記録しませんでした');
 }
 
 // ---------- 今から移動読書：押すだけで始まる。はじめての時だけ、使い方を1回 ----------
 export function openReadStart({ book = '' } = {}) {
-  const go = () => { J.startTrip(book); closeModal(); toast(`📖 移動読書をはじめました。次の本屋でスタンプを押すと +${READ.pages}ページ`, 'ok'); };
+  const go = () => { J.startTrip(book); closeModal(); toast('📖 移動読書をはじめました。読み終えたら「おわる」を押してください', 'ok'); };
   if (S.settings.readTip) { go(); return; }
-  openModal(`<h2>移動読書</h2><ul class="plain"><li>本屋から本屋へ移るあいだに、本を読む（耳で聞くのも）</li><li>読むのは乗り物の中や、座れるところで。歩くあいだは、しまってください</li><li>アプリは閉じて大丈夫。次の本屋でスタンプを押すと記録されます（5分以上なら +${READ.pages}ページ）</li></ul>
+  openModal(`<h2>移動読書</h2><ul class="plain"><li>本屋から本屋へ移るあいだに、本を読む（耳で聞くのも）</li><li>読み終えたら「おわる」を押します。読んだ時間だけページが増えます（1分で1ページ）</li><li>読むのは乗り物の中や、座れるところで。歩くあいだは、しまってください</li><li>アプリは閉じて大丈夫です（時間は、はじめた時刻から計ります）</li></ul>
     <div class="actions"><button class="btn primary wide" id="rs-go">📖 はじめる</button><button class="btn ghost wide" id="rs-close">やめる</button></div>`);
   $('#rs-close').onclick = closeModal; $('#rs-go').onclick = () => { S.settings.readTip = 1; save(); go(); };
 }
-// 移動読書中（地図のボタンを押したとき）：読んでいる本をえらぶ（えらばなくてよい）・やめる
+// 移動読書中（ボタンの左を押したとき）：おわる・読んでいる本をえらぶ（えらばなくてよい）・記録せずにやめる
 export function openTrip() {
-  const tr = J.activeTrip(); if (!tr) return; const b = tripBook(tr);
+  const tr = J.activeTrip(); if (!tr) return; const b = tripBook(tr); const m = J.tripMin(tr);
   const books = J.reading().slice().sort((x, y) => (y.t || 0) - (x.t || 0));
-  openModal(`<h2>移動読書中</h2><div class="muted small">${tr.fn ? `${esc(tr.fn)}から・` : ''}${hm(tr.t)}〜</div>
-    <div class="note">次の本屋でスタンプを押すと記録されます（5分以上なら +${READ.pages}ページ）。歩くあいだは、しまってください。</div>
+  openModal(`<h2>移動読書中</h2><div class="muted small">${tr.fn ? `${esc(tr.fn)}から・` : ''}${hm(tr.t)}〜（${m < 1 ? 'はじめたところ' : J.fmtMin(m)}）</div>
+    <div class="note">読み終えたら「おわる」を押してください。読んだ時間だけページが増えます（1分で1ページ）。歩くあいだは、しまってください。</div>
     ${books.length ? `<p class="hint">読んでいる本（えらばなくて大丈夫です）</p><div class="list rlist">${books.map((x) => `<div class="item rbook${b && b.id === x.id ? ' sel' : ''}" data-b="${esc(x.id)}">${cover(x)}<div class="main"><div class="name">${esc(x.title)}</div>${b && b.id === x.id ? '<div class="sub">この本を読んでいます</div>' : ''}</div></div>`).join('')}</div>` : ''}
-    <div class="actions"><button class="btn danger" id="tp-stop">移動読書をやめる</button><button class="btn ghost" id="tp-close">閉じる</button></div>`);
-  $('#tp-close').onclick = closeModal; $('#tp-stop').onclick = () => { J.cancelTrip(); closeModal(); toast('移動読書をやめました'); };
+    <div class="actions"><button class="btn primary wide" id="tp-end">おわる（記録する）</button><button class="btn danger" id="tp-stop">記録せずにやめる</button><button class="btn ghost" id="tp-close">閉じる</button></div>`);
+  $('#tp-close').onclick = closeModal; $('#tp-end').onclick = finishTrip; $('#tp-stop').onclick = () => { J.cancelTrip(); closeModal(); toast('移動読書をやめました（記録していません）'); };
   $$('#modal-box [data-b]').forEach((el) => el.addEventListener('click', () => { const id = b && b.id === el.dataset.b ? '' : el.dataset.b; J.setTripBook(id); closeModal(); }));
 }
 
