@@ -1,10 +1,10 @@
 // 旅の記録：歩いた距離（ページ）・その日の物語・月のふり返り・行きたい店のお知らせ・投稿の記録・Googleマップの★の読み込み・店と店のあいだ・移動読書・いま読んでいる本
 // 位置は、アプリを開いて現在地を追っているあいだだけ使う（ブラウザの決まりで、閉じているあいだは測れない）。閉じていたあいだの道のりは、次の店でスタンプを押したときに、前の店からのまっすぐの距離で足す（v0.14）
-import { WALK, RANGE_M, SEG, READ } from './config.js?v=0.14.1';
-import { S, save } from './state.js?v=0.14.1';
-import { STORES, BYID, rarityOf } from './data.js?v=0.14.1';
-import * as G from './game.js?v=0.14.1';
-import { dist, todayISO, prefOf, hash32, fmtDist, monthKey, emit } from './util.js?v=0.14.1';
+import { WALK, RANGE_M, SEG, READ } from './config.js?v=0.14.2';
+import { S, save } from './state.js?v=0.14.2';
+import { STORES, BYID, rarityOf } from './data.js?v=0.14.2';
+import * as G from './game.js?v=0.14.2';
+import { dist, todayISO, prefOf, hash32, fmtDist, monthKey, emit } from './util.js?v=0.14.2';
 
 function dayRec(d = todayISO()) { S.days = S.days || {}; const r = (S.days[d] = S.days[d] || { m: 0, v: 0 }); r.pass = r.pass || {}; r.alert = r.alert || {}; return r; }
 export const pagesOf = (m) => Math.floor((m || 0) / WALK.pageM);
@@ -76,7 +76,7 @@ export function arrive(st, { near, trial }) {
     Object.assign(g, { from: a.i, fn: a.n, m: Math.round(m), ride: ride ? 1 : 0, add, walked: (tracked || 0) + add });
   }
   if (trip) {
-    if ((now - trip.t) / 1000 >= READ.minS) { const bk = (S.reading || []).find((b) => b.id === trip.book); if (bk) { Object.assign(g, { book: bk.id, title: bk.title, mode: trip.mode, read: 1, pg: READ.pages }); G.addPages(READ.pages); } S.trip = null; }
+    if ((now - trip.t) / 1000 >= READ.minS) { const bk = trip.book ? (S.reading || []).find((b) => b.id === trip.book) : null; Object.assign(g, { book: bk ? bk.id : '', title: bk ? bk.title : '', mode: trip.mode || '', read: 1, pg: READ.pages }); G.addPages(READ.pages); S.trip = null; } // 本はえらばなくても数える（v0.14.2）
     else g.early = 1; // 5分より短い移動では数えない（移動読書は、その次の店まで続く）
   }
   if (g.from || g.read) { S.trips = S.trips || []; S.trips.push(g); if (S.trips.length > 600) S.trips.splice(0, S.trips.length - 600); }
@@ -114,12 +114,14 @@ export function finishReading(id) { const b = (S.reading || []).find((x) => x.id
 export function unfinishReading(id) { const b = (S.reading || []).find((x) => x.id === id); if (!b) return; b.done = ''; b.tDone = 0; save(); emit('records'); }
 export function dropReading(id) { S.reading = (S.reading || []).filter((x) => x.id !== id); if (S.trip && S.trip.book === id) S.trip = null; save(); emit('records'); }
 export const activeTrip = () => (S.trip && S.trip.d === todayISO() ? S.trip : null);
-// 移動読書をはじめる（地図のボタンから、どこでも）。出発した店＝今日さいごにスタンプを押した店（2時間以内）。同じ店でもう一度押しても数えないため。本を変えたときは、はじめた時刻をそのままに
-export function startTrip(bookId, mode) {
-  const cur = activeTrip(), today = todayISO(); let from = cur ? cur.from : '', fn = cur ? cur.fn : '';
-  if (!cur) for (let i = S.visits.length - 1; i >= 0; i--) { const v = S.visits[i]; if (v.d !== today) break; if (v.near && !v.trial) { if (Date.now() - v.t < 2 * 3600 * 1000) { from = v.s; fn = (BYID.get(v.s) || v).n || ''; } break; } }
-  S.trip = { from, fn, d: today, t: cur ? cur.t : Date.now(), book: bookId, mode: mode === 'ear' ? 'ear' : 'eye' }; S.settings.readMode = S.trip.mode; save(); emit('trip');
+// 移動読書をはじめる（地図のボタンから、どこでも。本も読みかたも選ばない。v0.14.2）。出発した店＝今日さいごにスタンプを押した店（2時間以内）。同じ店でもう一度押しても数えないため
+export function startTrip(bookId = '') {
+  const today = todayISO(); let from = '', fn = '';
+  for (let i = S.visits.length - 1; i >= 0; i--) { const v = S.visits[i]; if (v.d !== today) break; if (v.near && !v.trial) { if (Date.now() - v.t < 2 * 3600 * 1000) { from = v.s; fn = (BYID.get(v.s) || v).n || ''; } break; } }
+  S.trip = { from, fn, d: today, t: Date.now(), book: bookId || '' }; save(); emit('trip');
 }
+// 移動読書中に、読んでいる本をえらぶ（えらばなくてよい）
+export function setTripBook(id) { const tr = activeTrip(); if (!tr) return; tr.book = id || ''; save(); emit('trip'); }
 export function cancelTrip() { S.trip = null; save(); emit('trip'); }
 
 // ---- その日の物語 ----
@@ -146,7 +148,7 @@ export function chapter(date = todayISO()) {
   for (const v of vis) {
     const st = BYID.get(v.s); const name = st ? st.n : v.n; const h = new Date(v.t).getHours();
     const g = v.near ? (S.trips || []).find((x) => x.read && x.to === v.s && Math.abs(x.t - v.t) < 5000) : null; // 移動読書で着いた
-    let s = g ? `${h}時、『${g.title}』を${g.mode === 'ear' ? '耳で聞きながら' : '読みながら'}、${name}${rnd(['へ。', 'に着いた。'], v.t)}` : `${h}時、${name}${v.near ? rnd(['へ。', 'の扉をくぐる。', 'に着いた。'], v.t) : 'に立ち寄った（記録だけ）。'}`;
+    let s = g ? `${h}時、${g.title ? `『${g.title}』を` : '本を'}${g.mode === 'ear' ? '耳で聞きながら' : '読みながら'}、${name}${rnd(['へ。', 'に着いた。'], v.t)}` : `${h}時、${name}${v.near ? rnd(['へ。', 'の扉をくぐる。', 'に着いた。'], v.t) : 'に立ち寄った（記録だけ）。'}`;
     if (v.near && st) {
       const firstToday = vis.find((x) => x.s === v.s && x.near) === v;
       if (firstToday && S.stamps[v.s] && S.stamps[v.s].d === date) s += rarityOf(st) === 3 ? '周りに本屋のない、秘境の一軒。はじめてのスタンプを押した。' : 'はじめてのスタンプを押した。';
