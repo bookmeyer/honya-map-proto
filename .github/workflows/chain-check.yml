@@ -26,7 +26,7 @@ jobs:
           git config user.name "chain-check bot"
           git config user.email "chain-check@users.noreply.github.com"
           git checkout -b "$BR"
-          git add data/chain_check
+          git add tools/data/chain_check
           git commit -m "chain-check $DATE：公式店舗一覧との突き合わせ（自動）" || echo "no changes"
           git push -f origin "$BR"
           echo "branch=$BR" >> "$GITHUB_OUTPUT"
@@ -37,7 +37,7 @@ jobs:
         run: |
           DATE=${{ steps.save.outputs.date }}
           BR=${{ steps.save.outputs.branch }}
-          REPORT="data/chain_check/report_$DATE.md"
+          REPORT="tools/data/chain_check/report_$DATE.md"
           BODY=$(mktemp)
-          { echo "自動の突き合わせ結果です。枝 \`$BR\` に報告と候補（\`data/chain_check/candidates.json\`）があります。"; echo; echo "確かめて反映するとき：候補を \`data/overrides.json\` に写し、\`node tools/build_data.js data/bookstores_raw.json data/bookstores.json\` → 版を上げて push。"; echo; head -c 60000 "$REPORT"; } > "$BODY"
+          { echo "自動の突き合わせ結果です。枝 \`$BR\` に報告と候補（\`tools/data/chain_check/candidates.json\`）があります。"; echo; echo "確かめて反映するとき：候補を \`node tools/apply_candidates.js\` で \`tools/data/\` の表に写し、\`node tools/build_data.js tools/data/bookstores_raw.json data/bookstores.json\` → 版を上げて push。"; echo; head -c 60000 "$REPORT"; } > "$BODY"
           gh issue create --title "チェーン公式一覧との突き合わせ $DATE" --body-file "$BODY" --label "chain-check" || gh issue create --title "チェーン公式一覧との突き合わせ $DATE" --body-file "$BODY"

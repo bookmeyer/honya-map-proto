@@ -1,4 +1,4 @@
-data/bookstores_raw.json
+tools/data/bookstores_raw.json
 .DS_Store
 Thumbs.db
-data/libraries_raw.json
+tools/data/libraries_raw.json

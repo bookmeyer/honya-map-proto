@@ -5,14 +5,14 @@
 //   node tools/chain_check.js --only kinokuniya,yurindo
 //   node tools/chain_check.js --fetch-only --only xxx … 取得だけして件数と見本を表示（部品の確認用）
 //   node tools/chain_check.js --no-fetch             … 前回取った一覧（cache）で突き合わせだけ
-// 出力：data/chain_check/report_YYYY-MM-DD.md（人が読む）、data/chain_check/candidates.json（上書き表の候補）
-// 位置は国土地理院の住所検索API（無料・鍵なし）で調べ、data/chain_check/geocode.json に覚える
+// 出力：tools/data/chain_check/report_YYYY-MM-DD.md（人が読む）、tools/data/chain_check/candidates.json（上書き表の候補）
+// 位置は国土地理院の住所検索API（無料・鍵なし）で調べ、tools/data/chain_check/geocode.json に覚える
 const fs = require('fs');
 const path = require('path');
 const lib = require('./chains/_lib');
 
 const ROOT = path.join(__dirname, '..');
-const OUT = path.join(ROOT, 'data', 'chain_check');
+const OUT = path.join(__dirname, 'data', 'chain_check'); // 報告・候補・取った一覧は tools/data/chain_check/（v0.16.0）
 const CACHE = path.join(OUT, 'cache');
 fs.mkdirSync(CACHE, { recursive: true });
 const args = process.argv.slice(2);
@@ -131,7 +131,7 @@ if (!adapters.length) { console.error('部品がありません（--only の名�
   fs.writeFileSync(path.join(OUT, `report_${today}.md`), report.join('\n'));
   fs.writeFileSync(path.join(OUT, 'candidates.json'), JSON.stringify(candidates, null, 1));
   const addN = Object.values(candidates.additions).reduce((n, l) => n + l.length, 0), addP = Object.values(candidates.additions).reduce((n, l) => n + l.filter((x) => x.precise).length, 0);
-  console.log(`\n報告：data/chain_check/report_${today}.md\n候補：data/chain_check/candidates.json（閉店 ${Object.keys(candidates.closed).length}・名前 ${Object.keys(candidates.renames).length}・確認 ${Object.keys(candidates.confirmed).length}・追加 ${addN}（位置が正確 ${addP}））\n反映：node tools/apply_candidates.js --closed high --renames all --confirmed --add precise`);
+  console.log(`\n報告：tools/data/chain_check/report_${today}.md\n候補：tools/data/chain_check/candidates.json（閉店 ${Object.keys(candidates.closed).length}・名前 ${Object.keys(candidates.renames).length}・確認 ${Object.keys(candidates.confirmed).length}・追加 ${addN}（位置が正確 ${addP}））\n反映：node tools/apply_candidates.js --closed high --renames all --confirmed --add precise`);
 })().catch((e) => { console.error(e); process.exit(1); });
 
 function hash32(s) { let h = 2166136261 >>> 0; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; } return h; }

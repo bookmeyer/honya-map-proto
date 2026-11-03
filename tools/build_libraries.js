@@ -1,12 +1,12 @@
 // OpenStreetMap（Overpass）の図書館の生データ → アプリ用の小さなJSONに
 // 使い方:
-//   curl -A "honya-map/0.8" --data-urlencode "data@tools/overpass_libraries.txt" -o data/libraries_raw.json https://overpass-api.de/api/interpreter
-//   node tools/build_libraries.js data/libraries_raw.json data/libraries.json
+//   curl -A "honya-map/0.8" --data-urlencode "data@tools/overpass_libraries.txt" -o tools/data/libraries_raw.json https://overpass-api.de/api/interpreter
+//   node tools/build_libraries.js tools/data/libraries_raw.json data/libraries.json
 // 大学・学校・研究所・病院などの、一般の人が入れないことが多い図書館は外す。id は「L」＋OSMの種別1文字＋番号
 const fs = require('fs');
 const path = require('path');
 const [,, inFile, outFile] = process.argv;
-if (!inFile || !outFile) { console.error('使い方: node tools/build_libraries.js data/libraries_raw.json data/libraries.json'); process.exit(1); }
+if (!inFile || !outFile) { console.error('使い方: node tools/build_libraries.js tools/data/libraries_raw.json data/libraries.json'); process.exit(1); }
 const raw = JSON.parse(fs.readFileSync(inFile, 'utf8'));
 const NG_NAME = /大学|学院|学園|短期大学|短大|高専|キャンパス|小学校|中学校|高校|高等学校|学校|幼稚園|保育園|研究所|研究センター|社内|株式会社|病院|資料室/;
 const NG_ACCESS = /^(private|no|customers|students|members)$/;
@@ -25,8 +25,9 @@ for (const e of raw.elements || []) {
   const cd = t.check_date || t['survey:date'] || t.last_checked; if (cd && /^\d{4}/.test(cd)) rec.c = cd.slice(0, 7);
   out.push(rec);
 }
-// 上書き表（閉館・名前の変更。本屋と同じ data/overrides.json を使う）
-let ov = { renames: {}, closed: {} }; try { ov = JSON.parse(fs.readFileSync(path.join(path.dirname(outFile), 'overrides.json'), 'utf8')); } catch (e) {}
+// 上書き表（閉館・名前の変更。本屋と同じ tools/data/overrides.json を使う。見つからないときは止める）
+const ovPath = path.join(__dirname, 'data', 'overrides.json'); if (!fs.existsSync(ovPath)) { console.error(`見つかりません：${ovPath}`); process.exit(1); }
+const ov = Object.assign({ renames: {}, closed: {} }, JSON.parse(fs.readFileSync(ovPath, 'utf8')));
 let renamed = 0, closedN = 0;
 for (let i = out.length - 1; i >= 0; i--) { const r = out[i]; if (ov.closed && ov.closed[r.i]) { out.splice(i, 1); closedN++; continue; } if (ov.renames && ov.renames[r.i]) { r.n = ov.renames[r.i].n; r.ov = 1; renamed++; } }
 // 同じ場所・同じ名前の重なり（点と建物の両方で描かれているもの）を1つに

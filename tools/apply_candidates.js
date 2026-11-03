@@ -1,17 +1,17 @@
-// chain_check の候補（data/chain_check/candidates.json）を、上書き表・確認表・追加表に写す
+// chain_check の候補（tools/data/chain_check/candidates.json）を、上書き表・確認表・追加表に写す
 // 使い方：
-//   node tools/apply_candidates.js --closed high            … 確からしさ「高」の閉店候補を data/overrides.json の closed に
+//   node tools/apply_candidates.js --closed high            … 確からしさ「高」の閉店候補を tools/data/overrides.json の closed に
 //   node tools/apply_candidates.js --closed high,mid        … 高と中
 //   node tools/apply_candidates.js --closed n123,w456       … id を指定
 //   node tools/apply_candidates.js --renames all|id,id      … 公式表記への名前直しを overrides.json の renames に
-//   node tools/apply_candidates.js --confirmed              … 公式一覧で確認できた店の「最終確認の月」を data/confirmed.json に
-//   node tools/apply_candidates.js --add precise|all|kinokuniya … 地図にない公式店を data/additions.json に（precise＝位置が番地まで正確なものだけ）
+//   node tools/apply_candidates.js --confirmed              … 公式一覧で確認できた店の「最終確認の月」を tools/data/confirmed.json に
+//   node tools/apply_candidates.js --add precise|all|kinokuniya … 地図にない公式店を tools/data/additions.json に（precise＝位置が番地まで正確なものだけ）
 //   node tools/apply_candidates.js --add xe8t63h,xvf4c7v    … 地図にない公式店を id で指定して足す（報告を見て選んだ店だけ）
-//   組み合わせ可。写したあと：node tools/build_data.js data/bookstores_raw.json data/bookstores.json → 版を上げて push
+//   組み合わせ可。写したあと：node tools/build_data.js tools/data/bookstores_raw.json data/bookstores.json → 版を上げて push
 const fs = require('fs');
 const path = require('path');
 const ROOT = path.join(__dirname, '..');
-const DATA = path.join(ROOT, 'data');
+const DATA = path.join(__dirname, 'data'); // 上書き表・確認表・追加表・chain_check は tools/data/（v0.16.0）
 const args = process.argv.slice(2);
 const opt = (k) => { const i = args.indexOf(k); return i >= 0 ? (args[i + 1] && !args[i + 1].startsWith('--') ? args[i + 1] : 'all') : null; };
 const read = (f, def) => { try { return JSON.parse(fs.readFileSync(path.join(DATA, f), 'utf8')); } catch (e) { return def; } };
@@ -62,4 +62,4 @@ if (addSel) {
   }
   write('additions.json', adds); console.log('追加表に：', n, '（合計', adds.length, '店）');
 }
-console.log('つぎ：node tools/build_data.js data/bookstores_raw.json data/bookstores.json');
+console.log('つぎ：node tools/build_data.js tools/data/bookstores_raw.json data/bookstores.json');

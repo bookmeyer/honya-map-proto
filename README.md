@@ -20,7 +20,7 @@ v0.6.0（10/15）：実機の声「音がチープ」「スタンプが御書印
 3. 店のページで **「スタンプを押す」**。その店だけのスタンプが押せて、物語のページが増えます。レア度は「秘境度」（周り5kmにある本屋の数。0店＝★★★、6店以下＝★★）。店のまわりが朱に塗られます。印を押すとインク（いんでい）を1つ使い、90分に1つ回復します
 4. 買った本の裏のバーコードを読むと **カード** が1枚（表紙と書誌は openBD）
 5. **めぐり帳**にスタンプ・カード・物語・月・県がたまり、**ラリー**（今日・今週のお題）、**今週の推し店**（県ごとに1店、+50ページ）、**ご当地ラリー**（神保町・渋谷・新宿・松山・札幌・大阪）で称号
-6. 店のページに **店の情報の確認日**（OpenStreetMap の check_date）が出ます。閉店している店・本屋ではない店は「閉店している」で外し、名前が変わった店は「名前が違う」で直せます（この端末だけ。記録の書き出しに含まれます。開発側で `data/overrides.json` に写すと、次のデータ作成から全員の地図に反映されます）
+6. 店のページに **店の情報の確認日**（OpenStreetMap の check_date）が出ます。閉店している店・本屋ではない店は「閉店している」で外し、名前が変わった店は「名前が違う」で直せます（この端末だけ。記録の書き出しに含まれます。開発側で `tools/data/overrides.json` に写すと、次のデータ作成から全員の地図に反映されます）
 7. 近づいたときの音・画面の縁の光・振動はありません（v0.8.3で外しました）。射程に入るとピンが金色の星になり、上に小さくお知らせが出ます。スタンプは**シェア画像**（地図の切り抜き＋スタンプ）にしてXなどへ
 
 家で試すとき：地図の「👣 お試し歩き」をオンにすると、地図を押した場所に自分がいることになります。「⤴」で本屋の近くへワープ。
@@ -36,19 +36,27 @@ v0.6.0（10/15）：実機の声「音がチープ」「スタンプが御書印
 ## ファイル
 | ファイル | 役目 |
 |---|---|
-| `index.html` `css/app.css` `js/*.js` | 画面と動き（ビルド不要・ES モジュール）。`config.js` 設定値／`state.js` 記録／`data.js` 店・スタンプ／`map.js` 地図／`position.js` 現在地／`game.js` 遊びの仕組み／`ui.js` 部品／`screens.js` 画面／`share.js` 画像／`audio.js` 音と振動／`main.js` 起動 |
-| `manifest.webmanifest` `sw.js` `icon-*.png` | ホーム画面に追加するための部品 |
-| `data/bookstores.json` | 店のデータ（OpenStreetMap。`tools/build_data.js` で作る） |
-| `data/libraries.json` | 図書館のデータ（OpenStreetMap。`tools/overpass_libraries.txt` で取得し `tools/build_libraries.js` で作る） |
-| `data/rallies.json` | ご当地ラリーの組（`tools/build_rallies.js` で作る） |
-| `data/overrides.json` | 店のデータの上書き表（屋号変更・閉店。`tools/build_data.js` が適用。出典を `why` に書く） |
-| `tools/overpass_query.txt` `tools/build_data.js` `tools/build_rallies.js` `tools/make_icons.js` | データとアイコンを作る道具 |
-| `tools/bump_version.js` | 版を上げる道具（`node tools/bump_version.js 0.5.3`）。config.js の APP_VER・js の import の `?v=`・index.html・sw.js を一度に直す。部品のURLに版が付くので、ブラウザに古い部品が混ざらない |
+| `index.html` `css/app.css` | 画面のひな形と見た目（ビルド不要。CSP と、外のスクリプトの改ざんの確かめ〈SRI〉は index.html に） |
+| `js/main.js` | 起動：記録を読み、データを取り、地図を出し、画面どうしをつなぐ。試す入口 `window.__honya` |
+| `js/config.js` `js/util.js` `js/state.js` | 設定値（着せ替えの色も）・小さな道具・記録（端末の中だけ。読み込むときに型と形を確かめる） |
+| `js/data.js` `js/map.js` `js/position.js` | 店と図書館のデータ・スタンプの絵／地図（ピン・読んだ場所・シェア画像の地図）／現在地 |
+| `js/game.js` `js/journey.js` `js/reading.js` `js/gimport.js` | 遊びの決まり（ページ・巻・常連度・お題）／旅の記録（歩いた道のり・店と店のあいだ・物語・月）／読書（時間・場所・前回の本・いま読んでいる本）／Googleマップの★の読み込み |
+| `js/events.js` `js/share.js` `js/audio.js` | イベント（サーバーの設定・参加の記録）／シェア画像／音 |
+| `js/ui.js` | 画面の共通の部品（トースト・モーダル・タブ・見出し帯・バーコードの読み取り・道順のボタン） |
+| `js/map_ui.js` `js/checkin_ui.js` `js/card_ui.js` `js/reading_ui.js` | 地図と店のページ／スタンプを押す／本のカード／読書のボタンと本 |
+| `js/radar_ui.js` `js/zukan_ui.js` `js/mission_ui.js` `js/settings_ui.js` `js/onboard_ui.js` | ちかく／めぐり帳／ラリー／設定／最初の案内 |
+| `manifest.webmanifest` `sw.js` `icon-*.png` `apple-touch-icon.png` | ホーム画面に追加するための部品（sw.js の部品の一覧 MODS は bump_version.js が js/ から作る） |
+| `data/` | **アプリが読むデータ**：`bookstores.json`（店）・`libraries.json`（図書館）・`rallies.json`（ご当地ラリー）・`picks.json`（書店員さんの1冊）。サーバーの管理画面も bookstores.json と libraries.json を読む |
+| `tools/data/` | **データを作る道具だけが使うもの**：`overrides.json`（屋号変更・閉店。出典を `why` に）・`additions.json`（地図にない公式店）・`confirmed.json`（公式一覧で確認）・`chain_check/`（月1の突き合わせの報告・候補・取った一覧）・`*_raw.json`（OpenStreetMap から取ったもの。git に入れない） |
+| `tools/build_data.js` `tools/build_libraries.js` `tools/build_rallies.js` `tools/overpass_*.txt` | データを作る道具（上書き表などが見つからないときは止まる） |
+| `tools/chain_check.js` `tools/apply_candidates.js` `tools/chains/` | 月1の突き合わせ |
+| `tools/bump_version.js` | 版を上げる道具（`node tools/bump_version.js 0.16.0`）。config.js の APP_VER・js の import の `?v=`・index.html・sw.js の版と部品の一覧 |
+| `tools/make_icons.js` | アイコンの絵（SVG）を作る道具（PNG はブラウザで書き出す） |
 
 店のデータを作り直すとき（curl と node）：
 ```
-curl -A "honya-map/0.2" --data-urlencode "data@tools/overpass_query.txt" -o data/bookstores_raw.json https://overpass-api.de/api/interpreter
-node tools/build_data.js data/bookstores_raw.json data/bookstores.json
+curl -A "honya-map/0.2" --data-urlencode "data@tools/overpass_query.txt" -o tools/data/bookstores_raw.json https://overpass-api.de/api/interpreter
+node tools/build_data.js tools/data/bookstores_raw.json data/bookstores.json
 node tools/build_rallies.js data/bookstores.json data/rallies.json
 ```
 
@@ -56,9 +64,9 @@ node tools/build_rallies.js data/bookstores.json data/rallies.json
 大手チェーンの公式店舗一覧と地図データを突き合わせて、閉店・名前の変更・地図にない店を見つけます。
 
 ```
-node tools/chain_check.js                      # 取得 → 位置（国土地理院の住所検索）→ 突き合わせ → data/chain_check/report_日付.md と candidates.json
+node tools/chain_check.js                      # 取得 → 位置（国土地理院の住所検索）→ 突き合わせ → tools/data/chain_check/report_日付.md と candidates.json
 node tools/apply_candidates.js --closed high --renames all --confirmed --add precise   # 確かめた候補を overrides.json / confirmed.json / additions.json に写す
-node tools/build_data.js data/bookstores_raw.json data/bookstores.json                 # 地図データを作り直す
+node tools/build_data.js tools/data/bookstores_raw.json data/bookstores.json           # 地図データを作り直す
 node tools/bump_version.js 0.6.3 && git commit -am "..." && git push
 ```
 
@@ -77,5 +85,5 @@ node tools/bump_version.js 0.6.3 && git commit -am "..." && git push
 - 記録はサーバーに送りません（ランキング・みんなの出会い・店に返す数字は本番で）
 - 都道府県は、住所の情報がない店は近い県庁所在地に寄せた目安
 - スタンプの絵柄は店ごとに自動で作っています（本番では公認店にちゃんとしたスタンプを）
-- 閉店・名前の直しは、いまは端末の中と上書き表（`data/overrides.json`）で。みんなの報告を集める仕組み、位置ずれの直し、公認店の管理画面は本番で
+- 閉店・名前の直しは、いまは端末の中と上書き表（`tools/data/overrides.json`）で。みんなの報告を集める仕組み、位置ずれの直し、公認店の管理画面は本番で
 - iPhone のホーム画面版は位置の許可が出ないことがあります（その場合は Safari で開く）

@@ -1,5 +1,5 @@
 // OpenStreetMap（Overpass）の生データ → アプリ用の小さなJSONに
-// 使い方: node tools/build_data.js data/bookstores_raw.json data/bookstores.json
+// 使い方: node tools/build_data.js tools/data/bookstores_raw.json data/bookstores.json
 const fs = require('fs');
 const [,, inFile, outFile] = process.argv;
 const raw = JSON.parse(fs.readFileSync(inFile, 'utf8'));
@@ -31,18 +31,19 @@ for (const e of raw.elements || []) {
   out.push(rec);
 }
 // 上書き表（閉店・屋号変更など、確かめた分）
-const ovPath = require('path').join(require('path').dirname(outFile), 'overrides.json');
-let ov = { renames: {}, closed: {} }; try { ov = JSON.parse(fs.readFileSync(ovPath, 'utf8')); } catch (e) {}
+// 上書き表・追加表・確認表は tools/data/ に置く（v0.16.0。アプリが読むのは data/ の bookstores.json などだけ）。見つからないときは止める
+const TD = require('path').join(__dirname, 'data');
+const must = (f) => { const p = require('path').join(TD, f); if (!fs.existsSync(p)) { console.error(`見つかりません：${p}（空のまま作ると、閉店した店が戻り、足した店が消えるので止めます）`); process.exit(1); } return JSON.parse(fs.readFileSync(p, 'utf8')); };
+const ov = Object.assign({ renames: {}, closed: {} }, must('overrides.json'));
 let renamed = 0, closedN = 0;
 for (let i = out.length - 1; i >= 0; i--) { const r = out[i]; if (ov.closed && ov.closed[r.i]) { out.splice(i, 1); closedN++; continue; } if (ov.renames && ov.renames[r.i]) { r.n = ov.renames[r.i].n; r.ov = 1; renamed++; } }
 console.log('上書き：屋号変更', renamed, '閉店', closedN);
 // 追加表（公式店舗一覧にあって OSM にない店。tools/chain_check.js → tools/apply_candidates.js --add で足す）
-const dataDir = require('path').dirname(outFile);
-let adds = []; try { adds = JSON.parse(fs.readFileSync(require('path').join(dataDir, 'additions.json'), 'utf8')); } catch (e) {}
+const adds = must('additions.json');
 const have = new Set(out.map((r) => r.i)); let added = 0;
 for (const x of adds) { if (!x || !x.i || !x.n || x.la == null || x.lo == null || have.has(x.i) || (ov.closed && ov.closed[x.i])) continue; const rec = { i: x.i, n: x.n, la: +Number(x.la).toFixed(5), lo: +Number(x.lo).toFixed(5), x: 1 }; if (x.a) rec.a = x.a; if (x.p) rec.p = x.p; if (x.u) rec.u = 1; if (x.c) rec.c = x.c; out.push(rec); have.add(x.i); added++; }
 // 確認表（公式店舗一覧で「ある」と確かめられた店 → 最終確認の月を更新）
-let confirmed = {}; try { confirmed = JSON.parse(fs.readFileSync(require('path').join(dataDir, 'confirmed.json'), 'utf8')); } catch (e) {}
+const confirmed = must('confirmed.json');
 let confN = 0; for (const r of out) { const m = confirmed[r.i]; if (m && (!r.c || m > r.c)) { r.c = m; r.cf = 1; confN++; } }
 console.log('追加表：', added, ' 公式一覧で確認：', confN);
 out.sort((a, b) => a.la - b.la);
