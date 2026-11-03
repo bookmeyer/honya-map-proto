@@ -1,10 +1,10 @@
 // 旅の記録：歩いた距離（ページ）・その日の物語・月のふり返り・行きたい店のお知らせ・投稿の記録・Googleマップの★の読み込み・店と店のあいだ・移動読書・いま読んでいる本
 // 位置は、アプリを開いて現在地を追っているあいだだけ使う（ブラウザの決まりで、閉じているあいだは測れない）。閉じていたあいだの道のりは、次の店でスタンプを押したときに、前の店からのまっすぐの距離で足す（v0.14）
-import { WALK, RANGE_M, SEG, READ } from './config.js?v=0.14.6';
-import { S, save } from './state.js?v=0.14.6';
-import { STORES, BYID, rarityOf } from './data.js?v=0.14.6';
-import * as G from './game.js?v=0.14.6';
-import { dist, todayISO, prefOf, hash32, fmtDist, monthKey, emit } from './util.js?v=0.14.6';
+import { WALK, RANGE_M, SEG, READ } from './config.js?v=0.14.7';
+import { S, save } from './state.js?v=0.14.7';
+import { STORES, BYID, rarityOf } from './data.js?v=0.14.7';
+import * as G from './game.js?v=0.14.7';
+import { dist, todayISO, prefOf, hash32, fmtDist, monthKey, emit } from './util.js?v=0.14.7';
 
 function dayRec(d = todayISO()) { S.days = S.days || {}; const r = (S.days[d] = S.days[d] || { m: 0, v: 0 }); r.pass = r.pass || {}; r.alert = r.alert || {}; return r; }
 export const pagesOf = (m) => Math.floor((m || 0) / WALK.pageM);
@@ -166,7 +166,7 @@ export function chapter(date = todayISO()) {
   for (const v of vis) {
     const st = BYID.get(v.s); const name = st ? st.n : v.n; const h = new Date(v.t).getHours();
     const g = v.near ? (S.trips || []).find((x) => x.read && x.to === v.s && Math.abs(x.t - v.t) < 5000) : null; // 移動読書で着いた
-    let s = g ? `${h}時、${g.title ? `『${g.title}』を` : '本を'}${g.mode === 'ear' ? '耳で聞きながら' : '読みながら'}、${name}${rnd(['へ', 'に着いた'], v.t)}${g.min ? `（移動読書${fmtMin(g.min)}）` : ''}。` : `${h}時、${name}${v.near ? rnd(['へ。', 'の扉をくぐる。', 'に着いた。'], v.t) : 'に立ち寄った（記録だけ）。'}`;
+    let s = g ? `${h}時、${g.title ? `『${g.title}』を` : '本を'}${g.mode === 'ear' ? '耳で聞きながら' : '読みながら'}、${name}${rnd(['へ', 'に着いた'], v.t)}${g.min ? `（読書${fmtMin(g.min)}）` : ''}。` : `${h}時、${name}${v.near ? rnd(['へ。', 'の扉をくぐる。', 'に着いた。'], v.t) : 'に立ち寄った（記録だけ）。'}`;
     if (v.near && st) {
       const firstToday = vis.find((x) => x.s === v.s && x.near) === v;
       if (firstToday && S.stamps[v.s] && S.stamps[v.s].d === date) s += rarityOf(st) === 3 ? '周りに本屋のない、秘境の一軒。はじめてのスタンプを押した。' : 'はじめてのスタンプを押した。';
@@ -177,7 +177,7 @@ export function chapter(date = todayISO()) {
     events.push({ t: v.t, s });
   }
   for (const c of cards) events.push({ t: c.t, s: `『${c.title}』と出会った（${c.sn}）。${c.why ? '——' + c.why : ''}` });
-  for (const r of (S.reads || []).filter((x) => x.d === date && !x.off)) events.push({ t: r.t0, s: `${new Date(r.t0).getHours()}時、${r.fn ? `${r.fn}を出て、` : ''}${r.title ? `『${r.title}』を` : '本を'}${fmtMin(r.min)}読んだ（移動読書）。` });
+  for (const r of (S.reads || []).filter((x) => x.d === date && !x.off)) events.push({ t: r.t0, s: `${new Date(r.t0).getHours()}時、${r.fn ? `${r.fn}を出て、` : ''}${r.title ? `『${r.title}』を` : '本を'}${fmtMin(r.min)}読んだ。` });
   for (const b of (S.reading || []).filter((x) => x.done === date)) { const n = readTimes(b.id); const days = b.dm ? Math.round((Date.parse(date) - Date.parse(b.dm)) / 864e5) : -1; events.push({ t: b.tDone || 0, s: `『${b.title}』を読み終えた。${b.sn ? (days > 0 ? `${b.sn}で出会ってから${days}日。` : `${b.sn}で出会ったその日に。`) : ''}${n ? `本屋と本屋のあいだで${n}回読んだ。` : ''}` }); }
   for (const p of posts) events.push({ t: p.t, s: `Xに投稿した。${p.text ? '「' + p.text + '」' : ''}`, url: p.url, pid: p.id });
   for (const sh of shares) events.push({ t: sh.t, s: SHARE_LBL[sh.kind] || 'シェアした。' });
