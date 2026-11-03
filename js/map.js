@@ -1,6 +1,6 @@
 // 地図（MapLibre）。店はピンの絵で表示し、固まり（クラスタ）でまとめ、状態は feature-state で軽く更新する
-import { STYLE_LIGHT, STYLE_DARK, TERRITORY_M, RANGE_M } from './config.js?v=0.15.1';
-import { circlePoly, emit } from './util.js?v=0.15.1';
+import { STYLE_LIGHT, STYLE_DARK, TERRITORY_M, RANGE_M, MAP_SKINS } from './config.js?v=0.15.2';
+import { circlePoly, emit } from './util.js?v=0.15.2';
 
 export const M = { map: null, ready: false, theme: 'light' };
 let storesGeo = { type: 'FeatureCollection', features: [] };
@@ -137,22 +137,24 @@ function addLayers() {
 
 // 地図にもともと出ている店・お寺などの印は消す（本屋・図書館のピンと紛れるため）。駅とバス停の印は残す
 function hideBasePoi() { for (const id of ['poi_r1', 'poi_r7', 'poi_r20']) { try { if (M.map.getLayer(id)) M.map.setLayoutProperty(id, 'visibility', 'none'); } catch (e) {} } }
-// 地図の下地を「ポップ」に合わせる（明るいときだけ）：クリームの地・白い細い道・檸檬の大通り・空色の水・若草の公園
+// 地図の下地を「ポップ」に合わせる（明るいときだけ）：ふつうはクリームの地・白い細い道・檸檬の大通り・空色の水・若草の公園。着せ替え（v0.15.2）で色を選べる（MAP_SKINS）
+let mapSkin = MAP_SKINS.cream;
+export function setMapSkin(name) { mapSkin = MAP_SKINS[name] || MAP_SKINS.cream; if (M.ready) tintBase(); }
 function tintBase() {
-  if (M.theme !== 'light') return; const map = M.map; const set = (id, prop, v) => { try { if (map.getLayer(id)) map.setPaintProperty(id, prop, v); } catch (e) {} };
-  set('background', 'background-color', '#FBEFD6'); set('landuse_residential', 'fill-color', '#F6E6C8'); set('building', 'fill-color', '#EFD9B0'); set('building-3d', 'fill-extrusion-color', '#EFD9B0');
-  for (const id of ['landuse_pitch', 'landuse_track', 'landuse_cemetery']) set(id, 'fill-color', '#DDEBC4'); set('landuse_hospital', 'fill-color', '#FBE3E3'); set('landuse_school', 'fill-color', '#F3ECC4');
-  set('park', 'fill-color', '#BFE8A8'); set('park_outline', 'line-color', '#A9DE91'); set('landcover_wood', 'fill-color', '#B7E39F'); set('landcover_grass', 'fill-color', '#BFE8A8'); set('landcover_sand', 'fill-color', '#F7EAB8');
-  set('water', 'fill-color', '#9FD6F5'); for (const id of ['waterway_river', 'waterway_other', 'waterway_tunnel']) set(id, 'line-color', '#9FD6F5');
+  if (M.theme !== 'light') return; const map = M.map, c = mapSkin; const set = (id, prop, v) => { try { if (map.getLayer(id)) map.setPaintProperty(id, prop, v); } catch (e) {} };
+  set('background', 'background-color', c.bg); set('landuse_residential', 'fill-color', c.res); set('building', 'fill-color', c.bld); set('building-3d', 'fill-extrusion-color', c.bld);
+  for (const id of ['landuse_pitch', 'landuse_track', 'landuse_cemetery']) set(id, 'fill-color', c.pitch); set('landuse_hospital', 'fill-color', c.hosp); set('landuse_school', 'fill-color', c.school);
+  set('park', 'fill-color', c.green); set('park_outline', 'line-color', c.green); set('landcover_wood', 'fill-color', c.wood); set('landcover_grass', 'fill-color', c.green); set('landcover_sand', 'fill-color', c.sand);
+  set('water', 'fill-color', c.water); for (const id of ['waterway_river', 'waterway_other', 'waterway_tunnel']) set(id, 'line-color', c.water);
   for (const p of ['road', 'bridge', 'tunnel']) {
-    for (const k of ['minor', 'service_track', 'street', 'path_pedestrian']) set(`${p}_${k}`, 'line-color', '#FFFFFF');
-    for (const k of ['minor_casing', 'service_track_casing', 'street_casing', 'path_pedestrian_casing']) set(`${p}_${k}`, 'line-color', '#E3CFA6');
-    for (const k of ['secondary_tertiary', 'trunk_primary', 'link', 'motorway_link']) set(`${p}_${k}`, 'line-color', '#FFD447');
-    for (const k of ['secondary_tertiary_casing', 'trunk_primary_casing', 'link_casing', 'motorway_link_casing']) set(`${p}_${k}`, 'line-color', '#C9A227');
-    set(`${p}_motorway`, 'line-color', '#FFB84D'); set(`${p}_motorway_casing`, 'line-color', '#B8761A');
-    for (const k of ['major_rail', 'major_rail_hatching', 'transit_rail', 'transit_rail_hatching']) set(`${p}_${k}`, 'line-color', '#7A7369');
+    for (const k of ['minor', 'service_track', 'street', 'path_pedestrian']) set(`${p}_${k}`, 'line-color', c.minor);
+    for (const k of ['minor_casing', 'service_track_casing', 'street_casing', 'path_pedestrian_casing']) set(`${p}_${k}`, 'line-color', c.minorC);
+    for (const k of ['secondary_tertiary', 'trunk_primary', 'link', 'motorway_link']) set(`${p}_${k}`, 'line-color', c.major);
+    for (const k of ['secondary_tertiary_casing', 'trunk_primary_casing', 'link_casing', 'motorway_link_casing']) set(`${p}_${k}`, 'line-color', c.majorC);
+    set(`${p}_motorway`, 'line-color', c.mw); set(`${p}_motorway_casing`, 'line-color', c.mwC);
+    for (const k of ['major_rail', 'major_rail_hatching', 'transit_rail', 'transit_rail_hatching']) set(`${p}_${k}`, 'line-color', c.rail);
   }
-  for (const id of ['highway-name-minor', 'highway-name-major', 'highway-name-path']) set(id, 'text-color', '#5A554D');
+  for (const id of ['highway-name-minor', 'highway-name-major', 'highway-name-path']) set(id, 'text-color', c.text);
 }
 function safeAddLayers() { try { hideBasePoi(); tintBase(); addLayers(); } catch (e) { console.error('layers', e); window.__mapErr = String(e && e.message || e); } }
 export function initMap({ center, zoom, theme = 'light', onStoreClick, onMapClick, onDrag }) {

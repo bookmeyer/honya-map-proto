@@ -1,17 +1,17 @@
 // 画面：ちかく（旧レーダー）・めぐり帳（旧図鑑）・ラリー（旧お題）・設定・最初の案内
-import { APP_VER, RANGE_M, PG, pagesForVol, frameOf, PREFS } from './config.js?v=0.15.1';
-import { S, save, exportJSON, parseImport, replace, reset } from './state.js?v=0.15.1';
-import { STORES, BYID, FEAT, RALLIES, isFeat, rarityOf, rarityText, stampSVG, unhideAll, rebuild, DATA_DATE, pickOpen, bookTitle } from './data.js?v=0.15.1';
-import * as G from './game.js?v=0.15.1';
-import * as MAP from './map.js?v=0.15.1';
-import { POS, hasPos } from './position.js?v=0.15.1';
-import { sfx, haptic } from './audio.js?v=0.15.1';
-import { profileImage, shareBlob } from './share.js?v=0.15.1';
-import { toast, openModal, closeModal, confirmBox, openSheet, openCard, switchView, setSub, refreshHud, applyMapStates, updateNear, locate, setTrialUI, warp, makeAvatar, nameModal, cleanHandle, joinModal, NEAR, currentSub, homeTip, exportFile } from './ui.js?v=0.15.1';
-import * as JU from './journey_ui.js?v=0.15.1';
-import { renderReading } from './reading_ui.js?v=0.15.1';
-import * as E from './events.js?v=0.15.1';
-import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, weekKey, isStandalone, mobileOS, emit } from './util.js?v=0.15.1';
+import { APP_VER, RANGE_M, PG, pagesForVol, frameOf, PREFS, SKINS, MAP_SKINS } from './config.js?v=0.15.2';
+import { S, save, exportJSON, parseImport, replace, reset } from './state.js?v=0.15.2';
+import { STORES, BYID, FEAT, RALLIES, isFeat, rarityOf, rarityText, stampSVG, unhideAll, rebuild, DATA_DATE, pickOpen, bookTitle } from './data.js?v=0.15.2';
+import * as G from './game.js?v=0.15.2';
+import * as MAP from './map.js?v=0.15.2';
+import { POS, hasPos } from './position.js?v=0.15.2';
+import { sfx, haptic } from './audio.js?v=0.15.2';
+import { profileImage, shareBlob } from './share.js?v=0.15.2';
+import { toast, openModal, closeModal, confirmBox, openSheet, openCard, switchView, setSub, refreshHud, applyMapStates, updateNear, locate, setTrialUI, warp, makeAvatar, nameModal, cleanHandle, joinModal, NEAR, currentSub, homeTip, exportFile } from './ui.js?v=0.15.2';
+import * as JU from './journey_ui.js?v=0.15.2';
+import { renderReading } from './reading_ui.js?v=0.15.2';
+import * as E from './events.js?v=0.15.2';
+import { $, $$, esc, dist, bearing, arrowOf, fmtDist, fmtDate, todayISO, prefOf, stars, icon, weekKey, isStandalone, mobileOS, emit } from './util.js?v=0.15.2';
 
 const empty = (ic, text) => `<div class="empty">${icon(ic)}<div>${text}</div></div>`;
 
@@ -138,6 +138,9 @@ export function renderSettings() {
   $('#settings-pane').innerHTML = `
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><button class="icon-btn" id="st-back" aria-label="戻る" style="transform:rotate(180deg)">${icon('chevron')}</button><h2 style="margin:0">設定</h2></div>
     <div class="setting"><div><div class="l">見た目</div><div class="s">明るい見た目が基本です。「自動」にすると端末の設定に合わせます</div></div><div class="seg3" id="st-theme">${['auto', 'light', 'dark'].map((t) => `<button data-t="${t}" class="${s.theme === t ? 'active' : ''}">${{ auto: '自動', light: '明', dark: '暗' }[t]}</button>`).join('')}</div></div>
+    <div class="setting stack"><div><div class="l">着せ替え（ためし）</div><div class="s">画面の色と地図の色を、ためしに変えられます（明るい見た目のとき）。ピンとスタンプの色は変わりません</div>
+      <div class="skins"><div class="sk-h">画面</div>${Object.entries(SKINS).map(([k, x]) => `<button class="skin${(s.skin || 'remon') === k ? ' on' : ''}" data-skin="${k}"><i style="background:linear-gradient(135deg,${x.sw[0]} 50%,${x.sw[1]} 50%)"></i>${esc(x.name)}</button>`).join('')}
+      <div class="sk-h">地図</div>${Object.entries(MAP_SKINS).map(([k, x]) => `<button class="skin${(s.mapSkin || 'cream') === k ? ' on' : ''}" data-mapskin="${k}"><i style="background:linear-gradient(135deg,${x.bg} 50%,${x.water} 50%)"></i>${esc(x.name)}</button>`).join('')}</div></div></div>
     <div class="setting"><div><div class="l">ハンドルネーム</div><div class="s">${S.settings.handle ? esc(S.settings.handle) : 'まだありません。見出し・プロフィール・シェアする画像に出ます'}</div></div><button class="btn" id="st-name">${S.settings.handle ? '変える' : '付ける'}</button></div>
     <div class="setting"><div><div class="l">参加コード</div><div class="s">${s.joinCode ? `「${esc(s.joinCode)}」で参加中（お試しの人だけのイベントが見えます）` : 'お試しなどで渡されたコードを入れると、その人たちだけのイベントが見えます'}</div></div><button class="btn" id="st-join">${s.joinCode ? '変える' : '入れる'}</button></div>
     <div class="setting"><div><div class="l">参加の記録を送る</div><div class="s">参加の人数を数えるための記録を送ります。位置・名前・メモは送りません${(S.outbox || []).length ? `（まだ送っていない記録 ${S.outbox.length}件）` : ''}<details class="more"><summary>くわしく</summary>送るのは、スタンプを押した店の番号・日時・店の近くで押したか・お試し歩きか・どのイベントかと、名前のない、ランダムな番号です。カードも送りません。止めても、イベントの枠は付きます。</details></div></div><button class="switch ${s.sendLog !== false ? 'on' : ''}" id="st-send" role="switch" aria-checked="${s.sendLog !== false}" aria-label="参加の記録を送る"></button></div>
@@ -176,6 +179,8 @@ export function renderSettings() {
   $('#st-join').onclick = () => joinModal(renderSettings);
   $('#st-send').onclick = () => { E.setSendLog(s.sendLog === false); renderSettings(); toast(S.settings.sendLog === false ? '参加の記録を送るのを止めました' : '参加の記録を送るようにしました', 'ok'); };
   $('#st-readplace').onclick = () => { s.readPlace = s.readPlace === false; save(); renderSettings(); emit('records'); toast(s.readPlace === false ? '読んだ場所を残すのを止めました（地図の印も消えます）' : '読んだ場所を残すようにしました', 'ok'); }; // 読んだ場所（v0.15.0）
+  $$('#view-settings [data-skin]').forEach((b) => { b.onclick = () => { s.skin = b.dataset.skin; save(); applySkin(); renderSettings(); }; }); // 着せ替え（v0.15.2）
+  $$('#view-settings [data-mapskin]').forEach((b) => { b.onclick = () => { s.mapSkin = b.dataset.mapskin; save(); applySkin(); renderSettings(); toast('地図の色を変えました（地図のタブで見られます）', 'ok'); }; });
   $('#st-sound').onclick = () => { s.sound = !s.sound; save(); renderSettings(); if (s.sound) sfx.click(); };
   $('#st-trial').onclick = () => { setTrialUI(!POS.fake); renderSettings(); };
   $('#st-export').onclick = exportFile;
@@ -187,7 +192,14 @@ export function renderSettings() {
 }
 export function applyTheme() {
   const t = S.settings.theme; const dark = t === 'dark' || (t === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-  document.documentElement.dataset.theme = dark ? 'dark' : 'light'; MAP.setTheme(dark ? 'dark' : 'light');
+  document.documentElement.dataset.theme = dark ? 'dark' : 'light'; applySkin(); MAP.setTheme(dark ? 'dark' : 'light');
+}
+// 着せ替え（ためし・v0.15.2）：明るい見た目のときだけ、画面の色の変数を上書きする。地図の色も（明るいときだけ効く）
+export function applySkin() {
+  const el = document.documentElement; const sk = SKINS[S.settings.skin] || SKINS.remon;
+  for (const k of new Set(Object.values(SKINS).flatMap((x) => Object.keys(x.v)))) el.style.removeProperty(k);
+  if (el.dataset.theme !== 'dark') for (const [k, v] of Object.entries(sk.v)) el.style.setProperty(k, v);
+  MAP.setMapSkin(S.settings.mapSkin);
 }
 
 // ---------- 最初の案内 ----------

@@ -1,5 +1,5 @@
 // 設定値（数字はここだけで変える）
-export const APP_VER = '0.15.1';
+export const APP_VER = '0.15.2';
 export const STORAGE_KEY = 'honya_map_v3';
 // イベントの設定を読み、参加の記録（店番号・日時・射程内か・お試しか・イベント＋名前のないランダムな端末の番号）を送る先。管理画面は同じ場所の /meguri/admin/
 export const EVENTS_API = 'https://tsunagubooks.com/meguri/api/';
@@ -79,3 +79,23 @@ export const ACHIEVEMENTS = [
   { id: 'a_book1', name: '一冊ぶん歩いた', desc: '歩いて300ページ（30km）', kind: 'pages', n: 300 },
   { id: 'a_share', name: '見せびらかし', desc: 'スタンプをシェアする', kind: 'share', n: 1 },
 ];
+
+// 着せ替え（ためし・v0.15.2 ぶっくまさん「テスト的に着せ替えできるようにできる？ 地図の色もいろいろ変えたい」）
+// 画面の色＝色の変数を上書き（明るい見た目のときだけ）。sw は選ぶ丸の2色。ピン・スタンプの色は変えない（種類の見分けのため）
+export const SKINS = {
+  remon: { name: '檸檬（いま）', sw: ['#FFD447', '#FF6A48'], v: {} },
+  sora: { name: '空', sw: ['#8CCBFF', '#2F9BFF'], v: { '--shu': '#2F9BFF', '--shu-2': '#1F7AE0', '--shu-soft': '#DCEEFF', '--gold': '#8CCBFF', '--gold-soft': '#E3F2FF', '--gold-ink': '#1F5E99', '--paper': '#F3F8FF', '--paper-2': '#E6F0FC', '--paper-3': '#D3E4F7', '--card-2': '#F3F8FF', '--line': '#D6E2F0', '--line-2': '#C2D3E6' } },
+  wakakusa: { name: '若草', sw: ['#A6E39A', '#2FA866'], v: { '--shu': '#2FA866', '--shu-2': '#1F8A50', '--shu-soft': '#DDF5E5', '--gold': '#A6E39A', '--gold-soft': '#E8F8E2', '--gold-ink': '#2E6B26', '--paper': '#F4FAF0', '--paper-2': '#E6F3DD', '--paper-3': '#D2E8C4', '--card-2': '#F4FAF0', '--line': '#D8E6CC', '--line-2': '#C3D8B3' } },
+  momo: { name: '桃', sw: ['#FFB3CB', '#FF5C8A'], v: { '--shu': '#FF5C8A', '--shu-2': '#E0406E', '--shu-soft': '#FFE0EA', '--gold': '#FFB3CB', '--gold-soft': '#FFE8F0', '--gold-ink': '#8A2F4D', '--paper': '#FFF5F8', '--paper-2': '#FCE6EE', '--paper-3': '#F6D0DE', '--card-2': '#FFF5F8', '--line': '#F0D9E1', '--line-2': '#E6C3D0' } },
+  murasaki: { name: '紫', sw: ['#C7AEFF', '#8F5BFF'], v: { '--shu': '#8F5BFF', '--shu-2': '#7442E0', '--shu-soft': '#EFE4FF', '--gold': '#C7AEFF', '--gold-soft': '#F1EAFF', '--gold-ink': '#4B2A8F', '--paper': '#F8F5FF', '--paper-2': '#ECE6FB', '--paper-3': '#DCD2F5', '--card-2': '#F8F5FF', '--line': '#E2DAF3', '--line-2': '#D0C4EC' } },
+  shu: { name: '朱', sw: ['#FFB38F', '#FF6A48'], v: { '--gold': '#FFB38F', '--gold-soft': '#FFE9DE', '--gold-ink': '#8A3A1C', '--paper': '#FFF6F0', '--paper-2': '#FCE7DC', '--paper-3': '#F6D2BF', '--card-2': '#FFF6F0' } },
+};
+// 地図の色（下地・家・建物・緑・林・砂・水・細い道とふち・大通りとふち・高速とふち・線路・文字・運動場・病院・学校）
+export const MAP_SKINS = {
+  cream: { name: 'クリーム（いま）', bg: '#FBEFD6', res: '#F6E6C8', bld: '#EFD9B0', green: '#BFE8A8', wood: '#B7E39F', sand: '#F7EAB8', water: '#9FD6F5', minor: '#FFFFFF', minorC: '#E3CFA6', major: '#FFD447', majorC: '#C9A227', mw: '#FFB84D', mwC: '#B8761A', rail: '#7A7369', text: '#5A554D', pitch: '#DDEBC4', hosp: '#FBE3E3', school: '#F3ECC4' },
+  white: { name: '白', bg: '#F6F6F3', res: '#EEEEEA', bld: '#E2E0DA', green: '#CDE9C4', wood: '#C3E2B6', sand: '#EFE8CF', water: '#A9D4F2', minor: '#FFFFFF', minorC: '#D9D7D0', major: '#FFE38A', majorC: '#D2B256', mw: '#FFC27A', mwC: '#C48A3A', rail: '#8E8E8E', text: '#5A5A5A', pitch: '#DCEAD2', hosp: '#F8E6E6', school: '#F2EED8' },
+  mizu: { name: '水色', bg: '#EAF4FB', res: '#DDEBF5', bld: '#CBDDED', green: '#BFE6C8', wood: '#B3E0BE', sand: '#EEF0D8', water: '#7CC4F0', minor: '#FFFFFF', minorC: '#C1D5E6', major: '#A8D8FF', majorC: '#5B9BD1', mw: '#6FBAFF', mwC: '#2F7FC9', rail: '#6E7B88', text: '#3E5366', pitch: '#D2EADB', hosp: '#F3E3EA', school: '#E6EEDB' },
+  wakakusa: { name: '若草', bg: '#EEF6E4', res: '#E2EFD3', bld: '#D2E3BD', green: '#A9DB8C', wood: '#9CD47D', sand: '#F1EDC8', water: '#9FD6F5', minor: '#FFFFFF', minorC: '#C8DAB0', major: '#DDF08F', majorC: '#97B54A', mw: '#B8E065', mwC: '#7FA33A', rail: '#6F7A63', text: '#4E5A44', pitch: '#CFE6B6', hosp: '#F3E6E2', school: '#EAF0CF' },
+  sepia: { name: '古地図', bg: '#F1E2C2', res: '#EAD6AE', bld: '#DCC291', green: '#CFD8A0', wood: '#C4D093', sand: '#F0DFAE', water: '#B7D2C8', minor: '#FAF0DA', minorC: '#C8AD7B', major: '#EAC47C', majorC: '#A8803E', mw: '#DBA35C', mwC: '#93652A', rail: '#6B5A45', text: '#5B4630', pitch: '#D9DCA8', hosp: '#EED9C6', school: '#EFE0B4' },
+  momo: { name: '桃', bg: '#FCEFF3', res: '#F7E2E9', bld: '#EECFDB', green: '#CDEBC5', wood: '#C1E5B8', sand: '#F8EBD6', water: '#A9D8F5', minor: '#FFFFFF', minorC: '#E6C5D2', major: '#FFC6DC', majorC: '#D97FA6', mw: '#FF9DC4', mwC: '#C2608A', rail: '#7D6872', text: '#6A4E5A', pitch: '#DDEED6', hosp: '#FBE3E8', school: '#F6ECDF' },
+};

@@ -1,20 +1,20 @@
 // 起動：記録を読み、データを取り、地図を出し、部品をつなぐ
-import { APP_VER } from './config.js?v=0.15.1';
-import { S, load, save } from './state.js?v=0.15.1';
-import { loadAll, STORES } from './data.js?v=0.15.1';
-import * as MAP from './map.js?v=0.15.1';
-import { POS, setPos, setFollow, jumped } from './position.js?v=0.15.1';
-import * as AUDIO from './audio.js?v=0.15.1';
-import * as UI from './ui.js?v=0.15.1';
-import * as J from './journey.js?v=0.15.1';
-import * as JU from './journey_ui.js?v=0.15.1';
-import * as RU from './reading_ui.js?v=0.15.1';
-import * as E from './events.js?v=0.15.1';
-import { renderRadar, renderZukan, renderMissions, renderSettings, applyTheme, showOnboarding } from './screens.js?v=0.15.1';
-import { $, $$, on, emit, isStandalone, mobileOS } from './util.js?v=0.15.1';
+import { APP_VER } from './config.js?v=0.15.2';
+import { S, load, save } from './state.js?v=0.15.2';
+import { loadAll, STORES } from './data.js?v=0.15.2';
+import * as MAP from './map.js?v=0.15.2';
+import { POS, setPos, setFollow, jumped } from './position.js?v=0.15.2';
+import * as AUDIO from './audio.js?v=0.15.2';
+import * as UI from './ui.js?v=0.15.2';
+import * as J from './journey.js?v=0.15.2';
+import * as JU from './journey_ui.js?v=0.15.2';
+import * as RU from './reading_ui.js?v=0.15.2';
+import * as E from './events.js?v=0.15.2';
+import { renderRadar, renderZukan, renderMissions, renderSettings, applyTheme, applySkin, showOnboarding } from './screens.js?v=0.15.2';
+import { $, $$, on, emit, isStandalone, mobileOS } from './util.js?v=0.15.2';
 
 async function boot() {
-  load(); applyThemeEarly();
+  load(); applyThemeEarly(); applySkin(); // 着せ替え（v0.15.2）
   const res = await loadAll();
   const join = E.takeJoinParam(); // お試しの人に渡すURLの ?join=参加コード
   const lp = S.lastPos; const center = lp ? [lp.lon, lp.lat] : [137.5, 37.3]; const zoom = lp ? 14 : 5;
