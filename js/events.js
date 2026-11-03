@@ -3,10 +3,10 @@
 // 書店員さんの手書きのカードも、ここからサーバーに頼む（v0.16.1。その店で押した記録がある端末だけに渡る）
 // 店の情報の報告を送り、運営が直した閉店・名前を受け取る（v0.17.0）
 // サーバーに届かないときは、前回読んだ設定で動く。スタンプはいつでも押せる
-import { EVENTS_API, APP_VER } from './config.js?v=0.21.1';
-import { $, emit, prefOf, todayISO, on } from './util.js?v=0.21.1';
-import { S, save } from './state.js?v=0.21.1';
-import { isLib, setFixes } from './data.js?v=0.21.1';
+import { EVENTS_API, APP_VER } from './config.js?v=0.21.2';
+import { $, emit, prefOf, todayISO, on } from './util.js?v=0.21.2';
+import { S, save } from './state.js?v=0.21.2';
+import { isLib, setFixes } from './data.js?v=0.21.2';
 
 export const EV = { list: [], permitted: new Set(), cards: new Set(), ok: false, at: 0 };
 const CACHE_KEY = 'meguri_events_v1';

@@ -1,12 +1,12 @@
 // 画面の共通の部品：トースト・モーダル・確かめの箱・タブの切りかえ・見出し帯・地図の下のチケット・バーコードの読み取り・書名でさがす・道順のボタン
-import { pagesForVol } from './config.js?v=0.21.1';
-import { gmapDir, $$, icon, $, esc, emit } from './util.js?v=0.21.1';
-import { S } from './state.js?v=0.21.1';
-import { haptic } from './audio.js?v=0.21.1';
-import { lookupIsbn, lookupBook, searchBooks, coversOf } from './data.js?v=0.21.1';
-import * as MAP from './map.js?v=0.21.1';
-import * as G from './game.js?v=0.21.1';
-import * as E from './events.js?v=0.21.1';
+import { pagesForVol } from './config.js?v=0.21.2';
+import { gmapDir, $$, icon, $, esc, emit } from './util.js?v=0.21.2';
+import { S } from './state.js?v=0.21.2';
+import { haptic } from './audio.js?v=0.21.2';
+import { lookupIsbn, lookupBook, searchBooks, coversOf } from './data.js?v=0.21.2';
+import * as MAP from './map.js?v=0.21.2';
+import * as G from './game.js?v=0.21.2';
+import * as E from './events.js?v=0.21.2';
 
 export const dirLink = (st, label = '道順') => `<a class="btn" href="${gmapDir(st)}" target="_blank" rel="noopener" data-stop>${label}</a>`;
 export const stopLinks = (root) => $$('[data-stop]', root).forEach((a) => a.addEventListener('click', (e) => e.stopPropagation()));

@@ -1,13 +1,13 @@
 // 画面の案内（チュートリアル。v0.19.0）：最初の案内のあと、地図の画面で本物のボタンを1つずつ光らせて説明する（v0.20.2 で「自分のアイコン」を足して7つ）
 // ぶっくまさん 11/3「一番最初に表示したとき、チュートリアルを表示できますか」→ 地図の上で6つを指さす案。とばせる。設定の「画面の案内」から、もう一度
-import { RANGE_M } from './config.js?v=0.21.1';
-import { $, esc } from './util.js?v=0.21.1';
-import { S, save } from './state.js?v=0.21.1';
-import { STORES } from './data.js?v=0.21.1';
-import * as MAP from './map.js?v=0.21.1';
-import * as E from './events.js?v=0.21.1';
-import { NEAR } from './map_ui.js?v=0.21.1';
-import { switchView, closeSheet } from './ui.js?v=0.21.1';
+import { RANGE_M } from './config.js?v=0.21.2';
+import { $, esc } from './util.js?v=0.21.2';
+import { S, save } from './state.js?v=0.21.2';
+import { STORES } from './data.js?v=0.21.2';
+import * as MAP from './map.js?v=0.21.2';
+import * as E from './events.js?v=0.21.2';
+import { NEAR } from './map_ui.js?v=0.21.2';
+import { switchView, closeSheet } from './ui.js?v=0.21.2';
 
 // el：光らせる部品（ok で出ているときだけ）／pin：地図の真ん中に近い店のピン
 const STEPS = [
