@@ -4,7 +4,7 @@ const [,, inFile, outFile] = process.argv;
 const stores = JSON.parse(fs.readFileSync(inFile, 'utf8'));
 const dist = (a, b, c, d) => { const R = 6371000, t = Math.PI / 180; const x = (c - a) * t, y = (d - b) * t; const s = Math.sin(x / 2) ** 2 + Math.cos(a * t) * Math.cos(c * t) * Math.sin(y / 2) ** 2; return 2 * R * Math.asin(Math.sqrt(s)); };
 const defs = [
-  { id: 'jimbocho', name: '神保町 本の街ラリー', la: 35.6958, lo: 139.7577, r: 500, max: 8, title: '神保町の主', desc: '古書店が並ぶ本の街。8店の印を集める' },
+  { id: 'jimbocho', name: '神保町 本の街ラリー', la: 35.6958, lo: 139.7577, r: 500, max: 8, title: '神保町の主', desc: '古書店が並ぶ本の街。8店のスタンプを集める' },
   { id: 'shibuya', name: '渋谷 本屋ラリー', la: 35.6595, lo: 139.7005, r: 900, max: 6, title: '渋谷の本好き', desc: '駅のまわりの6店' },
   { id: 'shinjuku', name: '新宿 本屋ラリー', la: 35.6905, lo: 139.7040, r: 800, max: 6, title: '新宿の本好き', desc: '駅のまわりの6店' },
   { id: 'matsuyama', name: '松山 本屋ラリー', la: 33.8395, lo: 132.7657, r: 2500, max: 6, title: '伊予の本好き', desc: '愛媛・松山の6店' },

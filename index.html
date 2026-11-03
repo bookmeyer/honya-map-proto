@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+P+One&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
-<link rel="stylesheet" href="css/app.css?v=0.12.0">
+<link rel="stylesheet" href="css/app.css?v=0.13.0">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -70,7 +70,7 @@
       <button id="btn-warp" class="fab" title="本屋の近くへワープ" aria-label="本屋の近くへワープ" hidden><svg class="ic"><use href="#i-warp"></use></svg></button>
       <button id="btn-add" class="fab" title="地図にない本屋を追加" aria-label="地図にない本屋を追加"><svg class="ic"><use href="#i-add"></use></svg></button>
     </div>
-    <div id="trial-banner" class="pill-banner" hidden><svg class="ic"><use href="#i-foot"></use></svg>お試し歩き：地図を押した場所に、自分がいることになります</div>
+    <div id="trial-banner" class="pill-banner" hidden><svg class="ic"><use href="#i-foot"></use></svg>お試し歩き中（地図を押すと、そこへ移動）</div>
     <div id="bottom-dock">
       <div id="want-alert" hidden></div>
       <div class="dock-row"><button id="event-chip" class="ticket ev" hidden aria-label="開催中のイベント"></button><button id="area-chip" class="area-chip" hidden></button><button id="mission-chip" class="ticket" hidden aria-label="きょうのお題"></button></div>
@@ -140,6 +140,6 @@
 <div id="toasts" aria-live="polite"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
-<script type="module" src="js/main.js?v=0.12.0"></script>
+<script type="module" src="js/main.js?v=0.13.0"></script>
 </body>
 </html>

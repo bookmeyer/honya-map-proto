@@ -133,7 +133,7 @@ h3 .muted{font-weight:500;letter-spacing:0}
 .modal-box{background:var(--card-2);width:100%;max-width:560px;border-top:var(--edge-w) solid var(--edge);border-top-left-radius:var(--r-xl);border-top-right-radius:var(--r-xl);padding:18px 16px;padding-bottom:calc(24px + var(--sab));max-height:92%;overflow:auto;animation:up var(--mid) var(--ease)}
 @keyframes up{from{transform:translateY(16px);opacity:.5}to{transform:none;opacity:1}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
-#toasts{position:fixed;left:12px;right:12px;bottom:calc(var(--tabs) + var(--sab) + 14px);z-index:60;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
+#toasts{position:fixed;left:12px;right:12px;top:calc(var(--head) + 6px);z-index:60;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
 .toast{background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:999px;font-size:14px;font-weight:700;border:2px solid var(--edge);box-shadow:var(--hard-s);max-width:100%;animation:up var(--fast) var(--ease)}
 .toast.ok{background:var(--midori);color:var(--on-color)} .toast.warn{background:var(--shu);color:var(--on-color)}
 #banners{position:fixed;left:12px;right:12px;top:calc(var(--head) + 8px);z-index:35;display:flex;flex-direction:column;gap:8px}
@@ -168,6 +168,14 @@ textarea{min-height:76px;resize:vertical}
 .pick-card{margin-top:10px}
 .pick-card img,.pick-card svg{display:block;width:100%;height:auto;border-radius:8px}
 #radar-picks h3 .muted{font-family:var(--body)}
+/* v0.13 ブラッシュアップ */
+.pf-sum{margin:10px 0 0;font-size:13px;color:var(--ink-2)}
+.pf-toggle{margin-top:8px;font-size:13px}
+#capture .lvup{word-break:auto-phrase;text-wrap:balance}
+details.more{margin-top:4px}
+details.more summary{cursor:pointer;color:var(--shu-2);font-size:12px;list-style:none}
+details.more summary::-webkit-details-marker{display:none}
+details.more[open] summary{margin-bottom:4px}
 
 /* ---- 一覧 ---- */
 .list .item{display:flex;gap:12px;align-items:center;padding:12px 4px;border-bottom:1.5px dashed var(--line-2);cursor:pointer}
