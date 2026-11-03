@@ -1,9 +1,23 @@
 // 設定値（数字はここだけで変える）
 
-export const APP_VER = '0.19.0';
+export const APP_VER = '0.20.0';
 export const STORAGE_KEY = 'honya_map_v3';
 // お試し歩き（地図を押した所にいることにする）：遊ぶ人には出さない（11/3 ぶっくまさん「OFFにしたい」）。作る人が試すときは localStorage の meguri_trial を 1 に
 export const TRIAL_ON = (() => { try { return localStorage.getItem('meguri_trial') === '1'; } catch (e) { return false; } })();
+// プロフィール（v0.20.0）：遊ぶ人に出すのは、プライバシーポリシーを出してから（11/3 ぶっくまさんの確かめ待ち）。作る人が試すときは localStorage の meguri_profile を 1 に
+export const PROFILE_ON = (() => { try { return localStorage.getItem('meguri_profile') === '1'; } catch (e) { return false; } })();
+// プロフィールの質問。答えはコードで持ち、送る（サーバーの lib/profiles.php の PROFILE_Q と同じ）。max：いくつまで選べるか（なし＝1つ）。pref：都道府県（01〜47）
+export const PROFILE_Q = [
+  { k: 'gen', t: '世代', o: [['10', '10代'], ['20', '20代'], ['30', '30代'], ['40', '40代'], ['50', '50代'], ['60', '60代'], ['70', '70代以上']] },
+  { k: 'sex', t: '性別', o: [['f', '女性'], ['m', '男性'], ['x', 'そのほか']] },
+  { k: 'buy', t: '1年に買う本（紙・電子あわせて）', o: [['0', '0〜2冊'], ['3', '3〜5冊'], ['6', '6〜11冊'], ['12', '12〜23冊'], ['24', '24〜49冊'], ['50', '50冊以上']] },
+  { k: 'freq', t: '本屋さんに行く回数', o: [['w', '週に1回以上'], ['m2', '月に2〜3回'], ['m1', '月に1回くらい'], ['q', '2〜3か月に1回'], ['r', 'ほとんど行かない']] },
+  { k: 'genres', t: 'よく読むジャンル（3つまで）', max: 3, o: [['lit', '小説・文芸'], ['mys', 'ミステリー・SF・ファンタジー'], ['ess', 'エッセイ・ノンフィクション'], ['biz', 'ビジネス・自己啓発'], ['hum', '人文・社会・思想'], ['his', '歴史'], ['sci', '科学・技術'], ['life', '暮らし・料理・趣味'], ['kid', '絵本・児童書'], ['comic', 'マンガ・ライトノベル'], ['poem', '詩歌・短歌・俳句']] },
+  { k: 'why', t: '本を選ぶきっかけ（いくつでも）', max: 6, o: [['shelf', '本屋さんの棚・POP'], ['sns', 'SNS'], ['media', '書評・テレビ・ラジオ'], ['friend', '友人・家族のすすめ'], ['award', '賞（本屋大賞・推し本大賞など）'], ['author', '好きな著者']] },
+  { k: 'where', t: '本を手に入れるところ（いくつでも）', max: 5, o: [['store', '本屋さん'], ['net', 'ネット書店'], ['ebook', '電子書籍'], ['used', '古本屋さん'], ['lib', '図書館で借りる']] },
+  { k: 'pref', t: '住んでいる都道府県', pref: true },
+  { k: 'found', t: '本めぐりを知ったきっかけ', o: [['x', 'X'], ['ig', 'Instagram'], ['tt', 'TikTok'], ['store', '本屋さんで'], ['friend', '知り合いから'], ['other', 'そのほか']] },
+];
 // イベントの設定を読み、参加の記録（店番号・日時・射程内か・お試しか・イベント＋名前のないランダムな端末の番号）を送る先
 export const EVENTS_API = 'https://tsunagubooks.com/meguri/api/';
 export const LEGACY_KEYS = ['honya_map_v2'];

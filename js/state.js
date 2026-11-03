@@ -1,6 +1,6 @@
 // 記録（この端末の中だけ）。版の違いを吸収して読み込み、まとめて書き込む
-import { SKINS, MAP_SKINS, STORAGE_KEY, LEGACY_KEYS, APP_VER } from './config.js?v=0.19.0';
-import { $, emit, debounce } from './util.js?v=0.19.0';
+import { SKINS, MAP_SKINS, STORAGE_KEY, LEGACY_KEYS, APP_VER, PROFILE_Q } from './config.js?v=0.20.0';
+import { $, emit, debounce } from './util.js?v=0.20.0';
 
 export const empty = () => ({
   v: 4, visits: [], cards: [], wants: [], custom: [], stamps: {}, pg: 0, pgDay: {},
@@ -18,6 +18,17 @@ const isPt = (p) => Array.isArray(p) && p.length === 2 && p.every((x) => typeof 
 const HEX = /^#[0-9A-Fa-f]{6}$/;
 const POST_RE = /^https?:\/\/(www\.|mobile\.)?(x|twitter)\.com\//i;
 const AVATAR_RE = /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/;
+function cleanProfile(p) {
+  if (!p || typeof p !== 'object' || !p.a || typeof p.a !== 'object') return null;
+  const a = {};
+  for (const q of PROFILE_Q) {
+    const v = p.a[q.k];
+    if (q.pref) { if (typeof v === 'string' && /^(0[1-9]|[1-3]\d|4[0-7])$/.test(v)) a[q.k] = v; continue; }
+    const codes = new Set(q.o.map((x) => x[0]));
+    if (q.max) { if (Array.isArray(v)) { const arr = [...new Set(v.filter((x) => codes.has(x)))].slice(0, q.max); if (arr.length) a[q.k] = arr; } } else if (codes.has(v)) a[q.k] = v;
+  }
+  return { a, d: isDay(p.d) ? p.d : '', send: p.send === true && Object.keys(a).length > 0 };
+}
 function sanitize(o) {
   for (const k of ['visits', 'cards', 'wants', 'custom', 'posts', 'shares', 'reading', 'trips', 'reads', 'evTitles', 'outbox', 'repOut']) if (!Array.isArray(o[k])) o[k] = [];
   for (const k of ['stamps', 'pgDay', 'claimedW', 'claimedD', 'rallyDone', 'featDone', 'looks', 'hidden', 'renames', 'days', 'evLog']) o[k] = plain(o[k]);
@@ -41,6 +52,8 @@ function sanitize(o) {
   o.trip = ok(o.trip) && num(o.trip.t, NaN) === o.trip.t ? Object.assign(o.trip, { p0: isPt(o.trip.p0) ? o.trip.p0 : null }) : null;
   o.lastPos = ok(o.lastPos) && num(o.lastPos.lat, NaN) === o.lastPos.lat && num(o.lastPos.lon, NaN) === o.lastPos.lon ? { lat: o.lastPos.lat, lon: o.lastPos.lon } : null;
   if (o.lastBook != null && typeof o.lastBook !== 'string') delete o.lastBook;
+  o.profile = cleanProfile(o.profile); // プロフィール（v0.20.0）：決まったコードだけ残す
+  o.profOut = ok(o.profOut) && ['put', 'del'].includes(o.profOut.op) ? { op: o.profOut.op } : null;
   const s = o.settings;
   s.avatar = typeof s.avatar === 'string' && s.avatar.length < 400000 && AVATAR_RE.test(s.avatar) ? s.avatar : '';
   s.handle = typeof s.handle === 'string' ? s.handle.slice(0, 20) : '';
@@ -74,6 +87,6 @@ const write = () => { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(S))
 export const save = debounce(write, 150);
 export const saveNow = write;
 export function replace(data) { S = ensure(data); saveNow(); emit('replaced'); return S; }
-export function reset() { const seen = S.seen, settings = S.settings; S = empty(); S.seen = seen; S.settings = settings; try { localStorage.removeItem('meguri_events_v1'); localStorage.removeItem('meguri_api'); } catch (e) {} saveNow(); emit('replaced'); return S; } // イベントの控え・試しの受け口も消す（v0.15.3）
+export function reset() { const seen = S.seen, settings = S.settings, sent = !!(S.profile && S.profile.send); S = empty(); S.seen = seen; S.settings = settings; if (sent) S.profOut = { op: 'del' }; /* 運営に送ったプロフィールも消す（v0.20.0。端末の番号は同じまま） */ try { localStorage.removeItem('meguri_events_v1'); localStorage.removeItem('meguri_api'); } catch (e) {} saveNow(); emit('replaced'); return S; } // イベントの控え・試しの受け口も消す（v0.15.3）
 export function exportJSON() { return JSON.stringify({ app: 'honya-map', ver: APP_VER, at: new Date().toISOString(), data: S }, null, 1); }
 export function parseImport(text) { const j = JSON.parse(text); const d = j.data || j; if (!d || !Array.isArray(d.visits)) throw new Error('bad'); return d; }

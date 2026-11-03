@@ -3,10 +3,10 @@
 // 書店員さんの手書きのカードも、ここからサーバーに頼む（v0.16.1。その店で押した記録がある端末だけに渡る）
 // 店の情報の報告を送り、運営が直した閉店・名前を受け取る（v0.17.0）
 // サーバーに届かないときは、前回読んだ設定で動く。スタンプはいつでも押せる
-import { EVENTS_API, APP_VER } from './config.js?v=0.19.0';
-import { $, emit, prefOf, todayISO, on } from './util.js?v=0.19.0';
-import { S, save } from './state.js?v=0.19.0';
-import { isLib, setFixes } from './data.js?v=0.19.0';
+import { EVENTS_API, APP_VER } from './config.js?v=0.20.0';
+import { $, emit, prefOf, todayISO, on } from './util.js?v=0.20.0';
+import { S, save } from './state.js?v=0.20.0';
+import { isLib, setFixes } from './data.js?v=0.20.0';
 
 export const EV = { list: [], permitted: new Set(), cards: new Set(), ok: false, at: 0 };
 const CACHE_KEY = 'meguri_events_v1';
@@ -150,12 +150,14 @@ export function flushSoon(ms = 1500) { clearTimeout(ftimer); ftimer = setTimeout
 export function flush() { if (!flushP) flushP = sendOutbox().finally(() => { flushP = null; }); return flushP; }
 async function sendOutbox() {
   const logs = S.settings.sendLog !== false && (S.outbox || []).length > 0, reps = (S.repOut || []).length > 0; // 報告は、その人が「運営にも知らせる」を選んだものなので、参加の記録を送らない設定でも送る
-  if (!logs && !reps) return;
+  const prof = !!S.profOut; // プロフィール（v0.20.0）：本人が同意したとき・やめたとき
+  if (!logs && !reps && !prof) return;
   if (!navigator.onLine) { flushSoon(retryMs); return; }
   let failed = false;
   if (logs && !(await sendQueue(S.outbox, 'checkin.php', 50))) failed = true;
   if (reps && !(await sendQueue(S.repOut, 'report.php', 20))) failed = true;
-  if (failed && ((S.outbox || []).length || (S.repOut || []).length)) { flushSoon(retryMs); retryMs = Math.min(retryMs * 2, 600000); } else retryMs = 60000;
+  if (prof && !(await sendProfile())) failed = true;
+  if (failed && ((S.outbox || []).length || (S.repOut || []).length || S.profOut)) { flushSoon(retryMs); retryMs = Math.min(retryMs * 2, 600000); } else retryMs = 60000;
 }
 // 1つの入れ物をまとめて送る。形のまちがい（400）は送り直しても通らないので捨てる。ほかのまちがいは残して、あとで送り直す
 async function sendQueue(q, file, n) {
@@ -169,6 +171,19 @@ async function sendQueue(q, file, n) {
       q.splice(0, batch.length); save();
     }
     return true;
+  } catch (e) { return false; }
+}
+// ---- プロフィール（v0.20.0）：送るのは答え（コード）と端末の番号だけ。put＝入れる・変える／del＝消す（いちばん新しいものだけ送る） ----
+export function queueProfile(op) { S.profOut = { op }; save(); flushSoon(300); }
+async function sendProfile() {
+  const op = S.profOut && S.profOut.op; if (!op) return true;
+  const put = op === 'put' && S.profile && S.profile.send;
+  try {
+    const ctl = new AbortController(); const tm = setTimeout(() => ctl.abort(), 10000);
+    const r = await fetch(new URL('profile.php', apiBase()).toString(), { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(put ? { device: deviceId(), ver: APP_VER, profile: S.profile.a } : { device: deviceId(), ver: APP_VER, delete: 1 }), signal: ctl.signal });
+    clearTimeout(tm);
+    if (r.status !== 400 && !r.ok) return false;
+    if (S.profOut && S.profOut.op === op) S.profOut = null; save(); return true; // 送っているあいだに変わったら、次に送る
   } catch (e) { return false; }
 }
 // ---- 店の情報の報告（v0.17.0）：閉店している・名前が違う・地図にない店を、運営に知らせる ----
