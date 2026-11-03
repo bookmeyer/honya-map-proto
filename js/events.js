@@ -3,10 +3,10 @@
 // 書店員さんの手書きのカードも、ここからサーバーに頼む（v0.16.1。その店で押した記録がある端末だけに渡る）
 // 店の情報の報告を送り、運営が直した閉店・名前を受け取る（v0.17.0）
 // サーバーに届かないときは、前回読んだ設定で動く。スタンプはいつでも押せる
-import { EVENTS_API, APP_VER } from './config.js?v=0.17.3';
-import { $, emit, prefOf, todayISO, on } from './util.js?v=0.17.3';
-import { S, save } from './state.js?v=0.17.3';
-import { isLib, setFixes } from './data.js?v=0.17.3';
+import { EVENTS_API, APP_VER } from './config.js?v=0.18.0';
+import { $, emit, prefOf, todayISO, on } from './util.js?v=0.18.0';
+import { S, save } from './state.js?v=0.18.0';
+import { isLib, setFixes } from './data.js?v=0.18.0';
 
 export const EV = { list: [], permitted: new Set(), cards: new Set(), ok: false, at: 0 };
 const CACHE_KEY = 'meguri_events_v1';
@@ -35,7 +35,11 @@ function applyFixes(f) {
   const closed = ok && Array.isArray(f.closed) ? f.closed.filter((x) => typeof x === 'string' && STORE_ID.test(x)).slice(0, 5000) : [];
   const rename = new Map(); // Map にする（"__proto__" などの名前で、ふつうの入れ物を壊さないように）
   if (ok && f.rename && typeof f.rename === 'object' && !Array.isArray(f.rename)) for (const [k, v] of Object.entries(f.rename)) if (STORE_ID.test(k) && typeof v === 'string' && v.trim() && rename.size < 5000) rename.set(k, v.trim().slice(0, 80));
-  if (setFixes(closed, rename)) emit('fixes');
+  // 管理画面で足した店（v0.18.0）：店番号は s＋番号・名前・場所（日本のなか）・住所・県・古書店（u）・図書館（t）
+  const inJP = (la, lo) => typeof la === 'number' && typeof lo === 'number' && la >= 20 && la <= 46.5 && lo >= 122 && lo <= 154.5;
+  const adds = ok && Array.isArray(f.add) ? f.add.filter((s) => s && typeof s.i === 'string' && /^s\d{1,9}$/.test(s.i) && typeof s.n === 'string' && s.n.trim() && inJP(s.la, s.lo)).slice(0, 5000)
+    .map((s) => Object.assign({ i: s.i, n: s.n.trim().slice(0, 80), la: s.la, lo: s.lo, srv: 1 }, typeof s.a === 'string' ? { a: s.a.slice(0, 200) } : {}, typeof s.p === 'string' ? { p: s.p.slice(0, 10) } : {}, s.u === 1 ? { u: 1 } : {}, s.t === 'l' ? { t: 'l' } : {})) : [];
+  if (setFixes(closed, rename, adds)) emit('fixes');
 }
 let evSeq = 0; // 読むのが重なったら、いちばん新しい返事だけ使う（v0.16.0：参加コードを変えた直後に、前の返事で上書きされることがあった）
 export async function loadEvents() {

@@ -1,7 +1,7 @@
 // 本屋・図書館・ラリーのデータ。スタンプ（その店だけの絵柄）の見た目もここ
-import { DEMO_STORE } from './config.js?v=0.17.3';
-import { sleep, $, weekKey, prefOf, hash32, esc, todayISO } from './util.js?v=0.17.3';
-import { S } from './state.js?v=0.17.3';
+import { DEMO_STORE } from './config.js?v=0.18.0';
+import { sleep, $, weekKey, prefOf, hash32, esc, todayISO, dist } from './util.js?v=0.18.0';
+import { S } from './state.js?v=0.18.0';
 
 export let STORES = [];
 export let RALLIES = [];
@@ -26,11 +26,14 @@ export async function loadAll() {
 let BASE = [], LIBS = [];
 // ---- みんなの地図への直し（v0.17.0）：運営が報告を確かめて直した閉店・名前（サーバーの events.php の fixes。events.js が渡す）----
 // 閉店した店は地図・さがす・近くから外す。ただしスタンプや来た記録の表示のために BYID には残す（closed: 1）
-let FIX = { closed: new Set(), rename: new Map(), key: '' };
-export function setFixes(closed, rename) {
-  const key = JSON.stringify([closed, [...rename]]); if (key === FIX.key) return false;
-  FIX = { closed: new Set(closed), rename, key }; rebuild(); return true;
+// 管理画面（CSV）で足した店（v0.18.0。店番号 s＋番号）も重ねる。月1回、明晰が店のデータに書き写したら、ファイルの店のほうを使う
+let FIX = { closed: new Set(), rename: new Map(), adds: [], key: '' };
+export function setFixes(closed, rename, adds = []) {
+  const key = JSON.stringify([closed, [...rename], adds]); if (key === FIX.key) return false;
+  FIX = { closed: new Set(closed), rename, adds, key }; rebuild(); return true;
 }
+// まわり5kmの同じ種類の店の数（秘境スタンプの目安。ファイルの店は道具が数えてある）
+function around(s, list) { let k = 0; for (const o of list) { if (Math.abs(o.la - s.la) > 0.05 || Math.abs(o.lo - s.lo) > 0.062 || o.i === s.i) continue; if (dist(s.la, s.lo, o.la, o.lo) <= 5000) k++; } return k; }
 // ---- 書店員さんの1冊（v0.11）。お店に確かめて、許可をいただいた店だけ data/picks.json に書く ----
 // 書名・著者・ひとことは誰でも見られる。スタンプの本の印は、その店の射程内で押した人だけ（お試し歩きは入らない。見本の店は入る）
 // 手書きのカード（写真）は picks.json にも GitHub にも置かない。サーバーの管理画面から入れ、押した記録がある端末にだけ渡す（v0.16.1。events.js loadCard）
@@ -45,7 +48,9 @@ export const placeWord = (st) => (isLib(st) ? '図書館' : '店');
 export function rebuild(base) {
   if (base) BASE = base;
   const libs = S.settings.showLib === false ? [] : LIBS;
-  const all = [DEMO_STORE, ...BASE, ...libs, ...S.custom.map((c) => Object.assign({}, c, { custom: 1 }))].filter((s) => !S.hidden[s.i]);
+  const have = new Set([...BASE, ...LIBS].map((s) => s.i));
+  const adds = FIX.adds.filter((s) => !have.has(s.i) && (s.t !== 'l' || S.settings.showLib !== false)).map((s) => (s.k == null ? Object.assign(s, { k: around(s, s.t === 'l' ? LIBS : BASE) }) : s));
+  const all = [DEMO_STORE, ...BASE, ...libs, ...adds, ...S.custom.map((c) => Object.assign({}, c, { custom: 1 }))].filter((s) => !S.hidden[s.i]);
   // 名前：この端末で直した名前 → 運営が直した名前（「名前を確認ずみ」）→ 地図データの名前
   const named = (s) => { const own = S.renames && S.renames[s.i]; const fx = FIX.rename.get(s.i); return own ? Object.assign({}, s, { n: own.n, fix: 1 }) : fx ? Object.assign({}, s, { n: fx, ov: 1 }) : s; };
   STORES = all.filter((s) => !FIX.closed.has(s.i)).map(named);

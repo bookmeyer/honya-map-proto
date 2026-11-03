@@ -1,15 +1,15 @@
 // 設定の画面と、そこから開くもの：見た目・着せ替え・アイコン・ハンドルネーム・参加コード・送るもののお知らせ・記録を守る・Googleマップの★
-import { SKINS, MAP_SKINS, APP_VER } from './config.js?v=0.17.3';
-import { $, esc, fmtDist, icon, $$, mobileOS, isStandalone, emit, todayISO } from './util.js?v=0.17.3';
-import { S, save, parseImport, replace, reset, exportJSON } from './state.js?v=0.17.3';
-import { sfx } from './audio.js?v=0.17.3';
-import { POS } from './position.js?v=0.17.3';
-import { addCustom, STORES, DATA_DATE, rebuild, unhideAll } from './data.js?v=0.17.3';
-import * as MAP from './map.js?v=0.17.3';
-import * as E from './events.js?v=0.17.3';
-import * as GI from './gimport.js?v=0.17.3';
-import { openModal, closeModal, toast, refreshHud, switchView, confirmBox } from './ui.js?v=0.17.3';
-import { applyMapStates, updateNear, updateAreaChip, setTrialUI } from './map_ui.js?v=0.17.3';
+import { SKINS, MAP_SKINS, APP_VER } from './config.js?v=0.18.0';
+import { $, esc, fmtDist, icon, $$, mobileOS, isStandalone, emit, todayISO } from './util.js?v=0.18.0';
+import { S, save, parseImport, replace, reset, exportJSON } from './state.js?v=0.18.0';
+import { sfx } from './audio.js?v=0.18.0';
+import { POS } from './position.js?v=0.18.0';
+import { addCustom, STORES, DATA_DATE, rebuild, unhideAll } from './data.js?v=0.18.0';
+import * as MAP from './map.js?v=0.18.0';
+import * as E from './events.js?v=0.18.0';
+import * as GI from './gimport.js?v=0.18.0';
+import { openModal, closeModal, toast, refreshHud, switchView, confirmBox } from './ui.js?v=0.18.0';
+import { applyMapStates, updateNear, updateAreaChip, setTrialUI } from './map_ui.js?v=0.18.0';
 
 // ---------- Googleマップの★を読み込む ----------
 export function googleHelp() {

@@ -1,7 +1,7 @@
 // 地図（MapLibre）。店はピンの絵で表示し、固まり（クラスタ）でまとめ、状態は feature-state で軽く更新する
-import { MAP_SKINS, STYLE_DARK, STYLE_LIGHT, TERRITORY_M, RANGE_M } from './config.js?v=0.17.3';
-import { emit, circlePoly } from './util.js?v=0.17.3';
-import { POS } from './position.js?v=0.17.3';
+import { MAP_SKINS, STYLE_DARK, STYLE_LIGHT, TERRITORY_M, RANGE_M } from './config.js?v=0.18.0';
+import { emit, circlePoly } from './util.js?v=0.18.0';
+import { POS } from './position.js?v=0.18.0';
 
 export const M = { map: null, ready: false, theme: 'light' };
 let storesGeo = { type: 'FeatureCollection', features: [] };
