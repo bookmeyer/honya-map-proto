@@ -1,14 +1,14 @@
 // 地図（MapLibre）。店はピンの絵で表示し、固まり（クラスタ）でまとめ、状態は feature-state で軽く更新する
-import { MAP_SKINS, STYLE_DARK, STYLE_LIGHT, TERRITORY_M, RANGE_M } from './config.js?v=0.18.0';
-import { emit, circlePoly } from './util.js?v=0.18.0';
-import { POS } from './position.js?v=0.18.0';
+import { MAP_SKINS, STYLE_DARK, STYLE_LIGHT, TERRITORY_M, RANGE_M } from './config.js?v=0.18.1';
+import { emit, circlePoly } from './util.js?v=0.18.1';
+import { POS } from './position.js?v=0.18.1';
 
 export const M = { map: null, ready: false, theme: 'light' };
 let storesGeo = { type: 'FeatureCollection', features: [] };
 let territoryGeo = { type: 'FeatureCollection', features: [] };
 let meGeo = { type: 'FeatureCollection', features: [] };
 let bound = false;
-const HIT_LAYERS = ['stores', 'stores-stamped', 'stores-near', 'stores-pick', 'clusters', 'reads']; // 押せるもの（地図の下地より先に受ける）
+const HIT_LAYERS = ['stores', 'stores-stamped', 'stores-near', 'stores-pick', 'ev-tag', 'ev-dot', 'clusters', 'reads']; // 押せるもの（地図の下地より先に受ける）
 let readsGeo = { type: 'FeatureCollection', features: [] }; // 読んだ場所（v0.15.0）
 const stateCache = new Map(); // id → 最後に送った状態
 let handlers = {};
@@ -62,9 +62,28 @@ function readMarkImage() { // 読んだ場所（桃の丸に白い開いた本�
   return g.getImageData(0, 0, W * s, W * s);
 }
 const fs = (k, def = 0) => ['coalesce', ['feature-state', k], def];
-// イベントの対象の店の輪の色（開催中のイベントの枠の色）
-let evRingColor = '#FFD447';
-export function setEventRingColor(c) { if (!c || c === evRingColor) return; evRingColor = c; if (M.ready && M.map.getLayer('event-ring')) M.map.setPaintProperty('event-ring', 'circle-color', c); }
+// ---- 開催中のイベントの参加店（対象をしぼったイベントだけ。v0.18.1）：ピンの下に札（枠の名前）、縮めて店が固まっているときは点 ----
+// 前は店の点のまわりの薄い輪だけで、ピンに隠れて見えなかった（ぶっくまさん 11/3「その店舗だけ地図上で目立たせることもできてませんね」）
+let evGeo = { type: 'FeatureCollection', features: [] };
+let evStyle = { color: '#FFD447', ink: EDGE }, evKey = '';
+const inkOn = (hex) => { const n = parseInt(hex.slice(1), 16); return 0.299 * (n >> 16) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255) > 150 ? EDGE : '#FFFFFF'; }; // 札の地の色に合う字の色
+function evTagImage(color) { // 札：角の丸い板に墨のふち。字の長さに合わせて横にのびる（EV_TAG の stretchX）。roundRect は古い iPhone にないので arcTo で描く
+  const W = 24, H = 20, s = 2, r = 7, x0 = 1.5, y0 = 1.5, x1 = W - 1.5, y1 = H - 1.5; const c = document.createElement('canvas'); c.width = W * s; c.height = H * s; const g = c.getContext('2d'); g.scale(s, s);
+  g.beginPath(); g.moveTo(x0 + r, y0); g.arcTo(x1, y0, x1, y1, r); g.arcTo(x1, y1, x0, y1, r); g.arcTo(x0, y1, x0, y0, r); g.arcTo(x0, y0, x1, y0, r); g.closePath();
+  g.fillStyle = color; g.fill(); g.lineWidth = 1.8; g.strokeStyle = EDGE; g.stroke();
+  return g.getImageData(0, 0, W * s, H * s);
+}
+const EV_TAG = { pixelRatio: 2, stretchX: [[18, 30]], stretchY: [[17, 23]], content: [12, 8, 36, 32] }; // 画像の点（48×40）で
+// list：[{ i, la, lo, done }]（done＝このイベントでもう押した店）。style：{ color, label }（いちばん上の開催中のイベントの枠）
+export function setEventStores(list, style) {
+  const color = style && /^#[0-9A-Fa-f]{6}$/.test(style.color || '') ? style.color : '#FFD447'; const label = String((style && style.label) || 'イベント').slice(0, 12);
+  const key = color + '|' + label + '|' + list.map((s) => s.i + (s.done ? '+' : '')).join(','); if (key === evKey) return; evKey = key; // 変わったときだけ描き直す
+  const recolor = color !== evStyle.color; evStyle = { color, ink: inkOn(color) };
+  evGeo = { type: 'FeatureCollection', features: list.map((s) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [s.lo, s.la] }, properties: { id: s.i, done: s.done ? 1 : 0, lb: label } })) };
+  if (!M.ready || !M.map.getSource('evstores')) return;
+  if (recolor) { M.map.updateImage('ev-tag', evTagImage(color)); M.map.setPaintProperty('ev-dot', 'circle-color', ['case', ['==', ['get', 'done'], 1], PIN.stamped[0], color]); M.map.setPaintProperty('ev-tag', 'text-color', evStyle.ink); }
+  M.map.getSource('evstores').setData(evGeo);
+}
 // ---- 自分のアイコン（現在地に出す。写真は端末の中だけ） ----
 let avatar = null; // { blue: ImageData, purple: ImageData }
 const loadImg = (src) => new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = src; });
@@ -109,7 +128,11 @@ function addLayers() {
     'circle-opacity': 1, 'circle-stroke-width': 2.5, 'circle-stroke-color': '#1B1B1B' } });
   map.addLayer({ id: 'cluster-count', type: 'symbol', source: 'stores', filter: ['has', 'point_count'], layout: { 'text-field': ['get', 'point_count_abbreviated'], 'text-font': ['Noto Sans Bold'], 'text-size': 12, 'text-allow-overlap': true }, paint: { 'text-color': '#1B1B1B' } });
   const unc = ['!', ['has', 'point_count']];
-  map.addLayer({ id: 'event-ring', type: 'circle', source: 'stores', filter: unc, paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, 11, 12, 16, 15, 24], 'circle-color': evRingColor, 'circle-opacity': ['*', 0.28, fs('ev')], 'circle-stroke-color': '#1B1B1B', 'circle-stroke-width': 2, 'circle-stroke-opacity': ['*', 0.85, fs('ev')] } });
+  // 開催中のイベントの参加店（v0.18.1）：縮めて店が固まっているあいだは、固まりの上に点（押した店は若草）
+  if (!map.hasImage('ev-tag')) map.addImage('ev-tag', evTagImage(evStyle.color), EV_TAG);
+  map.addSource('evstores', { type: 'geojson', data: evGeo });
+  map.addLayer({ id: 'ev-dot-halo', type: 'circle', source: 'evstores', maxzoom: 10, paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 4, 7.5, 9, 10], 'circle-color': '#FFFFFF' } }); // 白いふち（店の固まりの檸檬色の上でも見分けられるように）
+  map.addLayer({ id: 'ev-dot', type: 'circle', source: 'evstores', maxzoom: 10, paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 4, 4, 9, 6.5], 'circle-color': ['case', ['==', ['get', 'done'], 1], PIN.stamped[0], evStyle.color], 'circle-stroke-width': 1.6, 'circle-stroke-color': EDGE } });
   map.addLayer({ id: 'feat-ring', type: 'circle', source: 'stores', filter: unc, paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, 10, 12, 15, 15, 22], 'circle-color': '#A86CFF', 'circle-opacity': ['*', 0.12, fs('feat')], 'circle-stroke-color': '#A86CFF', 'circle-stroke-width': 2, 'circle-stroke-opacity': ['*', 0.9, fs('feat')] } });
   map.addLayer({ id: 'stores-halo', type: 'circle', source: 'stores', filter: unc, paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, 8, 12, 12, 15, 18], 'circle-color': '#FF6A48', 'circle-opacity': ['*', 0.16, ['min', 1, fs('st')]] } });
   map.addLayer({ id: 'near-pulse', type: 'circle', source: 'stores', filter: unc, paint: { 'circle-radius': 16, 'circle-color': '#FFD447', 'circle-opacity': ['*', 0.3, fs('near')] } });
@@ -121,14 +144,16 @@ function addLayers() {
   map.addLayer({ id: 'stores-near', type: 'symbol', source: 'stores', filter: unc, layout: sym('pin-near', ['interpolate', ['linear'], ['zoom'], 8, 0.6, 12, 0.8, 15, 1.05]), paint: { 'icon-opacity': fs('near') } });
   map.addLayer({ id: 'stores-want', type: 'symbol', source: 'stores', filter: unc, layout: { 'icon-image': 'mark-want', 'icon-size': ['interpolate', ['linear'], ['zoom'], 8, 0.5, 15, 0.8], 'icon-anchor': 'bottom-left', 'icon-offset': [10, -34], 'icon-allow-overlap': true, 'icon-ignore-placement': true }, paint: { 'icon-opacity': fs('want') } });
   map.addLayer({ id: 'stores-pick', type: 'symbol', source: 'stores', filter: ['all', unc, ['==', ['get', 'pk'], 1]], layout: { 'icon-image': 'mark-pick', 'icon-size': ['interpolate', ['linear'], ['zoom'], 8, 0.5, 15, 0.8], 'icon-anchor': 'bottom-right', 'icon-offset': [-10, -34], 'icon-allow-overlap': true, 'icon-ignore-placement': true } });
+  // 札（ピンの先の下）。ほかの印（行きたい＝右上・書店員さんの1冊＝左上）と重ならない場所
+  map.addLayer({ id: 'ev-tag', type: 'symbol', source: 'evstores', minzoom: 10, layout: { 'text-field': ['get', 'lb'], 'text-font': ['Noto Sans Bold'], 'text-size': ['interpolate', ['linear'], ['zoom'], 10, 9, 15, 12], 'text-anchor': 'top', 'text-offset': [0, 0.5], 'text-allow-overlap': true, 'text-ignore-placement': true, 'icon-image': 'ev-tag', 'icon-text-fit': 'both', 'icon-text-fit-padding': [3, 7, 2, 7], 'icon-allow-overlap': true, 'icon-ignore-placement': true }, paint: { 'text-color': evStyle.ink } });
   map.addLayer({ id: 'me-dot', type: 'circle', source: 'me', filter: ['==', ['get', 'k'], 'me'], paint: { 'circle-radius': 9, 'circle-color': ['case', ['==', ['get', 'fake'], 1], '#A86CFF', '#FFFFFF'], 'circle-stroke-width': 2.5, 'circle-stroke-color': '#1B1B1B' } });
   avatarLayer(map); // 自分のアイコンがあれば、現在地の点の上に
   if (!bound) { bound = true; // 押したときの受け口は1回だけ（v0.16.0：明・暗を切りかえるたびに増えていた）
-  for (const id of ['stores', 'stores-stamped', 'stores-near', 'stores-pick']) {
+  for (const id of ['stores', 'stores-stamped', 'stores-near', 'stores-pick', 'ev-tag', 'ev-dot']) {
     map.on('click', id, (e) => { if (e.originalEvent._hit) return; const f = e.features && e.features[0]; if (f) { e.originalEvent._hit = true; handlers.onStoreClick && handlers.onStoreClick(f.properties.id); } });
     map.on('mouseenter', id, () => { map.getCanvas().style.cursor = 'pointer'; }); map.on('mouseleave', id, () => { map.getCanvas().style.cursor = ''; });
   }
-  map.on('click', 'clusters', (e) => { const f = e.features && e.features[0]; if (!f) return; e.originalEvent._hit = true; map.getSource('stores').getClusterExpansionZoom(f.properties.cluster_id, (err, z) => { if (!err) map.easeTo({ center: f.geometry.coordinates, zoom: Math.min(z + 0.5, 16) }); }); });
+  map.on('click', 'clusters', (e) => { if (e.originalEvent._hit) return; const f = e.features && e.features[0]; if (!f) return; e.originalEvent._hit = true; map.getSource('stores').getClusterExpansionZoom(f.properties.cluster_id, (err, z) => { if (!err) map.easeTo({ center: f.geometry.coordinates, zoom: Math.min(z + 0.5, 16) }); }); });
   map.on('mouseenter', 'clusters', () => { map.getCanvas().style.cursor = 'pointer'; }); map.on('mouseleave', 'clusters', () => { map.getCanvas().style.cursor = ''; });
   // 読んだ場所の印を押したとき（店のピンと重なったら店を先に。だから店のあとに登録する）
   map.on('click', 'reads', (e) => { if (e.originalEvent._hit) return; const f = e.features && e.features[0]; if (!f) return; e.originalEvent._hit = true; handlers.onReadClick && handlers.onReadClick(f.properties); });
@@ -178,10 +203,10 @@ export function setStores(stores) {
   storesGeo = { type: 'FeatureCollection', features: stores.map((s) => ({ type: 'Feature', id: s.i, geometry: { type: 'Point', coordinates: [s.lo, s.la] }, properties: { id: s.i, r: s.k == null ? (s.demo ? 3 : 2) : (s.k === 0 ? 3 : s.k <= 6 ? 2 : 1), u: s.u ? 1 : 0, l: s.t === 'l' ? 1 : 0, custom: s.custom ? 1 : 0, demo: s.demo ? 1 : 0, pk: s.rec ? 1 : 0 } })) };
   if (M.ready) M.map.getSource('stores').setData(storesGeo);
 }
-export function setStates(next) { // Map<id, {stamp, near, feat, want, st, ev}>
+export function setStates(next) { // Map<id, {stamp, near, feat, want, st}>
   for (const [id, st] of next) {
     const prev = stateCache.get(id);
-    if (prev && prev.stamp === st.stamp && prev.near === st.near && prev.feat === st.feat && prev.want === st.want && prev.st === st.st && prev.ev === st.ev) continue;
+    if (prev && prev.stamp === st.stamp && prev.near === st.near && prev.feat === st.feat && prev.want === st.want && prev.st === st.st) continue;
     stateCache.set(id, st); if (M.ready) M.map.setFeatureState({ source: 'stores', id }, st);
   }
 }

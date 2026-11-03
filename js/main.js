@@ -1,29 +1,29 @@
 // 起動：記録を読み、データを取り、地図を出し、部品をつなぐ
-import { APP_VER } from './config.js?v=0.18.0';
-import { $, on, $$, isStandalone, mobileOS, emit } from './util.js?v=0.18.0';
-import { load, S, save } from './state.js?v=0.18.0';
-import * as AUDIO from './audio.js?v=0.18.0';
-import { POS, setPos, setFollow, jumped } from './position.js?v=0.18.0';
-import { loadAll, STORES } from './data.js?v=0.18.0';
-import * as MAP from './map.js?v=0.18.0';
-import * as E from './events.js?v=0.18.0';
-import * as J from './journey.js?v=0.18.0';
-import * as R from './reading.js?v=0.18.0';
-import { toast, closeSheet, refreshHud, currentView, switchView, setSub, closeModal } from './ui.js?v=0.18.0';
-import { openSheet, refreshSheet, applyMapStates, updateNear, showWantAlerts, updateAreaChip, setupSearch, startAdd, locate, setTrialUI, warp } from './map_ui.js?v=0.18.0';
-import * as RU from './reading_ui.js?v=0.18.0';
-import { renderRadar } from './radar_ui.js?v=0.18.0';
-import { renderZukan } from './zukan_ui.js?v=0.18.0';
-import { renderMissions } from './mission_ui.js?v=0.18.0';
-import { joinNotice, privacyNotice, homeTip, renderSettings, applyTheme } from './settings_ui.js?v=0.18.0';
-import { showOnboarding } from './onboard_ui.js?v=0.18.0';
-import * as UI0 from './ui.js?v=0.18.0'; // 試す入口（__honya）用
-import * as MU from './map_ui.js?v=0.18.0'; // 試す入口（__honya）用
-import * as CU from './checkin_ui.js?v=0.18.0'; // 試す入口（__honya）用
-import * as KU from './card_ui.js?v=0.18.0'; // 試す入口（__honya）用
-import * as SU from './settings_ui.js?v=0.18.0'; // 試す入口（__honya）用
-import * as RAD from './radar_ui.js?v=0.18.0'; // 試す入口（__honya）用
-import * as ZU from './zukan_ui.js?v=0.18.0'; // 試す入口（__honya）用
+import { APP_VER, TRIAL_ON } from './config.js?v=0.18.1';
+import { $, on, $$, isStandalone, mobileOS, emit } from './util.js?v=0.18.1';
+import { load, S, save } from './state.js?v=0.18.1';
+import * as AUDIO from './audio.js?v=0.18.1';
+import { POS, setPos, setFollow, jumped } from './position.js?v=0.18.1';
+import { loadAll, STORES } from './data.js?v=0.18.1';
+import * as MAP from './map.js?v=0.18.1';
+import * as E from './events.js?v=0.18.1';
+import * as J from './journey.js?v=0.18.1';
+import * as R from './reading.js?v=0.18.1';
+import { toast, closeSheet, refreshHud, currentView, switchView, setSub, closeModal } from './ui.js?v=0.18.1';
+import { openSheet, refreshSheet, applyMapStates, updateNear, showWantAlerts, updateAreaChip, setupSearch, startAdd, locate, setTrialUI, warp } from './map_ui.js?v=0.18.1';
+import * as RU from './reading_ui.js?v=0.18.1';
+import { renderRadar } from './radar_ui.js?v=0.18.1';
+import { renderZukan } from './zukan_ui.js?v=0.18.1';
+import { renderMissions, openEventStores } from './mission_ui.js?v=0.18.1';
+import { joinNotice, privacyNotice, homeTip, renderSettings, applyTheme } from './settings_ui.js?v=0.18.1';
+import { showOnboarding } from './onboard_ui.js?v=0.18.1';
+import * as UI0 from './ui.js?v=0.18.1'; // 試す入口（__honya）用
+import * as MU from './map_ui.js?v=0.18.1'; // 試す入口（__honya）用
+import * as CU from './checkin_ui.js?v=0.18.1'; // 試す入口（__honya）用
+import * as KU from './card_ui.js?v=0.18.1'; // 試す入口（__honya）用
+import * as SU from './settings_ui.js?v=0.18.1'; // 試す入口（__honya）用
+import * as RAD from './radar_ui.js?v=0.18.1'; // 試す入口（__honya）用
+import * as ZU from './zukan_ui.js?v=0.18.1'; // 試す入口（__honya）用
 
 async function boot() {
   load(); applyTheme(); // 見た目（明・暗）と着せ替え。地図はまだないので、地図の色は決めておくだけ
@@ -48,6 +48,7 @@ async function boot() {
   on('read-start', (x) => RU.openReadStart(x || {})); on('trip', RU.renderReadBtn); on('trial', RU.renderReadBtn);
   // イベント：起動時・10分ごと・画面に戻ったとき（5分以上たっていたら）に設定を読む。記録はつながったときに送る
   on('events', () => { applyMapStates(); refreshHud(); refreshSheet(); if (currentView === 'mission') renderMissions(); }); // 店のページも（手書きのカードがある店が届く。v0.16.1）
+  on('evlist', (id) => openEventStores(id)); // 店のページから、イベントの参加店の一覧へ（v0.18.1）
   on('fixes', () => { MAP.setStores(STORES); applyMapStates(); updateNear(); emit('records'); }); // 運営が直した閉店・名前が届いた（v0.17.0）
   E.loadEvents(); setInterval(() => { if (document.visibilityState === 'visible') E.loadEvents(); }, 10 * 60 * 1000);
   document.addEventListener('visibilitychange', () => { if (document.visibilityState !== 'visible') return; if (Date.now() - E.EV.at > 5 * 60 * 1000) E.loadEvents(); E.flushSoon(1000); });
@@ -57,7 +58,7 @@ async function boot() {
   $$('.segmented button').forEach((b) => b.addEventListener('click', () => setSub(b.dataset.sub)));
   $('#sheet-close').onclick = closeSheet;
   $('#modal').addEventListener('click', (e) => { if (e.target.id === 'modal') closeModal(); });
-  $('#btn-add').onclick = startAdd; $('#btn-locate').onclick = locate; $('#btn-trial').onclick = () => { AUDIO.unlock(); setTrialUI(!POS.fake); }; $('#btn-warp').onclick = () => warp();
+  $('#btn-add').onclick = startAdd; $('#btn-locate').onclick = locate; $('#btn-trial').hidden = !TRIAL_ON; $('#btn-trial').onclick = () => { AUDIO.unlock(); setTrialUI(!POS.fake); }; $('#btn-warp').onclick = () => warp();
   $('#btn-settings').onclick = () => switchView('settings'); $('#lv-btn').onclick = () => switchView('zukan');
   document.addEventListener('pointerdown', AUDIO.unlock, { once: true });
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
@@ -81,7 +82,7 @@ async function boot() {
   // ホーム画面のアイコンから開いているときは、記録を消さないよう端末に頼む（ふつうのタブでは頼まない。確かめる窓を出すブラウザがあるため）
   if (isStandalone() && navigator.storage && navigator.storage.persist) navigator.storage.persisted().then((p) => p || navigator.storage.persist()).catch(() => {});
   const afterIntro = () => { if (join && join.isNew) joinNotice(join.code); else if (!S.settings.privacyV10) privacyNotice(); else if (!S.settings.homeTip && mobileOS() && !isStandalone()) homeTip(); };
-  if (!S.seen) showOnboarding((mode) => { S.seen = 1; S.settings.privacyV10 = join && join.isNew ? 0 : 1; save(); refreshHud(); if (mode === 'geo') locate(); if (mode === 'trial') { setTrialUI(true); warp(); } if (join && join.isNew) joinNotice(join.code); });
+  if (!S.seen) showOnboarding((mode) => { S.seen = 1; S.settings.privacyV10 = join && join.isNew ? 0 : 1; save(); refreshHud(); if (mode === 'geo') locate(); if (mode === 'trial' && TRIAL_ON) { setTrialUI(true); warp(); } if (join && join.isNew) joinNotice(join.code); });
   else afterIntro();
   // 2回目からは、開いたときに自分のいる場所から始める（v0.13.2）。位置の許可がもうある人か、前に現在地を使った人だけ。断られている人には聞かない
   if (S.seen && !POS.fake) {

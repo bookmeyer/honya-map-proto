@@ -1,14 +1,14 @@
 // ラリー（view-mission）：イベント・今日と今週のお題・推し店
-import { PG, PREFS } from './config.js?v=0.18.0';
-import { esc, icon, $, $$, dist, fmtDist, weekKey, todayISO, fmtDate } from './util.js?v=0.18.0';
-import { S } from './state.js?v=0.18.0';
-import { hasPos, POS } from './position.js?v=0.18.0';
-import { BYID, stampSVG, STORES, RALLIES } from './data.js?v=0.18.0';
-import * as MAP from './map.js?v=0.18.0';
-import * as G from './game.js?v=0.18.0';
-import * as E from './events.js?v=0.18.0';
-import { switchView, toast, emptyBox } from './ui.js?v=0.18.0';
-import { openSheet } from './map_ui.js?v=0.18.0';
+import { PG, PREFS } from './config.js?v=0.18.1';
+import { esc, icon, $, $$, dist, fmtDist, weekKey, todayISO, fmtDate, prefOf } from './util.js?v=0.18.1';
+import { S } from './state.js?v=0.18.1';
+import { hasPos, POS } from './position.js?v=0.18.1';
+import { BYID, stampSVG, STORES, RALLIES, FEAT } from './data.js?v=0.18.1';
+import * as MAP from './map.js?v=0.18.1';
+import * as G from './game.js?v=0.18.1';
+import * as E from './events.js?v=0.18.1';
+import { switchView, toast, emptyBox, openModal, closeModal } from './ui.js?v=0.18.1';
+import { openSheet } from './map_ui.js?v=0.18.1';
 
 // ---------- ラリー（view-mission）：今日・今週のお題、推し店、ご当地ラリー、実績 ----------
 // ---------- イベント（ラリーの画面の一番上。設定はサーバーの管理画面から） ----------
@@ -24,10 +24,10 @@ function eventCard(e, kind) {
     <div class="evhead"><div class="evpv">${stampSVG(sample, true, 84, { ev: e.frame })}</div><div class="evtt"><h4>${esc(e.name)}</h4>${e.notice ? `<p class="evnotice">${esc(e.notice)}</p>` : ''}<p class="muted small">${esc(E.targetText(e))}スタンプを押すと、限定の枠${e.frame.label ? `「${esc(e.frame.label)}」` : ''}が付きます。</p></div></div>
     ${e.desc ? `<p class="evdesc">${esc(e.desc)}</p>` : ''}
     ${e.bonus ? `<div class="evbonus"><b>${n}店</b>めぐって <b>+${E.evPages(e.id)}ページ</b><span class="muted small">参加店で押すと、1店ごとに +${e.bonus}ページ（同じ店は1回）</span></div>` : ''}
-    ${e.special ? `<div class="evspecial">${stampSVG({ i: 'event-sp-' + e.id, n: e.special.label || '参加店', k: 5 }, true, 58, { ev: e.special })}<span>参加店（${E.EV.permitted.size}店）で押すと、特別な枠${e.special.label ? `「${esc(e.special.label)}」` : ''}になります。地図では輪が付いています。</span></div>` : ''}
+    ${e.special ? `<div class="evspecial">${stampSVG({ i: 'event-sp-' + e.id, n: e.special.label || '参加店', k: 5 }, true, 58, { ev: e.special })}<span>参加店（${E.EV.permitted.size}店）で押すと、特別な枠${e.special.label ? `「${esc(e.special.label)}」` : ''}になります。地図では札が付いています。</span></div>` : ''}
     ${g ? `<div class="evgoal ${done ? 'done' : ''}"><div class="h"><b>${done ? `記念の称号「${esc(g.title)}」をもらいました` : `${g.count}軒で、記念の称号「${esc(g.title)}」`}</b><span>${Math.min(n, g.count)}/${g.count}軒</span></div><div class="bar"><i style="width:${Math.min(100, Math.round((n / g.count) * 100))}%"></i></div></div>` : ''}
     ${stamps.length ? `<div class="evstamps">${stamps.slice(0, 12).map((s) => `<button class="evst" data-id="${esc(s.i)}" aria-label="${esc(s.n)}">${stampSVG(s, true, 58, { ev: E.frameIn(e.id, s.i) })}</button>`).join('')}${stamps.length > 12 ? `<span class="muted small">ほか${stamps.length - 12}軒</span>` : ''}</div>` : (kind === 'live' ? '<p class="muted small">お試し歩きで押したスタンプには、枠は付きません。</p>' : '')}
-    <div class="actions">${E.narrow(e) && kind !== 'done' ? `<button class="btn" data-evmap="${e.id}">${icon('map')}地図で対象の店を見る</button>` : ''}${kind !== 'soon' ? `<button class="btn" data-evshare="${e.id}">${icon('share')}シェア</button>` : ''}</div>
+    <div class="actions">${E.narrow(e) && kind !== 'done' ? `<button class="btn" data-evlist="${e.id}">${icon('pin')}参加店の一覧（${STORES.filter((s) => E.isTarget(e, s)).length}店）</button><button class="btn" data-evmap="${e.id}">${icon('map')}地図でいちばん近い店へ</button>` : ''}${kind !== 'soon' ? `<button class="btn" data-evshare="${e.id}">${icon('share')}シェア</button>` : ''}</div>
   </div>`;
 }
 function renderEvents() {
@@ -39,6 +39,7 @@ function renderEvents() {
   box.innerHTML = '<h3>イベント</h3>' + [...live.map((e) => eventCard(e, 'live')), ...soon.map((e) => eventCard(e, 'soon')), ...ended.map((e) => eventCard(e, 'done'))].join('')
     + (past.length ? `<details class="chap evpast"><summary>これまでのイベント（${past.length}）</summary>${past.map(([id, L]) => `<div class="evp"><b>${esc(L.name || 'イベント')}</b><span class="muted small">${Object.keys(L.s || {}).length}軒${(S.evTitles || []).some((t) => String(t.id) === id) ? '・記念の称号' : ''}</span></div>`).join('')}</details>` : '');
   $$('#event-list .evst').forEach((b) => b.addEventListener('click', () => openSheet(b.dataset.id)));
+  $$('#event-list [data-evlist]').forEach((b) => b.addEventListener('click', () => openEventStores(b.dataset.evlist)));
   $$('#event-list [data-evmap]').forEach((b) => b.addEventListener('click', () => {
     const e = E.EV.list.find((x) => String(x.id) === b.dataset.evmap); if (!e) return;
     const c = hasPos() ? { lat: POS.lat, lng: POS.lon } : MAP.center();
@@ -51,6 +52,38 @@ function renderEvents() {
     const text = `${e.name}に参加中。${E.evCount(e.id)}軒の本屋・図書館でスタンプを押しました ${tags}`;
     try { if (navigator.share) { await navigator.share({ text }); G.noteShare('event', '', 'shared'); } else { await navigator.clipboard.writeText(text); toast('文をコピーしました', 'ok'); } } catch (err) { if (!(err && err.name === 'AbortError')) toast('シェアできませんでした', 'warn'); }
   }));
+}
+// ---------- イベントの参加店の一覧（v0.18.1。ぶっくまさん 11/3「一覧もわからなければ」） ----------
+// 近い順（いる場所から。位置がないときは地図の真ん中から）と、都道府県順（北から）。「まだ押していない店だけ」にもできる。押すと地図でその店を開く
+const EVL = { mode: '', todo: false };
+export function openEventStores(id) {
+  const e = E.EV.list.find((x) => String(x.id) === String(id)); if (!e) return;
+  const all = STORES.filter((s) => E.isTarget(e, s)); const order = new Map(PREFS.map(([n], k) => [n, k]));
+  if (!EVL.mode) EVL.mode = hasPos() ? 'near' : 'pref';
+  const draw = () => {
+    const log = (((S.evLog || {})[e.id] || {}).s) || {}; const got = all.filter((s) => log[s.i]).length;
+    const c = hasPos() ? { lat: POS.lat, lng: POS.lon, lbl: 'いる場所' } : Object.assign({ lbl: '地図の真ん中' }, MAP.center());
+    const rows = all.filter((s) => !EVL.todo || !log[s.i]).map((s) => ({ s, d: dist(c.lat, c.lng, s.la, s.lo), p: prefOf(s) }));
+    if (EVL.mode === 'near') rows.sort((a, b) => a.d - b.d); else rows.sort((a, b) => (order.has(a.p) ? order.get(a.p) : 99) - (order.has(b.p) ? order.get(b.p) : 99) || a.s.n.localeCompare(b.s.n, 'ja'));
+    let list = '', cur = null;
+    for (const r of rows) {
+      if (EVL.mode === 'pref' && r.p !== cur) { cur = r.p; const inP = all.filter((s) => prefOf(s) === cur); list += `<div class="evl-pref">${esc(cur || '県がわからない店')}<span>押した ${inP.filter((s) => log[s.i]).length}/${inP.length}店</span></div>`; }
+      const g = log[r.s.i];
+      list += `<div class="item${g ? ' got' : ''}" data-id="${esc(r.s.i)}"><div class="main"><div class="name">${g ? icon('check') : ''}${esc(r.s.n)}</div><div class="sub">${g ? `押した ${esc(fmtDate(g.d))}・` : ''}${esc(r.s.a || r.p || '')}</div></div>${EVL.mode === 'near' ? `<div class="dist">${fmtDist(r.d)}</div>` : ''}</div>`;
+    }
+    openModal(`<h2>${esc(e.frame.label || e.name)}の参加店</h2>
+      <p class="hint">${esc(e.name)}。参加店 ${all.length}店のうち、押した店 ${got}店${e.bonus ? `（+${E.evPages(e.id)}ページ）` : ''}。店を押すと、地図でその店を開きます。</p>
+      <div class="segmented"><button data-m="near" class="${EVL.mode === 'near' ? 'active' : ''}">近い順</button><button data-m="pref" class="${EVL.mode === 'pref' ? 'active' : ''}">都道府県順</button></div>
+      <label class="chk"><input type="checkbox" id="evl-todo"${EVL.todo ? ' checked' : ''}> まだ押していない店だけ</label>
+      ${EVL.mode === 'near' ? `<p class="muted small">距離は${c.lbl}から（まっすぐの距離）</p>` : ''}
+      <div class="list evl">${list || `<p class="muted">${got && got === all.length ? 'すべての参加店で押しました。' : '店がありません。'}</p>`}</div>
+      <div class="actions"><button class="btn ghost wide" id="evl-close">閉じる</button></div>`);
+    $$('#modal-box [data-m]').forEach((b) => b.addEventListener('click', () => { EVL.mode = b.dataset.m; draw(); }));
+    $('#evl-todo').addEventListener('change', (ev) => { EVL.todo = ev.target.checked; draw(); });
+    $('#evl-close').onclick = closeModal;
+    $$('#modal-box .item[data-id]').forEach((el) => el.addEventListener('click', () => { const s = BYID.get(el.dataset.id); if (!s) return; closeModal(); switchView('map'); MAP.flyTo(s.lo, s.la, 15); openSheet(s.i); }));
+  };
+  draw();
 }
 export function renderMissions() {
   renderEvents();

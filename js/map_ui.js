@@ -1,17 +1,17 @@
 // 地図の画面：現在地まわり（射程・いちばん近い店）・ピンの状態・現在地とお試し歩き・店のページ・さがす・店を足す・行きたい店のお知らせ
-import { RANGE_M, TERRITORY_M, PG } from './config.js?v=0.18.0';
-import { $, arrowOf, bearing, icon, fmtDist, esc, dist, $$, emit, fmtDate, gmapDir, stars, gmapPlace, prefOf } from './util.js?v=0.18.0';
-import { S, save } from './state.js?v=0.18.0';
-import { unlock, sfx } from './audio.js?v=0.18.0';
-import { hasPos, POS, startWatch, setTrial, setPos, jumped } from './position.js?v=0.18.0';
-import { STORES, BYID, isLib, isFeat, rarityOf, pickOpen, placeWord, bookTitle, stampSVG, rarityText, lookupIsbn, hideStore, renameStore, search, addCustom, FEAT } from './data.js?v=0.18.0';
-import * as MAP from './map.js?v=0.18.0';
-import * as G from './game.js?v=0.18.0';
-import * as E from './events.js?v=0.18.0';
-import * as J from './journey.js?v=0.18.0';
-import { dirLink, openModal, closeModal, stopLinks, toast, closeSheet, refreshHud, currentView, switchView } from './ui.js?v=0.18.0';
-import { startCheckin, shareStampUI } from './checkin_ui.js?v=0.18.0';
-import { startCard } from './card_ui.js?v=0.18.0';
+import { RANGE_M, TERRITORY_M, PG, TRIAL_ON } from './config.js?v=0.18.1';
+import { $, arrowOf, bearing, icon, fmtDist, esc, dist, $$, emit, fmtDate, gmapDir, stars, gmapPlace, prefOf } from './util.js?v=0.18.1';
+import { S, save } from './state.js?v=0.18.1';
+import { unlock, sfx } from './audio.js?v=0.18.1';
+import { hasPos, POS, startWatch, setTrial, setPos, jumped } from './position.js?v=0.18.1';
+import { STORES, BYID, isLib, isFeat, rarityOf, pickOpen, placeWord, bookTitle, stampSVG, rarityText, lookupIsbn, hideStore, renameStore, search, FEAT } from './data.js?v=0.18.1';
+import * as MAP from './map.js?v=0.18.1';
+import * as G from './game.js?v=0.18.1';
+import * as E from './events.js?v=0.18.1';
+import * as J from './journey.js?v=0.18.1';
+import { dirLink, openModal, closeModal, stopLinks, toast, closeSheet, refreshHud, currentView, switchView } from './ui.js?v=0.18.1';
+import { startCheckin, shareStampUI } from './checkin_ui.js?v=0.18.1';
+import { startCard } from './card_ui.js?v=0.18.1';
 
 // ---------- 行きたい店のお知らせ（地図の下に出る帯） ----------
 let waTimer = null;
@@ -45,16 +45,14 @@ const GLOW_MAX = 3; // 地図で光の輪を付けるのは、射程内のうち
 // ---------- 現在地まわりの表示（レーダーの帯・最初のクエスト・縁の光） ----------
 // 近づいたときの画面の縁の光・音・振動は使わない（2026-10-17 ぶっくまさんの指示）。射程に入ったらトーストで知らせるだけ
 export function updateNear() {
-  const strip = $('#radar-items'), quest = $('#first-quest');
-  if (!hasPos()) { NEAR.list = []; NEAR.inRange = new Set(); NEAR.glow = new Set(); strip.innerHTML = ''; quest.hidden = true; applyMapStates(); emit('near'); return; }
+  const strip = $('#radar-items'); // 「いちばん近い本屋 ○○まで あと○m」の帯は外した（下の店のチップと同じなので。11/3 ぶっくまさん）
+  if (!hasPos()) { NEAR.list = []; NEAR.inRange = new Set(); NEAR.glow = new Set(); strip.innerHTML = ''; applyMapStates(); emit('near'); return; }
   const cand = []; for (const s of STORES) { if (Math.abs(s.la - POS.lat) > 0.03 || Math.abs(s.lo - POS.lon) > 0.036) continue; cand.push({ s, d: dist(POS.lat, POS.lon, s.la, s.lo) }); }
   cand.sort((a, b) => a.d - b.d); NEAR.list = cand.slice(0, 30);
   const now = new Set(NEAR.list.filter((x) => x.d <= RANGE_M).map((x) => x.s.i));
   NEAR.glow = new Set(NEAR.list.filter((x) => x.d <= RANGE_M).slice(0, GLOW_MAX).map((x) => x.s.i));
   const entered = [...now].filter((id) => !NEAR.inRange.has(id)); NEAR.inRange = now;
   if (entered.length) { const first = BYID.get(entered[0]); toast(`📍 ${first.n}${entered.length > 1 ? ` ほか${entered.length - 1}店` : ''} が射程に入りました`, 'ok'); }
-  const target = NEAR.list.find((x) => !G.hasStamp(x.s.i));
-  if (target && !now.size) { quest.hidden = false; quest.innerHTML = `${icon('pin')}<span>いちばん近い${isLib(target.s) ? '図書館' : '本屋'} <b>${esc(target.s.n)}</b> まで あと${fmtDist(Math.max(0, target.d - RANGE_M))} ${arrowOf(bearing(POS.lat, POS.lon, target.s.la, target.s.lo))}</span>`; quest.onclick = () => openSheet(target.s.i); } else quest.hidden = true;
   strip.innerHTML = NEAR.list.slice(0, 8).map(({ s, d }) => `<div class="rchip ${d <= RANGE_M ? 'in' : ''}" data-id="${esc(s.i)}"><div class="n">${G.hasStamp(s.i) ? icon('check') : ''}${isFeat(s.i) ? '👑 ' : ''}${esc(s.n)}</div><div class="d"><span>${d <= RANGE_M ? '射程内！' : `あと${fmtDist(d - RANGE_M)} ${arrowOf(bearing(POS.lat, POS.lon, s.la, s.lo))}`}</span><span class="stars">${'★'.repeat(rarityOf(s))}</span></div></div>`).join('');
   $$('#radar-items .rchip').forEach((el) => el.addEventListener('click', () => openSheet(el.dataset.id)));
   applyMapStates(); emit('near');
@@ -64,23 +62,27 @@ export function updateNear() {
 export function refreshSheet() { const sheet = $('#sheet'); if (!sheet.hidden && sheet.dataset.id && !$('#sheet-extra').childElementCount) openSheet(sheet.dataset.id, true); }
 export function applyMapStates() {
   const states = new Map();
-  const nev = E.liveEvents().filter(E.narrow); if (nev.length) MAP.setEventRingColor(nev[0].frame.color);
+  const nev = E.liveEvents().filter(E.narrow);
   // 店ごとの記録の数・推し店・行きたいは、先に1回だけ数える（v0.16.0：位置が届くたびに 店×記録 を数え直していて、記録が増えると重くなった）
   const cnt = new Map(); for (const v of S.visits) cnt.set(v.s, (cnt.get(v.s) || 0) + 1); for (const c of S.cards) cnt.set(c.s, (cnt.get(c.s) || 0) + 1);
   const feat = new Set(FEAT.values()), wants = new Set(S.wants);
-  for (const s of STORES) { const n = cnt.get(s.i) || 0; states.set(s.i, { stamp: G.hasStamp(s.i) ? 1 : 0, near: NEAR.glow.has(s.i) ? 1 : 0, feat: feat.has(s.i) ? 1 : 0, want: wants.has(s.i) ? 1 : 0, st: n === 0 ? 0 : n >= 3 ? 2 : 1, ev: nev.length && nev.some((e) => E.isTarget(e, s)) ? 1 : 0 }); }
+  for (const s of STORES) { const n = cnt.get(s.i) || 0; states.set(s.i, { stamp: G.hasStamp(s.i) ? 1 : 0, near: NEAR.glow.has(s.i) ? 1 : 0, feat: feat.has(s.i) ? 1 : 0, want: wants.has(s.i) ? 1 : 0, st: n === 0 ? 0 : n >= 3 ? 2 : 1 }); }
   MAP.setStates(states);
+  // 開催中のイベントの参加店（v0.18.1）：ピンの下の札と、縮めたときの点。done＝このイベントでもう押した店
+  const evDone = (id) => nev.some((e) => !!((((S.evLog || {})[e.id] || {}).s || {})[id]));
+  MAP.setEventStores(nev.length ? STORES.filter((s) => nev.some((e) => E.isTarget(e, s))).map((s) => ({ i: s.i, la: s.la, lo: s.lo, done: evDone(s.i) })) : [], nev.length ? { color: nev[0].frame.color, label: nev[0].frame.label || 'イベント' } : null);
   MAP.setTerritory(Object.keys(S.stamps).map((id) => { const s = BYID.get(id); if (!s) return null; const rk = G.regularInfo(id).rank; return Object.assign({}, s, { rank: rk, rad: TERRITORY_M * (1 + 0.25 * Math.min(4, Math.max(0, rk - 1))) }); }).filter(Boolean));
 }
 // ---------- 現在地・お試し ----------
 export function locate() {
   unlock();
   if (POS.fake) { setTrialUI(false); }
-  const ok = startWatch({ onFirst: (p) => { if (!S.settings.geoOk) { S.settings.geoOk = 1; save(); } MAP.flyTo(p.lon, p.lat, 15); toast(`現在地（誤差 約${Math.round(p.acc)}m）`); }, onError: (err) => { $('#btn-locate').classList.remove('on'); toast(err && err.code === 1 ? '位置の許可がありません。ブラウザの設定で許可できます。「お試し歩き」でも試せます' : '位置が取れませんでした。「お試し歩き」でも試せます', 'warn'); } });
-  if (!ok) { toast('この端末では位置が使えません。「お試し歩き」で試せます', 'warn'); return; }
+  const ok = startWatch({ onFirst: (p) => { if (!S.settings.geoOk) { S.settings.geoOk = 1; save(); } MAP.flyTo(p.lon, p.lat, 15); toast(`現在地（誤差 約${Math.round(p.acc)}m）`); }, onError: (err) => { $('#btn-locate').classList.remove('on'); toast((err && err.code === 1 ? '位置の許可がありません。ブラウザの設定で許可できます' : '位置が取れませんでした。少しあとで、もう一度') + (TRIAL_ON ? '。「お試し歩き」でも試せます' : ''), 'warn'); } });
+  if (!ok) { toast('この端末では位置が使えません' + (TRIAL_ON ? '。「お試し歩き」で試せます' : ''), 'warn'); return; }
   $('#btn-locate').classList.add('on'); if (hasPos()) MAP.flyTo(POS.lon, POS.lat, 15); else toast('現在地を確かめています…');
 }
 export function setTrialUI(onFlag) {
+  if (onFlag && !TRIAL_ON) return; // 遊ぶ人には出さない（v0.18.1）
   setTrial(onFlag);
   $('#btn-trial').classList.toggle('on', onFlag); $('#btn-trial').classList.toggle('trial', onFlag); $('#trial-banner').hidden = !onFlag; $('#btn-warp').hidden = !onFlag; $('#btn-locate').classList.remove('on');
   if (onFlag) toast('お試し歩き：地図を押すと、そこにいることになります'); else { MAP.setMe(POS); updateNear(); }
@@ -131,6 +133,8 @@ export function openSheet(id, quiet) {
   if (feat) b.push(`<span class="badge feat">${icon('crown')}今週の推し店</span>`); if (st.u) b.push('<span class="badge">古書店</span>'); if (isLib(st)) b.push('<span class="badge lib">図書館</span>');
   b.push(stamp ? `<span class="badge shu">スタンプ ${fmtDate(stamp.d)}</span>${stamp.trial ? '<span class="badge trial">体験</span>' : ''}` : vs.length ? `<span class="badge sumi">記録 ${vs.length}回</span>` : '<span class="badge">まだ</span>');
   for (const e of E.liveEvents().filter((x) => E.isTarget(x, st)).slice(0, 2)) { const fr = E.frameFor(e, st); b.push(`<span class="badge evb" style="--evc:${esc(fr.color)}">${esc(fr.label || e.name)}${fr === e.special ? '（特別な枠）' : '（イベント）'}</span>`); }
+  const evn = E.liveEvents().find((x) => E.narrow(x) && E.isTarget(x, st)); // 参加店の一覧へ（v0.18.1）
+  const evl = evn ? `<button class="evlink" data-evlist="${evn.id}" style="--evc:${esc(evn.frame.color)}">${icon('pin')}<span>${esc(evn.frame.label || evn.name)}の参加店をすべて見る（${STORES.filter((s) => E.isTarget(evn, s)).length}店）</span><b>›</b></button>` : '';
   if (cs.length) b.push(`<span class="badge">カード${cs.length}枚</span>`); if (want) b.push(`<span class="badge gold">${icon('heart')}行きたい</span>`); if (near) b.push('<span class="badge gold">射程内</span>');
   const rec = st.rec ? pickHTML(st) : '';
   const hist = vs.length ? `<div class="muted small" style="margin-top:8px">${vs.slice(-3).reverse().map((v) => `${fmtDate(v.d)}${v.near ? '（スタンプ）' : '（記録）'}${v.memo ? '「' + esc(v.memo) + '」' : ''}`).join('<br>')}</div>` : '';
@@ -144,7 +148,7 @@ export function openSheet(id, quiet) {
     : `<a class="btn primary wide" href="${gmapDir(st)}" target="_blank" rel="noopener">${icon('map')}道順を見る</a>`;
   $('#sheet-body').innerHTML = `
     <div class="sheet-head"><div class="stamp-sm">${stampSVG(st, !!stamp, 72, { rank: reg.rank, ev: stamp ? E.storeFrame(st.i) : null })}</div><div style="min-width:0"><h2>${esc(st.n)}</h2><div class="stars">${stars(r)} <span class="muted small">${esc(rarityText(st))}</span></div></div></div>
-    <div style="margin-top:8px">${b.join('')}</div>
+    <div style="margin-top:8px">${b.join('')}</div>${evl}
     <div class="muted small">${esc(distText)}</div>
     <div class="actions">${main}</div>${rec}
     <div class="actions">
@@ -158,6 +162,7 @@ export function openSheet(id, quiet) {
     <div class="muted small" style="margin-top:10px">${esc(st.a || (st.custom ? '' : '住所の情報なし（地図データより）'))}　${esc(prefOf(st))}</div>${st.demo || st.custom ? '' : `<div class="muted small">${esc(srcLine)}</div>`}
     ${st.demo || st.custom || st.closed ? '' : `<div class="actions"><button class="btn ghost" data-act="report">${isLib(st) ? '閉館している' : '閉店している'}</button><button class="btn ghost" data-act="rename">名前が違う</button></div>`}
     <div id="sheet-extra"></div>`;
+  $$('#sheet-body [data-evlist]').forEach((x) => x.addEventListener('click', () => emit('evlist', x.dataset.evlist)));
   const pc = $('#sheet-body .pick-card[data-card]'); if (pc) E.loadCard(st.i).then((r) => { if (pc.isConnected) pc.innerHTML = r.url ? cardImg(r.url, st.rec) : `<div class="pick-wait">${CARD_TEXT[r.error] || CARD_TEXT.net}</div>`; });
   const cv = $('#sheet-body .pick-cover[data-isbn]'); if (cv) lookupIsbn(cv.dataset.isbn).then((bk) => { if (bk && bk.cover && cv.isConnected) cv.innerHTML = `<img src="${esc(bk.cover)}" alt="" referrerpolicy="no-referrer">`; });
   $$('#sheet-body [data-act]').forEach((btn) => btn.addEventListener('click', () => { sfx.click(); const a = btn.dataset.act;
@@ -175,16 +180,17 @@ export function setupSearch() {
     $$('#search-results .item[data-id]').forEach((el) => el.addEventListener('click', () => { res.hidden = true; inp.value = ''; const st = BYID.get(el.dataset.id); openSheet(st.i); MAP.flyTo(st.lo, st.la, 15); })); });
   inp.addEventListener('blur', () => setTimeout(() => { res.hidden = true; }, 200));
 }
+// 地図にない本屋（v0.18.1）：運営に知らせるだけ。運営が確かめて承認すると、みんなの地図に出る（11/3 ぶっくまさん「運営の承認のみにしたいです」）
+// 前は、自分の地図にすぐ足していた（S.custom）。前に足した店は、その人の地図にそのまま残す
 export function startAdd() {
   const c = MAP.center();
-  openModal(`<h2>地図にない本屋を追加</h2><p class="hint">追加した店は、すぐにあなたの地図に出ます。</p>
+  openModal(`<h2>地図にない本屋を知らせる</h2><p class="hint">運営が確かめてから、みんなの地図に載せます（すぐには出ません）。送るのは、店の名前と場所と、書いたひとことだけです。</p>
     <div class="field"><label for="ad-name">店の名前</label><input type="text" id="ad-name" placeholder="例：○○書店 △△店"></div><label class="chk"><input type="checkbox" id="ad-used"> 古書店</label>
     <div class="field"><label>場所</label><label class="chk"><input type="radio" name="ad-pos" value="center" checked> いま地図の真ん中（${c.lat.toFixed(4)}, ${c.lng.toFixed(4)}）</label><label class="chk"><input type="radio" name="ad-pos" value="here" ${hasPos() ? '' : 'disabled'}> いまいる場所</label></div>
-    <label class="chk rp-send"><input type="checkbox" id="rp-send" checked> 運営にも知らせる（確かめてから、みんなの地図に載せます。送るのは店の名前と場所だけ）</label>${NOTE_IN('2階にある古本屋')}
-    <div class="actions"><button class="btn primary" id="ad-save">追加する</button><button class="btn ghost" id="ad-cancel">やめる</button></div>`);
+    ${NOTE_IN('2階にある古本屋')}
+    <div class="actions"><button class="btn primary" id="ad-save">運営に知らせる</button><button class="btn ghost" id="ad-cancel">やめる</button></div>`);
   $('#ad-cancel').onclick = closeModal; $('#ad-name').focus();
   $('#ad-save').onclick = () => { const n = $('#ad-name').value.trim(); if (!n) { toast('店の名前を入れてください', 'warn'); return; } let la = c.lat, lo = c.lng; if ($('input[name=ad-pos]:checked').value === 'here' && hasPos()) { la = POS.lat; lo = POS.lon; }
-    const st = { i: 'u' + Date.now(), n, la: +la.toFixed(5), lo: +lo.toFixed(5), u: $('#ad-used').checked ? 1 : undefined }; const s = $('#rp-send').checked;
-    if (s) E.queueReport({ kind: 'add', store: st.i, name: n.slice(0, 80), lat: st.la, lon: st.lo, place: st.u ? 'used' : 'book', note: $('#rp-note').value.trim().slice(0, 100) }); // 地図にない店（v0.17.0）
-    addCustom(st); save(); MAP.setStores(STORES); applyMapStates(); updateNear(); closeModal(); toast(`追加しました${s ? '。' + THANKS : ''}`, 'ok'); openSheet(st.i); };
+    E.queueReport({ kind: 'add', store: 'u' + Date.now(), name: n.slice(0, 80), lat: +la.toFixed(5), lon: +lo.toFixed(5), place: $('#ad-used').checked ? 'used' : 'book', note: $('#rp-note').value.trim().slice(0, 100) }); // つながらないときは、あとで送る
+    closeModal(); toast('運営に知らせました。確かめてから、みんなの地図に載せます。ありがとうございます', 'ok'); };
 }
