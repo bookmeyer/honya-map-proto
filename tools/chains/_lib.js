@@ -1,5 +1,5 @@
 // チェーン公式店舗一覧の読み取りで使う小道具（CommonJS）。各チェーンの部品（tools/chains/*.js）から使う
-const UA = 'honya-map-chaincheck/0.1 (+https://bookmeyer.github.io/honya-map-proto/; monthly check of our own store list)';
+const UA = 'honya-map-chaincheck/0.1 (+https://meguri.tsunagubooks.com/; monthly check of our own store list)';
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // ページを文字列で取る。文字コードは応答ヘッダ→<meta>→指定の順で決める（Shift_JIS・EUC-JP も可）。取ったあと少し待つ（礼儀）
