@@ -1,12 +1,12 @@
 // 設定値（数字はここだけで変える）
 
-export const APP_VER = '0.20.1';
+export const APP_VER = '0.20.2';
 export const STORAGE_KEY = 'honya_map_v3';
 // お試し歩き（地図を押した所にいることにする）：遊ぶ人には出さない（11/3 ぶっくまさん「OFFにしたい」）。作る人が試すときは localStorage の meguri_trial を 1 に
 export const TRIAL_ON = (() => { try { return localStorage.getItem('meguri_trial') === '1'; } catch (e) { return false; } })();
-// プロフィール（v0.20.0）：遊ぶ人に出すのは、プライバシーポリシーを出してから（11/3 ぶっくまさんの確かめ待ち）。作る人が試すときは localStorage の meguri_profile を 1 に
+// プロフィール（v0.20.0）：v0.20.2 から遊ぶ人にも出す（プライバシーポリシーを載せ、サーバーに profile.php が置かれたため）
 export const POLICY_VER = '2026-11-03'; // プライバシーポリシーの版（制定日・変えた日）。privacy.html と合わせる
-export const PROFILE_ON = (() => { try { return localStorage.getItem('meguri_profile') === '1'; } catch (e) { return false; } })();
+export const PROFILE_ON = true; // 11/3 深夜：プライバシーポリシーを載せ、サーバーに profile.php が置かれたので、遊ぶ人にも出す（v0.20.2）
 // プロフィールの質問。答えはコードで持ち、送る（サーバーの lib/profiles.php の PROFILE_Q と同じ）。max：いくつまで選べるか（なし＝1つ）。pref：都道府県（01〜47）
 export const PROFILE_Q = [
   { k: 'gen', t: '世代', o: [['10', '10代'], ['20', '20代'], ['30', '30代'], ['40', '40代'], ['50', '50代'], ['60', '60代'], ['70', '70代以上']] },

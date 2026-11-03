@@ -1,17 +1,18 @@
-// 画面の案内（チュートリアル。v0.19.0）：最初の案内のあと、地図の画面で本物のボタンを1つずつ光らせて説明する
+// 画面の案内（チュートリアル。v0.19.0）：最初の案内のあと、地図の画面で本物のボタンを1つずつ光らせて説明する（v0.20.2 で「自分のアイコン」を足して7つ）
 // ぶっくまさん 11/3「一番最初に表示したとき、チュートリアルを表示できますか」→ 地図の上で6つを指さす案。とばせる。設定の「画面の案内」から、もう一度
-import { RANGE_M } from './config.js?v=0.20.1';
-import { $, esc } from './util.js?v=0.20.1';
-import { S, save } from './state.js?v=0.20.1';
-import { STORES } from './data.js?v=0.20.1';
-import * as MAP from './map.js?v=0.20.1';
-import * as E from './events.js?v=0.20.1';
-import { NEAR } from './map_ui.js?v=0.20.1';
-import { switchView, closeSheet } from './ui.js?v=0.20.1';
+import { RANGE_M } from './config.js?v=0.20.2';
+import { $, esc } from './util.js?v=0.20.2';
+import { S, save } from './state.js?v=0.20.2';
+import { STORES } from './data.js?v=0.20.2';
+import * as MAP from './map.js?v=0.20.2';
+import * as E from './events.js?v=0.20.2';
+import { NEAR } from './map_ui.js?v=0.20.2';
+import { switchView, closeSheet } from './ui.js?v=0.20.2';
 
 // el：光らせる部品（ok で出ているときだけ）／pin：地図の真ん中に近い店のピン
 const STEPS = [
   { el: '#btn-locate', h: '現在地', p: () => `ここを押すと、いる場所から始まります。本屋や図書館から${RANGE_M}m以内に入ると、スタンプが押せます。` },
+  { el: '#btn-settings', h: '自分のアイコン', p: () => '右上の歯車（設定）の「自分のアイコン」で写真を選ぶと、地図の現在地に、あなたのアイコンが出ます。写真はこの端末の中だけに置きます。ハンドルネームもここで決められます。' }, // v0.20.2（11/3 ぶっくまさん「アイコン設定もできることを伝えたい」）
   { pin: true, h: '店のピン', p: () => (MAP.M.map && MAP.M.map.getZoom() >= 10 ? 'ピンを押すと、店のページが開きます。' : '地図を大きくすると、店のピンが出ます。ピンを押すと、店のページが開きます。') + '朱は本屋、茶は古書店、空色は図書館。スタンプを押した店は若草になります。' },
   { el: '#radar-items', h: '近くの店', p: () => '近い店と、あと何mかが出ます。押すと、その店のページへ。', ok: (el) => el.childElementCount > 0 },
   { el: '#event-chip', h: '開催中のイベント', p: () => { const e = E.liveEvents()[0], nev = E.liveEvents().find(E.narrow); return `いまは「${e ? e.name : 'イベント'}」を開いています。${nev ? `参加店のピンには「${nev.frame.label || 'イベント'}」の札が付きます。` : ''}押すと、ラリーの画面でくわしく見られます。`; }, ok: (el) => !el.hidden && E.liveEvents().length > 0 },

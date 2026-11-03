@@ -1,7 +1,7 @@
 // 地図（MapLibre）。店はピンの絵で表示し、固まり（クラスタ）でまとめ、状態は feature-state で軽く更新する
-import { MAP_SKINS, STYLE_DARK, STYLE_LIGHT, TERRITORY_M, RANGE_M } from './config.js?v=0.20.1';
-import { emit, circlePoly } from './util.js?v=0.20.1';
-import { POS } from './position.js?v=0.20.1';
+import { MAP_SKINS, STYLE_DARK, STYLE_LIGHT, TERRITORY_M, RANGE_M } from './config.js?v=0.20.2';
+import { emit, circlePoly } from './util.js?v=0.20.2';
+import { POS } from './position.js?v=0.20.2';
 
 export const M = { map: null, ready: false, theme: 'light' };
 let storesGeo = { type: 'FeatureCollection', features: [] };
@@ -182,7 +182,28 @@ function tintBase() {
   }
   for (const id of ['highway-name-minor', 'highway-name-major', 'highway-name-path']) set(id, 'text-color', c.text);
 }
-function safeAddLayers() { try { hideBasePoi(); tintBase(); addLayers(); } catch (e) { console.error('layers', e); window.__mapErr = String(e && e.message || e); } }
+// 暗いときの地図の色（v0.20.2）。もとの dark は道も川もほぼ黒で、地図が真っ黒に見えた（11/3 ぶっくまさん）。層の名前は OpenFreeMap の dark のもの
+const NIGHT = {
+  bg: '#1D2130', res: '#22273A', bld: '#2C3248', green: '#1E3A2C', water: '#1C3B5E', path: '#3A4058', minor: '#454C66', major: '#5D6683', majorC: '#2A2F42',
+  mw: '#8C7C4C', mwC: '#3A3524', rail: '#5A6078', dash: '#1D2130', line: '#59607A', text: '#D8DBE6', halo: '#1D2130', road: '#B6BBCC', water_t: '#86ACD6', air: '#2B3043',
+};
+function tintNight() {
+  if (M.theme !== 'dark') return; const map = M.map, c = NIGHT; const set = (id, prop, v) => { try { if (map.getLayer(id)) map.setPaintProperty(id, prop, v); } catch (e) {} };
+  set('background', 'background-color', c.bg); set('landuse_residential', 'fill-color', c.res); set('building', 'fill-color', c.bld);
+  for (const id of ['landcover_wood', 'landuse_park']) set(id, 'fill-color', c.green);
+  set('water', 'fill-color', c.water); set('waterway', 'line-color', c.water);
+  for (const id of ['aeroway-area', 'aeroway-taxiway', 'aeroway-runway', 'road_area_pier', 'road_pier']) set(id, id.includes('area') || id.includes('pier') ? (id === 'road_pier' ? 'line-color' : 'fill-color') : 'line-color', c.air);
+  set('highway_path', 'line-color', c.path); set('highway_minor', 'line-color', c.minor);
+  set('highway_major_casing', 'line-color', c.majorC); set('highway_major_inner', 'line-color', c.major); set('highway_major_subtle', 'line-color', c.major);
+  set('highway_motorway_casing', 'line-color', c.mwC); set('highway_motorway_inner', 'line-color', c.mw); set('highway_motorway_subtle', 'line-color', c.mw);
+  for (const id of ['railway_transit', 'railway_minor', 'railway']) set(id, 'line-color', c.rail);
+  for (const id of ['railway_transit_dashline', 'railway_minor_dashline', 'railway_dashline']) set(id, 'line-color', c.dash);
+  for (const id of ['boundary_state', 'boundary_country_z0-4', 'boundary_country_z5-']) set(id, 'line-color', c.line);
+  for (const id of ['highway_name_other', 'highway_name_motorway']) { set(id, 'text-color', c.road); set(id, 'text-halo-color', c.halo); }
+  set('water_name', 'text-color', c.water_t); set('water_name', 'text-halo-color', c.halo);
+  for (const id of ['place_other', 'place_suburb', 'place_village', 'place_town', 'place_city', 'place_city_large', 'place_state', 'place_country_other', 'place_country_minor', 'place_country_major']) { set(id, 'text-color', c.text); set(id, 'text-halo-color', c.halo); }
+}
+function safeAddLayers() { try { hideBasePoi(); tintBase(); tintNight(); addLayers(); } catch (e) { console.error('layers', e); window.__mapErr = String(e && e.message || e); } }
 export function initMap({ center, zoom, theme = 'light', onStoreClick, onMapClick, onDrag }) {
   handlers = { onStoreClick, onMapClick, onDrag }; M.theme = theme;
   const map = new maplibregl.Map({ container: 'map', style: theme === 'dark' ? STYLE_DARK : STYLE_LIGHT, center, zoom, attributionControl: false, preserveDrawingBuffer: true, maxZoom: 18 });

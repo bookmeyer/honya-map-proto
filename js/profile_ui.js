@@ -1,11 +1,11 @@
 // プロフィール（v0.20.0〜）：世代・性別・本の買い方など。どれも答えなくてよい
 // v0.20.1：名前（ハンドルネーム）以外の答えは、統計データとして使う（ぶっくまさん 11/3「プロフィールは名前以外の情報を統計データとして使用。」）。画面の上でそう知らせ、答えた分を運営に送る
 // 送るのは答え（コード）と名前のない端末の番号だけ。運営が見るのは人数の集計だけ。「答えをすべて消す」と、運営からも消える（events.js queueProfile）
-import { PROFILE_Q, PREFS } from './config.js?v=0.20.1';
-import { $, $$, esc, todayISO } from './util.js?v=0.20.1';
-import { S, save } from './state.js?v=0.20.1';
-import * as E from './events.js?v=0.20.1';
-import { openModal, closeModal, toast } from './ui.js?v=0.20.1';
+import { PROFILE_Q, PREFS } from './config.js?v=0.20.2';
+import { $, $$, esc, todayISO } from './util.js?v=0.20.2';
+import { S, save } from './state.js?v=0.20.2';
+import * as E from './events.js?v=0.20.2';
+import { openModal, closeModal, toast } from './ui.js?v=0.20.2';
 
 const prefCode = (i) => String(i + 1).padStart(2, '0'); // 都道府県は JIS の番号（01 北海道 〜 47 沖縄県）
 const has = () => !!(S.profile && Object.keys(S.profile.a).length);
