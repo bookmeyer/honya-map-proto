@@ -1,15 +1,15 @@
 // 本のカード：本と出会った（バーコード・ISBN・名前）→ カードの画面
-import { PG } from './config.js?v=0.16.0';
-import { esc, icon, $, fmtDate, todayISO, emit } from './util.js?v=0.16.0';
-import { S } from './state.js?v=0.16.0';
-import { sfx, haptic } from './audio.js?v=0.16.0';
-import { POS } from './position.js?v=0.16.0';
-import { placeWord, isLib } from './data.js?v=0.16.0';
-import * as G from './game.js?v=0.16.0';
-import { cardImage, shareBlob } from './share.js?v=0.16.0';
-import * as R from './reading.js?v=0.16.0';
-import { openModal, closeModal, manualIsbn, scanIsbn, stopScan, toast, refreshHud, setSub, switchView, confirmBox } from './ui.js?v=0.16.0';
-import { applyMapStates, openSheet } from './map_ui.js?v=0.16.0';
+import { PG } from './config.js?v=0.16.1';
+import { esc, icon, $, fmtDate, todayISO, emit } from './util.js?v=0.16.1';
+import { S } from './state.js?v=0.16.1';
+import { sfx, haptic } from './audio.js?v=0.16.1';
+import { POS } from './position.js?v=0.16.1';
+import { placeWord, isLib } from './data.js?v=0.16.1';
+import * as G from './game.js?v=0.16.1';
+import { cardImage, shareBlob } from './share.js?v=0.16.1';
+import * as R from './reading.js?v=0.16.1';
+import { openModal, closeModal, manualIsbn, scanIsbn, stopScan, toast, refreshHud, setSub, switchView, confirmBox } from './ui.js?v=0.16.1';
+import { applyMapStates, openSheet } from './map_ui.js?v=0.16.1';
 
 // ---------- カード ----------
 export function startCard(st) {

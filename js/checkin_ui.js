@@ -1,18 +1,18 @@
 // スタンプを押す：チェックイン → スタンプの画面（道中のまとめ・読書）→ シェア・紙ふぶき
-import { PG, WALK } from './config.js?v=0.16.0';
-import { weekKey, stars, esc, $, fmtDist, icon, $$, emit, fmtMin } from './util.js?v=0.16.0';
-import { S } from './state.js?v=0.16.0';
-import { sfx, haptic } from './audio.js?v=0.16.0';
-import { POS } from './position.js?v=0.16.0';
-import { isFeat, placeWord, rarityOf, pickOpen, BYID, stampSVG, rarityText, stampInk } from './data.js?v=0.16.0';
-import * as G from './game.js?v=0.16.0';
-import * as E from './events.js?v=0.16.0';
-import { stampImage, shareBlob } from './share.js?v=0.16.0';
-import * as J from './journey.js?v=0.16.0';
-import * as R from './reading.js?v=0.16.0';
-import { openModal, closeModal, closeSheet, refreshHud, toast } from './ui.js?v=0.16.0';
-import { applyMapStates, openSheet } from './map_ui.js?v=0.16.0';
-import { startCard } from './card_ui.js?v=0.16.0';
+import { PG, WALK } from './config.js?v=0.16.1';
+import { weekKey, stars, esc, $, fmtDist, icon, $$, emit, fmtMin } from './util.js?v=0.16.1';
+import { S } from './state.js?v=0.16.1';
+import { sfx, haptic } from './audio.js?v=0.16.1';
+import { POS } from './position.js?v=0.16.1';
+import { isFeat, placeWord, rarityOf, pickOpen, BYID, stampSVG, rarityText, stampInk } from './data.js?v=0.16.1';
+import * as G from './game.js?v=0.16.1';
+import * as E from './events.js?v=0.16.1';
+import { stampImage, shareBlob } from './share.js?v=0.16.1';
+import * as J from './journey.js?v=0.16.1';
+import * as R from './reading.js?v=0.16.1';
+import { openModal, closeModal, closeSheet, refreshHud, toast } from './ui.js?v=0.16.1';
+import { applyMapStates, openSheet } from './map_ui.js?v=0.16.1';
+import { startCard } from './card_ui.js?v=0.16.1';
 
 // ---------- チェックイン → スタンプ ----------
 export function startCheckin(st, near) {
@@ -23,7 +23,7 @@ export function startCheckin(st, near) {
     <div class="note">位置（座標）は送りません。${S.settings.sendLog === false ? '参加の記録も送らない設定です。' : '送るのは、この店の番号と日時など（名前のない、ランダムな番号といっしょに。設定で止められます）。'}</div>
     <div class="actions"><button class="btn primary" id="ci-save">${near ? 'スタンプを押す' : '記録だけ残す'}</button><button class="btn ghost" id="ci-cancel">やめる</button></div>`);
   $('#ci-cancel').onclick = closeModal;
-  $('#ci-save').onclick = () => { const pkBefore = pickOpen(st); const volBefore = G.volume(); const seg = J.arrive(st, { near, trial: POS.fake }); /* 前の店からの道のり・読書（v0.14）。スタンプの記録より先に */ const res = G.checkin(st, { near, memo: $('#ci-memo').value.trim(), trial: POS.fake }); res.lv.before = Math.min(res.lv.before, volBefore); const evr = E.onCheckin(st, { near, trial: POS.fake }); closeModal(); closeSheet(); applyMapStates(); refreshHud(); showCapture(st, res, near, evr, seg); if (st.rec && !pkBefore && pickOpen(st)) toast('📖 書店員さんの手書きのカードが見られるようになりました（店のページ）', 'ok'); };
+  $('#ci-save').onclick = () => { const pkBefore = pickOpen(st); const volBefore = G.volume(); const seg = J.arrive(st, { near, trial: POS.fake }); /* 前の店からの道のり・読書（v0.14）。スタンプの記録より先に */ const res = G.checkin(st, { near, memo: $('#ci-memo').value.trim(), trial: POS.fake }); res.lv.before = Math.min(res.lv.before, volBefore); const evr = E.onCheckin(st, { near, trial: POS.fake }); closeModal(); closeSheet(); applyMapStates(); refreshHud(); showCapture(st, res, near, evr, seg); if (E.hasCard(st) && !pkBefore && pickOpen(st) && (st.demo || S.settings.sendLog !== false)) toast('📖 書店員さんの手書きのカードが見られるようになりました（店のページ）', 'ok'); };
 }
 // 道中のまとめ（v0.14）：前の店からの距離・歩いたページ・読書・あいだにあった本屋
 function segHTML(st, g) {

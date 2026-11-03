@@ -1,15 +1,15 @@
 // 設定の画面と、そこから開くもの：見た目・着せ替え・アイコン・ハンドルネーム・参加コード・送るもののお知らせ・記録を守る・Googleマップの★
-import { SKINS, MAP_SKINS, APP_VER } from './config.js?v=0.16.0';
-import { $, esc, fmtDist, icon, $$, mobileOS, isStandalone, emit, todayISO } from './util.js?v=0.16.0';
-import { S, save, parseImport, replace, reset, exportJSON } from './state.js?v=0.16.0';
-import { sfx } from './audio.js?v=0.16.0';
-import { POS } from './position.js?v=0.16.0';
-import { addCustom, STORES, DATA_DATE, rebuild, unhideAll } from './data.js?v=0.16.0';
-import * as MAP from './map.js?v=0.16.0';
-import * as E from './events.js?v=0.16.0';
-import * as GI from './gimport.js?v=0.16.0';
-import { openModal, closeModal, toast, refreshHud, switchView, confirmBox } from './ui.js?v=0.16.0';
-import { applyMapStates, updateNear, updateAreaChip, setTrialUI } from './map_ui.js?v=0.16.0';
+import { SKINS, MAP_SKINS, APP_VER } from './config.js?v=0.16.1';
+import { $, esc, fmtDist, icon, $$, mobileOS, isStandalone, emit, todayISO } from './util.js?v=0.16.1';
+import { S, save, parseImport, replace, reset, exportJSON } from './state.js?v=0.16.1';
+import { sfx } from './audio.js?v=0.16.1';
+import { POS } from './position.js?v=0.16.1';
+import { addCustom, STORES, DATA_DATE, rebuild, unhideAll } from './data.js?v=0.16.1';
+import * as MAP from './map.js?v=0.16.1';
+import * as E from './events.js?v=0.16.1';
+import * as GI from './gimport.js?v=0.16.1';
+import { openModal, closeModal, toast, refreshHud, switchView, confirmBox } from './ui.js?v=0.16.1';
+import { applyMapStates, updateNear, updateAreaChip, setTrialUI } from './map_ui.js?v=0.16.1';
 
 // ---------- Googleマップの★を読み込む ----------
 export function googleHelp() {
@@ -50,7 +50,7 @@ export function renderSettings() {
       <div class="sk-h">地図</div>${Object.entries(MAP_SKINS).map(([k, x]) => `<button class="skin${(s.mapSkin || 'cream') === k ? ' on' : ''}" data-mapskin="${k}"><i style="background:linear-gradient(135deg,${x.bg} 50%,${x.water} 50%)"></i>${esc(x.name)}</button>`).join('')}</div></div></div>
     <div class="setting"><div><div class="l">ハンドルネーム</div><div class="s">${S.settings.handle ? esc(S.settings.handle) : 'まだありません。見出し・プロフィール・シェアする画像に出ます'}</div></div><button class="btn" id="st-name">${S.settings.handle ? '変える' : '付ける'}</button></div>
     <div class="setting"><div><div class="l">参加コード</div><div class="s">${s.joinCode ? `「${esc(s.joinCode)}」で参加中（お試しの人だけのイベントが見えます）` : 'お試しなどで渡されたコードを入れると、その人たちだけのイベントが見えます'}</div></div><button class="btn" id="st-join">${s.joinCode ? '変える' : '入れる'}</button></div>
-    <div class="setting"><div><div class="l">参加の記録を送る</div><div class="s">参加の人数を数えるための記録を送ります。位置・名前・メモは送りません${(S.outbox || []).length ? `（まだ送っていない記録 ${S.outbox.length}件）` : ''}<details class="more"><summary>くわしく</summary>送るのは、スタンプを押した店の番号・日時・店の近くで押したか・お試し歩きか・どのイベントかと、名前のない、ランダムな番号です。カードも送りません。止めても、イベントの枠は付きます。</details></div></div><button class="switch ${s.sendLog !== false ? 'on' : ''}" id="st-send" role="switch" aria-checked="${s.sendLog !== false}" aria-label="参加の記録を送る"></button></div>
+    <div class="setting"><div><div class="l">参加の記録を送る</div><div class="s">参加の人数を数えるのと、書店員さんの手書きのカードを開くための記録を送ります。位置・名前・メモは送りません${(S.outbox || []).length ? `（まだ送っていない記録 ${S.outbox.length}件）` : ''}<details class="more"><summary>くわしく</summary>送るのは、スタンプを押した店の番号・日時・店の近くで押したか・お試し歩きか・どのイベントかと、名前のない、ランダムな番号です。手書きのカードを開くときは、店の番号とランダムな番号を送ります（その店で押した記録と照らし合わせるため）。本のカードは送りません。止めても、イベントの枠は付きます（手書きのカードは見られなくなります）。</details></div></div><button class="switch ${s.sendLog !== false ? 'on' : ''}" id="st-send" role="switch" aria-checked="${s.sendLog !== false}" aria-label="参加の記録を送る"></button></div>
     <div class="setting"><div><div class="l">自分のアイコン</div><div class="s">地図の現在地に出ます。写真はこの端末の中だけに置き、どこにも送りません</div></div><div class="avatar-ctl">${s.avatar ? `<img class="avatar" src="${esc(s.avatar)}" alt="">` : ''}<label class="btn">${s.avatar ? '替える' : '選ぶ'}<input type="file" id="st-avatar" accept="image/*" hidden></label>${s.avatar ? '<button class="btn ghost" id="st-avatar-del">外す</button>' : ''}</div></div>
     <div class="setting"><div><div class="l">図書館も地図に出す</div><div class="s">全国の公共図書館（約3,500館）。大学・学校の図書館は入っていません</div></div><button class="switch ${s.showLib !== false ? 'on' : ''}" id="st-lib" role="switch" aria-checked="${s.showLib !== false}" aria-label="図書館も地図に出す"></button></div>
     <div class="setting"><div><div class="l">行きたい店のお知らせ</div><div class="s">行きたい店に近づくと、地図の下でお知らせします（アプリを開いて現在地を追っているあいだ）</div></div><button class="switch ${s.wantAlert !== false ? 'on' : ''}" id="st-want" role="switch" aria-checked="${s.wantAlert !== false}" aria-label="行きたい店のお知らせ"></button></div>
@@ -136,7 +136,7 @@ export function nameModal(after) {
   if ($('#nm-cancel')) $('#nm-cancel').onclick = closeModal;
 }
 // ---------- 参加コード・送るもののお知らせ（v0.10） ----------
-const SEND_TEXT = '<ul class="plain"><li><b>送るもの</b>：スタンプを押した店の番号と日時、店の近くで押したか・お試し歩きか・どのイベントか（参加の人数を数えるため。名前のない、ランダムな番号といっしょに）</li><li><b>送らないもの</b>：位置の座標・移動の記録・名前・メモ・カード</li><li>設定の「参加の記録を送る」で、いつでも止められます</li></ul>';
+const SEND_TEXT = '<ul class="plain"><li><b>送るもの</b>：スタンプを押した店の番号と日時、店の近くで押したか・お試し歩きか・どのイベントか（参加の人数を数えるため。名前のない、ランダムな番号といっしょに）</li><li><b>手書きのカードを開くとき</b>：店の番号と、ランダムな番号（その店で押した記録と照らし合わせるため）</li><li><b>送らないもの</b>：位置の座標・移動の記録・読んだ場所・名前・メモ・本のカード</li><li>設定の「参加の記録を送る」で、いつでも止められます</li></ul>';
 export function joinNotice(code) {
   S.settings.privacyV10 = 1; save();
   openModal(`<h2>お試しに参加しました</h2><p>参加コード「${esc(code)}」が入りました。お試しの人だけのイベントが、ラリーの画面と地図に出ます。</p>${SEND_TEXT}<div class="actions"><button class="btn primary wide" id="jn-ok">はじめる</button></div>`);

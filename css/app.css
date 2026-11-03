@@ -163,6 +163,8 @@ textarea{min-height:76px;resize:vertical}
 .pick-lock .ic{width:22px;height:22px;flex:none;color:var(--shu-2)}
 .pick-card{margin-top:10px}
 .pick-card img,.pick-card svg{display:block;width:100%;height:auto;border-radius:8px}
+.pick-card img{pointer-events:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none} /* 長押しで保存しにくく（お店の手書きのため。v0.16.1） */
+.pick-wait{padding:10px 12px;border:2px dashed var(--line-2);border-radius:var(--r-s);font-size:13px;line-height:1.6;background:var(--paper);color:var(--ink-2)}
 #radar-picks h3 .muted{font-family:var(--body)}
 /* v0.13 ブラッシュアップ */
 .pf-sum{margin:10px 0 0;font-size:13px;color:var(--ink-2)}

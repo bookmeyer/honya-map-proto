@@ -1,13 +1,14 @@
 // ちかく（view-radar）：近い店・書店員さんの1冊・行きたい店・ピンの色の見方
-import { RANGE_M } from './config.js?v=0.16.0';
-import { $, esc, fmtDist, arrowOf, bearing, icon, $$, dist, prefOf, stars } from './util.js?v=0.16.0';
-import { hasPos, POS } from './position.js?v=0.16.0';
-import { STORES, bookTitle, pickOpen, isFeat, rarityOf } from './data.js?v=0.16.0';
-import * as MAP from './map.js?v=0.16.0';
-import * as G from './game.js?v=0.16.0';
-import * as J from './journey.js?v=0.16.0';
-import { dirLink, stopLinks, switchView, emptyBox } from './ui.js?v=0.16.0';
-import { openSheet, locate, setTrialUI, warp, NEAR } from './map_ui.js?v=0.16.0';
+import { RANGE_M } from './config.js?v=0.16.1';
+import { $, esc, fmtDist, arrowOf, bearing, icon, $$, dist, prefOf, stars } from './util.js?v=0.16.1';
+import { hasPos, POS } from './position.js?v=0.16.1';
+import { STORES, bookTitle, pickOpen, isFeat, rarityOf } from './data.js?v=0.16.1';
+import * as MAP from './map.js?v=0.16.1';
+import * as G from './game.js?v=0.16.1';
+import * as J from './journey.js?v=0.16.1';
+import { dirLink, stopLinks, switchView, emptyBox } from './ui.js?v=0.16.1';
+import { openSheet, locate, setTrialUI, warp, NEAR } from './map_ui.js?v=0.16.1';
+import { hasCard } from './events.js?v=0.16.1';
 
 // ---------- ちかく：行きたい店（近い順） ----------
 export function renderRadarWants() {
@@ -29,7 +30,7 @@ function renderPicks() {
   const real = all.filter((s) => !s.demo).length;
   const sorted = (real ? all.filter((s) => !s.demo) : all).map((s) => ({ s, d: dist(base.lat, base.lon, s.la, s.lo) })).sort((a, b) => a.d - b.d); // 本物の1冊が入ったら、見本は出さない
   const show = picksAll ? sorted : sorted.slice(0, 3);
-  el.innerHTML = `<h3>書店員さんの1冊 <span class="muted small">${real ? `全国 ${real}店` : 'いまは見本だけ'}</span></h3><div class="list">${show.map(({ s, d }) => `<div class="item" data-id="${esc(s.i)}"><div class="main"><div class="name">${esc(bookTitle(s.rec.title))}</div><div class="sub">${esc(s.n)}・${esc(s.rec.who)}　${base.lbl} ${fmtDist(d)}${pickOpen(s) ? '　<span class="badge shu">カードを見た</span>' : ''}</div></div></div>`).join('')}</div>${sorted.length > 3 ? `<button class="linkish" id="pk-more">${picksAll ? '近い3店だけにする' : `すべて見る（${sorted.length}店）`}</button>` : ''}`;
+  el.innerHTML = `<h3>書店員さんの1冊 <span class="muted small">${real ? `全国 ${real}店` : 'いまは見本だけ'}</span></h3><div class="list">${show.map(({ s, d }) => `<div class="item" data-id="${esc(s.i)}"><div class="main"><div class="name">${esc(bookTitle(s.rec.title))}</div><div class="sub">${esc(s.n)}・${esc(s.rec.who)}　${base.lbl} ${fmtDist(d)}${pickOpen(s) && hasCard(s) ? '　<span class="badge shu">カードを見た</span>' : ''}</div></div></div>`).join('')}</div>${sorted.length > 3 ? `<button class="linkish" id="pk-more">${picksAll ? '近い3店だけにする' : `すべて見る（${sorted.length}店）`}</button>` : ''}`;
   $$('#radar-picks .item').forEach((x) => x.addEventListener('click', () => openSheet(x.dataset.id)));
   if ($('#pk-more')) $('#pk-more').onclick = () => { picksAll = !picksAll; renderPicks(); };
 }

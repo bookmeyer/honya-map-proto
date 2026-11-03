@@ -1,7 +1,7 @@
 // 本屋・図書館・ラリーのデータ。スタンプ（その店だけの絵柄）の見た目もここ
-import { DEMO_STORE } from './config.js?v=0.16.0';
-import { sleep, $, weekKey, prefOf, hash32, esc, todayISO } from './util.js?v=0.16.0';
-import { S } from './state.js?v=0.16.0';
+import { DEMO_STORE } from './config.js?v=0.16.1';
+import { sleep, $, weekKey, prefOf, hash32, esc, todayISO } from './util.js?v=0.16.1';
+import { S } from './state.js?v=0.16.1';
 
 export let STORES = [];
 export let RALLIES = [];
@@ -25,10 +25,11 @@ export async function loadAll() {
 }
 let BASE = [], LIBS = [];
 // ---- 書店員さんの1冊（v0.11）。お店に確かめて、許可をいただいた店だけ data/picks.json に書く ----
-// 書名・著者・ひとことは誰でも見られる。手書きのカード（写真）とスタンプの本の印は、その店の射程内で押した人だけ（お試し歩きは入らない。見本の店は入る）
+// 書名・著者・ひとことは誰でも見られる。スタンプの本の印は、その店の射程内で押した人だけ（お試し歩きは入らない。見本の店は入る）
+// 手書きのカード（写真）は picks.json にも GitHub にも置かない。サーバーの管理画面から入れ、押した記録がある端末にだけ渡す（v0.16.1。events.js loadCard）
 function applyPicks(list, base) {
   const by = new Map(list.filter((p) => p && p.store && p.title).map((p) => [p.store, p]));
-  for (const s of [...base, ...LIBS]) { const p = by.get(s.i); if (p) s.rec = { who: p.who || '書店員さん', title: p.title, author: p.author || '', isbn: p.isbn || '', say: p.say || '', shelf: p.shelf || '', photo: p.photo || '', d: p.d || '' }; }
+  for (const s of [...base, ...LIBS]) { const p = by.get(s.i); if (p) s.rec = { who: p.who || '書店員さん', title: p.title, author: p.author || '', isbn: p.isbn || '', say: p.say || '', shelf: p.shelf || '', d: p.d || '' }; } // photo（写真のアドレス）は読まない（v0.16.1）
 }
 export const pickOpen = (st) => !!(st && st.rec) && S.visits.some((v) => v.s === st.i && v.near && (st.demo || !v.trial));
 export const bookTitle = (t) => `『${String(t || '').replace(/^『/, '').replace(/』$/, '')}』`;

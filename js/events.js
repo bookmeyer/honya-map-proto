@@ -1,23 +1,26 @@
 // イベント（v0.10）：管理画面で作った設定をサーバーから読み、期間・対象の店・限定の枠・お題・称号を決める
 // サーバーに送るのは「匿名の番号・店番号・日時・射程内か・お試し歩きか・イベント」だけ。位置の座標・名前・メモは送らない
+// 書店員さんの手書きのカードも、ここからサーバーに頼む（v0.16.1。その店で押した記録がある端末だけに渡る）
 // サーバーに届かないときは、前回読んだ設定で動く。スタンプはいつでも押せる
-import { EVENTS_API, APP_VER } from './config.js?v=0.16.0';
-import { $, emit, prefOf, todayISO, on } from './util.js?v=0.16.0';
-import { S, save } from './state.js?v=0.16.0';
-import { isLib } from './data.js?v=0.16.0';
+import { EVENTS_API, APP_VER } from './config.js?v=0.16.1';
+import { $, emit, prefOf, todayISO, on } from './util.js?v=0.16.1';
+import { S, save } from './state.js?v=0.16.1';
+import { isLib } from './data.js?v=0.16.1';
 
-export const EV = { list: [], permitted: new Set(), ok: false, at: 0 };
+export const EV = { list: [], permitted: new Set(), cards: new Set(), ok: false, at: 0 };
 const CACHE_KEY = 'meguri_events_v1';
 const OUTBOX_MAX = 300;
 // 試すときだけ、別のサーバーを指せる（localStorage の meguri_api）
 export function apiBase() { try { const o = localStorage.getItem('meguri_api'); if (o && /^https?:\/\//.test(o) && /^(localhost|127\.0\.0\.1)$/.test(location.hostname)) return o; } catch (e) {} return EVENTS_API; } // 手元（localhost）だけ（v0.15.3）
 const tms = (s) => { const x = Date.parse(s); return Number.isNaN(x) ? 0 : x; };
+const STORE_ID = /^[A-Za-z0-9_.:-]{1,40}$/;
 const HEX = /^#[0-9A-Fa-f]{6}$/; // 色は #000000 の形だけ（style に入るため。v0.15.3）
 function valid(e) { return e && Number.isInteger(e.id) && typeof e.name === 'string' && tms(e.starts) && tms(e.ends) && e.frame && HEX.test(e.frame.color) && (!e.special || HEX.test(e.special.color)) && (!e.goal || (Number.isInteger(e.goal.count) && e.goal.count > 0 && typeof e.goal.title === 'string')); }
 function apply(j) {
   if (!j || !Array.isArray(j.events)) return;
   EV.list = j.events.filter(valid).map((e) => Object.assign({}, e, { _stores: new Set(e.stores || []), _prefs: new Set(e.prefs || []) }));
   EV.permitted = new Set(Array.isArray(j.permitted) ? j.permitted : []);
+  EV.cards = new Set(Array.isArray(j.cards) ? j.cards.filter((x) => typeof x === 'string' && STORE_ID.test(x)) : []); // 手書きのカードがある店（v0.16.1）
 }
 let evSeq = 0; // 読むのが重なったら、いちばん新しい返事だけ使う（v0.16.0：参加コードを変えた直後に、前の返事で上書きされることがあった）
 export async function loadEvents() {
@@ -116,16 +119,16 @@ function queueCheckin(st, near, trial, ids) {
   if (S.settings.sendLog === false) return;
   S.outbox = S.outbox || []; S.outbox.push({ store: st.i, at: new Date().toISOString(), near: near ? 1 : 0, trial: trial ? 1 : 0, events: ids });
   if (S.outbox.length > OUTBOX_MAX) S.outbox.splice(0, S.outbox.length - OUTBOX_MAX);
-  save(); flushSoon();
+  CARD_ERR.delete(st.i); save(); flushSoon();
 }
-let flushing = false, ftimer = null, retryMs = 60000;
+let flushP = null, ftimer = null, retryMs = 60000;
 export function flushSoon(ms = 1500) { clearTimeout(ftimer); ftimer = setTimeout(flush, ms); }
-// まとめて送る。つながらなかったときは、1分 → 2分 → … 10分おきに送り直す（アプリを開いているあいだ）
-export async function flush() {
+// まとめて送る。つながらなかったときは、1分 → 2分 → … 10分おきに送り直す（アプリを開いているあいだ）。送っている途中に呼ばれたら、その終わりを待つ（v0.16.1）
+export function flush() { if (!flushP) flushP = sendOutbox().finally(() => { flushP = null; }); return flushP; }
+async function sendOutbox() {
   if (!S.outbox || !S.outbox.length || S.settings.sendLog === false) return;
-  if (flushing) { flushSoon(5000); return; }
   if (!navigator.onLine) { flushSoon(retryMs); return; }
-  flushing = true; let failed = false;
+  let failed = false;
   try {
     while (S.outbox.length) {
       const batch = S.outbox.slice(0, 50);
@@ -136,7 +139,34 @@ export async function flush() {
       if (!r.ok) { failed = true; break; }
       S.outbox.splice(0, batch.length); save();
     }
-  } catch (e) { failed = true; } finally { flushing = false; }
+  } catch (e) { failed = true; }
   if (failed && S.outbox.length) { flushSoon(retryMs); retryMs = Math.min(retryMs * 2, 600000); } else retryMs = 60000;
 }
-export function setSendLog(on) { S.settings.sendLog = !!on; if (!on) S.outbox = []; save(); if (on) flushSoon(); }
+export function setSendLog(on) { S.settings.sendLog = !!on; if (!on) S.outbox = []; CARD_ERR.clear(); save(); if (on) flushSoon(); }
+// ---- 書店員さんの手書きのカード（v0.16.1） ----
+// 写真はサーバーの中にしまってあり、その店の射程内でスタンプを押した記録がサーバーにある端末にだけ渡る（写真のアドレスを知っているだけでは見られない）
+// 送るのは端末の番号と店の番号だけ（アドレスに入れないよう POST で）。写真は開いているあいだだけ覚える（端末にもブラウザの控えにも残さない）
+export const hasCard = (st) => !!(st && st.rec) && (st.rec.photo === 'demo' || EV.cards.has(st.i));
+const CARD_URL = new Map(), CARD_P = new Map(), CARD_ERR = new Map(); // 写真／読んでいる途中／うまくいかなかった（同じ店に何度も聞かない）
+export const cardUrl = (id) => CARD_URL.get(id) || '';
+export const cardErr = (id) => { const e = CARD_ERR.get(id); return e && Date.now() < e.until ? e.error : ''; };
+export function loadCard(id) {
+  if (CARD_URL.has(id)) return Promise.resolve({ url: CARD_URL.get(id) });
+  if (S.settings.sendLog === false) return Promise.resolve({ error: 'off' });
+  const e = CARD_ERR.get(id); if (e && Date.now() < e.until) return Promise.resolve({ error: e.error });
+  if (CARD_P.has(id)) return CARD_P.get(id);
+  const p = (async () => {
+    let error = 'net';
+    try {
+      await flush(); // 押したばかりのスタンプの記録を先に届ける
+      const ctl = new AbortController(); const tm = setTimeout(() => ctl.abort(), 15000);
+      const r = await fetch(new URL('card.php', apiBase()).toString(), { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ device: deviceId(), store: id }), cache: 'no-store', signal: ctl.signal });
+      if (r.ok && /^image\//.test(r.headers.get('content-type') || '')) { const url = URL.createObjectURL(await r.blob()); clearTimeout(tm); CARD_URL.set(id, url); return { url }; }
+      clearTimeout(tm); const j = await r.json().catch(() => null); if (j && typeof j.error === 'string') error = j.error;
+    } catch (err) {}
+    if (error === 'stamp' && (S.outbox || []).some((x) => x.store === id)) error = 'net'; // 記録がまだ送れていないだけ
+    CARD_ERR.set(id, { error, until: Date.now() + (error === 'net' ? 10000 : 60000) });
+    return { error };
+  })().finally(() => CARD_P.delete(id));
+  CARD_P.set(id, p); return p;
+}
