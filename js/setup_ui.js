@@ -2,13 +2,13 @@
 // ぶっくまさん 11/4「ハンドルネームとプロフィール、アイコン設定後にアプリが使えるようにしてほしい。そうしないと入れないはず」
 // → アイコンは絵（12）から選ぶか写真。プロフィールは9問すべて必須（性別だけ「答えない」あり）。もう使っている人も、次に開いたときに（記録はそのまま）
 // ハンドルネームとアイコンは、この端末の中だけ（送らない）。プロフィールは名前以外の答えを統計データとして送る（profile_ui.js・events.js queueProfile）
-import { $, esc, todayISO } from './util.js?v=0.22.1';
-import { S, save } from './state.js?v=0.22.1';
-import * as E from './events.js?v=0.22.1';
-import * as MAP from './map.js?v=0.22.1';
-import { toast, refreshHud, openModal, closeModal } from './ui.js?v=0.22.1';
-import { cleanHandle, makeAvatar } from './settings_ui.js?v=0.22.1';
-import { profileFields, bindProfileFields, readProfileFields, missingOf, profileComplete, shortTitle, pointMissing, STAT_NOTE } from './profile_ui.js?v=0.22.1';
+import { $, esc, todayISO } from './util.js?v=0.22.2';
+import { S, save } from './state.js?v=0.22.2';
+import * as E from './events.js?v=0.22.2';
+import * as MAP from './map.js?v=0.22.2';
+import { toast, refreshHud, openModal, closeModal } from './ui.js?v=0.22.2';
+import { cleanHandle, makeAvatar } from './settings_ui.js?v=0.22.2';
+import { profileFields, bindProfileFields, readProfileFields, missingOf, profileComplete, shortTitle, pointMissing, STAT_NOTE } from './profile_ui.js?v=0.22.2';
 
 // ---- アイコンの絵（12）：アプリの見た目と同じ、太い墨のふち・べた塗り。選んだら PNG にして持つ ----
 const ST = 'stroke="#1B1B1B" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"';

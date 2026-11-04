@@ -2,11 +2,11 @@
 // v0.20.1：名前（ハンドルネーム）以外の答えは、統計データとして使う（ぶっくまさん 11/3「プロフィールは名前以外の情報を統計データとして使用。」）。画面の上でそう知らせ、答えた分を運営に送る
 // v0.21.0：9問すべて必須（性別だけ「答えない」あり）。はじめの設定（setup_ui.js）と同じ部品で入れる（ぶっくまさん 11/4「ハンドルネームとプロフィール、アイコン設定後にアプリが使えるように」）
 // 送るのは答え（コード）と名前のない端末の番号だけ。運営が見るのは人数の集計だけ。「答えをすべて消す」と、運営からも消える（次に開いたときに、もう一度答えていただく）
-import { PROFILE_Q, PREFS } from './config.js?v=0.22.1';
-import { $, $$, esc, todayISO } from './util.js?v=0.22.1';
-import { S, save } from './state.js?v=0.22.1';
-import * as E from './events.js?v=0.22.1';
-import { openModal, closeModal, toast } from './ui.js?v=0.22.1';
+import { PROFILE_Q, PREFS } from './config.js?v=0.22.2';
+import { $, $$, esc, todayISO } from './util.js?v=0.22.2';
+import { S, save } from './state.js?v=0.22.2';
+import * as E from './events.js?v=0.22.2';
+import { openModal, closeModal, toast } from './ui.js?v=0.22.2';
 
 const prefCode = (i) => String(i + 1).padStart(2, '0'); // 都道府県は JIS の番号（01 北海道 〜 47 沖縄県）
 const optsOf = (q) => (q.pref ? PREFS.map(([n], i) => [prefCode(i), n]) : q.o);

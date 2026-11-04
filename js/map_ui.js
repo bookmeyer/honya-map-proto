@@ -1,17 +1,17 @@
 // 地図の画面：現在地まわり（射程・いちばん近い店）・ピンの状態・現在地とお試し歩き・店のページ・さがす・店を足す・行きたい店のお知らせ
-import { RANGE_M, TERRITORY_M, PG, TRIAL_ON, PREFS } from './config.js?v=0.22.1';
-import { $, arrowOf, bearing, icon, fmtDist, esc, dist, $$, emit, fmtDate, gmapDir, stars, gmapPlace, prefOf } from './util.js?v=0.22.1';
-import { S, save } from './state.js?v=0.22.1';
-import { unlock, sfx } from './audio.js?v=0.22.1';
-import { hasPos, POS, startWatch, setTrial, setPos, jumped } from './position.js?v=0.22.1';
-import { STORES, BYID, isLib, isFeat, rarityOf, pickOpen, placeWord, bookTitle, stampSVG, rarityText, lookupIsbn, hideStore, renameStore, search, FEAT } from './data.js?v=0.22.1';
-import * as MAP from './map.js?v=0.22.1';
-import * as G from './game.js?v=0.22.1';
-import * as E from './events.js?v=0.22.1';
-import * as J from './journey.js?v=0.22.1';
-import { dirLink, openModal, closeModal, stopLinks, toast, closeSheet, refreshHud, currentView, switchView } from './ui.js?v=0.22.1';
-import { startCheckin, shareStampUI } from './checkin_ui.js?v=0.22.1';
-import { startCard } from './card_ui.js?v=0.22.1';
+import { RANGE_M, TERRITORY_M, PG, TRIAL_ON, PREFS } from './config.js?v=0.22.2';
+import { $, arrowOf, bearing, icon, fmtDist, esc, dist, $$, emit, fmtDate, gmapDir, stars, gmapPlace, prefOf } from './util.js?v=0.22.2';
+import { S, save } from './state.js?v=0.22.2';
+import { unlock, sfx } from './audio.js?v=0.22.2';
+import { hasPos, POS, startWatch, setTrial, setPos, jumped } from './position.js?v=0.22.2';
+import { STORES, BYID, isLib, isFeat, rarityOf, pickOpen, placeWord, bookTitle, stampSVG, rarityText, lookupIsbn, hideStore, renameStore, search, FEAT } from './data.js?v=0.22.2';
+import * as MAP from './map.js?v=0.22.2';
+import * as G from './game.js?v=0.22.2';
+import * as E from './events.js?v=0.22.2';
+import * as J from './journey.js?v=0.22.2';
+import { dirLink, openModal, closeModal, stopLinks, toast, closeSheet, refreshHud, currentView, switchView } from './ui.js?v=0.22.2';
+import { startCheckin, shareStampUI } from './checkin_ui.js?v=0.22.2';
+import { startCard } from './card_ui.js?v=0.22.2';
 
 // ---------- 行きたい店のお知らせ（地図の下に出る帯） ----------
 let waTimer = null;
@@ -98,7 +98,7 @@ export function warp(target) {
 // 書名・著者・ひとことは誰でも見られる。手書きのカードは、その店の射程内でスタンプを押した人だけ（data.js pickOpen）
 // 写真はサーバーから、押した記録がある端末にだけ届く（v0.16.1。events.js loadCard）。見本の店は絵
 const DEMO_CARD = `<svg viewBox="0 0 300 186" role="img" aria-label="手書きのカードの見本"><g transform="rotate(-2 150 93)"><rect x="14" y="12" width="272" height="160" rx="6" fill="#FFFDF5" stroke="#1B1B1B" stroke-width="2"/><path d="M32 66h236M32 98h236M32 130h236" stroke="#E6DCC6" stroke-width="1.5"/><text x="150" y="50" text-anchor="middle" font-size="15" fill="#1B1B1B" font-family="'Zen Maru Gothic',sans-serif">（見本）書店員さんの手書きのカード</text><text x="150" y="88" text-anchor="middle" font-size="13" fill="#5A554D" font-family="'Zen Maru Gothic',sans-serif">ここに、お店でいただいた</text><text x="150" y="120" text-anchor="middle" font-size="13" fill="#5A554D" font-family="'Zen Maru Gothic',sans-serif">カードの写真が入ります</text></g><g transform="rotate(-8 246 150)"><rect x="216" y="137" width="60" height="26" rx="6" fill="#FF6A48" stroke="#1B1B1B" stroke-width="2"/><text x="246" y="155" text-anchor="middle" font-size="14" fill="#1B1B1B" font-family="'Mochiy Pop P One',sans-serif">見本</text></g></svg>`;
-const CARD_TEXT = { off: '手書きのカードは、設定の「参加の記録を送る」をオンにしてから、この店でスタンプを押すと見られます（押した記録で、カードを開きます）', stamp: 'この店で押したスタンプの記録が、まだサーバーに届いていません。次にこの店でスタンプを押すと見られます', none: '手書きのカードは、いま準備中です', net: 'いまは手書きのカードを読み込めませんでした。電波のよいところで、店のページを開き直してください' };
+const CARD_TEXT = { stamp: 'この店で押したスタンプの記録が、まだサーバーに届いていません。次にこの店でスタンプを押すと見られます', none: '手書きのカードは、いま準備中です', net: 'いまは手書きのカードを読み込めませんでした。電波のよいところで、店のページを開き直してください' };
 const cardImg = (url, p) => `<img src="${esc(url)}" alt="${esc(p.who)}の手書きのカード" draggable="false">`;
 function pickHTML(st) {
   const p = st.rec; const open = pickOpen(st);
@@ -106,7 +106,7 @@ function pickHTML(st) {
     : !open ? `<div class="pick-lock">${icon('stamp')}<div>この${placeWord(st)}でスタンプを押すと、${esc(p.who)}の<b>手書きのカード</b>が見られます</div></div>`
     : p.photo === 'demo' ? `<div class="pick-card">${DEMO_CARD}</div>`
     : E.cardUrl(st.i) ? `<div class="pick-card">${cardImg(E.cardUrl(st.i), p)}</div>`
-    : `<div class="pick-card" data-card="${esc(st.i)}"><div class="pick-wait">${S.settings.sendLog === false ? CARD_TEXT.off : CARD_TEXT[E.cardErr(st.i)] || '手書きのカードを読み込んでいます…'}</div></div>`;
+    : `<div class="pick-card" data-card="${esc(st.i)}"><div class="pick-wait">${CARD_TEXT[E.cardErr(st.i)] || '手書きのカードを読み込んでいます…'}</div></div>`;
   return `<div class="staff pick"><div class="who">${esc(p.who)}の手放せない1冊</div><div class="pick-book"><div class="pick-cover"${p.isbn ? ` data-isbn="${esc(p.isbn)}"` : ''}>${icon('book')}</div><div style="min-width:0"><div class="title">${esc(bookTitle(p.title))}</div>${p.author ? `<div class="muted small">${esc(p.author)}</div>` : ''}</div></div>${p.say ? `<div class="say">${esc(p.say)}</div>` : ''}${p.shelf ? `<div class="muted small">棚：${esc(p.shelf)}</div>` : ''}${card}</div>`;
 }
 // 閉店している・名前が違う（v0.17.0）：この端末の地図はすぐ直し、「運営にも知らせる」なら報告を送る（確かめてから、みんなの地図も直る）

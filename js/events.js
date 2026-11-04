@@ -3,10 +3,10 @@
 // 書店員さんの手書きのカードも、ここからサーバーに頼む（v0.16.1。その店で押した記録がある端末だけに渡る）
 // 店の情報の報告を送り、運営が直した閉店・名前を受け取る（v0.17.0）
 // サーバーに届かないときは、前回読んだ設定で動く。スタンプはいつでも押せる
-import { EVENTS_API, APP_VER } from './config.js?v=0.22.1';
-import { $, emit, prefOf, todayISO, on } from './util.js?v=0.22.1';
-import { S, save } from './state.js?v=0.22.1';
-import { isLib, setFixes } from './data.js?v=0.22.1';
+import { EVENTS_API, APP_VER } from './config.js?v=0.22.2';
+import { $, emit, prefOf, todayISO, on } from './util.js?v=0.22.2';
+import { S, save } from './state.js?v=0.22.2';
+import { isLib, setFixes } from './data.js?v=0.22.2';
 
 export const EV = { list: [], permitted: new Set(), cards: new Set(), ok: false, at: 0 };
 const CACHE_KEY = 'meguri_events_v1';
@@ -139,8 +139,7 @@ function uuid() {
 }
 export function deviceId() { if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(S.settings.dev || '')) { S.settings.dev = uuid(); save(); } return S.settings.dev; }
 function queueCheckin(st, near, trial, ids) {
-  if (S.settings.sendLog === false) return;
-  S.outbox = S.outbox || []; S.outbox.push({ store: st.i, at: new Date().toISOString(), near: near ? 1 : 0, trial: trial ? 1 : 0, events: ids });
+  S.outbox = S.outbox || []; /* いつも送る（v0.22.2。同意は最初の画面のプライバシーポリシーで） */ S.outbox.push({ store: st.i, at: new Date().toISOString(), near: near ? 1 : 0, trial: trial ? 1 : 0, events: ids });
   if (S.outbox.length > OUTBOX_MAX) S.outbox.splice(0, S.outbox.length - OUTBOX_MAX);
   CARD_ERR.delete(st.i); save(); flushSoon();
 }
@@ -149,7 +148,7 @@ export function flushSoon(ms = 1500) { clearTimeout(ftimer); ftimer = setTimeout
 // まとめて送る（参加の記録と、店の報告）。つながらなかったときは、1分 → 2分 → … 10分おきに送り直す（アプリを開いているあいだ）。送っている途中に呼ばれたら、その終わりを待つ（v0.16.1）
 export function flush() { if (!flushP) flushP = sendOutbox().finally(() => { flushP = null; }); return flushP; }
 async function sendOutbox() {
-  const logs = S.settings.sendLog !== false && (S.outbox || []).length > 0, reps = (S.repOut || []).length > 0; // 報告は、その人が「運営にも知らせる」を選んだものなので、参加の記録を送らない設定でも送る
+  const logs = (S.outbox || []).length > 0, reps = (S.repOut || []).length > 0; // 報告は、その人が「運営にも知らせる」を選んだものなので、参加の記録を送らない設定でも送る
   const prof = !!S.profOut; // プロフィール（v0.20.0）：本人が同意したとき・やめたとき
   if (!logs && !reps && !prof) return;
   if (!navigator.onLine) { flushSoon(retryMs); return; }
@@ -193,7 +192,6 @@ export function queueReport(r) {
   if (S.repOut.length > 50) S.repOut.splice(0, S.repOut.length - 50);
   save(); flushSoon(500);
 }
-export function setSendLog(on) { S.settings.sendLog = !!on; if (!on) S.outbox = []; CARD_ERR.clear(); save(); if (on) flushSoon(); }
 // ---- 書店員さんの手書きのカード（v0.16.1） ----
 // 写真はサーバーの中にしまってあり、その店の射程内でスタンプを押した記録がサーバーにある端末にだけ渡る（写真のアドレスを知っているだけでは見られない）
 // 送るのは端末の番号と店の番号だけ（アドレスに入れないよう POST で）。写真は開いているあいだだけ覚える（端末にもブラウザの控えにも残さない）
@@ -203,7 +201,6 @@ export const cardUrl = (id) => CARD_URL.get(id) || '';
 export const cardErr = (id) => { const e = CARD_ERR.get(id); return e && Date.now() < e.until ? e.error : ''; };
 export function loadCard(id) {
   if (CARD_URL.has(id)) return Promise.resolve({ url: CARD_URL.get(id) });
-  if (S.settings.sendLog === false) return Promise.resolve({ error: 'off' });
   const e = CARD_ERR.get(id); if (e && Date.now() < e.until) return Promise.resolve({ error: e.error });
   if (CARD_P.has(id)) return CARD_P.get(id);
   const p = (async () => {
