@@ -1,6 +1,6 @@
 // 設定値（数字はここだけで変える）
 
-export const APP_VER = '0.22.0';
+export const APP_VER = '0.22.1';
 export const STORAGE_KEY = 'honya_map_v3';
 // お試し歩き（地図を押した所にいることにする）：遊ぶ人には出さない（11/3 ぶっくまさん「OFFにしたい」）。作る人が試すときは localStorage の meguri_trial を 1 に
 export const TRIAL_ON = (() => { try { return localStorage.getItem('meguri_trial') === '1'; } catch (e) { return false; } })();
