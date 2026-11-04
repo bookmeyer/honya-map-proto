@@ -1,17 +1,17 @@
 // 地図の画面：現在地まわり（射程・いちばん近い店）・ピンの状態・現在地とお試し歩き・店のページ・さがす・店を足す・行きたい店のお知らせ
-import { RANGE_M, TERRITORY_M, PG, TRIAL_ON } from './config.js?v=0.21.2';
-import { $, arrowOf, bearing, icon, fmtDist, esc, dist, $$, emit, fmtDate, gmapDir, stars, gmapPlace, prefOf } from './util.js?v=0.21.2';
-import { S, save } from './state.js?v=0.21.2';
-import { unlock, sfx } from './audio.js?v=0.21.2';
-import { hasPos, POS, startWatch, setTrial, setPos, jumped } from './position.js?v=0.21.2';
-import { STORES, BYID, isLib, isFeat, rarityOf, pickOpen, placeWord, bookTitle, stampSVG, rarityText, lookupIsbn, hideStore, renameStore, search, FEAT } from './data.js?v=0.21.2';
-import * as MAP from './map.js?v=0.21.2';
-import * as G from './game.js?v=0.21.2';
-import * as E from './events.js?v=0.21.2';
-import * as J from './journey.js?v=0.21.2';
-import { dirLink, openModal, closeModal, stopLinks, toast, closeSheet, refreshHud, currentView, switchView } from './ui.js?v=0.21.2';
-import { startCheckin, shareStampUI } from './checkin_ui.js?v=0.21.2';
-import { startCard } from './card_ui.js?v=0.21.2';
+import { RANGE_M, TERRITORY_M, PG, TRIAL_ON, PREFS } from './config.js?v=0.22.0';
+import { $, arrowOf, bearing, icon, fmtDist, esc, dist, $$, emit, fmtDate, gmapDir, stars, gmapPlace, prefOf } from './util.js?v=0.22.0';
+import { S, save } from './state.js?v=0.22.0';
+import { unlock, sfx } from './audio.js?v=0.22.0';
+import { hasPos, POS, startWatch, setTrial, setPos, jumped } from './position.js?v=0.22.0';
+import { STORES, BYID, isLib, isFeat, rarityOf, pickOpen, placeWord, bookTitle, stampSVG, rarityText, lookupIsbn, hideStore, renameStore, search, FEAT } from './data.js?v=0.22.0';
+import * as MAP from './map.js?v=0.22.0';
+import * as G from './game.js?v=0.22.0';
+import * as E from './events.js?v=0.22.0';
+import * as J from './journey.js?v=0.22.0';
+import { dirLink, openModal, closeModal, stopLinks, toast, closeSheet, refreshHud, currentView, switchView } from './ui.js?v=0.22.0';
+import { startCheckin, shareStampUI } from './checkin_ui.js?v=0.22.0';
+import { startCard } from './card_ui.js?v=0.22.0';
 
 // ---------- 行きたい店のお知らせ（地図の下に出る帯） ----------
 let waTimer = null;
@@ -74,10 +74,12 @@ export function applyMapStates() {
   MAP.setTerritory(Object.keys(S.stamps).map((id) => { const s = BYID.get(id); if (!s) return null; const rk = G.regularInfo(id).rank; return Object.assign({}, s, { rank: rk, rad: TERRITORY_M * (1 + 0.25 * Math.min(4, Math.max(0, rk - 1))) }); }).filter(Boolean));
 }
 // ---------- 現在地・お試し ----------
+// 位置がないとき（「あとで」・許可しなかった・取れなかった）は、プロフィールの「住んでいる都道府県」の県庁のあたりから（v0.22.0。前は日本全体）
+export function goPrefHome() { const c = S.profile && S.profile.a && S.profile.a.pref; const p = c ? PREFS[Number(c) - 1] : null; if (!p || hasPos()) return false; MAP.flyTo(p[2], p[1], 11); return true; }
 export function locate() {
   unlock();
   if (POS.fake) { setTrialUI(false); }
-  const ok = startWatch({ onFirst: (p) => { if (!S.settings.geoOk) { S.settings.geoOk = 1; save(); } MAP.flyTo(p.lon, p.lat, 15); toast(`現在地（誤差 約${Math.round(p.acc)}m）`); }, onError: (err) => { $('#btn-locate').classList.remove('on'); toast((err && err.code === 1 ? '位置の許可がありません。ブラウザの設定で許可できます' : '位置が取れませんでした。少しあとで、もう一度') + (TRIAL_ON ? '。「お試し歩き」でも試せます' : ''), 'warn'); } });
+  const ok = startWatch({ onFirst: (p) => { if (!S.settings.geoOk) { S.settings.geoOk = 1; save(); } MAP.flyTo(p.lon, p.lat, 15); toast(`現在地（誤差 約${Math.round(p.acc)}m）`); }, onError: (err) => { $('#btn-locate').classList.remove('on'); goPrefHome(); toast((err && err.code === 1 ? '位置の許可がありません。ブラウザの設定で許可できます' : '位置が取れませんでした。少しあとで、もう一度') + (TRIAL_ON ? '。「お試し歩き」でも試せます' : ''), 'warn'); } });
   if (!ok) { toast('この端末では位置が使えません' + (TRIAL_ON ? '。「お試し歩き」で試せます' : ''), 'warn'); return; }
   $('#btn-locate').classList.add('on'); if (hasPos()) MAP.flyTo(POS.lon, POS.lat, 15); else toast('現在地を確かめています…');
 }

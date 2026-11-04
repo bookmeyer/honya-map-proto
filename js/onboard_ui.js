@@ -1,10 +1,11 @@
 // 最初の案内（はじめて開いたとき）
-import { mobileOS, isStandalone, $, esc, icon } from './util.js?v=0.21.2';
-import { S, save } from './state.js?v=0.21.2';
-import { stampSVG, STORES } from './data.js?v=0.21.2';
-import * as MAP from './map.js?v=0.21.2';
-import { cleanHandle } from './settings_ui.js?v=0.21.2';
-import { TRIAL_ON, POLICY_VER } from './config.js?v=0.21.2';
+import { mobileOS, isStandalone, $, esc, icon } from './util.js?v=0.22.0';
+import { S, save } from './state.js?v=0.22.0';
+import { stampSVG, STORES } from './data.js?v=0.22.0';
+import * as MAP from './map.js?v=0.22.0';
+import { cleanHandle } from './settings_ui.js?v=0.22.0';
+import { TRIAL_ON, POLICY_VER } from './config.js?v=0.22.0';
+import { openTakeCode } from './transfer_ui.js?v=0.22.0';
 
 // ---------- 最初の案内 ----------
 export function showOnboarding(onDone) {
@@ -22,8 +23,8 @@ export function showOnboarding(onDone) {
   let i = 0; const box = $('#onboard-box');
   const draw = () => { const p = pages[i]; const last = i === pages.length - 1; if (p.home) { S.settings.homeTip = 1; save(); }
     box.innerHTML = `${i === 0 ? '<div class="ob-catch"><b>本めぐり</b>本屋をめぐって、本とめぐりあう</div>' : ''}<div class="art">${p.art}</div><h2>${esc(p.h)}</h2><p>${esc(p.p)}</p><div class="dotsnav">${pages.map((_, k) => `<i class="${k === i ? 'on' : ''}"></i>`).join('')}</div>
-      ${last ? `<div class="note">歩きながら画面を見ない・運転中は使わない・お店では店の方の迷惑にならないように、お願いします。</div><p class="ob-howto"><a href="howto.html" target="_blank" rel="noopener">くわしい使い方を見る</a></p><div class="note">位置（座標）は送りません。参加の人数を数えるために、スタンプを押した店の番号と日時などを、名前のない、ランダムな番号といっしょに送ります（設定で止められます）。</div><p class="ob-agree">始めると、<a href="privacy.html" target="_blank" rel="noopener">プライバシーポリシー</a>に同意したことになります。</p><div class="actions"><button class="btn primary wide" id="ob-geo">${icon('locate')}現在地から始める</button>${TRIAL_ON ? `<button class="btn wide" id="ob-trial">${icon('foot')}お試し歩きで始める（家で試す）</button>` : ''}<button class="btn ghost wide" id="ob-later">あとで</button></div>` : `<div class="actions"><button class="btn primary wide" id="ob-next">つぎへ</button><button class="btn ghost wide" id="ob-skip">とばす</button></div>`}`;
+      ${last ? `<div class="note">歩きながら画面を見ない・運転中は使わない・お店では店の方の迷惑にならないように、お願いします。</div><p class="ob-howto"><a href="howto.html" target="_blank" rel="noopener">くわしい使い方を見る</a></p><div class="note">位置（座標）は送りません。参加の人数を数えるために、スタンプを押した店の番号と日時などを、名前のない、ランダムな番号といっしょに送ります（設定で止められます）。</div><p class="ob-agree">始めると、<a href="privacy.html" target="_blank" rel="noopener">プライバシーポリシー</a>に同意したことになります。</p><div class="actions"><button class="btn primary wide" id="ob-geo">${icon('locate')}現在地から始める</button>${TRIAL_ON ? `<button class="btn wide" id="ob-trial">${icon('foot')}お試し歩きで始める（家で試す）</button>` : ''}<button class="btn ghost wide" id="ob-later">あとで</button></div><p class="ob-transfer"><button type="button" class="linkbtn" id="ob-take">前の端末から引き継ぐ（引き継ぎコード）</button></p>` : `<div class="actions"><button class="btn primary wide" id="ob-next">つぎへ</button><button class="btn ghost wide" id="ob-skip">とばす</button></div>`}`;
     if (!last) { $('#ob-next').onclick = () => { i++; draw(); }; $('#ob-skip').onclick = () => { i = pages.length - 1; draw(); }; }
-    else { const done = (mode) => { const nm = cleanHandle($('#ob-name') ? $('#ob-name').value : ''); if (nm) { S.settings.handle = nm; save(); } S.settings.policy = POLICY_VER; save(); $('#onboard').hidden = true; onDone(mode); }; /* 始めた＝プライバシーポリシーに同意（v0.20.1） */ $('#ob-geo').onclick = () => done('geo'); if ($('#ob-trial')) $('#ob-trial').onclick = () => done('trial'); $('#ob-later').onclick = () => done('later'); } };
+    else { const done = (mode) => { const nm = cleanHandle($('#ob-name') ? $('#ob-name').value : ''); if (nm) { S.settings.handle = nm; save(); } S.settings.policy = POLICY_VER; save(); $('#onboard').hidden = true; onDone(mode); }; /* 始めた＝プライバシーポリシーに同意（v0.20.1） */ $('#ob-geo').onclick = () => done('geo'); if ($('#ob-trial')) $('#ob-trial').onclick = () => done('trial'); $('#ob-later').onclick = () => done('later'); $('#ob-take').onclick = () => { $('#onboard').hidden = true; openTakeCode(() => setTimeout(() => location.reload(), 600), () => { $('#onboard').hidden = false; }); }; } }; // 引き継ぎコード（v0.22.0）
   $('#onboard').hidden = false; draw();
 }

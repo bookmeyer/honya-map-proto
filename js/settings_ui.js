@@ -1,17 +1,18 @@
 // 設定の画面と、そこから開くもの：見た目・着せ替え・アイコン・ハンドルネーム・参加コード・送るもののお知らせ・記録を守る・Googleマップの★
-import { SKINS, MAP_SKINS, APP_VER, TRIAL_ON, PROFILE_ON, POLICY_VER } from './config.js?v=0.21.2';
-import { openProfile, profileSummary } from './profile_ui.js?v=0.21.2';
-import { openAvatarPicker } from './setup_ui.js?v=0.21.2';
-import { $, esc, fmtDist, icon, $$, mobileOS, isStandalone, emit, todayISO } from './util.js?v=0.21.2';
-import { S, save, parseImport, replace, reset, exportJSON } from './state.js?v=0.21.2';
-import { sfx } from './audio.js?v=0.21.2';
-import { POS } from './position.js?v=0.21.2';
-import { addCustom, STORES, DATA_DATE, rebuild, unhideAll } from './data.js?v=0.21.2';
-import * as MAP from './map.js?v=0.21.2';
-import * as E from './events.js?v=0.21.2';
-import * as GI from './gimport.js?v=0.21.2';
-import { openModal, closeModal, toast, refreshHud, switchView, confirmBox } from './ui.js?v=0.21.2';
-import { applyMapStates, updateNear, updateAreaChip, setTrialUI } from './map_ui.js?v=0.21.2';
+import { SKINS, MAP_SKINS, APP_VER, TRIAL_ON, PROFILE_ON, POLICY_VER } from './config.js?v=0.22.0';
+import { openProfile, profileSummary } from './profile_ui.js?v=0.22.0';
+import { openAvatarPicker } from './setup_ui.js?v=0.22.0';
+import { openGiveCode, openTakeCode } from './transfer_ui.js?v=0.22.0';
+import { $, esc, fmtDist, icon, $$, mobileOS, isStandalone, emit, todayISO } from './util.js?v=0.22.0';
+import { S, save, parseImport, replace, reset, exportJSON } from './state.js?v=0.22.0';
+import { sfx } from './audio.js?v=0.22.0';
+import { POS } from './position.js?v=0.22.0';
+import { addCustom, STORES, DATA_DATE, rebuild, unhideAll } from './data.js?v=0.22.0';
+import * as MAP from './map.js?v=0.22.0';
+import * as E from './events.js?v=0.22.0';
+import * as GI from './gimport.js?v=0.22.0';
+import { openModal, closeModal, toast, refreshHud, switchView, confirmBox } from './ui.js?v=0.22.0';
+import { applyMapStates, updateNear, updateAreaChip, setTrialUI } from './map_ui.js?v=0.22.0';
 
 // ---------- Googleマップの★を読み込む ----------
 export function googleHelp() {
@@ -66,6 +67,7 @@ export function renderSettings() {
     ${mobileOS() ? `<div class="setting"><div><div class="l">記録を守る</div><div class="s">${isStandalone() ? 'ホーム画面のアイコンから開いています。記録が消えにくい開き方です' : 'ホーム画面に追加して、アイコンから開くと、記録が消えにくくなります'}</div></div>${isStandalone() ? '' : '<button class="btn" id="st-home">やり方</button>'}</div>` : ''}
     <div class="setting"><div><div class="l">書き出す</div><div class="s">（読んだ場所・最後にいた場所も入ります。人に渡さないでください）スタンプ・カード・ページをファイルに</div></div><button class="btn" id="st-export">書き出す</button></div>
     <div class="setting"><div><div class="l">読み込む</div><div class="s">書き出したファイルから置き換え</div></div><label class="btn">読み込む<input type="file" id="st-import" accept="application/json" hidden></label></div>
+    <div class="setting stack"><div><div class="l">引き継ぎコード</div><div class="s">機種変更や、ホーム画面のアイコンに移すときに。記録を暗号にして24時間だけ預け、新しい端末でコードを入れて受け取ります（運営も中身を読めません）</div></div><div class="avatar-ctl"><button class="btn" id="st-tc-give">コードを出す</button><button class="btn" id="st-tc-take">コードで受け取る</button></div></div>
     <div class="setting"><div><div class="l">店の情報の直し</div><div class="s">${hid.length || Object.keys(S.renames || {}).length ? `閉店 ${hid.length}件・名前の直し ${Object.keys(S.renames || {}).length}件（この端末の地図。書き出しに含まれます）` : 'まだありません（店のページの「閉店している」「名前が違う」から）'}。「運営にも知らせる」を選ぶと、確かめてから、みんなの地図も直します${(S.repOut || []).length ? `（まだ送れていない報告 ${S.repOut.length}件）` : ''}</div></div><button class="btn" id="st-unhide" ${hid.length || Object.keys(S.renames || {}).length ? '' : 'disabled'}>戻す</button></div>
     <div class="setting"><div><div class="l">すべて消す</div><div class="s">この端末の記録を消します。戻せません</div></div><button class="btn danger" id="st-clear">消す</button></div>
     <div id="st-area"></div>
@@ -96,6 +98,8 @@ export function renderSettings() {
   $$('#view-settings [data-mapskin]').forEach((b) => { b.onclick = () => { s.mapSkin = b.dataset.mapskin; save(); applySkin(); renderSettings(); toast('地図の色を変えました（地図のタブで見られます）', 'ok'); }; });
   $('#st-sound').onclick = () => { s.sound = !s.sound; save(); renderSettings(); if (s.sound) sfx.click(); };
   $('#st-tour').onclick = () => emit('tour');
+  $('#st-tc-give').onclick = () => openGiveCode();
+  $('#st-tc-take').onclick = () => openTakeCode(renderSettings); // 引き継ぎコード（v0.22.0）
   if ($('#st-profile')) $('#st-profile').onclick = () => openProfile(renderSettings);
   if ($('#st-trial')) $('#st-trial').onclick = () => { setTrialUI(!POS.fake); renderSettings(); };
   $('#st-export').onclick = exportFile;

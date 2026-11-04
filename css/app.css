@@ -498,3 +498,8 @@ ul.plain,ol.plain{padding-left:1.2em;margin:8px 0;line-height:1.7;font-size:14px
 .setup .onboard-box::after{height:0}
 /* 最初の案内の絵が見出しにかぶる（v0.21.2：最後の1枚は下の説明・ボタンが多く、絵の場所が縮んで絵がはみ出していた）→ 絵の場所は絵より小さくしない */
 .onboard .art{flex:1 0 auto;padding-bottom:10px}
+/* 引き継ぎコード（v0.22.0） */
+.tc-code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:28px;font-weight:700;letter-spacing:.06em;text-align:center;background:var(--card);border:2px solid var(--edge);border-radius:var(--r-m);padding:12px 8px;margin:6px 0 12px;user-select:all}
+#tc-in{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:20px;letter-spacing:.06em;text-transform:uppercase;text-align:center}
+.ob-transfer{text-align:center;margin:10px 0 0}
+.linkbtn{background:none;border:0;padding:6px 4px;color:var(--ink-2);font-weight:700;font-size:13px;text-decoration:underline;cursor:pointer}
