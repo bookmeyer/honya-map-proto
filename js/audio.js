@@ -1,9 +1,12 @@
 // 音（部品ファイルなしで、その場で合成）。振動は使わない（2026-10-17 ぶっくまさんの指示）
 // 材料：マリンバ風の打音（mallet）・鐘（bell）・弦をはじく音（pluck）・低い打音（thump）・小さな「ぽ」（pop）。
 // すべて残響（convolver）とコンプレッサーを通すので、安っぽい電子音にならない
-import { S } from './state.js?v=0.22.2';
+import { S } from './state.js?v=0.23.0';
 
 let ctx = null, bus = null;
+// マナーモードのときは鳴らさない・聞いている音楽やラジオを止めない（v0.23.0 テストプレイの声「iPhoneだとマナーモードでも鳴る」）。
+// iPhone の Safari が持つ「音の種類」の指定。ambient＝マナーモードに従い、ほかの音と重ねて鳴らす種類。できないブラウザでは何もしない
+try { if (navigator.audioSession) navigator.audioSession.type = 'ambient'; } catch (e) {}
 function ac() { if (!ctx) { try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { ctx = null; } } if (ctx && ctx.state === 'suspended') ctx.resume().catch(() => {}); return ctx; }
 export function unlock() { const c = ac(); if (!c) return; try { const o = c.createOscillator(); const g = c.createGain(); g.gain.value = 0; o.connect(g).connect(c.destination); o.start(); o.stop(c.currentTime + 0.01); } catch (e) {} }
 // 残響の種（短く減衰する雑音）

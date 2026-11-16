@@ -1,9 +1,9 @@
 // シェア用の画像（スタンプ・常連度・カード・プレイヤーカード）
-import { prefOf, stars, fmtDate, todayISO } from './util.js?v=0.22.2';
-import { S } from './state.js?v=0.22.2';
-import { stampInk, stampSVG, rarityOf, rarityText } from './data.js?v=0.22.2';
-import { snapshotAt } from './map.js?v=0.22.2';
-import { regularInfo } from './game.js?v=0.22.2';
+import { prefOf, stars, fmtDate, todayISO } from './util.js?v=0.23.0';
+import { S } from './state.js?v=0.23.0';
+import { stampInk, stampSVG, rarityOf, rarityText } from './data.js?v=0.23.0';
+import { snapshotAt } from './map.js?v=0.23.0';
+import { regularInfo } from './game.js?v=0.23.0';
 
 const PAPER = '#FFF8EA', INK = '#1B1B1B', INK2 = '#5A554D', SHU = '#FF6A48', LINE = '#1B1B1B';
 const DISP = '"Mochiy Pop P One","Zen Maru Gothic","Hiragino Sans",sans-serif', BODY = '"Zen Maru Gothic","Hiragino Sans",sans-serif';
@@ -31,7 +31,7 @@ export async function stampImage(st, opts = {}) {
   return await new Promise((res) => cv.toBlob(res, 'image/png'));
 }
 // カード（本との出会い）
-export async function cardImage(c) {
+export async function cardImage(c, opts = {}) {
   const W = 720, H = 960, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
   g.fillStyle = PAPER; g.fillRect(0, 0, W, H); g.strokeStyle = LINE; g.lineWidth = 4; rrect(g, 24, 24, W - 48, H - 48, 28); g.stroke();
   let coverDrawn = false;
@@ -57,7 +57,7 @@ export async function profileImage({ level, title, st, topStamps, avatar, handle
   rows.forEach(([l, n], i) => { const x = 80 + i * 240; g.fillStyle = '#FFF3C2'; rrect(g, x, 340, 210, 140, 24); g.fill(); g.strokeStyle = INK; g.lineWidth = 3; g.stroke(); g.fillStyle = SHU; g.font = `64px ${DISP}`; g.textAlign = 'center'; g.fillText(String(n), x + 105, 425); g.fillStyle = INK2; g.font = `26px ${BODY}`; g.fillText(l, x + 105, 465); });
   let x = 80; for (const s of topStamps.slice(0, 4)) { try { const im = await svgToImage(stampSVG(s, true, 220, { rank: regularInfo(s.i).rank })); g.drawImage(im, x, 520, 220, 220); } catch (e) {} x += 240; }
   g.textAlign = 'left'; g.fillStyle = INK2; g.font = `28px ${BODY}`; g.fillText(`${todayISO()} 時点`, 80, 810);
-  footer(g, W, H);
+  footer(g, W, H, opts.tags || '#本めぐり');
   return await new Promise((res) => cv.toBlob(res, 'image/png'));
 }
 export async function shareBlob(blob, filename, title, text) {

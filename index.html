@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+P+One&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" integrity="sha384-MinO0mNliZ3vwppuPOUnGa+iq619pfMhLVUXfC4LHwSCvF9H+6P/KO4Q7qBOYV5V" crossorigin="anonymous">
-<link rel="stylesheet" href="css/app.css?v=0.22.2">
+<link rel="stylesheet" href="css/app.css?v=0.23.0">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -36,7 +36,7 @@
   <symbol id="i-radar" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 12 18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></symbol>
   <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4h7a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H4zM20 4h-7a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h7z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
   <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4m0 0h12l-2 4 2 4H5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></symbol>
-  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><path d="M10.54 5.15L10.78 2.07L13.22 2.07L13.46 5.15A7 7 0 0 1 15.81 6.13L18.16 4.12L19.88 5.84L17.87 8.19A7 7 0 0 1 18.85 10.54L21.93 10.78L21.93 13.22L18.85 13.46A7 7 0 0 1 17.87 15.81L19.88 18.16L18.16 19.88L15.81 17.87A7 7 0 0 1 13.46 18.85L13.22 21.93L10.78 21.93L10.54 18.85A7 7 0 0 1 8.19 17.87L5.84 19.88L4.12 18.16L6.13 15.81A7 7 0 0 1 5.15 13.46L2.07 13.22L2.07 10.78L5.15 10.54A7 7 0 0 1 6.13 8.19L4.12 5.84L5.84 4.12L8.19 6.13A7 7 0 0 1 10.54 5.15Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.9"/></symbol>
   <symbol id="i-crown" viewBox="0 0 24 24"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z" fill="currentColor"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3 2 21h20z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 9v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17.5" r="1.2" fill="currentColor"/></symbol>
@@ -54,25 +54,27 @@
   <div class="brand"><svg class="seal" aria-hidden="true"><use href="#i-seal"></use></svg><div><div id="brand-title" class="brand-name"></div><div class="brand-sub">本めぐり</div></div></div>
   <div class="hud">
     <button id="lv-btn" class="lv" aria-label="巻（物語の進み）"><span id="lv-label">第1巻</span><i class="xpbar"><b id="xp-fill"></b></i></button>
-    <button id="btn-settings" class="icon-btn" aria-label="設定"><svg class="ic"><use href="#i-gear"></use></svg></button>
+    <button id="btn-settings" class="icon-btn gear-b" aria-label="設定"><svg class="ic"><use href="#i-gear"></use></svg><span class="gl" aria-hidden="true">設定</span></button>
   </div>
 </header>
 
 <main id="main">
   <section id="view-map" class="view active" aria-label="地図">
     <div id="map"></div>
-    <div id="search-box"><svg class="ic sicon"><use href="#i-search"></use></svg><input id="search" type="search" placeholder="店の名前や住所でさがす" autocomplete="off" aria-label="店をさがす"><div id="search-results" class="dropdown" hidden></div></div>
+    <div id="search-box" hidden><svg class="ic sicon"><use href="#i-search"></use></svg><input id="search" type="search" placeholder="店の名前や住所でさがす" autocomplete="off" aria-label="店をさがす"><div id="search-results" class="dropdown" hidden></div></div>
     <div class="map-ctl">
-      <button id="btn-locate" class="fab" title="現在地を追う" aria-label="現在地を追う"><svg class="ic"><use href="#i-locate"></use></svg></button>
+      <button id="btn-search" class="fab" title="店をさがす" aria-label="店をさがす" aria-expanded="false"><svg class="ic"><use href="#i-search"></use></svg></button>
       <button id="btn-trial" class="fab" title="お試し歩き" aria-label="お試し歩き" hidden><svg class="ic"><use href="#i-foot"></use></svg></button>
       <button id="btn-warp" class="fab" title="本屋の近くへワープ" aria-label="本屋の近くへワープ" hidden><svg class="ic"><use href="#i-warp"></use></svg></button>
-      <button id="btn-add" class="fab" title="地図にない本屋を知らせる" aria-label="地図にない本屋を知らせる"><svg class="ic"><use href="#i-add"></use></svg></button>
     </div>
     <div id="trial-banner" class="pill-banner" hidden><svg class="ic"><use href="#i-foot"></use></svg>お試し歩き中（地図を押すと、そこへ移動）</div>
     <div id="bottom-dock">
+      <button id="btn-locate" class="fab dock-fab" title="現在地を追う" aria-label="現在地を追う"><svg class="ic"><use href="#i-locate"></use></svg></button>
       <div id="want-alert" hidden></div>
-      <div class="dock-row"><button id="event-chip" class="ticket ev" hidden aria-label="開催中のイベント"></button><button id="area-chip" class="area-chip" hidden></button><button id="mission-chip" class="ticket" hidden aria-label="きょうのお題"></button></div>
-      <div id="radar-items" class="chips"></div>
+      <div id="status-card" class="status-dock" hidden>
+        <button id="sc-near" class="sc-near" hidden></button>
+        <div class="sc-pills"><button id="event-chip" class="sc-pill ev" hidden aria-label="開催中のイベント"></button><button id="mission-chip" class="sc-pill mi" hidden aria-label="きょうのお題"></button><button id="area-chip" class="sc-pill ar" hidden></button><button id="sc-more" class="sc-more" hidden></button></div>
+      </div>
       <div id="read-btn" class="read-btn" hidden></div>
     </div>
   </section>
@@ -138,6 +140,6 @@
 <div id="toasts" aria-live="polite"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js" integrity="sha384-SYKAG6cglRMN0RVvhNeBY0r3FYKNOJtznwA0v7B5Vp9tr31xAHsZC0DqkQ/pZDmj" crossorigin="anonymous"></script>
-<script type="module" src="js/main.js?v=0.22.2"></script>
+<script type="module" src="js/main.js?v=0.23.0"></script>
 </body>
 </html>

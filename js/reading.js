@@ -1,11 +1,11 @@
 // 読書：いま読んでいる本・読書の時間（はじめる〜おわる）・どこで読んだか・前回の本。画面は reading_ui.js
 // 中の名前は v0.14 の「移動読書」のなごり：S.trip＝いま計っている読書／S.reads＝おわった読書／S.trips の read=1＝v0.14.0〜0.14.3 の読書の記録（allReads でいっしょに数える）
-import { READ } from './config.js?v=0.22.2';
-import { emit, todayISO, dist, fmtDist, on, fmtDate, fmtMin } from './util.js?v=0.22.2';
-import { S, save } from './state.js?v=0.22.2';
-import { POS } from './position.js?v=0.22.2';
-import { STORES, BYID } from './data.js?v=0.22.2';
-import * as G from './game.js?v=0.22.2';
+import { READ } from './config.js?v=0.23.0';
+import { emit, todayISO, dist, fmtDist, on, fmtDate, fmtMin } from './util.js?v=0.23.0';
+import { S, save } from './state.js?v=0.23.0';
+import { POS } from './position.js?v=0.23.0';
+import { STORES, BYID } from './data.js?v=0.23.0';
+import * as G from './game.js?v=0.23.0';
 
 // 読書を取り消す（「読んでいなかった」）。v0.14.3 までの記録（店と店のあいだに入れていた分）にも使える
 export function undoRead(id) {
@@ -32,8 +32,11 @@ export const readingFromCard = (c) => addReading({ title: c.title, author: c.aut
 export function finishReading(id) { const b = (S.reading || []).find((x) => x.id === id); if (!b || b.done) return null; const read = S.trip && S.trip.book === id ? endTrip() : null; /* 読書中なら、ここまでの時間を残して終える（v0.15.1。前は記録せずに消えていた） */ b.done = todayISO(); b.tDone = Date.now(); if (S.lastBook === id) S.lastBook = ''; save(); emit('records'); return { book: b, read: read && read.min >= 1 ? read : null }; } // 本と、ここまでの読書（1分より短いときは null）
 export function unfinishReading(id) { const b = (S.reading || []).find((x) => x.id === id); if (!b) return; b.done = ''; b.tDone = 0; save(); emit('records'); }
 export function dropReading(id) { S.reading = (S.reading || []).filter((x) => x.id !== id); if (S.trip && S.trip.book === id) S.trip.book = ''; /* 読書は続ける（本だけ外す。v0.15.1） */ if (S.lastBook === id) S.lastBook = ''; save(); emit('trip'); emit('records'); }
-// 読書中：はじめてから12時間を過ぎたものは、押したまま忘れたものとして流す
-export function activeTrip() { if (S.trip && Date.now() - S.trip.t > 12 * 3600 * 1000) { S.trip = null; save(); } return S.trip || null; }
+// 読書中。v0.22 までは、はじめてから12時間を過ぎると記録せずに流していた。v0.23.0 からは消さずに残し、次に開いたときに「いつまで読んだか」を聞く
+// （reading_ui.js の checkForgot。テストプレイの声「終わるのを忘れてしまいます」）
+export const STALE_MS = 12 * 3600 * 1000;
+export const tripStale = (tr = S.trip) => !!tr && Date.now() - tr.t > STALE_MS;
+export function activeTrip() { return S.trip || null; }
 export const tripMin = (tr = S.trip) => (tr ? Math.floor((Date.now() - tr.t) / 60000) : 0);
 // どこで読んだか（v0.15.0）：「読書をはじめる」と「おわる」はアプリを開いて押すので、その2か所だけはわかる（閉じていたあいだの道のりはわからない）
 // 本屋・図書館のそば（100m）＝「○○のそばで」／はじめとおわりが1km以上＝「移動しながら」／ほか＝「その場で」。場所は端末の中だけ。設定で止められる（S.settings.readPlace）
@@ -72,13 +75,17 @@ export function setTripBook(id) { const tr = activeTrip(); if (!tr) return; tr.b
 function lastBook() { const id = S.lastBook !== undefined ? S.lastBook : ([...(S.reads || [])].reverse().find((r) => !r.off && r.book) || {}).book || ''; return id && reading().some((b) => b.id === id) ? id : ''; }
 export function cancelTrip() { S.trip = null; save(); emit('trip'); }
 // 読書を終える（「おわる」・おわるを押し忘れて次の本屋に着いたとき）。読んだ時間だけページ（1分で1ページ・1回60ページまで）。1分より短いときは記録しない
-export function endTrip(at = Date.now(), auto = false, endPos = null) {
+// chosen：あとから「いつまで読んだか」を選んだとき（v0.23.0）。endPos が false なら、読み終えた場所はわからないので残さない
+// 12時間を過ぎたものを、選ばずに終えるとき（めぐり帳で「読み終わった」など）は、これまでどおり記録しない
+export function endTrip(at = Date.now(), auto = false, endPos = null, chosen = false) {
   const tr = S.trip; if (!tr) return null; S.trip = null;
+  if (!chosen && at - tr.t > STALE_MS) { save(); emit('trip'); return { min: 0, stale: 1 }; }
   const min = Math.min(READ.maxMin, Math.floor((at - tr.t) / 60000));
   if (min < 1) { save(); emit('trip'); return { min: 0 }; }
   const bk = tr.book ? (S.reading || []).find((b) => b.id === tr.book) : null;
   const r = { id: 'r' + at, d: todayISO(new Date(tr.t)), t0: tr.t, t1: at, min, pg: Math.min(READ.maxPg, Math.round(min * READ.pgPerMin)), book: bk ? bk.id : '', title: bk ? bk.title : '', from: tr.from || '', fn: tr.fn || '', auto: auto ? 1 : 0 };
-  if (placeOn()) { r.p0 = tr.p0 || null; r.p1 = endPos || herePos(60000); r.pl = placeOf(r.p0, r.p1); if (!r.p1) r.p1wait = 1; } // どこで読んだか（v0.15.0）
+  if (chosen) r.late = 1; // あとから長さを選んだ記録
+  if (placeOn()) { r.p0 = tr.p0 || null; if (endPos === false) { r.p1 = null; r.pl = null; } else { r.p1 = endPos || herePos(60000); r.pl = placeOf(r.p0, r.p1); if (!r.p1) r.p1wait = 1; } } // どこで読んだか（v0.15.0）
   S.reads = S.reads || []; S.reads.push(r); if (S.reads.length > 1000) S.reads.splice(0, S.reads.length - 1000);
   G.addPages(r.pg); save(); emit('trip'); emit('records'); return r;
 }

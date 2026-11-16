@@ -1,12 +1,12 @@
 // 旅の記録：歩いた距離（ページ）・その日の物語・月のふり返り・行きたい店のお知らせ・投稿の記録・Googleマップの★の読み込み・店と店のあいだ・読書・いま読んでいる本
 // 位置は、アプリを開いて現在地を追っているあいだだけ使う（ブラウザの決まりで、閉じているあいだは測れない）。閉じていたあいだの道のりは、次の店でスタンプを押したときに、前の店からのまっすぐの距離で足す（v0.14）
-import { WALK, RANGE_M, SEG } from './config.js?v=0.22.2';
-import { todayISO, dist, emit, hash32, prefOf, fmtDist, monthKey, fmtMin } from './util.js?v=0.22.2';
-import { S, save } from './state.js?v=0.22.2';
-import { POS } from './position.js?v=0.22.2';
-import { BYID, STORES, rarityOf } from './data.js?v=0.22.2';
-import * as G from './game.js?v=0.22.2';
-import { activeTrip, endTrip, readTimes, readMinOf, allReads } from './reading.js?v=0.22.2';
+import { WALK, RANGE_M, SEG } from './config.js?v=0.23.0';
+import { todayISO, dist, emit, hash32, prefOf, fmtDist, monthKey, fmtMin } from './util.js?v=0.23.0';
+import { S, save } from './state.js?v=0.23.0';
+import { POS } from './position.js?v=0.23.0';
+import { BYID, STORES, rarityOf } from './data.js?v=0.23.0';
+import * as G from './game.js?v=0.23.0';
+import { activeTrip, tripStale, endTrip, readTimes, readMinOf, allReads } from './reading.js?v=0.23.0';
 
 function dayRec(d = todayISO()) { S.days = S.days || {}; const r = (S.days[d] = S.days[d] || { m: 0, v: 0 }); r.pass = r.pass || {}; r.alert = r.alert || {}; return r; }
 export const pagesOf = (m) => Math.floor((m || 0) / WALK.pageM);
@@ -62,7 +62,7 @@ export function arrive(st, { near, trial }) {
   const now = Date.now(), today = todayISO();
   const pv = G.lastNearVisitToday();
   const a = pv && pv.s !== st.i ? BYID.get(pv.s) : null;
-  const auto = activeTrip() && S.trip.from !== st.i ? endTrip(now, true, [st.la, st.lo]) : null; // 「おわる」を押し忘れたまま次の本屋に着いた → ここで終える（このときだけ、スタンプまでの時間）
+  const auto = activeTrip() && !tripStale() && S.trip.from !== st.i ? endTrip(now, true, [st.la, st.lo]) : null; /* 12時間を過ぎたものは終えずに残し、開いたときに聞く（v0.23.0） */ // 「おわる」を押し忘れたまま次の本屋に着いた → ここで終える（このときだけ、スタンプまでの時間）
   const g = { id: 'g' + now, d: today, t: now, to: st.i };
   if (a) {
     const m = dist(a.la, a.lo, st.la, st.lo), dt = Math.max(1, (now - pv.t) / 1000), day = dayRec();

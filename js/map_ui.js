@@ -1,17 +1,17 @@
 // 地図の画面：現在地まわり（射程・いちばん近い店）・ピンの状態・現在地とお試し歩き・店のページ・さがす・店を足す・行きたい店のお知らせ
-import { RANGE_M, TERRITORY_M, PG, TRIAL_ON, PREFS } from './config.js?v=0.22.2';
-import { $, arrowOf, bearing, icon, fmtDist, esc, dist, $$, emit, fmtDate, gmapDir, stars, gmapPlace, prefOf } from './util.js?v=0.22.2';
-import { S, save } from './state.js?v=0.22.2';
-import { unlock, sfx } from './audio.js?v=0.22.2';
-import { hasPos, POS, startWatch, setTrial, setPos, jumped } from './position.js?v=0.22.2';
-import { STORES, BYID, isLib, isFeat, rarityOf, pickOpen, placeWord, bookTitle, stampSVG, rarityText, lookupIsbn, hideStore, renameStore, search, FEAT } from './data.js?v=0.22.2';
-import * as MAP from './map.js?v=0.22.2';
-import * as G from './game.js?v=0.22.2';
-import * as E from './events.js?v=0.22.2';
-import * as J from './journey.js?v=0.22.2';
-import { dirLink, openModal, closeModal, stopLinks, toast, closeSheet, refreshHud, currentView, switchView } from './ui.js?v=0.22.2';
-import { startCheckin, shareStampUI } from './checkin_ui.js?v=0.22.2';
-import { startCard } from './card_ui.js?v=0.22.2';
+import { RANGE_M, TERRITORY_M, PG, TRIAL_ON, PREFS } from './config.js?v=0.23.0';
+import { $, arrowOf, bearing, icon, fmtDist, esc, dist, $$, emit, fmtDate, gmapDir, stars, gmapPlace, prefOf } from './util.js?v=0.23.0';
+import { S, save } from './state.js?v=0.23.0';
+import { unlock, sfx } from './audio.js?v=0.23.0';
+import { hasPos, POS, startWatch, setTrial, setPos, jumped } from './position.js?v=0.23.0';
+import { STORES, BYID, isLib, isFeat, rarityOf, pickOpen, placeWord, bookTitle, stampSVG, rarityText, lookupIsbn, hideStore, renameStore, search, FEAT } from './data.js?v=0.23.0';
+import * as MAP from './map.js?v=0.23.0';
+import * as G from './game.js?v=0.23.0';
+import * as E from './events.js?v=0.23.0';
+import * as J from './journey.js?v=0.23.0';
+import { dirLink, openModal, closeModal, stopLinks, toast, closeSheet, refreshHud, currentView, switchView, syncStatusCard } from './ui.js?v=0.23.0';
+import { startCheckin, shareStampUI } from './checkin_ui.js?v=0.23.0';
+import { startCard } from './card_ui.js?v=0.23.0';
 
 // ---------- 行きたい店のお知らせ（地図の下に出る帯） ----------
 let waTimer = null;
@@ -29,10 +29,10 @@ export function showWantAlerts(list) {
 // ---------- 地図に映っている範囲の行きたい店（出かける前の下見に） ----------
 export function updateAreaChip() {
   const chip = $('#area-chip'); const m = MAP.M.map;
-  if (!chip || !m || !S.wants.length || m.getZoom() < 10) { if (chip) chip.hidden = true; return; }
+  if (!chip || !m || !S.wants.length || m.getZoom() < 10) { if (chip) { chip.hidden = true; syncStatusCard(); } return; }
   const b = m.getBounds(); const list = J.wantsInBounds({ s: b.getSouth(), n: b.getNorth(), w: b.getWest(), e: b.getEast() });
-  if (!list.length) { chip.hidden = true; return; }
-  chip.innerHTML = `${icon('heart')}この辺りに行きたい店 ${list.length}店`; chip.hidden = false;
+  if (!list.length) { chip.hidden = true; syncStatusCard(); return; }
+  chip.innerHTML = `${icon('heart')}<span>行きたい店 ${list.length}</span>`; chip.setAttribute('aria-label', `この辺りに行きたい店 ${list.length}店`); chip.hidden = false; syncStatusCard();
   chip.onclick = () => {
     const c = m.getCenter(); const rows = list.map((st) => ({ st, d: dist(c.lat, c.lng, st.la, st.lo) })).sort((a, b) => a.d - b.d);
     openModal(`<h2>この辺りの行きたい店</h2><p class="hint">地図に映っている範囲です。出かける前に、行き先の地図を開くだけで分かります。</p><div class="list">${rows.map(({ st, d }) => `<div class="item" data-id="${esc(st.i)}"><div class="main"><div class="name">${esc(st.n)}</div><div class="sub">地図の真ん中から ${fmtDist(d)}</div></div>${dirLink(st)}</div>`).join('')}</div><div class="actions"><button class="btn ghost wide" id="ar-close">閉じる</button></div>`);
@@ -45,18 +45,35 @@ const GLOW_MAX = 3; // 地図で光の輪を付けるのは、射程内のうち
 // ---------- 現在地まわりの表示（レーダーの帯・最初のクエスト・縁の光） ----------
 // 近づいたときの画面の縁の光・音・振動は使わない（2026-10-17 ぶっくまさんの指示）。射程に入ったらトーストで知らせるだけ
 export function updateNear() {
-  const strip = $('#radar-items'); // 「いちばん近い本屋 ○○まで あと○m」の帯は外した（下の店のチップと同じなので。11/3 ぶっくまさん）
-  if (!hasPos()) { NEAR.list = []; NEAR.inRange = new Set(); NEAR.glow = new Set(); strip.innerHTML = ''; applyMapStates(); emit('near'); return; }
+  // 「いちばん近い本屋」の帯（11/3 に外した）と、下に並べていた8枚の店のチップは、v0.23.0 で札の1行目にまとめた（テストプレイの声「画面の四角が多い」）
+  if (!hasPos()) { NEAR.list = []; NEAR.inRange = new Set(); NEAR.glow = new Set(); renderNearRow(); applyMapStates(); emit('near'); return; }
   const cand = []; for (const s of STORES) { if (Math.abs(s.la - POS.lat) > 0.03 || Math.abs(s.lo - POS.lon) > 0.036) continue; cand.push({ s, d: dist(POS.lat, POS.lon, s.la, s.lo) }); }
   cand.sort((a, b) => a.d - b.d); NEAR.list = cand.slice(0, 30);
   const now = new Set(NEAR.list.filter((x) => x.d <= RANGE_M).map((x) => x.s.i));
   NEAR.glow = new Set(NEAR.list.filter((x) => x.d <= RANGE_M).slice(0, GLOW_MAX).map((x) => x.s.i));
   const entered = [...now].filter((id) => !NEAR.inRange.has(id)); NEAR.inRange = now;
   if (entered.length) { const first = BYID.get(entered[0]); toast(`📍 ${first.n}${entered.length > 1 ? ` ほか${entered.length - 1}店` : ''} が射程に入りました`, 'ok'); }
-  strip.innerHTML = NEAR.list.slice(0, 8).map(({ s, d }) => `<div class="rchip ${d <= RANGE_M ? 'in' : ''}" data-id="${esc(s.i)}"><div class="n">${G.hasStamp(s.i) ? icon('check') : ''}${isFeat(s.i) ? '👑 ' : ''}${esc(s.n)}</div><div class="d"><span>${d <= RANGE_M ? '射程内！' : `あと${fmtDist(d - RANGE_M)} ${arrowOf(bearing(POS.lat, POS.lon, s.la, s.lo))}`}</span><span class="stars">${'★'.repeat(rarityOf(s))}</span></div></div>`).join('');
-  $$('#radar-items .rchip').forEach((el) => el.addEventListener('click', () => openSheet(el.dataset.id)));
+  renderNearRow();
   applyMapStates(); emit('near');
   refreshSheet();
+}
+// 札の1行目：いちばん近い店と、あと何m（射程に入ったら黄色）。押すと店のページ。「近く○店 ›」は、ちかくの画面へ
+function renderNearRow() {
+  const row = $('#sc-near'), more = $('#sc-more'); if (!row || !more) return;
+  const first = NEAR.list[0];
+  if (!first) { row.hidden = true; more.hidden = true; syncStatusCard(); return; }
+  const { s, d } = first, inR = d <= RANGE_M;
+  row.className = 'sc-near' + (inR ? ' in' : ''); row.dataset.id = s.i; row.hidden = false;
+  row.innerHTML = `${G.hasStamp(s.i) ? icon('check', 'ck') : icon('pin', 'pin')}<b>${isFeat(s.i) ? '👑 ' : ''}${esc(s.n)}</b><span class="d">${inR ? '射程内！' : `あと${fmtDist(d - RANGE_M)} ${arrowOf(bearing(POS.lat, POS.lon, s.la, s.lo))}`}</span>`;
+  row.setAttribute('aria-label', `いちばん近い店：${s.n}。${inR ? '射程内' : `あと${fmtDist(d - RANGE_M)}`}`);
+  row.onclick = () => openSheet(s.i);
+  const n = Math.min(NEAR.list.length, 30); more.textContent = `近く${n}店 ›`; more.hidden = n < 2; more.onclick = () => switchView('radar');
+  syncStatusCard();
+}
+// 札の高さに合わせて、地図の左下の文字（出典）を札の上に出す
+export function watchDock() {
+  const dock = $('#bottom-dock'), view = $('#view-map'); if (!dock || !view || !window.ResizeObserver) return;
+  new ResizeObserver(() => { view.style.setProperty('--dock-h', `${Math.round(dock.offsetHeight)}px`); }).observe(dock);
 }
 // 開いている店のページを描き直す。名前の直し・閉店の確かめを開いているあいだは描き直さない（v0.16.0）
 export function refreshSheet() { const sheet = $('#sheet'); if (!sheet.hidden && sheet.dataset.id && !$('#sheet-extra').childElementCount) openSheet(sheet.dataset.id, true); }
@@ -175,12 +192,17 @@ export function openSheet(id, quiet) {
   if (!quiet) { if (currentView !== 'map') switchView('map'); MAP.flyTo(st.lo, st.la, 14); G.noteLook(id).forEach((x) => toast(x, 'ok')); refreshHud(); }
 }
 // ---------- さがす・追加 ----------
+// v0.23.0：検索窓はふだんしまっておき、右上の虫めがねで開く（テストプレイの声「画面の四角が多い」）。＋（地図にない本屋）は、見つからなかったときに出す
 export function setupSearch() {
-  const inp = $('#search'), res = $('#search-results');
+  const inp = $('#search'), res = $('#search-results'), box = $('#search-box'), btn = $('#btn-search');
+  const setOpen = (on) => { box.hidden = !on; btn.classList.toggle('on', on); btn.setAttribute('aria-expanded', String(on)); btn.innerHTML = icon(on ? 'close' : 'search'); btn.setAttribute('aria-label', on ? '検索を閉じる' : '店をさがす'); if (on) inp.focus(); else { inp.value = ''; res.hidden = true; res.innerHTML = ''; inp.blur(); } };
+  btn.onclick = () => setOpen(box.hidden);
+  inp.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
   inp.addEventListener('input', () => { if (!inp.value.trim()) { res.hidden = true; res.innerHTML = ''; return; } const hits = search(inp.value);
-    res.innerHTML = hits.map((s) => `<div class="item" data-id="${esc(s.i)}">${isFeat(s.i) ? '👑 ' : ''}${esc(s.n)} <span class="stars">${'★'.repeat(rarityOf(s))}</span><div class="muted small">${esc(s.a || prefOf(s))}</div></div>`).join('') || '<div class="item muted">見つかりません。＋ で地図に追加できます</div>'; res.hidden = false;
-    $$('#search-results .item[data-id]').forEach((el) => el.addEventListener('click', () => { res.hidden = true; inp.value = ''; const st = BYID.get(el.dataset.id); openSheet(st.i); MAP.flyTo(st.lo, st.la, 15); })); });
-  inp.addEventListener('blur', () => setTimeout(() => { res.hidden = true; }, 200));
+    res.innerHTML = hits.map((s) => `<div class="item" data-id="${esc(s.i)}">${isFeat(s.i) ? '👑 ' : ''}${esc(s.n)} <span class="stars">${'★'.repeat(rarityOf(s))}</span><div class="muted small">${esc(s.a || prefOf(s))}</div></div>`).join('') || '<div class="item muted">見つかりません</div><div class="item add-link" id="sr-add">＋ 地図にない本屋を知らせる</div>'; res.hidden = false;
+    $$('#search-results .item[data-id]').forEach((el) => el.addEventListener('click', () => { const st = BYID.get(el.dataset.id); setOpen(false); openSheet(st.i); MAP.flyTo(st.lo, st.la, 15); }));
+    const add = $('#sr-add'); if (add) add.addEventListener('click', () => { setOpen(false); startAdd(); }); });
+  inp.addEventListener('blur', () => setTimeout(() => { res.hidden = true; if (!inp.value.trim() && document.activeElement !== inp) setOpen(false); }, 200));
 }
 // 地図にない本屋（v0.18.1）：運営に知らせるだけ。運営が確かめて承認すると、みんなの地図に出る（11/3 ぶっくまさん「運営の承認のみにしたいです」）
 // 前は、自分の地図にすぐ足していた（S.custom）。前に足した店は、その人の地図にそのまま残す

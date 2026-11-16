@@ -1,17 +1,29 @@
 // 本のカード：本と出会った（バーコード・書名でさがす・名前）→ カードの画面
-import { PG } from './config.js?v=0.22.2';
-import { esc, icon, $, fmtDate, todayISO, emit } from './util.js?v=0.22.2';
-import { S } from './state.js?v=0.22.2';
-import { sfx, haptic } from './audio.js?v=0.22.2';
-import { POS } from './position.js?v=0.22.2';
-import { placeWord, isLib } from './data.js?v=0.22.2';
-import * as G from './game.js?v=0.22.2';
-import { cardImage, shareBlob } from './share.js?v=0.22.2';
-import * as R from './reading.js?v=0.22.2';
-import { openModal, closeModal, searchBook, scanIsbn, stopScan, toast, refreshHud, setSub, switchView, confirmBox } from './ui.js?v=0.22.2';
-import { applyMapStates, openSheet } from './map_ui.js?v=0.22.2';
+import { PG } from './config.js?v=0.23.0';
+import { esc, icon, $, fmtDate, todayISO, emit } from './util.js?v=0.23.0';
+import { S } from './state.js?v=0.23.0';
+import { sfx, haptic } from './audio.js?v=0.23.0';
+import { POS } from './position.js?v=0.23.0';
+import { placeWord, isLib, BYID } from './data.js?v=0.23.0';
+import * as G from './game.js?v=0.23.0';
+import * as E from './events.js?v=0.23.0';
+import { cardImage, shareBlob } from './share.js?v=0.23.0';
+import * as R from './reading.js?v=0.23.0';
+import { openModal, closeModal, searchBook, scanIsbn, stopScan, toast, refreshHud, setSub, switchView, confirmBox } from './ui.js?v=0.23.0';
+import { applyMapStates, openSheet } from './map_ui.js?v=0.23.0';
 
 // ---------- カード ----------
+// カードをシェアする（v0.23.0：カードができた画面からも。テストプレイの声「この書店でこの本を買いました、を共有したい」・ぶっくまさん「シェアしやすい形が良い」）
+// イベントの店で出会った本は、イベントのハッシュタグも入れる（スタンプのシェアと同じ）。アプリのURLは、まだ入れない（決まった方だけに見せている時期）
+async function shareCard(c, out) {
+  try {
+    const st = BYID.get(c.s), fr = E.storeFrame(c.s); // スタンプを押したイベント＋いま開催中で、この店が対象のイベント
+    const evTags = st ? E.liveEvents().filter((e) => E.isTarget(e, st)).map((e) => e.hashtag || '') : [];
+    const tags = [...new Set(['#本めぐり', ...[(fr && fr.hashtag) || '', ...evTags].join(' ').split(/\s+/).filter(Boolean)])].join(' ');
+    const blob = await cardImage(c, { tags }); const r = await shareBlob(blob, `card-${c.d}.png`, c.title, `${c.sn}で『${c.title}』と出会った ${tags}`);
+    if (r !== 'cancel') { G.noteShare('card', c.s, r); toast(r === 'saved' ? '画像を保存しました' : 'シェアしました', 'ok'); }
+  } catch (e) { if (out) out.innerHTML = '<p class="muted small">画像にできませんでした（表紙の画像が外部のため、ブラウザが書き出しを止めることがあります）。</p>'; }
+}
 export function startCard(st) {
   openModal(`<h2>この${placeWord(st)}で本と出会った</h2><p class="hint">${esc(st.n)}${isLib(st) ? '　借りた本も、裏のバーコードで読めます' : ''}</p>
     <div class="note">カードは +${PG.card}ページ。今日この店でスタンプを押していれば「店で出会った」+${PG.cardInStore}ページ。</div>
@@ -38,8 +50,8 @@ function cardForm(st, b) {
 function cardDone(st, c, res, inStore) {
   const go = inStore && !POS.fake && !st.demo && !R.activeTrip(); const inR = R.inReading(c);
   openModal(`<h2>カードができました</h2><div class="card-full"><div class="cover">${c.cover ? `<img src="${esc(c.cover)}" alt="" referrerpolicy="no-referrer">` : '<div class="notitle">表紙なし</div>'}</div><div style="flex:1;min-width:0"><div><b>${esc(c.title)}</b></div><div class="muted small">${esc(c.sn)}　${fmtDate(c.d)}</div><div class="gain-s">+${res.total}ページ${res.lv.after > res.lv.before ? `　📖 第${res.lv.after}巻に入った！` : ''}</div></div></div>
-    <div class="actions">${go ? `<button class="btn primary wide" id="cs-go">📖 この本で読書をはじめる</button>` : ''}<button class="btn ${go ? '' : 'primary '}wide" id="cs-read"${inR ? ' disabled' : ''}>${inR ? 'いま読んでいる本に入っています' : 'いま読んでいる本に入れる'}</button><button class="btn wide" id="cs-see">めぐり帳で見る</button><button class="btn ghost wide" id="cs-close">閉じる</button></div>`);
-  $('#cs-close').onclick = closeModal;
+    <div class="actions">${go ? `<button class="btn primary wide" id="cs-go">📖 この本で読書をはじめる</button>` : ''}<button class="btn ${go ? '' : 'primary '}wide" id="cs-read"${inR ? ' disabled' : ''}>${inR ? 'いま読んでいる本に入っています' : 'いま読んでいる本に入れる'}</button><button class="btn wide" id="cs-share">${icon('share')}シェアする</button><button class="btn wide" id="cs-see">めぐり帳で見る</button><button class="btn ghost wide" id="cs-close">閉じる</button></div><div id="cs-out"></div>`);
+  $('#cs-close').onclick = closeModal; $('#cs-share').onclick = () => shareCard(c, $('#cs-out'));
   $('#cs-see').onclick = () => { closeModal(); setSub('cards'); switchView('zukan'); };
   if (!inR) $('#cs-read').onclick = () => { R.readingFromCard(c); $('#cs-read').disabled = true; $('#cs-read').textContent = 'いま読んでいる本に入れました'; };
   if (go) $('#cs-go').onclick = () => { const b = R.readingFromCard(c); closeModal(); emit('read-start', { book: b.id }); };
@@ -51,5 +63,5 @@ export function openCard(id) {
     <div class="actions"><button class="btn primary" id="cv-img">${icon('share')}画像にする</button><button class="btn" id="cv-store">店を地図で見る</button><button class="btn danger" id="cv-del">${icon('trash')}消す</button><button class="btn ghost" id="cv-close">閉じる</button></div><div id="cv-out"></div>`);
   $('#cv-close').onclick = closeModal; $('#cv-store').onclick = () => { closeModal(); openSheet(c.s); };
   $('#cv-del').onclick = () => confirmBox($('#cv-out'), 'このカードを消しますか？ 戻せません。', () => { G.deleteCard(id); closeModal(); toast('消しました'); });
-  $('#cv-img').onclick = async () => { try { const blob = await cardImage(c); const r = await shareBlob(blob, `card-${c.d}.png`, c.title, `${c.sn}で『${c.title}』と出会った #本めぐり`); if (r !== 'cancel') G.noteShare('card', c.s, r); if (r !== 'cancel') toast(r === 'saved' ? '画像を保存しました' : 'シェアしました', 'ok'); } catch (e) { $('#cv-out').innerHTML = '<p class="muted small">画像にできませんでした（表紙の画像が外部のため、ブラウザが書き出しを止めることがあります）。</p>'; } };
+  $('#cv-img').onclick = () => shareCard(c, $('#cv-out'));
 }

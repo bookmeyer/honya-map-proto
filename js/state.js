@@ -1,12 +1,12 @@
 // 記録（この端末の中だけ）。版の違いを吸収して読み込み、まとめて書き込む
-import { SKINS, MAP_SKINS, STORAGE_KEY, LEGACY_KEYS, APP_VER, PROFILE_Q } from './config.js?v=0.22.2';
-import { $, emit, debounce } from './util.js?v=0.22.2';
+import { SKINS, MAP_SKINS, STORAGE_KEY, LEGACY_KEYS, APP_VER, PROFILE_Q } from './config.js?v=0.23.0';
+import { $, emit, debounce } from './util.js?v=0.23.0';
 
 export const empty = () => ({
   v: 4, visits: [], cards: [], wants: [], custom: [], stamps: {}, pg: 0, pgDay: {},
   claimedW: {}, claimedD: {}, rallyDone: {}, featDone: {}, looks: {},
   hidden: {}, renames: {}, days: {}, posts: [], shares: [], reading: [], trips: [], trip: null, seen: 0, lastPos: null, shareCount: 0, evLog: {}, evTitles: [], outbox: [], repOut: [],
-  settings: { theme: 'light', sound: true, avatar: '', handle: '', wantAlert: true, wantAlertM: 2000, dev: '', joinCode: '', privacyV10: 0 }, createdAt: Date.now(),
+  settings: { theme: 'light', sound: false, avatar: '', handle: '', wantAlert: true, wantAlertM: 2000, dev: '', joinCode: '', privacyV10: 0 }, createdAt: Date.now(),
 });
 export let S = empty();
 // 読み込んだ記録の確かめ（v0.15.3 セキュリティ）：__proto__ などの名前は入れない・入れ物の型・日付・数・アイコン・URL・座標・着せ替えの名前
@@ -72,6 +72,8 @@ function ensure(j) {
   // v0.9.1：明るい見た目が基本。これまでの「自動」は一度だけ「明」に置き換える（端末が暗い設定だと、アプリまで暗くなっていたため）。自分で選び直した「自動」はそのまま
   if (out.settings.theme === 'auto' && !out.settings.themeV9) out.settings.theme = 'light';
   out.settings.themeV9 = 1;
+  // v0.23.0：音は最初「なし」に（本屋さんや図書館は静かな場所なので。テストプレイの声「マナーモードでも鳴る」）。いま使っている人も一度だけ「なし」に戻す。そのあと自分でONにしたものはそのまま
+  if (!out.settings.soundV23) { out.settings.sound = false; out.settings.soundV23 = 1; }
   if (j && j.claimed && !j.claimedW) out.claimedW = j.claimed; // 旧版
   if (j && j.pg == null && j.xp != null) out.pg = Math.round(j.xp / 10); // 経験値（XP）→ ページ（10分の1）
   delete out.xp;

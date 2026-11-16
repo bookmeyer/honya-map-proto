@@ -1,12 +1,12 @@
 // 画面の共通の部品：トースト・モーダル・確かめの箱・タブの切りかえ・見出し帯・地図の下のチケット・バーコードの読み取り・書名でさがす・道順のボタン
-import { pagesForVol } from './config.js?v=0.22.2';
-import { gmapDir, $$, icon, $, esc, emit } from './util.js?v=0.22.2';
-import { S } from './state.js?v=0.22.2';
-import { haptic } from './audio.js?v=0.22.2';
-import { lookupIsbn, lookupBook, searchBooks, coversOf } from './data.js?v=0.22.2';
-import * as MAP from './map.js?v=0.22.2';
-import * as G from './game.js?v=0.22.2';
-import * as E from './events.js?v=0.22.2';
+import { pagesForVol } from './config.js?v=0.23.0';
+import { gmapDir, $$, icon, $, esc, emit } from './util.js?v=0.23.0';
+import { S } from './state.js?v=0.23.0';
+import { haptic } from './audio.js?v=0.23.0';
+import { lookupIsbn, lookupBook, searchBooks, coversOf } from './data.js?v=0.23.0';
+import * as MAP from './map.js?v=0.23.0';
+import * as G from './game.js?v=0.23.0';
+import * as E from './events.js?v=0.23.0';
 
 export const dirLink = (st, label = '道順') => `<a class="btn" href="${gmapDir(st)}" target="_blank" rel="noopener" data-stop>${label}</a>`;
 export const stopLinks = (root) => $$('[data-stop]', root).forEach((a) => a.addEventListener('click', (e) => e.stopPropagation()));
@@ -33,23 +33,35 @@ export function refreshHud() {
   $('#brand-title').textContent = S.settings.handle || G.currentTitle() || '本屋あるき見習い';
   renderMissionChip(); renderEventChip();
 }
-// 開催中のイベントのチケット（地図の下）。押すとラリーの画面のイベントへ
+// 地図の下の札（v0.23.0 テストプレイの声「画面の四角が多い」）：1行目＝いちばん近い店（map_ui.js）、2行目＝開催中・お題・行きたい店・近く○店
+// 中身がひとつもないときは、札ごと出さない
+export function syncStatusCard() {
+  const card = $('#status-card'); if (!card) return;
+  const any = [...card.querySelectorAll('#sc-near, .sc-pills > *')].some((el) => !el.hidden);
+  card.hidden = !any;
+}
+// 開催中のイベント（札の2行目）。押すとラリーの画面のイベントへ
 export function renderEventChip() {
   const el = $('#event-chip'); if (!el) return;
-  const e = E.liveEvents()[0]; if (!e) { el.hidden = true; return; }
-  const n = E.evCount(e.id); el.hidden = false; el.style.setProperty('--evc', e.frame.color);
-  el.innerHTML = `<span class="stub">開催中</span><span class="body"><span class="l">あと${E.daysLeft(e)}日${E.liveEvents().length > 1 ? `・ほか${E.liveEvents().length - 1}つ` : ''}</span><span class="m">${esc(e.name)}${e.goal ? `　${Math.min(n, e.goal.count)}/${e.goal.count}軒` : ''}</span></span>`;
+  const e = E.liveEvents()[0]; if (!e) { el.hidden = true; syncStatusCard(); return; }
+  const n = E.evCount(e.id); const more = E.liveEvents().length - 1; el.hidden = false; el.style.setProperty('--evc', e.frame.color);
+  const short = (e.frame && e.frame.label) || e.name;
+  el.innerHTML = `<i>開催中</i><span>${esc(short)}${e.goal ? ` ${Math.min(n, e.goal.count)}/${e.goal.count}軒` : `・あと${E.daysLeft(e)}日`}${more > 0 ? `・ほか${more}つ` : ''}</span>`;
+  el.setAttribute('aria-label', `開催中のイベント：${e.name}（あと${E.daysLeft(e)}日）`);
   el.onclick = () => { switchView('mission'); setTimeout(() => { const c = $('#event-list'); if (c) c.scrollIntoView({ block: 'start', behavior: 'smooth' }); }, 60); };
+  syncStatusCard();
 }
-// きょうのお題のチケット（地図の下）。押すとお題の画面へ
+// きょうのお題（札の2行目）。押すとお題の画面へ
 export function renderMissionChip() {
   const el = $('#mission-chip'); if (!el) return;
-  let ms; try { ms = G.dailyMissions(); } catch (e) { el.hidden = true; return; }
-  if (!ms || !ms.length) { el.hidden = true; return; }
+  let ms; try { ms = G.dailyMissions(); } catch (e) { el.hidden = true; syncStatusCard(); return; }
+  if (!ms || !ms.length) { el.hidden = true; syncStatusCard(); return; }
   const done = ms.filter((m) => m.cur >= m.goal).length; const nxt = ms.find((m) => m.cur < m.goal);
   el.hidden = false; el.classList.toggle('done', !nxt);
-  el.innerHTML = `<span class="stub">${done}/${ms.length}</span><span class="body"><span class="l">きょうのお題</span><span class="m">${nxt ? `${esc(nxt.name)}・あと ${Math.max(0, nxt.goal - nxt.cur)}` : 'ぜんぶ達成！'}</span></span>`;
+  el.innerHTML = `<i>お題</i><span>${nxt ? `${done}/${ms.length}` : 'ぜんぶ達成！'}</span>`;
+  el.setAttribute('aria-label', nxt ? `きょうのお題 ${done}/${ms.length}。次は「${nxt.name}」あと${Math.max(0, nxt.goal - nxt.cur)}` : 'きょうのお題 ぜんぶ達成');
   el.onclick = () => switchView('mission');
+  syncStatusCard();
 }
 export function closeSheet() { const s = $('#sheet'); s.hidden = true; s.dataset.id = ''; }
 // バーコードの読み取り・書名でさがすは、カードといま読んでいる本の登録で使う（見つかった本を done に渡す。v0.14）

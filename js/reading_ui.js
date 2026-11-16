@@ -1,11 +1,12 @@
 // 読書・いま読んでいる本の画面（v0.14。v0.14.7 で「移動読書」から「読書」に：止まって読む人もいるので）
 // 地図の大きなボタン「読書をはじめる」で時間を計りはじめ（本も読みかたも選ばない）、読み終えたら「おわる」で止める（v0.14.4）。読んだ時間だけページが増える
 // アプリは閉じてよい（時刻で計る）。読んでいる本は、読書中のボタンを押したときに、えらびたい人だけえらぶ
-import { esc, icon, $, $$, fmtDate, fmtMin } from './util.js?v=0.22.2';
-import { S, save } from './state.js?v=0.22.2';
-import { POS } from './position.js?v=0.22.2';
-import * as R from './reading.js?v=0.22.2';
-import { closeModal, toast, openModal, stopScan, scanIsbn, searchBook, confirmBox } from './ui.js?v=0.22.2';
+import { esc, icon, $, $$, fmtDate, fmtMin, todayISO } from './util.js?v=0.23.0';
+import { READ } from './config.js?v=0.23.0';
+import { S, save } from './state.js?v=0.23.0';
+import { POS } from './position.js?v=0.23.0';
+import * as R from './reading.js?v=0.23.0';
+import { closeModal, toast, openModal, stopScan, scanIsbn, searchBook, confirmBox } from './ui.js?v=0.23.0';
 
 const cover = (b) => `<div class="rcover">${b.cover ? `<img src="${esc(b.cover)}" alt="" referrerpolicy="no-referrer" loading="lazy">` : icon('book')}</div>`;
 const hm = (t) => { const d = new Date(t); return `${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`; };
@@ -22,16 +23,47 @@ export function renderReadBtn() {
   el.innerHTML = tr ? `<button class="rb-main" id="rb-main"><span class="rb-i">📖</span><span class="rb-t"><b>読書中</b><span class="rb-b${b ? '' : ' pick'}">${b ? `『${esc(b.title)}』 ›` : '本をえらぶ ›'}</span></span><span class="rb-s">${m < 1 ? 'はじめたところ' : fmtMin(m)}</span></button><button class="rb-end" id="rb-end">おわる</button>` : '<button class="rb-go" id="rb-go"><span class="rb-i">📖</span><span class="rb-t">読書をはじめる</span></button>';
   if (tr) { $('#rb-main').onclick = openTrip; $('#rb-end').onclick = finishTrip; } else $('#rb-go').onclick = () => openReadStart();
 }
-// 「おわる」：読んだ時間を記録して、ページを足す
+// 「おわる」：読んだ時間を記録して、ページを足す。12時間を過ぎていたら、いつまで読んだかを聞く（v0.23.0）
 export function finishTrip() {
+  const tr = R.activeTrip(); if (tr && R.tripStale(tr)) { openForgot(tr); return; }
   const r = R.endTrip(); closeModal();
   if (r && r.min >= 1) toast(`📖 読書 ${fmtMin(r.min)}　+${r.pg}ページ${r.pl ? `（${R.placeText(r.pl)}）` : ''}`, 'ok'); else toast('1分より短かったので、記録しませんでした');
+}
+// ---------- 「おわる」の押し忘れ（v0.23.0 テストプレイの声「終わるのを忘れてしまいます」） ----------
+// 読書をはじめて1時間を過ぎてからアプリを開くと「読書中のままでした」と出し、読んだ長さを、だいたいで選んでもらう。
+// 「まだ読んでいる」なら、そのまま続ける（それから1時間は聞かない）。12時間を過ぎていても消さずに聞く（このときは「いままで」と「まだ読んでいる」を出さない）
+const ASK_AFTER = 60 * 60000, ASK_AGAIN = 60 * 60000;
+const lenText = (m) => (m < 60 ? `${m}分` : m % 60 === 0 ? `${m / 60}時間` : m % 60 === 30 ? `${Math.floor(m / 60)}時間半` : `${Math.floor(m / 60)}時間${m % 60}分`);
+const busy = () => !!$('#setup') || !$('#modal').hidden || !$('#onboard').hidden || !!$('#tour') || !!document.querySelector('.capture:not([hidden])');
+export function checkForgot(tries = 0) {
+  const tr = R.activeTrip(); if (!tr || POS.fake) return;
+  const el = Date.now() - tr.t; if (el < ASK_AFTER) return;
+  if (!R.tripStale(tr) && tr.askAt && Date.now() - tr.askAt < ASK_AGAIN) return;
+  if (busy()) { if (tries < 90) setTimeout(() => checkForgot(tries + 1), 1000); return; } // はじめの設定・お知らせ・画面の案内が閉じてから
+  openForgot(tr);
+}
+export function openForgot(tr) {
+  const elMin = Math.floor((Date.now() - tr.t) / 60000), stale = R.tripStale(tr);
+  tr.askAt = Date.now(); save(); // 閉じただけのときも、1時間は聞かない
+  const opts = [15, 30, 45, 60, 90, 120, 180].filter((m) => m < elMin).slice(0, stale ? 6 : 5);
+  const now = Math.min(elMin, READ.maxMin);
+  const opt = (m) => `<button class="btn" data-m="${m}"><b>${lenText(m)}</b><small>${hm(tr.t + m * 60000)}まで</small></button>`;
+  openModal(`<h2>📖 読書中のままでした</h2><div class="muted small">${stale ? `${fmtDate(todayISO(new Date(tr.t)))} ` : ''}${hm(tr.t)} から、${lenText(elMin)}たっています</div>
+    <p class="hint" style="margin-top:10px">「おわる」を押し忘れていませんか？ 読んだ長さを、だいたいで選んでください。その分だけ記録して、ページを足します。</p>
+    <div class="fq">${opts.map(opt).join('')}${stale ? '' : `<button class="btn now" data-m="${now}"><b>いままで</b><small>${lenText(now)}${elMin > READ.maxMin ? 'まで' : ''}</small></button>`}</div>
+    <div class="actions">${stale ? '' : '<button class="btn wide" id="fg-keep">まだ読んでいる</button>'}<button class="btn ghost wide" id="fg-drop">記録しない</button></div>`);
+  $$('#modal-box .fq [data-m]').forEach((b) => b.addEventListener('click', () => {
+    const m = Number(b.dataset.m); const r = R.endTrip(tr.t + m * 60000, false, false, true); closeModal();
+    if (r && r.min >= 1) toast(`📖 読書 ${fmtMin(r.min)}　+${r.pg}ページ`, 'ok');
+  }));
+  if ($('#fg-keep')) $('#fg-keep').onclick = () => { closeModal(); toast('📖 読書をつづけます。読み終えたら「おわる」を押してください'); };
+  $('#fg-drop').onclick = () => { R.cancelTrip(); closeModal(); toast('読書をやめました（記録していません）'); };
 }
 // ---------- 読書をはじめる：押すだけで始まる。はじめての時だけ、使い方を1回 ----------
 export function openReadStart({ book = '' } = {}) {
   const go = () => { R.startTrip(book); closeModal(); const b = tripBook(R.activeTrip()); toast(b ? `📖『${b.title}』の読書をはじめました（本を変えるときは、読書中のボタンを押す）` : '📖 読書をはじめました。読み終えたら「おわる」を押してください', 'ok'); };
   if (S.settings.readTip) { go(); return; }
-  openModal(`<h2>読書をはじめる</h2><ul class="plain"><li>本を読む時間を計ります。電車の中でも、カフェでも。耳で聞くのも</li><li>読み終えたら「おわる」を押します。読んだ時間だけページが増えます（1分で1ページ）</li><li>読んでいる本は、読書中のボタンの「本をえらぶ」から（えらばなくても大丈夫です）</li><li>歩くあいだは、しまってください。アプリは閉じて大丈夫です</li></ul>
+  openModal(`<h2>読書をはじめる</h2><ul class="plain"><li>本を読む時間を計ります。電車の中でも、カフェでも。耳で聞くのも</li><li>読み終えたら「おわる」を押します。読んだ時間だけページが増えます（1分で1ページ）</li><li>読んでいる本は、読書中のボタンの「本をえらぶ」から（えらばなくても大丈夫です）</li><li>歩くあいだは、しまってください。アプリは閉じて大丈夫です</li><li>「おわる」を押し忘れても大丈夫です。1時間を過ぎてから開くと、読んだ長さを聞きます</li></ul>
     <div class="actions"><button class="btn primary wide" id="rs-go">📖 はじめる</button><button class="btn ghost wide" id="rs-close">やめる</button></div>`);
   $('#rs-close').onclick = closeModal; $('#rs-go').onclick = () => { S.settings.readTip = 1; save(); go(); };
 }

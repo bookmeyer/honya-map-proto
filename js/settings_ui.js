@@ -1,18 +1,18 @@
 // 設定の画面と、そこから開くもの：見た目・着せ替え・アイコン・ハンドルネーム・参加コード・送るもののお知らせ・記録を守る・Googleマップの★
-import { SKINS, MAP_SKINS, APP_VER, TRIAL_ON, PROFILE_ON, POLICY_VER } from './config.js?v=0.22.2';
-import { openProfile, profileSummary } from './profile_ui.js?v=0.22.2';
-import { openAvatarPicker } from './setup_ui.js?v=0.22.2';
-import { openGiveCode, openTakeCode } from './transfer_ui.js?v=0.22.2';
-import { $, esc, fmtDist, icon, $$, mobileOS, isStandalone, emit, todayISO } from './util.js?v=0.22.2';
-import { S, save, parseImport, replace, reset, exportJSON } from './state.js?v=0.22.2';
-import { sfx } from './audio.js?v=0.22.2';
-import { POS } from './position.js?v=0.22.2';
-import { addCustom, STORES, DATA_DATE, rebuild, unhideAll } from './data.js?v=0.22.2';
-import * as MAP from './map.js?v=0.22.2';
-import * as E from './events.js?v=0.22.2';
-import * as GI from './gimport.js?v=0.22.2';
-import { openModal, closeModal, toast, refreshHud, switchView, confirmBox } from './ui.js?v=0.22.2';
-import { applyMapStates, updateNear, updateAreaChip, setTrialUI } from './map_ui.js?v=0.22.2';
+import { SKINS, MAP_SKINS, APP_VER, TRIAL_ON, PROFILE_ON, POLICY_VER } from './config.js?v=0.23.0';
+import { openProfile, profileSummary } from './profile_ui.js?v=0.23.0';
+import { openAvatarPicker } from './setup_ui.js?v=0.23.0';
+import { openGiveCode, openTakeCode } from './transfer_ui.js?v=0.23.0';
+import { $, esc, fmtDist, icon, $$, mobileOS, isStandalone, emit, todayISO } from './util.js?v=0.23.0';
+import { S, save, parseImport, replace, reset, exportJSON } from './state.js?v=0.23.0';
+import { sfx } from './audio.js?v=0.23.0';
+import { POS } from './position.js?v=0.23.0';
+import { addCustom, STORES, DATA_DATE, rebuild, unhideAll } from './data.js?v=0.23.0';
+import * as MAP from './map.js?v=0.23.0';
+import * as E from './events.js?v=0.23.0';
+import * as GI from './gimport.js?v=0.23.0';
+import { openModal, closeModal, toast, refreshHud, switchView, confirmBox } from './ui.js?v=0.23.0';
+import { applyMapStates, updateNear, updateAreaChip, setTrialUI } from './map_ui.js?v=0.23.0';
 
 // ---------- Googleマップの★を読み込む ----------
 export function googleHelp() {
@@ -60,7 +60,7 @@ export function renderSettings() {
     ${s.wantAlert !== false ? `<div class="setting"><div><div class="l">お知らせする距離</div><div class="s">この距離に入ったときと、500mに入ったとき</div></div><div class="seg3" id="st-want-m">${[1000, 2000, 5000].map((m) => `<button data-m="${m}" class="${(s.wantAlertM || 2000) === m ? 'active' : ''}">${m / 1000}km</button>`).join('')}</div></div>` : ''}
     <div class="setting"><div><div class="l">読んだ場所を残す</div><div class="s">読書をはじめた所とおわった所を、この端末の中だけに残します（送りません）。物語に「○○書店のそばで」「移動しながら」と書き、地図に📖の印を出します</div></div><button class="switch ${s.readPlace !== false ? 'on' : ''}" id="st-readplace" role="switch" aria-checked="${s.readPlace !== false}" aria-label="読んだ場所を残す"></button></div>
     <div class="setting stack"><div><div class="l">Googleマップの★</div><div class="s">Googleマップで★を付けた本屋を「行きたい」にまとめて入れます${S.gimport ? `（前回 ${S.gimport.n}店）` : ''}</div></div><div class="avatar-ctl"><button class="btn ghost" id="st-ghelp">読み込み方</button><label class="btn">読み込む<input type="file" id="st-gimport" accept=".json,.csv,application/json,text/csv" multiple hidden></label></div></div>
-    <div class="setting"><div><div class="l">音</div><div class="s">スタンプを押したとき・巻が進んだとき（近づいたときは鳴りません）</div></div><button class="switch ${s.sound ? 'on' : ''}" id="st-sound" role="switch" aria-checked="${s.sound}" aria-label="音"></button></div>
+    <div class="setting"><div><div class="l">音</div><div class="s">スタンプを押したとき・カードができたとき。最初は「なし」です。マナーモードのときは鳴らないようにしています（近づいたときや、歩いて巻が進んだときは鳴りません）</div></div><button class="switch ${s.sound ? 'on' : ''}" id="st-sound" role="switch" aria-checked="${s.sound}" aria-label="音"></button></div>
     ${TRIAL_ON ? `<div class="setting"><div><div class="l">お試し歩き</div><div class="s">地図を押した場所に自分がいることにする（作る人が試す用）</div></div><button class="switch ${POS.fake ? 'on' : ''}" id="st-trial" role="switch" aria-checked="${POS.fake}" aria-label="お試し歩き"></button></div>` : ''}
     ${PROFILE_ON ? `<h3>プロフィール</h3><div class="setting"><div><div class="l">プロフィール</div><div class="s">世代・性別・本の買い方など。答えなくても使えます。${esc(profileSummary())}</div></div><button class="btn" id="st-profile">入れる・変える</button></div>` : ''}
     <h3>記録</h3>
@@ -96,7 +96,7 @@ export function renderSettings() {
   $('#st-readplace').onclick = () => { s.readPlace = s.readPlace === false; save(); renderSettings(); emit('records'); toast(s.readPlace === false ? '読んだ場所を残すのを止めました（地図の印も消えます）' : '読んだ場所を残すようにしました', 'ok'); }; // 読んだ場所（v0.15.0）
   $$('#view-settings [data-skin]').forEach((b) => { b.onclick = () => { s.skin = b.dataset.skin; save(); applySkin(); renderSettings(); }; }); // 着せ替え（v0.15.2）
   $$('#view-settings [data-mapskin]').forEach((b) => { b.onclick = () => { s.mapSkin = b.dataset.mapskin; save(); applySkin(); renderSettings(); toast('地図の色を変えました（地図のタブで見られます）', 'ok'); }; });
-  $('#st-sound').onclick = () => { s.sound = !s.sound; save(); renderSettings(); if (s.sound) sfx.click(); };
+  $('#st-sound').onclick = () => { s.sound = !s.sound; s.soundV23 = 1; /* 自分で選んだ音は、次に開いたときもそのまま */ save(); renderSettings(); if (s.sound) sfx.click(); };
   $('#st-tour').onclick = () => emit('tour');
   $('#st-tc-give').onclick = () => openGiveCode();
   $('#st-tc-take').onclick = () => openTakeCode(renderSettings); // 引き継ぎコード（v0.22.0）
