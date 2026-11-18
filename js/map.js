@@ -1,7 +1,7 @@
 // 地図（MapLibre）。店はピンの絵で表示し、固まり（クラスタ）でまとめ、状態は feature-state で軽く更新する
-import { MAP_SKINS, STYLE_DARK, STYLE_LIGHT, TERRITORY_M, RANGE_M } from './config.js?v=0.23.0';
-import { emit, circlePoly } from './util.js?v=0.23.0';
-import { POS } from './position.js?v=0.23.0';
+import { MAP_SKINS, STYLE_DARK, STYLE_LIGHT, TERRITORY_M, RANGE_M } from './config.js?v=0.24.0';
+import { emit, circlePoly } from './util.js?v=0.24.0';
+import { POS } from './position.js?v=0.24.0';
 
 export const M = { map: null, ready: false, theme: 'light' };
 let storesGeo = { type: 'FeatureCollection', features: [] };
@@ -55,11 +55,12 @@ function pickMarkImage() { // 書店員さんの1冊の店（白い丸に朱の�
   page(6.2); page(13);
   return g.getImageData(0, 0, W * s, W * s);
 }
-function readMarkImage() { // 読んだ場所（桃の丸に白い開いた本。図書館のピン＝空と見分けるため桃。v0.15.0）
-  const W = 26, s = 2; const c = document.createElement('canvas'); c.width = W * s; c.height = W * s; const g = c.getContext('2d'); g.scale(s, s);
-  g.beginPath(); g.arc(13, 13, 10.5, 0, Math.PI * 2); g.fillStyle = '#FF7AB6'; g.fill(); g.lineWidth = 1.6; g.strokeStyle = EDGE; g.stroke();
-  g.save(); g.translate(13, 12.6); g.scale(0.66, 0.66); bookPath(g, 0, 0); g.fillStyle = '#FFFFFF'; g.fill(); g.restore();
-  return g.getImageData(0, 0, W * s, W * s);
+function readMarkImage() { // 読んだ場所＝しおり（v0.24.0：しおりをはさんだ所に立てる。桃色は v0.15.0 の丸と同じ。図書館のピン＝空と見分けるため）
+  const W = 22, H = 30, s = 2; const c = document.createElement('canvas'); c.width = W * s; c.height = H * s; const g = c.getContext('2d'); g.scale(s, s);
+  g.beginPath(); g.moveTo(3.5, 2); g.lineTo(18.5, 2); g.lineTo(18.5, 27.5); g.lineTo(11, 21.5); g.lineTo(3.5, 27.5); g.closePath();
+  g.fillStyle = '#FF7AB6'; g.fill(); g.lineWidth = 1.7; g.lineJoin = 'round'; g.strokeStyle = EDGE; g.stroke();
+  g.beginPath(); g.arc(11, 7.5, 2.2, 0, Math.PI * 2); g.fillStyle = '#FFFFFF'; g.fill(); g.lineWidth = 1.3; g.stroke();
+  return g.getImageData(0, 0, W * s, H * s);
 }
 const fs = (k, def = 0) => ['coalesce', ['feature-state', k], def];
 // ---- 開催中のイベントの参加店（対象をしぼったイベントだけ。v0.18.1）：ピンの下に札（枠の名前）、縮めて店が固まっているときは点 ----
@@ -110,14 +111,13 @@ function addLayers() {
   for (const k of Object.keys(PIN)) if (!map.hasImage('pin-' + k)) map.addImage('pin-' + k, pinImage(k), { pixelRatio: 2 });
   if (!map.hasImage('mark-want')) map.addImage('mark-want', markImage(), { pixelRatio: 2 });
   if (!map.hasImage('mark-pick')) map.addImage('mark-pick', pickMarkImage(), { pixelRatio: 2 });
-  if (!map.hasImage('mark-read')) map.addImage('mark-read', readMarkImage(), { pixelRatio: 2 });
+  if (!map.hasImage('mark-shiori')) map.addImage('mark-shiori', readMarkImage(), { pixelRatio: 2 });
   map.addSource('territory', { type: 'geojson', data: territoryGeo });
   map.addLayer({ id: 'territory-fill', type: 'fill', source: 'territory', paint: { 'fill-color': '#4FC07A', 'fill-opacity': ['interpolate', ['linear'], ['coalesce', ['get', 'rank'], 1], 1, 0.14, 5, 0.3] } });
   map.addLayer({ id: 'territory-line', type: 'line', source: 'territory', paint: { 'line-color': '#4FC07A', 'line-opacity': 0.8, 'line-width': 1.5, 'line-dasharray': [2, 1.5] } });
-  // 読んだ場所（店のピンより下）：移動しながら読んだときの点線と、はじめた所の印
+  // 読んだ場所：移動読書の点線（店のピンより下）。しおりと、はじめた所の点は店のピンより上（v0.24.0。下だとピンに埋もれて見えなかった）
   map.addSource('reads', { type: 'geojson', data: readsGeo });
   map.addLayer({ id: 'reads-line', type: 'line', source: 'reads', filter: ['==', ['geometry-type'], 'LineString'], layout: { 'line-cap': 'round' }, paint: { 'line-color': '#FF7AB6', 'line-width': 3, 'line-dasharray': [0.1, 2.2], 'line-opacity': 0.9 } });
-  map.addLayer({ id: 'reads', type: 'symbol', source: 'reads', filter: ['==', ['geometry-type'], 'Point'], layout: { 'icon-image': 'mark-read', 'icon-size': ['interpolate', ['linear'], ['zoom'], 8, 0.55, 15, 0.95], 'icon-allow-overlap': true, 'icon-ignore-placement': true } });
   map.addSource('me', { type: 'geojson', data: meGeo });
   map.addLayer({ id: 'me-acc', type: 'fill', source: 'me', filter: ['==', ['get', 'k'], 'acc'], paint: { 'fill-color': '#2F9BFF', 'fill-opacity': 0.12 } });
   map.addLayer({ id: 'me-range', type: 'line', source: 'me', filter: ['==', ['get', 'k'], 'range'], paint: { 'line-color': '#2F9BFF', 'line-width': 1.5, 'line-dasharray': [2, 2], 'line-opacity': 0.85 } });
@@ -144,19 +144,21 @@ function addLayers() {
   map.addLayer({ id: 'stores-near', type: 'symbol', source: 'stores', filter: unc, layout: sym('pin-near', ['interpolate', ['linear'], ['zoom'], 8, 0.6, 12, 0.8, 15, 1.05]), paint: { 'icon-opacity': fs('near') } });
   map.addLayer({ id: 'stores-want', type: 'symbol', source: 'stores', filter: unc, layout: { 'icon-image': 'mark-want', 'icon-size': ['interpolate', ['linear'], ['zoom'], 8, 0.5, 15, 0.8], 'icon-anchor': 'bottom-left', 'icon-offset': [10, -34], 'icon-allow-overlap': true, 'icon-ignore-placement': true }, paint: { 'icon-opacity': fs('want') } });
   map.addLayer({ id: 'stores-pick', type: 'symbol', source: 'stores', filter: ['all', unc, ['==', ['get', 'pk'], 1]], layout: { 'icon-image': 'mark-pick', 'icon-size': ['interpolate', ['linear'], ['zoom'], 8, 0.5, 15, 0.8], 'icon-anchor': 'bottom-right', 'icon-offset': [-10, -34], 'icon-allow-overlap': true, 'icon-ignore-placement': true } });
+  map.addLayer({ id: 'reads-start', type: 'circle', source: 'reads', filter: ['all', ['==', ['geometry-type'], 'Point'], ['==', ['get', 'k'], 'start']], paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, 2.5, 15, 4.5], 'circle-color': '#FF7AB6', 'circle-stroke-color': EDGE, 'circle-stroke-width': 1.4 } });
+  map.addLayer({ id: 'reads', type: 'symbol', source: 'reads', filter: ['all', ['==', ['geometry-type'], 'Point'], ['==', ['get', 'k'], 'at']], layout: { 'icon-image': 'mark-shiori', 'icon-size': ['interpolate', ['linear'], ['zoom'], 8, 0.7, 15, 1.1], 'icon-anchor': 'bottom', 'icon-allow-overlap': true, 'icon-ignore-placement': true } });
   // 札（ピンの先の下）。ほかの印（行きたい＝右上・書店員さんの1冊＝左上）と重ならない場所
   map.addLayer({ id: 'ev-tag', type: 'symbol', source: 'evstores', minzoom: 10, layout: { 'text-field': ['get', 'lb'], 'text-font': ['Noto Sans Bold'], 'text-size': ['interpolate', ['linear'], ['zoom'], 10, 9, 15, 12], 'text-anchor': 'top', 'text-offset': [0, 0.5], 'text-allow-overlap': true, 'text-ignore-placement': true, 'icon-image': 'ev-tag', 'icon-text-fit': 'both', 'icon-text-fit-padding': [3, 7, 2, 7], 'icon-allow-overlap': true, 'icon-ignore-placement': true }, paint: { 'text-color': evStyle.ink } });
   map.addLayer({ id: 'me-dot', type: 'circle', source: 'me', filter: ['==', ['get', 'k'], 'me'], paint: { 'circle-radius': 9, 'circle-color': ['case', ['==', ['get', 'fake'], 1], '#A86CFF', '#FFFFFF'], 'circle-stroke-width': 2.5, 'circle-stroke-color': '#1B1B1B' } });
   avatarLayer(map); // 自分のアイコンがあれば、現在地の点の上に
   if (!bound) { bound = true; // 押したときの受け口は1回だけ（v0.16.0：明・暗を切りかえるたびに増えていた）
+  // しおりを押したとき（v0.24.0：しおりは店のピンより上に描くので、重なったら見えているしおりを先に。だから店より先に登録する。前は店が先）
+  map.on('click', 'reads', (e) => { if (e.originalEvent._hit) return; const f = e.features && e.features[0]; if (!f) return; e.originalEvent._hit = true; handlers.onReadClick && handlers.onReadClick(f.properties); });
   for (const id of ['stores', 'stores-stamped', 'stores-near', 'stores-pick', 'ev-tag', 'ev-dot']) {
     map.on('click', id, (e) => { if (e.originalEvent._hit) return; const f = e.features && e.features[0]; if (f) { e.originalEvent._hit = true; handlers.onStoreClick && handlers.onStoreClick(f.properties.id); } });
     map.on('mouseenter', id, () => { map.getCanvas().style.cursor = 'pointer'; }); map.on('mouseleave', id, () => { map.getCanvas().style.cursor = ''; });
   }
   map.on('click', 'clusters', (e) => { if (e.originalEvent._hit) return; const f = e.features && e.features[0]; if (!f) return; e.originalEvent._hit = true; map.getSource('stores').getClusterExpansionZoom(f.properties.cluster_id, (err, z) => { if (!err) map.easeTo({ center: f.geometry.coordinates, zoom: Math.min(z + 0.5, 16) }); }); });
   map.on('mouseenter', 'clusters', () => { map.getCanvas().style.cursor = 'pointer'; }); map.on('mouseleave', 'clusters', () => { map.getCanvas().style.cursor = ''; });
-  // 読んだ場所の印を押したとき（店のピンと重なったら店を先に。だから店のあとに登録する）
-  map.on('click', 'reads', (e) => { if (e.originalEvent._hit) return; const f = e.features && e.features[0]; if (!f) return; e.originalEvent._hit = true; handlers.onReadClick && handlers.onReadClick(f.properties); });
   }
   // 保存していた状態を入れ直す（スタイルを替えたときも）
   for (const [id, st] of stateCache) map.setFeatureState({ source: 'stores', id }, st);
@@ -204,8 +206,8 @@ function tintNight() {
   for (const id of ['place_other', 'place_suburb', 'place_village', 'place_town', 'place_city', 'place_city_large', 'place_state', 'place_country_other', 'place_country_minor', 'place_country_major']) { set(id, 'text-color', c.text); set(id, 'text-halo-color', c.halo); }
 }
 function safeAddLayers() { try { hideBasePoi(); tintBase(); tintNight(); addLayers(); } catch (e) { console.error('layers', e); window.__mapErr = String(e && e.message || e); } }
-export function initMap({ center, zoom, theme = 'light', onStoreClick, onMapClick, onDrag }) {
-  handlers = { onStoreClick, onMapClick, onDrag }; M.theme = theme;
+export function initMap({ center, zoom, theme = 'light', onStoreClick, onMapClick, onDrag, onReadClick }) {
+  handlers = { onStoreClick, onMapClick, onDrag, onReadClick }; M.theme = theme; // onReadClick：しおりを押したとき（v0.24.0：v0.15.0 から渡し忘れていて、押しても何も出なかった）
   const map = new maplibregl.Map({ container: 'map', style: theme === 'dark' ? STYLE_DARK : STYLE_LIGHT, center, zoom, attributionControl: false, preserveDrawingBuffer: true, maxZoom: 18 });
   M.map = map;
   map.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-left');
@@ -234,9 +236,10 @@ export function setStates(next) { // Map<id, {stamp, near, feat, want, st}>
 // 押した店のまわりを塗る。常連度が高い店ほど広く・濃く（s.rad と s.rank）
 let terrKey = '';
 export function setTerritory(stores) { const key = stores.map((s) => `${s.i}:${s.rank || 1}`).join(','); if (key === terrKey) return; terrKey = key; /* 変わっていなければ描き直さない（v0.16.0） */ territoryGeo = { type: 'FeatureCollection', features: stores.map((s) => ({ type: 'Feature', geometry: { type: 'Polygon', coordinates: circlePoly(s.lo, s.la, s.rad || TERRITORY_M) }, properties: { rank: s.rank || 1 } })) }; if (M.ready) M.map.getSource('territory').setData(territoryGeo); }
-// 読んだ場所（v0.15.0）：spots＝[{ id, p0:[lat,lon], p1, label }]
+// 読んだ場所（v0.15.0・v0.24.0）：spots＝[{ id, at:[lat,lon]＝しおりをはさんだ所, p0・p1＝移動読書のはじめとおわり（ほかは null）, label }]
 export function setReads(spots) {
-  readsGeo = { type: 'FeatureCollection', features: spots.flatMap((r) => [{ type: 'Feature', geometry: { type: 'Point', coordinates: [r.p0[1], r.p0[0]] }, properties: { id: r.id, label: r.label } }, ...(r.p1 ? [{ type: 'Feature', geometry: { type: 'LineString', coordinates: [[r.p0[1], r.p0[0]], [r.p1[1], r.p1[0]]] }, properties: { id: r.id } }] : [])]) };
+  const pt = (p, props) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [p[1], p[0]] }, properties: props });
+  readsGeo = { type: 'FeatureCollection', features: spots.flatMap((r) => [...(r.p0 && r.p1 ? [{ type: 'Feature', geometry: { type: 'LineString', coordinates: [[r.p0[1], r.p0[0]], [r.p1[1], r.p1[0]]] }, properties: { id: r.id } }, pt(r.p0, { id: r.id, k: 'start' })] : []), pt(r.at, { id: r.id, k: 'at', label: r.label })]) };
   if (M.ready && M.map.getSource('reads')) M.map.getSource('reads').setData(readsGeo);
 }
 export function setMe(POS) {
@@ -251,9 +254,16 @@ export function setMe(POS) {
 export function flyTo(lon, lat, zoom, opts = {}) { if (!M.map) return; M.map.flyTo(Object.assign({ center: [lon, lat], zoom: Math.max(M.map.getZoom(), zoom), speed: 1.2 }, opts)); }
 export function jumpTo(lon, lat, zoom) { if (M.map) M.map.jumpTo({ center: [lon, lat], zoom }); }
 export function easeTo(lon, lat) { if (M.map) M.map.easeTo({ center: [lon, lat], duration: 600 }); }
+// いくつかの点が入るように地図を合わせる（1冊の旅の「地図で見る」。v0.24.0）。pts＝[[lat,lon], …]
+export function fitPoints(pts) {
+  if (!M.map || !pts || !pts.length) return;
+  if (pts.length === 1) { M.map.easeTo({ center: [pts[0][1], pts[0][0]], zoom: Math.max(M.map.getZoom(), 14), duration: 700 }); return; }
+  const b = new maplibregl.LngLatBounds(); pts.forEach((p) => b.extend([p[1], p[0]]));
+  M.map.fitBounds(b, { padding: { top: 150, bottom: 300, left: 50, right: 70 }, maxZoom: 15, duration: 800 });
+}
 export function center() { return M.map ? M.map.getCenter() : { lat: 35.68, lng: 139.77 }; }
 // シェア画像の地図（v0.15.3）：自分の位置・顔写真・読んだ場所を隠し、店のまわりを写してから元に戻す（前は今の画面をそのまま使い、家のまわりや現在地が写ることがあった）
-const PRIVATE_LAYERS = ['me-acc', 'me-range', 'me-dot', 'me-avatar', 'reads', 'reads-line'];
+const PRIVATE_LAYERS = ['me-acc', 'me-range', 'me-dot', 'me-avatar', 'reads', 'reads-line', 'reads-start'];
 export async function snapshotAt(lon, lat, zoom = 15) {
   if (!M.ready) return null; const map = M.map; const cam = { center: map.getCenter(), zoom: map.getZoom(), bearing: map.getBearing(), pitch: map.getPitch() };
   const vis = PRIVATE_LAYERS.filter((id) => map.getLayer(id)).map((id) => [id, map.getLayoutProperty(id, 'visibility') || 'visible']);

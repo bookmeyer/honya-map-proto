@@ -1,31 +1,31 @@
 // 起動：記録を読み、データを取り、地図を出し、部品をつなぐ
-import { APP_VER, TRIAL_ON, POLICY_VER } from './config.js?v=0.23.0';
-import { $, on, $$, isStandalone, mobileOS, emit } from './util.js?v=0.23.0';
-import { load, S, save } from './state.js?v=0.23.0';
-import * as AUDIO from './audio.js?v=0.23.0';
-import { POS, setPos, setFollow, jumped } from './position.js?v=0.23.0';
-import { loadAll, STORES } from './data.js?v=0.23.0';
-import * as MAP from './map.js?v=0.23.0';
-import * as E from './events.js?v=0.23.0';
-import * as J from './journey.js?v=0.23.0';
-import * as R from './reading.js?v=0.23.0';
-import { toast, closeSheet, refreshHud, currentView, switchView, setSub, closeModal } from './ui.js?v=0.23.0';
-import { openSheet, refreshSheet, applyMapStates, updateNear, showWantAlerts, updateAreaChip, setupSearch, watchDock, locate, setTrialUI, warp, goPrefHome } from './map_ui.js?v=0.23.0';
-import * as RU from './reading_ui.js?v=0.23.0';
-import { renderRadar } from './radar_ui.js?v=0.23.0';
-import { renderZukan } from './zukan_ui.js?v=0.23.0';
-import { renderMissions, openEventStores } from './mission_ui.js?v=0.23.0';
-import { joinNotice, privacyNotice, policyNotice, homeTip, renderSettings, applyTheme } from './settings_ui.js?v=0.23.0';
-import { showOnboarding } from './onboard_ui.js?v=0.23.0';
-import * as UI0 from './ui.js?v=0.23.0'; // 試す入口（__honya）用
-import * as MU from './map_ui.js?v=0.23.0'; // 試す入口（__honya）用
-import * as CU from './checkin_ui.js?v=0.23.0'; // 試す入口（__honya）用
-import * as KU from './card_ui.js?v=0.23.0'; // 試す入口（__honya）用
-import * as SU from './settings_ui.js?v=0.23.0'; // 試す入口（__honya）用
-import * as RAD from './radar_ui.js?v=0.23.0'; // 試す入口（__honya）用
-import * as ZU from './zukan_ui.js?v=0.23.0'; // 試す入口（__honya）用
-import { startTour, autoTour } from './tour_ui.js?v=0.23.0';
-import { requireSetup } from './setup_ui.js?v=0.23.0';
+import { APP_VER, TRIAL_ON, POLICY_VER } from './config.js?v=0.24.0';
+import { $, on, $$, isStandalone, mobileOS, emit } from './util.js?v=0.24.0';
+import { load, S, save } from './state.js?v=0.24.0';
+import * as AUDIO from './audio.js?v=0.24.0';
+import { POS, setPos, setFollow, jumped } from './position.js?v=0.24.0';
+import { loadAll, STORES } from './data.js?v=0.24.0';
+import * as MAP from './map.js?v=0.24.0';
+import * as E from './events.js?v=0.24.0';
+import * as J from './journey.js?v=0.24.0';
+import * as R from './reading.js?v=0.24.0';
+import { toast, closeSheet, refreshHud, currentView, switchView, setSub, closeModal } from './ui.js?v=0.24.0';
+import { openSheet, refreshSheet, applyMapStates, updateNear, showWantAlerts, updateAreaChip, setupSearch, watchDock, locate, setTrialUI, warp, goPrefHome } from './map_ui.js?v=0.24.0';
+import * as RU from './reading_ui.js?v=0.24.0';
+import { renderRadar } from './radar_ui.js?v=0.24.0';
+import { renderZukan } from './zukan_ui.js?v=0.24.0';
+import { renderMissions, openEventStores } from './mission_ui.js?v=0.24.0';
+import { joinNotice, privacyNotice, policyNotice, homeTip, renderSettings, applyTheme } from './settings_ui.js?v=0.24.0';
+import { showOnboarding } from './onboard_ui.js?v=0.24.0';
+import * as UI0 from './ui.js?v=0.24.0'; // 試す入口（__honya）用
+import * as MU from './map_ui.js?v=0.24.0'; // 試す入口（__honya）用
+import * as CU from './checkin_ui.js?v=0.24.0'; // 試す入口（__honya）用
+import * as KU from './card_ui.js?v=0.24.0'; // 試す入口（__honya）用
+import * as SU from './settings_ui.js?v=0.24.0'; // 試す入口（__honya）用
+import * as RAD from './radar_ui.js?v=0.24.0'; // 試す入口（__honya）用
+import * as ZU from './zukan_ui.js?v=0.24.0'; // 試す入口（__honya）用
+import { startTour, autoTour } from './tour_ui.js?v=0.24.0';
+import { requireSetup } from './setup_ui.js?v=0.24.0';
 
 async function boot() {
   load(); applyTheme(); // 見た目（明・暗）と着せ替え。地図はまだないので、地図の色は決めておくだけ
@@ -34,7 +34,7 @@ async function boot() {
   const lp = S.lastPos; const center = lp ? [lp.lon, lp.lat] : [137.5, 37.3]; const zoom = lp ? 14 : 5;
   MAP.initMap({ center, zoom, theme: document.documentElement.dataset.theme || 'light',
     onStoreClick: (id) => openSheet(id),
-    onReadClick: (p) => toast(`📖 ${p.label}`), // 読んだ場所の印（v0.15.0）
+    onReadClick: (p) => toast(`🔖 ${p.label}`), // 読んだ場所のしおり（v0.15.0・v0.24.0）
     onMapClick: (lngLat) => { if (POS.fake) { setPos(lngLat.lat, lngLat.lng, 15, true); toast('ここにいることにしました'); } else closeSheet(); },
     onDrag: () => { setFollow(false); $('#btn-locate').classList.remove('on'); } });
   on('map-ready', () => { MAP.setStores(STORES); applyMapStates(); MAP.setMe(POS); MAP.setReads(R.readSpots()); if (S.settings.avatar) MAP.setAvatar(S.settings.avatar); });
@@ -46,8 +46,10 @@ async function boot() {
   on('view', (v) => { if (v === 'radar') renderRadar(); if (v === 'zukan') renderZukan(); if (v === 'mission') renderMissions(); if (v === 'settings') renderSettings(); });
   on('near', () => { if (currentView === 'radar') renderRadar(); });
   on('save-error', () => toast('保存できませんでした（端末の空きを確かめてください）', 'warn'));
-  // 読書（v0.14.1）：地図の大きなボタン「読書をはじめる」／読書中。スタンプのあと・カードのあとからも同じ画面へ
-  on('read-start', (x) => RU.openReadStart(x || {})); on('trip', RU.renderReadBtn); on('trial', RU.renderReadBtn);
+  // 読書（v0.14.1）：地図の大きなボタン「ここから読む」／読書中。スタンプのあと・カードのあとからも同じ画面へ
+  on('read-start', (x) => RU.openReadStart(x || {}));
+  on('trip', RU.renderReadBtn); on('trial', RU.renderReadBtn);
+  on('fit-reads', (pts) => { setFollow(false); $('#btn-locate').classList.remove('on'); switchView('map'); setTimeout(() => MAP.fitPoints(pts), 80); }); // 1冊の旅の「地図で見る」（v0.24.0）
   // イベント：起動時・10分ごと・画面に戻ったとき（5分以上たっていたら）に設定を読む。記録はつながったときに送る
   on('events', () => { applyMapStates(); refreshHud(); refreshSheet(); if (currentView === 'mission') renderMissions(); }); // 店のページも（手書きのカードがある店が届く。v0.16.1）
   on('tour', () => startTour()); // 設定の「画面の案内」から（v0.19.0）
@@ -96,7 +98,7 @@ async function boot() {
     else if (S.settings.geoOk) go();
   }
   emit('view', 'map');
-  setTimeout(() => RU.checkForgot(), 2500); // 読書の「おわる」の押し忘れ（v0.23.0）：ほかの窓が閉じてから
+  setTimeout(() => RU.checkForgot(), 2500); // 読書の「しおりをはさむ」の押し忘れ（v0.23.0）：ほかの窓が閉じてから
   // 試す入口（テストで使う）。v0.16.0 でファイルを分けたので、いくつかをまとめて見せる。S と STORES は入れかわるので、いつも今のものを返す
   const live = (...ms) => new Proxy({}, { get: (_, k) => { const x = ms.find((n) => k in n); return x ? x[k] : undefined; } });
   window.__honya = { get S() { return S; }, POS, get STORES() { return STORES; }, UI: live(UI0, MU, CU, KU, SU), MAP, J: live(J, R), JU: live(MU, RAD, ZU, SU), RU, E, audio: AUDIO, ver: APP_VER };

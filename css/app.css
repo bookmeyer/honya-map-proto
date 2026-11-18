@@ -441,6 +441,33 @@ ul.plain,ol.plain{padding-left:1.2em;margin:8px 0;line-height:1.7;font-size:14px
 .read-btn .rb-b.pick{text-decoration:underline;text-underline-offset:3px}
 .read-btn .rb-main .rb-s{flex:none;font-size:13px}
 
+/* v0.24.0：ここから読む（2行）・しおりをはさむ・しおりをはさんだあとの札・1冊の旅・本の里帰り */
+.read-btn .rb-t.two{display:flex;flex-direction:column;align-items:center;line-height:1.15;white-space:normal}
+.read-btn .rb-t.two small{font-family:var(--body);font-size:12.5px;font-weight:700;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.read-btn .rb-end.two{line-height:1.15;font-size:15px;padding:4px 12px;text-align:center}
+.shiori-done{pointer-events:auto;background:var(--card);border:2px solid var(--edge);border-radius:var(--r-l);box-shadow:var(--hard);padding:10px 14px 12px;margin-bottom:10px;cursor:pointer;animation:up var(--mid) var(--ease);transition:opacity .25s}
+.shiori-done.out{opacity:0}
+.shiori-done .k{font-size:13px;font-weight:700;color:var(--ink-2)}
+.shiori-done .big{font-family:var(--display);font-size:26px;line-height:1.3;margin:2px 0;word-break:auto-phrase}
+.shiori-done .big.st{font-size:20px}
+.shiori-done .big b{color:#E0428F;font-weight:400}
+:root[data-theme="dark"] .shiori-done .big b{color:#FF8CC4}
+.shiori-done .sub{font-size:13px;font-weight:700;color:var(--ink-2)}
+.shiori-done .tabi{margin-top:8px;font-size:13px;font-weight:700;border:2px solid #FF7AB6;border-radius:999px;padding:2px 12px;display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tb-head{display:flex;gap:12px;align-items:center;margin:6px 0 10px}
+.tb-head .rcover{width:56px;height:78px;flex:none}
+.tb-head b{font-size:18px}
+.tb-line{list-style:none;margin:0 0 10px;padding:0 0 0 4px;position:relative}
+.tb-line:before{content:'';position:absolute;left:11px;top:12px;bottom:18px;width:3px;background:var(--edge);border-radius:2px}
+.tb-line li{position:relative;padding:4px 0 8px 30px}
+.tb-line li i{position:absolute;left:3px;top:6px;width:19px;height:19px;border-radius:50%;border:2px solid var(--edge);background:var(--card)}
+.tb-line li i.shu{background:var(--shu)}.tb-line li i.pink{background:#FF7AB6}.tb-line li i.gold{background:var(--gold)}
+.tb-line li b{font-size:16px}.tb-line li div{font-size:13px;color:var(--ink-2);font-weight:700}
+.tb-sato{background:var(--gold-soft);color:var(--ink);border:2px solid var(--edge);border-radius:var(--r-l);padding:10px 12px;font-size:14px;line-height:1.55;margin:4px 0 6px}
+.tb-sato .actions{margin-top:8px}
+.capture .big svg.sato-rib{position:absolute;right:-14px;top:-18px;width:58px!important;height:107px!important;filter:drop-shadow(3px 3px 0 #1B1B1B);transform:rotate(8deg)}
+.sato-sum{text-align:left;word-break:auto-phrase}
+
 /* 着せ替え（v0.15.2） */
 .skins{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 .skins .sk-h{width:100%;font-size:13px;font-weight:700;color:var(--ink-2);margin-top:6px}

@@ -1,11 +1,12 @@
-// 読書：いま読んでいる本・読書の時間（はじめる〜おわる）・どこで読んだか・前回の本。画面は reading_ui.js
+// 読書：いま読んでいる本・読書の時間（「ここから読む」〜「しおりをはさむ」）・どこで読んだか・前回の本・1冊の旅・本の里帰り。画面は reading_ui.js
+// v0.24.0：ボタンの名前を「読書をはじめる」→「ここから読む」、「おわる」→「しおりをはさむ」に。1km以上動いて読んだ記録の名前は「移動読書」（ぶっくまさん 11/18）
 // 中の名前は v0.14 の「移動読書」のなごり：S.trip＝いま計っている読書／S.reads＝おわった読書／S.trips の read=1＝v0.14.0〜0.14.3 の読書の記録（allReads でいっしょに数える）
-import { READ } from './config.js?v=0.23.0';
-import { emit, todayISO, dist, fmtDist, on, fmtDate, fmtMin } from './util.js?v=0.23.0';
-import { S, save } from './state.js?v=0.23.0';
-import { POS } from './position.js?v=0.23.0';
-import { STORES, BYID } from './data.js?v=0.23.0';
-import * as G from './game.js?v=0.23.0';
+import { READ } from './config.js?v=0.24.0';
+import { emit, todayISO, dist, fmtDist, on, fmtDate, fmtMin } from './util.js?v=0.24.0';
+import { S, save } from './state.js?v=0.24.0';
+import { POS } from './position.js?v=0.24.0';
+import { STORES, BYID } from './data.js?v=0.24.0';
+import * as G from './game.js?v=0.24.0';
 
 // 読書を取り消す（「読んでいなかった」）。v0.14.3 までの記録（店と店のあいだに入れていた分）にも使える
 export function undoRead(id) {
@@ -16,7 +17,7 @@ export function undoRead(id) {
 const sameTitle = (a, b) => String(a || '').normalize('NFKC').replace(/\s/g, '') === String(b || '').normalize('NFKC').replace(/\s/g, '');
 export const reading = () => (S.reading || []).filter((b) => !b.done);
 export const finished = () => (S.reading || []).filter((b) => b.done).sort((x, y) => (y.tDone || 0) - (x.tDone || 0));
-// 読書の記録：「読書をはじめる」から「おわる」までの時間（v0.14.4）。v0.14.3 までの記録（店と店のあいだに入れていた分）もふくめる
+// 読書の記録：「ここから読む」から「しおりをはさむ」までの時間（v0.14.4）。v0.14.3 までの記録（店と店のあいだに入れていた分）もふくめる
 export const allReads = () => [...(S.reads || []).filter((r) => !r.off).map((r) => ({ id: r.id, d: r.d, t: r.t0, min: r.min, book: r.book, title: r.title })), ...(S.trips || []).filter((g) => g.read).map((g) => ({ id: g.id, d: g.d, t: g.t, min: g.min || 0, book: g.book, title: g.title }))];
 export const readTimes = (id) => allReads().filter((r) => r.book === id).length;
 export const readMinOf = (id) => allReads().filter((r) => r.book === id).reduce((a, r) => a + (r.min || 0), 0);
@@ -38,8 +39,8 @@ export const STALE_MS = 12 * 3600 * 1000;
 export const tripStale = (tr = S.trip) => !!tr && Date.now() - tr.t > STALE_MS;
 export function activeTrip() { return S.trip || null; }
 export const tripMin = (tr = S.trip) => (tr ? Math.floor((Date.now() - tr.t) / 60000) : 0);
-// どこで読んだか（v0.15.0）：「読書をはじめる」と「おわる」はアプリを開いて押すので、その2か所だけはわかる（閉じていたあいだの道のりはわからない）
-// 本屋・図書館のそば（100m）＝「○○のそばで」／はじめとおわりが1km以上＝「移動しながら」／ほか＝「その場で」。場所は端末の中だけ。設定で止められる（S.settings.readPlace）
+// どこで読んだか（v0.15.0）：「ここから読む」と「しおりをはさむ」はアプリを開いて押すので、その2か所だけはわかる（閉じていたあいだの道のりはわからない）
+// 本屋・図書館のそば（100m）＝「○○のそばで」／はじめとおわりが1km以上＝「移動読書」（v0.24.0。前は「移動しながら」）／ほか＝「その場で」。場所は端末の中だけ。設定で止められる（S.settings.readPlace）
 const PLACE = { nearM: 100, moveM: 1000 };
 const placeOn = () => S.settings.readPlace !== false;
 function herePos(maxAge = 120000) { return placeOn() && !POS.fake && POS.lat != null && Date.now() - POS.at < maxAge ? [+POS.lat.toFixed(4), +POS.lon.toFixed(4)] : null; }
@@ -49,7 +50,7 @@ export function placeOf(p0, p1) {
   if (p0 && p1) { const m = dist(p0[0], p0[1], p1[0], p1[1]); if (m >= PLACE.moveM) return { k: 'move', m: Math.round(m) }; }
   const s = nearStore(p0) || nearStore(p1); return s ? { k: 'store', s: s.i, n: s.n } : { k: 'stay' };
 }
-export const placeText = (pl) => (!pl ? '' : pl.k === 'store' ? `${pl.n}のそばで` : pl.k === 'move' ? `移動しながら ${fmtDist(pl.m)}` : 'その場で'); // お知らせ・地図の印用（物語は「移動しながら（6km）、」）
+export const placeText = (pl) => (!pl ? '' : pl.k === 'store' ? `${pl.n}のそばで` : pl.k === 'move' ? `移動読書 ${fmtDist(pl.m)}` : 'その場で'); // 地図の印・道中のまとめ用（物語は「移動読書（6km）で、」）
 // 押したときに位置がまだ届いていなければ、すぐあとに届いた位置を使う（はじめ＝2分・おわり＝3分まで）
 on('pos', () => {
   if (POS.fake || POS.lat == null || !placeOn()) return; let ch = false;
@@ -58,10 +59,34 @@ on('pos', () => {
   if (r && r.p1wait) { if (Date.now() - r.t1 < 180000) { r.p1 = herePos(); r.pl = placeOf(r.p0, r.p1); } delete r.p1wait; ch = true; }
   if (ch) { save(); emit('records'); }
 });
-// 地図の「読んだ場所」：はじめた所に印。移動しながら読んだときは、おわった所までの点線も
-export const readSpots = () => (placeOn() ? (S.reads || []).filter((r) => !r.off && r.p0) : []).map((r) => ({ id: r.id, p0: r.p0, p1: r.pl && r.pl.k === 'move' ? r.p1 : null,
-  label: `${fmtDate(r.d)} ${new Date(r.t0).getHours()}時　${r.title ? `『${r.title}』を` : '本を'}${fmtMin(r.min)}${r.pl ? `（${placeText(r.pl)}）` : ''}` }));
-// 読書をはじめる（地図のボタンから、どこでも。本も読みかたも選ばない）。出発した店＝今日さいごにスタンプを押した店（2時間以内）。同じ店でもう一度押しても終わらないため
+// 地図の「読んだ場所」（v0.24.0）：しおりをはさんだ所に、しおりの印。移動読書のときは、はじめた所に小さな点と、そのあいだの点線
+// しおりをはさんだ所がわからない記録（はさんだときに位置がなかった）は、はじめた所に印
+export const readSpots = () => (placeOn() ? (S.reads || []).filter((r) => !r.off && r.p0) : []).map((r) => { const mv = !!(r.pl && r.pl.k === 'move' && r.p1); return { id: r.id, p0: mv ? r.p0 : null, p1: mv ? r.p1 : null, at: mv ? r.p1 : r.p1 || r.p0, book: r.book || '',
+  label: `${fmtDate(r.d)} ${new Date(r.t0).getHours()}時　${r.title ? `『${r.title}』を` : '本を'}${fmtMin(r.min)}${r.pl ? `（${placeText(r.pl)}）` : ''}` }; });
+// 前回の本（地図のボタンの「『○○』のつづき」用。v0.24.0）
+export function nextBook() { const id = lastBook(); return id ? reading().find((b) => b.id === id) || null : null; }
+// 1冊の旅（v0.24.0）：本ごとに、出会った店・どこで何回読んだか・読み終えた日。v0.15.0 より前の記録は場所がないので「ほか」に数える
+export function bookTrip(id) {
+  const b = (S.reading || []).find((x) => x.id === id); if (!b) return null;
+  const rs = (S.reads || []).filter((r) => !r.off && r.book === id), old = (S.trips || []).filter((g) => g.read && g.book === id);
+  const of = (k) => rs.filter((r) => r.pl && r.pl.k === k); const mv = of('move'), st = of('store'), stay = of('stay');
+  const n = rs.length + old.length, min = rs.reduce((a, r) => a + (r.min || 0), 0) + old.reduce((a, g) => a + (g.min || 0), 0);
+  const days = b.dm ? Math.max(0, Math.round((Date.parse(b.done || todayISO()) - Date.parse(b.dm)) / 864e5)) : -1;
+  const pts = rs.flatMap((r) => [r.p0, r.p1]).filter(Boolean);
+  return { b, n, min, move: mv.length, moveM: mv.reduce((a, r) => a + (r.pl.m || 0), 0), store: st.length, storeNames: [...new Set(st.map((r) => r.pl.n).filter(Boolean))], stay: stay.length, other: n - mv.length - st.length - stay.length, days, pts: placeOn() ? pts : [] };
+}
+// 本ごとの回数の書き方（めぐり帳・しおりをはさんだあとの札）：移動読書があれば「移動読書 3回・ほか 1回」、なければ「読書 4回」
+export function tripCountText(t) { if (!t || !t.n) return ''; return t.move ? `移動読書 ${t.move}回${t.n > t.move ? `・ほか ${t.n - t.move}回` : ''}` : `読書 ${t.n}回`; }
+// 本の里帰り（v0.24.0）：読み終えた本と出会った店で、スタンプを押したとき（射程内・1冊に1回）。ページのおまけはない
+export function satoAt(storeId) {
+  const today = todayISO(), t = Date.now();
+  const list = (S.reading || []).filter((b) => b.done && b.s === storeId && !b.sato);
+  for (const b of list) { b.sato = today; b.tSato = t; }
+  if (list.length) save();
+  return list;
+}
+export const satoCount = () => (S.reading || []).filter((b) => b.sato).length;
+// ここから読む（地図のボタンから、どこでも。本も読みかたも選ばない）。出発した店＝今日さいごにスタンプを押した店（2時間以内）。同じ店でもう一度押しても終わらないため
 export function startTrip(bookId = '') {
   const today = todayISO(); let from = '', fn = '';
   const lv = G.lastNearVisitToday(); if (lv && Date.now() - lv.t < 2 * 3600 * 1000) { from = lv.s; fn = (BYID.get(lv.s) || lv).n || ''; }
@@ -74,7 +99,7 @@ export function setTripBook(id) { const tr = activeTrip(); if (!tr) return; tr.b
 // 前の読書で本を外していたら、本なしのまま。S.lastBook がまだない人は、いちばん新しい読書の記録の本
 function lastBook() { const id = S.lastBook !== undefined ? S.lastBook : ([...(S.reads || [])].reverse().find((r) => !r.off && r.book) || {}).book || ''; return id && reading().some((b) => b.id === id) ? id : ''; }
 export function cancelTrip() { S.trip = null; save(); emit('trip'); }
-// 読書を終える（「おわる」・おわるを押し忘れて次の本屋に着いたとき）。読んだ時間だけページ（1分で1ページ・1回60ページまで）。1分より短いときは記録しない
+// 読書を終える（「しおりをはさむ」・押し忘れて次の本屋に着いたとき）。読んだ時間だけページ（1分で1ページ・1回60ページまで）。1分より短いときは記録しない
 // chosen：あとから「いつまで読んだか」を選んだとき（v0.23.0）。endPos が false なら、読み終えた場所はわからないので残さない
 // 12時間を過ぎたものを、選ばずに終えるとき（めぐり帳で「読み終わった」など）は、これまでどおり記録しない
 export function endTrip(at = Date.now(), auto = false, endPos = null, chosen = false) {

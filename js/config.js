@@ -1,6 +1,6 @@
 // 設定値（数字はここだけで変える）
 
-export const APP_VER = '0.23.0';
+export const APP_VER = '0.24.0';
 export const STORAGE_KEY = 'honya_map_v3';
 // お試し歩き（地図を押した所にいることにする）：遊ぶ人には出さない（11/3 ぶっくまさん「OFFにしたい」）。作る人が試すときは localStorage の meguri_trial を 1 に
 export const TRIAL_ON = (() => { try { return localStorage.getItem('meguri_trial') === '1'; } catch (e) { return false; } })();
@@ -30,7 +30,7 @@ export const JUMP_COOLDOWN_MS = 60000;
 export const WALK = { pageM: 100, stepM: 0.7, minMoveM: 12, maxAccM: 60, walkMaxMps: 2.8, rideMaxMps: 45, gapS: 600, wantNearM: 500 };
 // 店と店のあいだ（v0.14）：次の店でスタンプを押したとき、前の店からのまっすぐの距離のうち、まだ数えていない分を歩いたページに足す（同じ日・3kmまで・歩く速さまで）
 export const SEG = { maxM: 3000, minM: 100, betweenM: 100 };
-// 読書（v0.14.4）：地図の「読書をはじめる」で時間を計りはじめ、「おわる」で止める（本も読みかたも選ばない・ページ数は聞かない）。読んだ時間だけページ（1分で1ページ・1回60ページまで）。時間は1回3時間まで（押したまま忘れたとき）
+// 読書（v0.14.4）：地図の「ここから読む」で時間を計りはじめ、「しおりをはさむ」で止める（名前は v0.24.0）（本も読みかたも選ばない・ページ数は聞かない）。読んだ時間だけページ（1分で1ページ・1回60ページまで）。時間は1回3時間まで（押したまま忘れたとき）
 export const READ = { pgPerMin: 1, maxPg: 60, maxMin: 180 };
 // 常連度：同じ店でスタンプを押した「日数」で上がる（たくさんの店に行けない人の楽しみ）
 export const REGULAR = [{ n: 1, name: 'はじめまして' }, { n: 3, name: '顔なじみ' }, { n: 5, name: '常連' }, { n: 10, name: 'ぬし' }, { n: 20, name: '名物客' }, { n: 50, name: '殿堂入り' }];

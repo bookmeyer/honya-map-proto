@@ -1,12 +1,12 @@
 // 旅の記録：歩いた距離（ページ）・その日の物語・月のふり返り・行きたい店のお知らせ・投稿の記録・Googleマップの★の読み込み・店と店のあいだ・読書・いま読んでいる本
 // 位置は、アプリを開いて現在地を追っているあいだだけ使う（ブラウザの決まりで、閉じているあいだは測れない）。閉じていたあいだの道のりは、次の店でスタンプを押したときに、前の店からのまっすぐの距離で足す（v0.14）
-import { WALK, RANGE_M, SEG } from './config.js?v=0.23.0';
-import { todayISO, dist, emit, hash32, prefOf, fmtDist, monthKey, fmtMin } from './util.js?v=0.23.0';
-import { S, save } from './state.js?v=0.23.0';
-import { POS } from './position.js?v=0.23.0';
-import { BYID, STORES, rarityOf } from './data.js?v=0.23.0';
-import * as G from './game.js?v=0.23.0';
-import { activeTrip, tripStale, endTrip, readTimes, readMinOf, allReads } from './reading.js?v=0.23.0';
+import { WALK, RANGE_M, SEG } from './config.js?v=0.24.0';
+import { todayISO, dist, emit, hash32, prefOf, fmtDist, monthKey, fmtMin } from './util.js?v=0.24.0';
+import { S, save } from './state.js?v=0.24.0';
+import { POS } from './position.js?v=0.24.0';
+import { BYID, STORES, rarityOf } from './data.js?v=0.24.0';
+import * as G from './game.js?v=0.24.0';
+import { activeTrip, tripStale, endTrip, readTimes, readMinOf, allReads } from './reading.js?v=0.24.0';
 
 function dayRec(d = todayISO()) { S.days = S.days || {}; const r = (S.days[d] = S.days[d] || { m: 0, v: 0 }); r.pass = r.pass || {}; r.alert = r.alert || {}; return r; }
 export const pagesOf = (m) => Math.floor((m || 0) / WALK.pageM);
@@ -54,7 +54,7 @@ export const wantsSorted = (lat, lon) => S.wants.map((id) => BYID.get(id)).filte
 // ---- 投稿・シェアの記録 ----
 export function addPost({ url, text, sid }) { S.posts = S.posts || []; const t = Date.now(); S.posts.push({ id: 'p' + t, t, d: todayISO(), url: url || '', text: text || '', s: sid || '' }); save(); }
 export function deletePost(id) { S.posts = (S.posts || []).filter((p) => p.id !== id); save(); }
-const SHARE_LBL = { stamp: 'スタンプの画像をシェアした。', regular: '常連度をシェアした。', card: 'カードの画像をシェアした。', profile: 'プレイヤーカードをシェアした。', story: 'この日の物語をシェアした。' };
+const SHARE_LBL = { tabi: '1冊の旅をシェアした。', stamp: 'スタンプの画像をシェアした。', regular: '常連度をシェアした。', card: 'カードの画像をシェアした。', profile: 'プレイヤーカードをシェアした。', story: 'この日の物語をシェアした。' };
 // ---- 店と店のあいだ・読書・いま読んでいる本（v0.14） ----
 // 次の店でスタンプを押したときに呼ぶ（G.checkin より先）。前の店から、まだ数えていない道のりを歩いたページに足す。前の店からあとの読書も、まとめて見せる
 export function arrive(st, { near, trial }) {
@@ -125,7 +125,8 @@ export function chapter(date = todayISO(), dates = activeDates()) {
   }
   for (const c of cards) events.push({ t: c.t, s: `『${c.title}』と出会った（${c.sn}）。${c.why ? '——' + c.why : ''}` });
   for (const r of (S.reads || []).filter((x) => x.d === date && !x.off)) { const pl = r.pl, h = `${new Date(r.t0).getHours()}時、`, bk = `${r.title ? `『${r.title}』を` : '本を'}${fmtMin(r.min)}読んだ。`; // どこで読んだか（v0.15.0）
-    events.push({ t: r.t0, s: pl && pl.k === 'store' ? `${h}${pl.n}のそばで、${bk}` : `${h}${r.fn ? `${r.fn}を出て、` : ''}${pl && pl.k === 'move' ? `移動しながら（${fmtDist(pl.m)}）、` : ''}${bk}` }); }
+    events.push({ t: r.t0, s: pl && pl.k === 'store' ? `${h}${pl.n}のそばで、${bk}` : `${h}${r.fn ? `${r.fn}を出て、` : ''}${pl && pl.k === 'move' ? `移動読書（${fmtDist(pl.m)}）で、` : ''}${bk}` }); } // v0.24.0：「移動しながら（6km）、」→「移動読書（6km）で、」
+  for (const b of (S.reading || []).filter((x) => x.sato === date)) events.push({ t: b.tSato || 0, s: `『${b.title}』を読み終えて、${b.sn}へ。里帰りのスタンプを押した。` }); // 本の里帰り（v0.24.0）
   for (const b of (S.reading || []).filter((x) => x.done === date)) { const n = readTimes(b.id); const days = b.dm ? Math.round((Date.parse(date) - Date.parse(b.dm)) / 864e5) : -1; events.push({ t: b.tDone || 0, s: `『${b.title}』を読み終えた。${b.sn ? (days > 0 ? `${b.sn}で出会ってから${days}日。` : `${b.sn}で出会ったその日に。`) : ''}${n ? `読書${n}回・あわせて${fmtMin(readMinOf(b.id))}。` : ''}` }); }
   for (const p of posts) events.push({ t: p.t, s: `Xに投稿した。${p.text ? '「' + p.text + '」' : ''}`, url: p.url, pid: p.id });
   for (const sh of shares) events.push({ t: sh.t, s: SHARE_LBL[sh.kind] || 'シェアした。' });

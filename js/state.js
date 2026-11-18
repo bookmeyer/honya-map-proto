@@ -1,6 +1,6 @@
 // 記録（この端末の中だけ）。版の違いを吸収して読み込み、まとめて書き込む
-import { SKINS, MAP_SKINS, STORAGE_KEY, LEGACY_KEYS, APP_VER, PROFILE_Q } from './config.js?v=0.23.0';
-import { $, emit, debounce } from './util.js?v=0.23.0';
+import { SKINS, MAP_SKINS, STORAGE_KEY, LEGACY_KEYS, APP_VER, PROFILE_Q } from './config.js?v=0.24.0';
+import { $, emit, debounce } from './util.js?v=0.24.0';
 
 export const empty = () => ({
   v: 4, visits: [], cards: [], wants: [], custom: [], stamps: {}, pg: 0, pgDay: {},
@@ -38,7 +38,7 @@ function sanitize(o) {
   o.cards = o.cards.filter((c) => ok(c) && isDay(c.d));
   o.custom = o.custom.filter((c) => ok(c) && typeof c.i === 'string' && num(c.la, NaN) === c.la && num(c.lo, NaN) === c.lo);
   o.posts = o.posts.filter((p) => ok(p) && isDay(p.d) && typeof p.url === 'string' && POST_RE.test(p.url));
-  o.reading = o.reading.filter((b) => ok(b) && typeof b.id === 'string' && isDay(b.d)).map((b) => Object.assign(b, { done: isDay(b.done) ? b.done : '', dm: isDay(b.dm) ? b.dm : '' }));
+  o.reading = o.reading.filter((b) => ok(b) && typeof b.id === 'string' && isDay(b.d)).map((b) => Object.assign(b, { done: isDay(b.done) ? b.done : '', dm: isDay(b.dm) ? b.dm : '', sato: isDay(b.sato) ? b.sato : '', tSato: num(b.tSato) })); // sato＝本の里帰りの日（v0.24.0）
   o.reads = o.reads.filter((r) => ok(r) && isDay(r.d)).map((r) => Object.assign(r, { min: num(r.min), pg: num(r.pg), t0: num(r.t0), t1: num(r.t1), p0: isPt(r.p0) ? r.p0 : null, p1: isPt(r.p1) ? r.p1 : null, pl: ok(r.pl) && ['store', 'move', 'stay'].includes(r.pl.k) ? { k: r.pl.k, s: String(r.pl.s || ''), n: String(r.pl.n || ''), m: num(r.pl.m) } : null }));
   o.trips = o.trips.filter((g) => ok(g) && isDay(g.d)).map((g) => Object.assign(g, { min: num(g.min), m: num(g.m) }));
   o.evTitles = o.evTitles.filter((x) => ok(x) && isDay(x.d));

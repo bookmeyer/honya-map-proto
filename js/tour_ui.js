@@ -1,13 +1,13 @@
 // 画面の案内（チュートリアル。v0.19.0）：最初の案内のあと、地図の画面で本物のボタンを1つずつ光らせて説明する（v0.20.2 で「自分のアイコン」を足して7つ）
 // ぶっくまさん 11/3「一番最初に表示したとき、チュートリアルを表示できますか」→ 地図の上で6つを指さす案。とばせる。設定の「画面の案内」から、もう一度
-import { RANGE_M } from './config.js?v=0.23.0';
-import { $, esc } from './util.js?v=0.23.0';
-import { S, save } from './state.js?v=0.23.0';
-import { STORES } from './data.js?v=0.23.0';
-import * as MAP from './map.js?v=0.23.0';
-import * as E from './events.js?v=0.23.0';
-import { NEAR } from './map_ui.js?v=0.23.0';
-import { switchView, closeSheet } from './ui.js?v=0.23.0';
+import { RANGE_M } from './config.js?v=0.24.0';
+import { $, esc } from './util.js?v=0.24.0';
+import { S, save } from './state.js?v=0.24.0';
+import { STORES } from './data.js?v=0.24.0';
+import * as MAP from './map.js?v=0.24.0';
+import * as E from './events.js?v=0.24.0';
+import { NEAR } from './map_ui.js?v=0.24.0';
+import { switchView, closeSheet } from './ui.js?v=0.24.0';
 
 // el：光らせる部品（ok で出ているときだけ）／pin：地図の真ん中に近い店のピン
 const STEPS = [
@@ -17,7 +17,7 @@ const STEPS = [
   { pin: true, h: '店のピン', p: () => (MAP.M.map && MAP.M.map.getZoom() >= 10 ? 'ピンを押すと、店のページが開きます。' : '地図を大きくすると、店のピンが出ます。ピンを押すと、店のページが開きます。') + '朱は本屋、茶は古書店、空色は図書館。スタンプを押した店は若草になります。' },
   { el: '#sc-near', h: '近くの店', p: () => 'いちばん近い店と、あと何mかが出ます。射程に入ると黄色になります。押すと、その店のページへ。「近く○店」で、ほかの店も見られます。', ok: (el) => !el.hidden }, // v0.23.0：8枚のチップを札の1行目に
   { el: '#event-chip', h: '開催中のイベント', p: () => { const e = E.liveEvents()[0], nev = E.liveEvents().find(E.narrow); return `いまは「${e ? e.name : 'イベント'}」を開いています。${nev ? `参加店のピンには「${nev.frame.label || 'イベント'}」の札が付きます。` : ''}押すと、ラリーの画面でくわしく見られます。`; }, ok: (el) => !el.hidden && E.liveEvents().length > 0 },
-  { el: '#read-btn', h: '読書をはじめる', p: () => '本を読んだ時間も、あなたの物語のページになります。電車でもカフェでも、押すだけで始まります。', ok: (el) => !el.hidden },
+  { el: '#read-btn', h: 'ここから読む', p: () => '本を読んだ時間も、あなたの物語のページになります。電車でもカフェでも、押すだけで始まります。読み終えたら「しおりをはさむ」。', ok: (el) => !el.hidden },
   { el: '#tabs', h: '下のタブ', p: () => 'ちかく：近くの店と、行きたい店。めぐり帳：押したスタンプと、本のカード。ラリー：お題とイベント。' },
 ];
 let T = null;

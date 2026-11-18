@@ -1,16 +1,16 @@
 // 本のカード：本と出会った（バーコード・書名でさがす・名前）→ カードの画面
-import { PG } from './config.js?v=0.23.0';
-import { esc, icon, $, fmtDate, todayISO, emit } from './util.js?v=0.23.0';
-import { S } from './state.js?v=0.23.0';
-import { sfx, haptic } from './audio.js?v=0.23.0';
-import { POS } from './position.js?v=0.23.0';
-import { placeWord, isLib, BYID } from './data.js?v=0.23.0';
-import * as G from './game.js?v=0.23.0';
-import * as E from './events.js?v=0.23.0';
-import { cardImage, shareBlob } from './share.js?v=0.23.0';
-import * as R from './reading.js?v=0.23.0';
-import { openModal, closeModal, searchBook, scanIsbn, stopScan, toast, refreshHud, setSub, switchView, confirmBox } from './ui.js?v=0.23.0';
-import { applyMapStates, openSheet } from './map_ui.js?v=0.23.0';
+import { PG } from './config.js?v=0.24.0';
+import { esc, icon, $, fmtDate, todayISO, emit } from './util.js?v=0.24.0';
+import { S } from './state.js?v=0.24.0';
+import { sfx, haptic } from './audio.js?v=0.24.0';
+import { POS } from './position.js?v=0.24.0';
+import { placeWord, isLib, BYID } from './data.js?v=0.24.0';
+import * as G from './game.js?v=0.24.0';
+import * as E from './events.js?v=0.24.0';
+import { cardImage, shareBlob } from './share.js?v=0.24.0';
+import * as R from './reading.js?v=0.24.0';
+import { openModal, closeModal, searchBook, scanIsbn, stopScan, toast, refreshHud, setSub, switchView, confirmBox } from './ui.js?v=0.24.0';
+import { applyMapStates, openSheet } from './map_ui.js?v=0.24.0';
 
 // ---------- カード ----------
 // カードをシェアする（v0.23.0：カードができた画面からも。テストプレイの声「この書店でこの本を買いました、を共有したい」・ぶっくまさん「シェアしやすい形が良い」）
@@ -46,11 +46,11 @@ function cardForm(st, b) {
     const book = Object.assign({ isbn: '', author: '', publisher: '', cover: '' }, b || {}, { title }); const res = G.makeCard(st, book, $('#cd-why').value.trim(), $('#cd-pub').checked);
     closeModal(); applyMapStates(); refreshHud(); sfx.reveal(); haptic([30, 40, 30]); res.rewards.forEach((x) => toast(x, 'ok')); cardDone(st, S.cards[S.cards.length - 1], res, inStore); };
 }
-// カードができたあと（v0.14）：この本で読書をはじめる／いま読んでいる本に入れる／めぐり帳で見る
+// カードができたあと（v0.14）：この本を、ここから読む／いま読んでいる本に入れる／めぐり帳で見る
 function cardDone(st, c, res, inStore) {
   const go = inStore && !POS.fake && !st.demo && !R.activeTrip(); const inR = R.inReading(c);
   openModal(`<h2>カードができました</h2><div class="card-full"><div class="cover">${c.cover ? `<img src="${esc(c.cover)}" alt="" referrerpolicy="no-referrer">` : '<div class="notitle">表紙なし</div>'}</div><div style="flex:1;min-width:0"><div><b>${esc(c.title)}</b></div><div class="muted small">${esc(c.sn)}　${fmtDate(c.d)}</div><div class="gain-s">+${res.total}ページ${res.lv.after > res.lv.before ? `　📖 第${res.lv.after}巻に入った！` : ''}</div></div></div>
-    <div class="actions">${go ? `<button class="btn primary wide" id="cs-go">📖 この本で読書をはじめる</button>` : ''}<button class="btn ${go ? '' : 'primary '}wide" id="cs-read"${inR ? ' disabled' : ''}>${inR ? 'いま読んでいる本に入っています' : 'いま読んでいる本に入れる'}</button><button class="btn wide" id="cs-share">${icon('share')}シェアする</button><button class="btn wide" id="cs-see">めぐり帳で見る</button><button class="btn ghost wide" id="cs-close">閉じる</button></div><div id="cs-out"></div>`);
+    <div class="actions">${go ? `<button class="btn primary wide" id="cs-go">📖 この本を、ここから読む</button>` : ''}<button class="btn ${go ? '' : 'primary '}wide" id="cs-read"${inR ? ' disabled' : ''}>${inR ? 'いま読んでいる本に入っています' : 'いま読んでいる本に入れる'}</button><button class="btn wide" id="cs-share">${icon('share')}シェアする</button><button class="btn wide" id="cs-see">めぐり帳で見る</button><button class="btn ghost wide" id="cs-close">閉じる</button></div><div id="cs-out"></div>`);
   $('#cs-close').onclick = closeModal; $('#cs-share').onclick = () => shareCard(c, $('#cs-out'));
   $('#cs-see').onclick = () => { closeModal(); setSub('cards'); switchView('zukan'); };
   if (!inR) $('#cs-read').onclick = () => { R.readingFromCard(c); $('#cs-read').disabled = true; $('#cs-read').textContent = 'いま読んでいる本に入れました'; };

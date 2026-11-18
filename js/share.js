@@ -1,9 +1,9 @@
 // シェア用の画像（スタンプ・常連度・カード・プレイヤーカード）
-import { prefOf, stars, fmtDate, todayISO } from './util.js?v=0.23.0';
-import { S } from './state.js?v=0.23.0';
-import { stampInk, stampSVG, rarityOf, rarityText } from './data.js?v=0.23.0';
-import { snapshotAt } from './map.js?v=0.23.0';
-import { regularInfo } from './game.js?v=0.23.0';
+import { prefOf, stars, fmtDate, todayISO } from './util.js?v=0.24.0';
+import { S } from './state.js?v=0.24.0';
+import { stampInk, stampSVG, rarityOf, rarityText } from './data.js?v=0.24.0';
+import { snapshotAt } from './map.js?v=0.24.0';
+import { regularInfo } from './game.js?v=0.24.0';
 
 const PAPER = '#FFF8EA', INK = '#1B1B1B', INK2 = '#5A554D', SHU = '#FF6A48', LINE = '#1B1B1B';
 const DISP = '"Mochiy Pop P One","Zen Maru Gothic","Hiragino Sans",sans-serif', BODY = '"Zen Maru Gothic","Hiragino Sans",sans-serif';
@@ -27,6 +27,31 @@ export async function stampImage(st, opts = {}) {
   g.font = `30px ${BODY}`; g.fillStyle = INK2; g.fillText(`${prefOf(st)}　${stars(rarityOf(st))}　${rarityText(st)}`, 60, y); y += 46;
   if (opts.regular || reg.rank >= 2) { g.fillStyle = ink.main; rrect(g, 60, y - 34, 520, 54, 27); g.fill(); g.strokeStyle = INK; g.lineWidth = 3; g.stroke(); g.fillStyle = INK; g.font = `28px ${DISP}`; g.fillText(`常連度：${reg.name}　来店 ${reg.days}日`, 84, y + 4); y += 66; }
   g.fillStyle = INK2; g.font = `30px ${BODY}`; g.fillText(`${fmtDate((S.stamps[st.i] || {}).d || todayISO())}　スタンプ ${Object.keys(S.stamps).length}個目${opts.ev && opts.ev.ev ? `　${opts.ev.ev}` : ''}`, 60, y);
+  footer(g, W, H, opts.tags || '#本めぐり');
+  return await new Promise((res) => cv.toBlob(res, 'image/png'));
+}
+// 1冊の旅（v0.24.0）：地図は入れない。読んだ場所の名前も入れない（本屋の名前だけ。スタンプのシェアと同じ）。t＝reading.js の bookTrip、st＝出会った店
+export async function tabiImage(t, st, opts = {}) {
+  const W = 1080, H = 1350, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d'); const b = t.b, PINK = '#FF7AB6';
+  try { await document.fonts.load(`40px "Mochiy Pop P One"`); await document.fonts.load(`40px "Zen Maru Gothic"`); } catch (e) {}
+  g.fillStyle = PAPER; g.fillRect(0, 0, W, H); g.strokeStyle = LINE; g.lineWidth = 4; rrect(g, 40, 40, W - 80, H - 80, 36); g.stroke();
+  g.textAlign = 'left'; g.fillStyle = SHU; g.font = `30px ${DISP}`; g.fillText('本めぐり　1冊の旅', 96, 130);
+  let y = 230;
+  if (b.sn) {
+    if (st) { try { const im = await svgToImage(stampSVG(st, true, 280, { rank: regularInfo(st.i).rank })); g.save(); g.translate(W - 230, 250); g.rotate(-0.1); g.shadowColor = 'rgba(0,0,0,.25)'; g.shadowBlur = 20; g.shadowOffsetY = 6; g.drawImage(im, -130, -130, 260, 260); g.restore(); } catch (e) {} }
+    g.fillStyle = INK2; g.font = `28px ${BODY}`; g.fillText('出会った店', 96, y); y += 60;
+    g.fillStyle = INK; g.font = `40px ${DISP}`; wrap(g, b.sn, st ? W - 460 : W - 192).slice(0, 3).forEach((l) => { g.fillText(l, 96, y); y += 54; });
+  }
+  y = Math.max(y + 60, 470); g.fillStyle = INK; g.font = `64px ${DISP}`;
+  const tl = wrap(g, `『${b.title}』`, W - 192).slice(0, 2); tl.forEach((l) => { g.fillText(l, 96, y); y += 78; });
+  g.strokeStyle = SHU; g.lineWidth = 5; g.beginPath(); g.moveTo(96, y - 42); g.lineTo(300, y - 42); g.stroke(); y += 50;
+  const md = (iso) => { const [, m, d] = String(iso).split('-').map(Number); return `${m}月${d}日`; };
+  const places = [t.move ? `移動読書 ${t.move}回` : '', t.store ? `本屋のそばで ${t.store}回` : '', t.stay ? `その場で ${t.stay}回` : '', t.other ? `ほか ${t.other}回` : ''].filter(Boolean).join('・');
+  const rows = [b.dm ? [SHU, `${md(b.dm)}　出会った`] : null, places ? [PINK, places] : null, b.done ? ['#FFD447', `${md(b.done)}　読み終えた${t.days >= 0 ? (t.days ? `（出会って${t.days}日）` : '（出会ったその日に）') : ''}`] : null].filter(Boolean);
+  if (rows.length > 1) { g.strokeStyle = INK; g.lineWidth = 4; g.beginPath(); g.moveTo(118, y - 12); g.lineTo(118, y - 12 + (rows.length - 1) * 96); g.stroke(); }
+  for (const [c, txt] of rows) { g.beginPath(); g.arc(118, y - 12, 17, 0, Math.PI * 2); g.fillStyle = c; g.fill(); g.lineWidth = 4; g.strokeStyle = INK; g.stroke(); g.fillStyle = INK; g.font = `36px ${BODY}`; g.fillText(wrap(g, txt, W - 260)[0], 160, y); y += 96; }
+  const boxes = [t.move ? [`${t.move}回`, '移動読書'] : null, t.move ? [`${Math.round(t.moveM / 1000)}km`, '移動のあいだに'] : null, [`${t.n}回`, '読書'], t.days >= 0 ? [`${t.days}日`, '出会ってから'] : null].filter(Boolean);
+  boxes.forEach(([n, l], i) => { const x = 96 + i * 228; g.fillStyle = '#FFF3C2'; rrect(g, x, H - 290, 204, 130, 22); g.fill(); g.strokeStyle = INK; g.lineWidth = 3; g.stroke(); g.fillStyle = SHU; g.font = `48px ${DISP}`; g.textAlign = 'center'; g.fillText(n, x + 102, H - 222); g.fillStyle = INK2; g.font = `24px ${BODY}`; g.fillText(l, x + 102, H - 182); g.textAlign = 'left'; });
   footer(g, W, H, opts.tags || '#本めぐり');
   return await new Promise((res) => cv.toBlob(res, 'image/png'));
 }
