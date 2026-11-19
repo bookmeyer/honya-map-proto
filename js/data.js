@@ -1,7 +1,7 @@
 // 本屋・図書館・ラリーのデータ。スタンプ（その店だけの絵柄）の見た目もここ
-import { DEMO_STORE } from './config.js?v=0.29.2';
-import { sleep, $, weekKey, prefOf, hash32, esc, todayISO, dist } from './util.js?v=0.29.2';
-import { S } from './state.js?v=0.29.2';
+import { DEMO_STORE } from './config.js?v=0.30.0';
+import { sleep, $, weekKey, prefOf, hash32, esc, todayISO, dist } from './util.js?v=0.30.0';
+import { S } from './state.js?v=0.30.0';
 
 export let STORES = [];
 export let RALLIES = [];
@@ -16,7 +16,8 @@ async function fetchJSON(url, tries = 3) {
   return null;
 }
 export async function loadAll() {
-  const [base, libs, rallies, picks] = await Promise.all([fetchJSON('data/bookstores.json'), fetchJSON('data/libraries.json'), fetchJSON('data/rallies.json'), fetchJSON('data/picks.json', 2)]);
+  const [base, libs, rallies, picks, gone] = await Promise.all([fetchJSON('data/bookstores.json'), fetchJSON('data/libraries.json'), fetchJSON('data/rallies.json'), fetchJSON('data/picks.json', 2), fetchJSON('data/gone.json', 1)]);
+  GONE = Array.isArray(gone) ? gone.filter((g) => g && typeof g.i === 'string' && typeof g.n === 'string') : []; // 外した店（v0.30.0）
   baseLoaded = Array.isArray(base) && base.length > 0; LIBS = Array.isArray(libs) ? libs : [];
   RALLIES = Array.isArray(rallies) ? rallies : [];
   applyPicks(picks && Array.isArray(picks.picks) ? picks.picks : [], baseLoaded ? base : []);
@@ -24,6 +25,8 @@ export async function loadAll() {
   return { ok: baseLoaded, count: STORES.length };
 }
 let BASE = [], LIBS = [];
+// 店のデータから外した店（閉店 z・重なり to）：地図には出さず、スタンプなど記録の表示にだけ使う（v0.30.0。前は記録から消えていた）
+let GONE = [];
 // ---- みんなの地図への直し（v0.17.0）：運営が報告を確かめて直した閉店・名前（サーバーの events.php の fixes。events.js が渡す）----
 // 閉店した店は地図・さがす・近くから外す。ただしスタンプや来た記録の表示のために BYID には残す（closed: 1）
 // 管理画面（CSV）で足した店（v0.18.0。店番号 s＋番号）も重ねる。月1回、明晰が店のデータに書き写したら、ファイルの店のほうを使う
@@ -76,6 +79,7 @@ export function rebuild(base) {
   BYID.clear(); STORES.forEach((s) => BYID.set(s.i, s));
   for (const s of all) if (FIX.closed.has(s.i)) BYID.set(s.i, Object.assign(named(s), { closed: 1 })); // 閉店：記録の表示のためだけに残す
   for (const s of all) if (FIX.hide.has(s.i) && !FIX.closed.has(s.i)) BYID.set(s.i, named(s)); // 地図から外した店：記録の表示のためだけに残す（v0.26.0）
+  for (const g of GONE) { if (BYID.has(g.i)) continue; const to = g.to && BYID.get(g.to); BYID.set(g.i, to ? Object.assign({}, to, { i: g.i, alias: g.to }) : Object.assign({}, g, { closed: 1 })); } // 重なりで外した店は、残した店として見せる／閉店は「閉店」
   computeFeatured();
 }
 // 支店名のない店（「TSUTAYA」「未来屋書店」だけの名前）は、今週の推し店に選ばない（どの店か分からないため。v0.13）
@@ -90,7 +94,7 @@ export function computeFeatured() {
 export const isFeat = (id) => { for (const v of FEAT.values()) if (v === id) return true; return false; };
 export function search(q, limit = 20) {
   const words = q.trim().split(/[\s　]+/).filter(Boolean); if (!words.length) return [];
-  return STORES.filter((s) => { const hay = (s.n || '') + ' ' + (s.a || '') + ' ' + prefOf(s); return words.every((w) => hay.includes(w)); }).slice(0, limit);
+  return STORES.filter((s) => { const hay = (s.n || '') + ' ' + (s.a || s.aa || '') + ' ' + prefOf(s); /* 町名でもさがせる（v0.30.0） */ return words.every((w) => hay.includes(w)); }).slice(0, limit);
 }
 export function addCustom(st) { S.custom.push(st); const full = Object.assign({}, st, { custom: 1 }); STORES.push(full); BYID.set(st.i, full); }
 export function hideStore(st) { S.hidden[st.i] = { d: todayISO(), n: st.n }; STORES = STORES.filter((s) => s.i !== st.i); BYID.delete(st.i); computeFeatured(); }

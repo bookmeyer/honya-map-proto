@@ -1,5 +1,5 @@
 {
- "fetchedAt": "2026-11-02T00:01:14.171Z",
+ "fetchedAt": "2026-11-19T16:34:58.143Z",
  "list": [
   {
    "name": "古本市場新琴似店",
@@ -931,6 +931,14 @@
    ]
   },
   {
+   "name": "ふるいちイオンモール京都桂川店",
+   "address": "京都府京都市南区久世高田町３７６−１イオンモール京都桂川３階",
+   "url": "https://www.furu1.net/shop/shop0216.html",
+   "tags": [
+    "ふるいち"
+   ]
+  },
+  {
    "name": "古本市場東豊中店",
    "address": "大阪府豊中市東豊中町５丁目３６-２４",
    "url": "https://www.furu1.net/shop/shop0015.html",
@@ -1515,9 +1523,9 @@
    ]
   },
   {
-   "name": "ふるいちイオンモール熊本店",
-   "address": "熊本県上益城郡嘉島町上島字長池２２３２イオンモール熊本２F",
-   "url": "https://www.furu1.net/shop/shop0194.html",
+   "name": "ふるいちイオンモール福津店",
+   "address": "福岡県福津市日蒔野６丁目１６−１イオンモール福津２階",
+   "url": "https://www.furu1.net/shop/shop0217.html",
    "tags": [
     "ふるいち"
    ]

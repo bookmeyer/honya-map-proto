@@ -1,19 +1,19 @@
 // 設定の画面と、そこから開くもの：見た目・着せ替え・アイコン・ハンドルネーム・参加コード・送るもののお知らせ・記録を守る・Googleマップの★
-import { SKINS, MAP_SKINS, APP_VER, TRIAL_ON, PROFILE_ON, POLICY_VER } from './config.js?v=0.29.2';
-import { openProfile, profileSummary } from './profile_ui.js?v=0.29.2';
-import { openAvatarPicker } from './setup_ui.js?v=0.29.2';
-import { openGiveCode, openTakeCode } from './transfer_ui.js?v=0.29.2';
-import { homeTip, inAppName } from './start_ui.js?v=0.29.2';
-import { $, esc, fmtDist, icon, $$, mobileOS, isStandalone, emit, todayISO } from './util.js?v=0.29.2';
-import { S, save, parseImport, replace, reset, exportJSON } from './state.js?v=0.29.2';
-import { sfx } from './audio.js?v=0.29.2';
-import { POS } from './position.js?v=0.29.2';
-import { addCustom, STORES, DATA_DATE, rebuild, unhideAll } from './data.js?v=0.29.2';
-import * as MAP from './map.js?v=0.29.2';
-import * as E from './events.js?v=0.29.2';
-import * as GI from './gimport.js?v=0.29.2';
-import { openModal, closeModal, toast, refreshHud, switchView, confirmBox } from './ui.js?v=0.29.2';
-import { applyMapStates, updateNear, updateAreaChip, setTrialUI } from './map_ui.js?v=0.29.2';
+import { SKINS, MAP_SKINS, APP_VER, TRIAL_ON, PROFILE_ON, POLICY_VER } from './config.js?v=0.30.0';
+import { openProfile, profileSummary } from './profile_ui.js?v=0.30.0';
+import { openAvatarPicker } from './setup_ui.js?v=0.30.0';
+import { openGiveCode, openTakeCode } from './transfer_ui.js?v=0.30.0';
+import { homeTip, inAppName } from './start_ui.js?v=0.30.0';
+import { $, esc, fmtDist, icon, $$, mobileOS, isStandalone, emit, todayISO } from './util.js?v=0.30.0';
+import { S, save, parseImport, replace, reset, exportJSON } from './state.js?v=0.30.0';
+import { sfx } from './audio.js?v=0.30.0';
+import { POS } from './position.js?v=0.30.0';
+import { addCustom, STORES, DATA_DATE, rebuild, unhideAll } from './data.js?v=0.30.0';
+import * as MAP from './map.js?v=0.30.0';
+import * as E from './events.js?v=0.30.0';
+import * as GI from './gimport.js?v=0.30.0';
+import { openModal, closeModal, toast, refreshHud, switchView, confirmBox } from './ui.js?v=0.30.0';
+import { applyMapStates, updateNear, updateAreaChip, setTrialUI } from './map_ui.js?v=0.30.0';
 
 // ---------- Googleマップの★を読み込む ----------
 export function googleHelp() {
@@ -55,7 +55,7 @@ export function renderSettings() {
     <div class="setting"><div><div class="l">ハンドルネーム</div><div class="s">${S.settings.handle ? esc(S.settings.handle) : 'まだありません。見出し・プロフィール・シェアする画像に出ます'}</div></div><button class="btn" id="st-name">${S.settings.handle ? '変える' : '付ける'}</button></div>
     <div class="setting"><div><div class="l">参加コード</div><div class="s">${s.joinCode ? `「${esc(s.joinCode)}」で参加中（お試しの人だけのイベントが見えます）` : 'お試しなどで渡されたコードを入れると、その人たちだけのイベントが見えます'}</div></div><button class="btn" id="st-join">${s.joinCode ? '変える' : '入れる'}</button></div>
     <div class="setting"><div><div class="l">運営に送るもの</div><div class="s">参加の人数と読書の機能の使われ方を数えるのと、書店員さんの手書きのカードを開くための記録（店の番号・日時・読んだ長さなど）を送ります。位置・本の名前・名前・メモは送りません${(S.outbox || []).length ? `（まだ送っていない記録 ${S.outbox.length}件）` : ''}</div></div><button class="btn" id="st-send-info">くわしく</button></div>
-    <div class="setting"><div><div class="l">自分のアイコン</div><div class="s">地図の現在地に出ます。画像はこの端末の中だけに置き、どこにも送りません</div></div><div class="avatar-ctl">${s.avatar ? `<img class="avatar" src="${esc(s.avatar)}" alt="">` : ''}<button class="btn" id="st-avatar">${s.avatar ? '替える' : '選ぶ'}</button></div></div>
+    <div class="setting"><div><div class="l">自分のアイコン</div><div class="s">地図の現在地に出ます。絵か、スマホの写真から選べます。写真はこの端末の中だけに置き、どこにも送りません</div></div><div class="avatar-ctl">${s.avatar ? `<img class="avatar" src="${esc(s.avatar)}" alt="">` : ''}<button class="btn" id="st-avatar">${s.avatar ? '替える' : '選ぶ'}</button></div></div>
     <div class="setting"><div><div class="l">図書館も地図に出す</div><div class="s">全国の公共図書館（約3,500館）。大学・学校の図書館は入っていません</div></div><button class="switch ${s.showLib !== false ? 'on' : ''}" id="st-lib" role="switch" aria-checked="${s.showLib !== false}" aria-label="図書館も地図に出す"></button></div>
     <div class="setting"><div><div class="l">行きたい店のお知らせ</div><div class="s">行きたい店に近づくと、地図の下でお知らせします（アプリを開いて現在地を追っているあいだ）</div></div><button class="switch ${s.wantAlert !== false ? 'on' : ''}" id="st-want" role="switch" aria-checked="${s.wantAlert !== false}" aria-label="行きたい店のお知らせ"></button></div>
     ${s.wantAlert !== false ? `<div class="setting"><div><div class="l">お知らせする距離</div><div class="s">この距離に入ったときと、500mに入ったとき</div></div><div class="seg3" id="st-want-m">${[1000, 2000, 5000].map((m) => `<button data-m="${m}" class="${(s.wantAlertM || 2000) === m ? 'active' : ''}">${m / 1000}km</button>`).join('')}</div></div>` : ''}
@@ -82,7 +82,7 @@ export function renderSettings() {
     <div class="setting"><div><div class="l">利用規約</div><div class="s">使うときのきまり・お店の方への約束（v0.26.0）</div></div><a class="btn" href="terms.html" target="_blank" rel="noopener">見る</a></div>
     <div class="setting"><div><div class="l">端末の番号</div><div class="s">名前のないランダムな番号です。送った記録やプロフィールを消してほしいときに、お問い合わせに添えてください：<span class="mono">${esc(E.deviceId())}</span></div></div></div>
     <div class="about">本めぐり v${APP_VER}。本屋をめぐって、本とめぐりあう。本屋と図書館の位置ゲームです。<br>歩きながら画面を見ないでください。運転中は使わないでください。お店では、店の方やほかのお客さんの迷惑にならないようにお願いします。<br>位置（座標）は、この端末の中で距離を出すためだけに使い、送りません。参加の人数を数えるために、スタンプを押した店の番号・日時・店の近くで押したか・お試し歩きか・どのイベントかを、名前のない、ランダムな番号といっしょに、本をつなぐ（tsunagubooks.com）へ送ります。読書の機能の使われ方を見るために、読書の日時（何時まで）・長さ・読んだ場所の種類・移動読書の距離も送ります（本の名前と読んだ場所は送りません。くわしくはプライバシーポリシー）。そのほかの記録は、この端末の中だけに残ります。<br>画面を出すために、Google Fonts（文字）・jsDelivr（地図のプログラム）・OpenFreeMap（地図の絵。見ている範囲）へ、本を調べるときは openBD（その本の番号）へつなぎます。このとき、端末のIPアドレスやブラウザの種類が相手に届きます。<br><br>
-      店の位置：© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors（ODbL）。地図：<a href="https://openfreemap.org/" target="_blank" rel="noopener">OpenFreeMap</a>・<a href="https://openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a>。本の情報と表紙：<a href="https://openbd.jp/" target="_blank" rel="noopener">openBD</a>（表紙は紹介のための参照表示で、保存しません）。書名でさがす：<a href="https://ndlsearch.ndl.go.jp/" target="_blank" rel="noopener">国立国会図書館サーチ</a>の API（国立国会図書館の書誌データ・<a href="https://creativecommons.org/licenses/by/4.0/deed.ja" target="_blank" rel="noopener">CC BY 4.0</a>。著者名の表し方を整えて出しています。送るのは、さがす言葉だけです）。地図の描画：MapLibre GL JS。文字：Google Fonts。<br>
+      店の位置：© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors（ODbL）。地図：<a href="https://openfreemap.org/" target="_blank" rel="noopener">OpenFreeMap</a>・<a href="https://openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a>。本の情報と表紙：<a href="https://openbd.jp/" target="_blank" rel="noopener">openBD</a>（表紙は紹介のための参照表示で、保存しません）。書名でさがす：<a href="https://ndlsearch.ndl.go.jp/" target="_blank" rel="noopener">国立国会図書館サーチ</a>の API（国立国会図書館の書誌データ・<a href="https://creativecommons.org/licenses/by/4.0/deed.ja" target="_blank" rel="noopener">CC BY 4.0</a>。著者名の表し方を整えて出しています。送るのは、さがす言葉だけです）。住所の目安（「○○ 付近」）：<a href="https://github.com/geolonia/japanese-addresses" target="_blank" rel="noopener">Geolonia 住所データ</a>（<a href="https://creativecommons.org/licenses/by/4.0/deed.ja" target="_blank" rel="noopener">CC BY 4.0</a>。国土交通省 位置参照情報をもとに作成。店の位置にいちばん近い町丁目です）。地図の描画：MapLibre GL JS。文字：Google Fonts。<br>
       店のデータは ${DATA_DATE} 時点の OpenStreetMap（有志が作る地図）で、閉店や名前の変更が反映されていない店があります。店のページの「閉店している」で外せ、「名前が違う」で直せます（この端末だけ。記録の書き出しに含まれます）。</div>`;
   $('#st-back').onclick = () => switchView('map');
   $$('#st-theme button').forEach((b) => b.addEventListener('click', () => { s.theme = b.dataset.t; save(); applyTheme(); renderSettings(); }));

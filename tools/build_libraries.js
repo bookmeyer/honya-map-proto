@@ -40,6 +40,12 @@ for (let i = 0; i < keep.length; i++) {
   for (let j = 0; j < keep.length; j++) { if (i === j) continue; const b = keep[j]; if (Math.abs(a.la - b.la) > 0.046 || Math.abs(a.lo - b.lo) > 0.06) continue; const dLat = (b.la - a.la) * T, dLon = (b.lo - a.lo) * T; const h = Math.sin(dLat / 2) ** 2 + Math.cos(a.la * T) * Math.cos(b.la * T) * Math.sin(dLon / 2) ** 2; if (2 * R * Math.asin(Math.sqrt(h)) <= 5000) k++; }
   a.k = k;
 }
+// 住所の目安（v0.30.0）：住所のない店に、いちばん近い町丁目（tools/approx_addr.js が作る tools/data/approx_addr.json。Geolonia 住所データ・CC BY 4.0）
+//   新しく入った店にも付けるには：build → node tools/approx_addr.js <latest.csv> → もう一度 build
+const approxPath = require('path').join(__dirname, 'data', 'approx_addr.json');
+const approx = fs.existsSync(approxPath) ? JSON.parse(fs.readFileSync(approxPath, 'utf8')) : {};
+let approxN = 0; for (const r of keep) { const x = approx[r.i]; if (!r.a && x && x.aa) { r.aa = x.aa; if (!r.p && x.p) r.p = x.p; approxN++; } }
+console.log('住所の目安：', approxN);
 fs.writeFileSync(outFile, JSON.stringify(keep));
 console.log('libraries:', keep.length, ' 外した（大学・学校など）:', ng, ' 名前や位置なし:', dropped, ' 重なり:', out.length - keep.length, ' 上書き 名前', renamed, '閉館', closedN);
 console.log('秘境（周り5kmに図書館なし）:', keep.filter((r) => r.k === 0).length, ' 住所あり:', keep.filter((r) => r.a).length);

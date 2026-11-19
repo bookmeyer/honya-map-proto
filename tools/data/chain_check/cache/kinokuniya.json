@@ -1,5 +1,5 @@
 {
- "fetchedAt": "2026-11-02T00:01:52.359Z",
+ "fetchedAt": "2026-11-19T16:35:45.355Z",
  "list": [
   {
    "name": "紀伊國屋書店 札幌本店",
@@ -119,13 +119,6 @@
    "lat": 35.68597997512659,
    "lon": 139.70239520072937,
    "url": "https://store.kinokuniya.co.jp/store/books-kinokuniya-tokyo/"
-  },
-  {
-   "name": "紀伊國屋書店 西武渋谷店",
-   "address": "",
-   "lat": 35.660229590859466,
-   "lon": 139.7003298997879,
-   "url": "https://store.kinokuniya.co.jp/store/seibu-shibuya-store/"
   },
   {
    "name": "紀伊國屋書店 玉川高島屋店",

@@ -1,20 +1,20 @@
 // 地図の画面：現在地まわり（射程・いちばん近い店）・ピンの状態・現在地とお試し歩き・店のページ・さがす・店を足す・行きたい店のお知らせ
-import { RANGE_M, TERRITORY_M, PG, TRIAL_ON, PREFS, MAP_CREDIT } from './config.js?v=0.29.2';
-import { $, arrowOf, bearing, icon, fmtDist, esc, dist, $$, emit, fmtDate, gmapDir, stars, gmapPlace, prefOf } from './util.js?v=0.29.2';
-import { S, save } from './state.js?v=0.29.2';
-import { unlock, sfx } from './audio.js?v=0.29.2';
-import { hasPos, POS, startWatch, setTrial, setPos, jumped } from './position.js?v=0.29.2';
-import { STORES, BYID, isLib, isFeat, rarityOf, pickOpen, placeWord, bookTitle, stampSVG, rarityText, lookupIsbn, hideStore, renameStore, search, FEAT } from './data.js?v=0.29.2';
-import * as MAP from './map.js?v=0.29.2';
-import * as G from './game.js?v=0.29.2';
-import * as E from './events.js?v=0.29.2';
-import * as J from './journey.js?v=0.29.2';
-import { dirLink, openModal, closeModal, stopLinks, toast, closeSheet, refreshHud, currentView, switchView, syncStatusCard } from './ui.js?v=0.29.2';
-import { startCheckin, shareStampUI } from './checkin_ui.js?v=0.29.2';
-import { startCard } from './card_ui.js?v=0.29.2';
-import * as SH from './shops.js?v=0.29.2';
-import { addReading } from './reading.js?v=0.29.2';
-import { todayISO } from './util.js?v=0.29.2';
+import { RANGE_M, TERRITORY_M, PG, TRIAL_ON, PREFS, MAP_CREDIT } from './config.js?v=0.30.0';
+import { $, arrowOf, bearing, icon, fmtDist, esc, dist, $$, emit, fmtDate, gmapDir, stars, gmapPlace, prefOf } from './util.js?v=0.30.0';
+import { S, save } from './state.js?v=0.30.0';
+import { unlock, sfx } from './audio.js?v=0.30.0';
+import { hasPos, POS, startWatch, setTrial, setPos, jumped } from './position.js?v=0.30.0';
+import { STORES, BYID, isLib, isFeat, rarityOf, pickOpen, placeWord, bookTitle, stampSVG, rarityText, lookupIsbn, hideStore, renameStore, search, FEAT } from './data.js?v=0.30.0';
+import * as MAP from './map.js?v=0.30.0';
+import * as G from './game.js?v=0.30.0';
+import * as E from './events.js?v=0.30.0';
+import * as J from './journey.js?v=0.30.0';
+import { dirLink, openModal, closeModal, stopLinks, toast, closeSheet, refreshHud, currentView, switchView, syncStatusCard } from './ui.js?v=0.30.0';
+import { startCheckin, shareStampUI } from './checkin_ui.js?v=0.30.0';
+import { startCard } from './card_ui.js?v=0.30.0';
+import * as SH from './shops.js?v=0.30.0';
+import { addReading } from './reading.js?v=0.30.0';
+import { todayISO } from './util.js?v=0.30.0';
 
 // ---------- 行きたい店のお知らせ（地図の下に出る帯） ----------
 let waTimer = null;
@@ -243,7 +243,7 @@ export function openSheet(id, quiet) {
       ${!near && !st.closed && (POS.fake || !st.demo) ? '<button class="btn" data-act="checkin">来た記録だけ（スタンプなし）</button>' : ''}
       ${st.demo || st.closed ? '' : '<div class="muted small" style="grid-column:1/-1;width:100%">営業時間・道順は、Googleマップが開きます</div>'}
     </div>${st.demo ? '' : `<div class="reg"><div class="reg-h"><span class="badge ${reg.rank >= 3 ? 'shu' : reg.rank >= 2 ? 'gold' : ''}">常連度 ${reg.rank ? esc(reg.name) : 'まだ'}</span><span class="muted small">来店 ${reg.days}日${reg.next ? `・あと${reg.toNext}日で「${esc(reg.next.name)}」` : '・最高位'}</span></div><div class="rally" role="img" aria-label="常連度 ${G.REGULAR_NAMES.length}段階のうち${reg.rank}">${G.REGULAR_NAMES.map((nm, k) => `<i class="${k < reg.rank ? (k === G.REGULAR_NAMES.length - 1 ? 'top' : 'on') : ''}" title="${esc(nm)}">${k < reg.rank ? icon('check') : ''}</i>`).join('')}</div><div class="rally-l"><span>${esc(G.REGULAR_NAMES[0])}</span><span>${esc(G.REGULAR_NAMES[G.REGULAR_NAMES.length - 1])}</span></div></div>`}${hist}
-    <div class="muted small" style="margin-top:10px">${esc(st.a || (st.custom ? '' : '住所の情報なし（地図データより）'))}　${esc(prefOf(st))}</div>${st.demo || st.custom ? '' : `<div class="muted small">${esc(srcLine)}</div>`}
+    <div class="muted small" style="margin-top:10px">${st.a ? `${esc(st.a)}　${esc(prefOf(st))}` : st.aa ? `${esc(st.aa)} 付近<span class="addr-note">（位置からの目安）</span>` : `${st.custom ? '' : '住所の情報なし（地図データより）'}　${esc(prefOf(st))}`}</div>${st.demo || st.custom ? '' : `<div class="muted small">${esc(srcLine)}</div>`}
     ${st.demo || st.custom || st.closed ? '' : `${reportInvite(st)}<div class="actions"><button class="btn ghost" data-act="report">${isLib(st) ? '閉館している' : '閉店している'}</button><button class="btn ghost" data-act="rename">名前が違う</button>${near ? '<button class="btn ghost" data-act="notfound">お店が見つからない</button>' : ''}</div>`}
     <div id="sheet-extra"></div>`;
   $$('#sheet-body [data-evlist]').forEach((x) => x.addEventListener('click', () => emit('evlist', x.dataset.evlist)));

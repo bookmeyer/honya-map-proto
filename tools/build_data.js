@@ -35,9 +35,12 @@ for (const e of raw.elements || []) {
 const TD = require('path').join(__dirname, 'data');
 const must = (f) => { const p = require('path').join(TD, f); if (!fs.existsSync(p)) { console.error(`見つかりません：${p}（空のまま作ると、閉店した店が戻り、足した店が消えるので止めます）`); process.exit(1); } return JSON.parse(fs.readFileSync(p, 'utf8')); };
 const ov = Object.assign({ renames: {}, closed: {} }, must('overrides.json'));
-let renamed = 0, closedN = 0;
-for (let i = out.length - 1; i >= 0; i--) { const r = out[i]; if (ov.closed && ov.closed[r.i]) { out.splice(i, 1); closedN++; continue; } if (ov.renames && ov.renames[r.i]) { r.n = ov.renames[r.i].n; r.ov = 1; renamed++; } }
-console.log('上書き：屋号変更', renamed, '閉店', closedN);
+let renamed = 0, closedN = 0, dupN = 0;
+// 外した店（閉店・重なり）は data/gone.json に残す（v0.30.0）：アプリは地図に出さず、スタンプなど記録の表示にだけ使う（前は記録から消えていた）
+const goneList = []; const goneRec = (r, extra) => { const g = { i: r.i, n: r.n, la: r.la, lo: r.lo }; if (r.p) g.p = r.p; if (r.u) g.u = 1; goneList.push(Object.assign(g, extra)); };
+const dups = ov.dups || {}; // 重なり（tools/dedupe.js）：{ 外す店: { to: 残す店 } }
+for (let i = out.length - 1; i >= 0; i--) { const r = out[i]; if (ov.closed && ov.closed[r.i]) { goneRec(r, { z: 1 }); out.splice(i, 1); closedN++; continue; } if (dups[r.i] && dups[r.i].to) { goneRec(r, { to: dups[r.i].to }); out.splice(i, 1); dupN++; continue; } if (ov.renames && ov.renames[r.i]) { r.n = ov.renames[r.i].n; r.ov = 1; renamed++; } }
+console.log('上書き：屋号変更', renamed, '閉店', closedN, '重なり', dupN);
 // 追加表（公式店舗一覧にあって OSM にない店。tools/chain_check.js → tools/apply_candidates.js --add で足す）
 const adds = must('additions.json');
 const have = new Set(out.map((r) => r.i)); let added = 0;
@@ -46,6 +49,12 @@ for (const x of adds) { if (!x || !x.i || !x.n || x.la == null || x.lo == null |
 const confirmed = must('confirmed.json');
 let confN = 0; for (const r of out) { const m = confirmed[r.i]; if (m && (!r.c || m > r.c)) { r.c = m; r.cf = 1; confN++; } }
 console.log('追加表：', added, ' 公式一覧で確認：', confN);
+// 住所の目安（v0.30.0）：住所のない店に、いちばん近い町丁目（tools/approx_addr.js が作る tools/data/approx_addr.json。Geolonia 住所データ・CC BY 4.0）
+//   新しく入った店にも付けるには：build → node tools/approx_addr.js <latest.csv> → もう一度 build
+const approxPath = require('path').join(__dirname, 'data', 'approx_addr.json');
+const approx = fs.existsSync(approxPath) ? JSON.parse(fs.readFileSync(approxPath, 'utf8')) : {};
+let approxN = 0; for (const r of out) { const x = approx[r.i]; if (!r.a && x && x.aa) { r.aa = x.aa; if (!r.p && x.p) r.p = x.p; approxN++; } }
+console.log('住所の目安：', approxN);
 out.sort((a, b) => a.la - b.la);
 // 秘境度：半径5kmにある他の本屋の数（k）。少ないほど珍しい印になる
 const R = 6371000, T = Math.PI / 180;
@@ -62,6 +71,11 @@ for (let i = 0; i < out.length; i++) {
 }
 console.log('秘境（k<=1）:', out.filter((r) => r.k <= 1).length, ' k<=8:', out.filter((r) => r.k <= 8).length);
 fs.writeFileSync(outFile, JSON.stringify(out));
+// 外した店の秘境度も、残った店から数える（記録の表示で、スタンプの珍しさが変わらないように）
+for (const g of goneList) { let k = 0; for (const b of out) { if (Math.abs(g.la - b.la) > 0.046 || Math.abs(g.lo - b.lo) > 0.06) continue; const dLat = (b.la - g.la) * T, dLon = (b.lo - g.lo) * T; const h = Math.sin(dLat / 2) ** 2 + Math.cos(g.la * T) * Math.cos(b.la * T) * Math.sin(dLon / 2) ** 2; if (2 * R * Math.asin(Math.sqrt(h)) <= 5000) k++; } g.k = k; }
+const gonePath = require('path').join(require('path').dirname(outFile), 'gone.json');
+fs.writeFileSync(gonePath, JSON.stringify(goneList));
+console.log('外した店（記録の表示用）:', goneList.length, '→', gonePath);
 console.log('stores:', out.length, 'dropped (no name/position):', dropped);
-console.log('with addr:', out.filter((r) => r.a).length, 'with province:', out.filter((r) => r.p).length, 'used:', out.filter((r) => r.u).length);
+console.log('with addr:', out.filter((r) => r.a).length, 'approx addr:', out.filter((r) => r.aa).length, 'with province:', out.filter((r) => r.p).length, 'used:', out.filter((r) => r.u).length);
 console.log('top tags:', Object.entries(keyCount).sort((a, b) => b[1] - a[1]).slice(0, 30).map(([k, v]) => k + ':' + v).join(' '));

@@ -610,3 +610,9 @@ ul.plain,ol.plain{padding-left:1.2em;margin:8px 0;line-height:1.7;font-size:14px
 .rp .rp-reward b{display:inline;margin:0}
 .rp-reward b,.mapcredit b{white-space:nowrap}
 .rp-reward.invite{border:2px dashed var(--edge)}
+/* v0.30.0 住所の目安 */
+.addr-note{font-size:11px;margin-left:2px}
+/* v0.30.0 アイコンの「写真を選ぶ」（前は「画像」。11/20 ぶっくまさん「わかりづらい」） */
+.av-photo{flex-direction:column;gap:2px}
+.av-photo .ic{width:22px;height:22px}
+.av-photo span{font-size:11px;line-height:1.25;text-align:center}

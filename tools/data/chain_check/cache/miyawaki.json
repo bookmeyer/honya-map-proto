@@ -1,5 +1,5 @@
 {
- "fetchedAt": "2026-10-15T07:53:39.236Z",
+ "fetchedAt": "2026-11-19T16:36:30.587Z",
  "list": [
   {
    "name": "宮脇書店 札幌平岡店",
@@ -517,8 +517,8 @@
    "url": "https://www.miyawakishoten.com/store/chugoku/yamaguchi/3575500390.html"
   },
   {
-   "name": "宮脇書店 イオン鳥取店",
-   "address": "鳥取県鳥取市天神町１ イオン鳥取店２階",
+   "name": "宮脇書店 そよら鳥取店",
+   "address": "鳥取県鳥取市天神町１ そよら鳥取駅南２階",
    "url": "https://www.miyawakishoten.com/store/chugoku/tottori/entry-1633.html"
   },
   {
@@ -805,6 +805,11 @@
    "name": "宮脇書店 十川店",
    "address": "香川県高松市十川東町55番地1 フジグラン十川内",
    "url": "https://www.miyawakishoten.com/store/kagawa/takamatsu/entry-2917.html"
+  },
+  {
+   "name": "宮脇書店 イオンモール綾川店",
+   "address": "香川県綾歌郡綾川町萱原８２２−１ イオンモール綾川店２F",
+   "url": "https://www.miyawakishoten.com/store/kagawa/outside_takamatsu/entry-4886.html"
   },
   {
    "name": "宮脇書店 那覇空港店",
