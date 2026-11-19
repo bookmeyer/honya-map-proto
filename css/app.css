@@ -431,7 +431,7 @@ ul.plain,ol.plain{padding-left:1.2em;margin:8px 0;line-height:1.7;font-size:14px
 .read-btn{pointer-events:auto;display:flex;gap:8px;margin-top:2px}
 .read-btn button{min-height:56px;border:var(--edge-w) solid var(--edge);border-radius:var(--r-l);box-shadow:var(--hard);color:var(--on-color);cursor:pointer;display:flex;align-items:center;gap:8px}
 .read-btn button:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--edge)}
-.read-btn .rb-go{flex:1;justify-content:center;background:var(--shu);font-family:var(--display);font-size:20px;padding:8px 16px}
+.read-btn .rb-go{flex:1;min-width:0;justify-content:center;background:var(--shu);font-family:var(--display);font-size:20px;padding:8px 16px} /* min-width:0：長い書名の「〜のつづき」でボタンが画面からはみ出していた（11/19 ぶっくまさん） */
 .read-btn .rb-main{flex:1;min-width:0;background:var(--gold);font-size:15px;font-weight:700;padding:6px 12px;text-align:left}
 .read-btn .rb-end{flex:none;background:var(--card);color:var(--ink);font-size:17px;font-weight:700;padding:6px 18px}
 .read-btn .rb-i{font-size:22px;line-height:1;flex:none}
