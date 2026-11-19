@@ -1,11 +1,11 @@
 // 記録（この端末の中だけ）。版の違いを吸収して読み込み、まとめて書き込む
-import { SKINS, MAP_SKINS, STORAGE_KEY, LEGACY_KEYS, APP_VER, PROFILE_Q } from './config.js?v=0.24.0';
-import { $, emit, debounce } from './util.js?v=0.24.0';
+import { SKINS, MAP_SKINS, STORAGE_KEY, LEGACY_KEYS, APP_VER, PROFILE_Q } from './config.js?v=0.25.0';
+import { $, emit, debounce } from './util.js?v=0.25.0';
 
 export const empty = () => ({
   v: 4, visits: [], cards: [], wants: [], custom: [], stamps: {}, pg: 0, pgDay: {},
   claimedW: {}, claimedD: {}, rallyDone: {}, featDone: {}, looks: {},
-  hidden: {}, renames: {}, days: {}, posts: [], shares: [], reading: [], trips: [], trip: null, seen: 0, lastPos: null, shareCount: 0, evLog: {}, evTitles: [], outbox: [], repOut: [],
+  hidden: {}, renames: {}, days: {}, posts: [], shares: [], reading: [], trips: [], trip: null, seen: 0, lastPos: null, shareCount: 0, evLog: {}, evTitles: [], outbox: [], repOut: [], actOut: [],
   settings: { theme: 'light', sound: false, avatar: '', handle: '', wantAlert: true, wantAlertM: 2000, dev: '', joinCode: '', privacyV10: 0 }, createdAt: Date.now(),
 });
 export let S = empty();
@@ -30,7 +30,7 @@ function cleanProfile(p) {
   return { a, d: isDay(p.d) ? p.d : '', send: Object.keys(a).length > 0 }; // v0.20.1：答えがあれば、統計データとして送る
 }
 function sanitize(o) {
-  for (const k of ['visits', 'cards', 'wants', 'custom', 'posts', 'shares', 'reading', 'trips', 'reads', 'evTitles', 'outbox', 'repOut']) if (!Array.isArray(o[k])) o[k] = [];
+  for (const k of ['visits', 'cards', 'wants', 'custom', 'posts', 'shares', 'reading', 'trips', 'reads', 'evTitles', 'outbox', 'repOut', 'actOut']) if (!Array.isArray(o[k])) o[k] = [];
   for (const k of ['stamps', 'pgDay', 'claimedW', 'claimedD', 'rallyDone', 'featDone', 'looks', 'hidden', 'renames', 'days', 'evLog']) o[k] = plain(o[k]);
   for (const k of ['pg', 'seen', 'shareCount']) o[k] = num(o[k]);
   const ok = (x) => x && typeof x === 'object';
@@ -44,6 +44,7 @@ function sanitize(o) {
   o.evTitles = o.evTitles.filter((x) => ok(x) && isDay(x.d));
   const str = (x, n) => (typeof x === 'string' ? x.slice(0, n) : ''); // まだ送れていない店の報告（v0.17.0）
   o.repOut = o.repOut.filter((r) => ok(r) && ['closed', 'rename', 'add'].includes(r.kind) && typeof r.store === 'string').slice(-50).map((r) => ({ kind: r.kind, store: str(r.store, 40), orig: str(r.orig, 80), name: str(r.name, 80), note: str(r.note, 200), lat: num(r.lat, null), lon: num(r.lon, null), place: str(r.place, 8), at: str(r.at, 40) }));
+  o.actOut = o.actOut.filter((x) => ok(x) && ['open', 'read', 'done', 'sato', 'tabi'].includes(x.k) && typeof x.id === 'string' && /^[a-z][0-9a-z-]{1,23}$/.test(x.id)).slice(-500).map((x) => (x.k === 'tabi' && ['open', 'share'].includes(x.sub) ? { k: x.k, id: x.id, at: str(x.at, 40), sub: x.sub } : { k: x.k, id: x.id, at: str(x.at, 40) })); // まだ送れていない読書と使い方の記録（v0.25.0）
   for (const [k, v] of Object.entries(o.stamps)) if (!ok(v) || !isDay(v.d)) delete o.stamps[k];
   for (const [k, v] of Object.entries(o.days)) if (!isDay(k) || !ok(v)) delete o.days[k]; else { v.m = num(v.m); v.v = num(v.v); }
   for (const [k, v] of Object.entries(o.pgDay)) if (!isDay(k)) delete o.pgDay[k]; else o.pgDay[k] = num(v);
@@ -58,6 +59,7 @@ function sanitize(o) {
   s.avatar = typeof s.avatar === 'string' && s.avatar.length < 400000 && AVATAR_RE.test(s.avatar) ? s.avatar : '';
   s.handle = typeof s.handle === 'string' ? s.handle.slice(0, 20) : '';
   if (s.avatarKind != null && !(typeof s.avatarKind === 'string' && /^[a-z]{1,12}$/.test(s.avatarKind))) delete s.avatarKind; // アイコンの種類（v0.21.0）
+  if (s.openDay != null && !isDay(s.openDay)) delete s.openDay; // その日に開いたことを送った日（v0.25.0）
   s.joinCode = typeof s.joinCode === 'string' && /^[a-z0-9_-]{2,40}$/.test(s.joinCode) ? s.joinCode : '';
   s.wantAlertM = num(s.wantAlertM, 2000);
   if (!['light', 'dark', 'auto'].includes(s.theme)) s.theme = 'light';

@@ -2,15 +2,16 @@
 // 地図の大きなボタン「ここから読む」で時間を計りはじめ（本も読みかたも選ばない）、読み終えたら「しおりをはさむ」で止める（v0.14.4・名前は v0.24.0）。読んだ時間だけページが増える
 // v0.24.0（ぶっくまさん 11/18。mekuru との違いは「どこで」）：1km以上動いて読んだ記録は「移動読書」。しおりをはさんだあとは「どこで」を大きく。読み終えたら「1冊の旅」
 // アプリは閉じてよい（時刻で計る）。読んでいる本は、読書中のボタンを押したときに、えらびたい人だけえらぶ
-import { esc, icon, $, $$, fmtDate, fmtMin, fmtDist, todayISO, emit } from './util.js?v=0.24.0';
-import { READ } from './config.js?v=0.24.0';
-import { S, save } from './state.js?v=0.24.0';
-import { POS } from './position.js?v=0.24.0';
-import * as R from './reading.js?v=0.24.0';
-import { closeModal, toast, openModal, stopScan, scanIsbn, searchBook, confirmBox, dirLink, currentView } from './ui.js?v=0.24.0';
-import { BYID } from './data.js?v=0.24.0';
-import { tabiImage, shareBlob } from './share.js?v=0.24.0';
-import { noteShare } from './game.js?v=0.24.0';
+import { esc, icon, $, $$, fmtDate, fmtMin, fmtDist, todayISO, emit } from './util.js?v=0.25.0';
+import { READ } from './config.js?v=0.25.0';
+import { S, save } from './state.js?v=0.25.0';
+import { POS } from './position.js?v=0.25.0';
+import * as R from './reading.js?v=0.25.0';
+import { closeModal, toast, openModal, stopScan, scanIsbn, searchBook, confirmBox, dirLink, currentView } from './ui.js?v=0.25.0';
+import { BYID } from './data.js?v=0.25.0';
+import { tabiImage, shareBlob } from './share.js?v=0.25.0';
+import { noteShare } from './game.js?v=0.25.0';
+import { queueAct } from './events.js?v=0.25.0';
 
 const cover = (b) => `<div class="rcover">${b.cover ? `<img src="${esc(b.cover)}" alt="" referrerpolicy="no-referrer" loading="lazy">` : icon('book')}</div>`;
 const hm = (t) => { const d = new Date(t); return `${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`; };
@@ -159,6 +160,7 @@ export function renderReading() {
 const md = (iso) => { const [, m, d] = String(iso).split('-').map(Number); return `${m}月${d}日`; };
 export function openTabi(id, { just = null } = {}) {
   const t = R.bookTrip(id); if (!t) return; const b = t.b; const st = b.s ? BYID.get(b.s) : null;
+  queueAct({ k: 'tabi', sub: 'open', id: 't' + Date.now() }); // 1冊の旅を開いた（回数だけ。v0.25.0）
   const rows = [];
   if (b.dm) rows.push(`<li><i class="shu"></i><b>${md(b.dm)}　出会った</b>${b.sn ? `<div>${esc(b.sn)}</div>` : ''}</li>`);
   if (t.move) rows.push(`<li><i class="pink"></i><b>移動読書　${t.move}回</b><div>あわせて ${fmtDist(t.moveM)}</div></li>`);
@@ -182,6 +184,6 @@ async function shareTabi(t, st) {
     const b = t.b; const blob = await tabiImage(t, st);
     const text = `『${b.title}』を${b.done ? '読み終えた' : '読んでいる'}。${b.sn ? `${b.sn}で出会って${t.days > 0 ? `${t.days}日` : 'その日'}、` : ''}${t.move ? `移動読書${t.move}回` : `読書${t.n}回`} #本めぐり`;
     const r = await shareBlob(blob, `tabi-${b.id}.png`, `${b.title}　1冊の旅`, text);
-    if (r !== 'cancel') { noteShare('tabi', b.s || '', r); toast(r === 'saved' ? '画像を保存しました' : 'シェアしました', 'ok'); }
+    if (r !== 'cancel') { noteShare('tabi', b.s || '', r); queueAct({ k: 'tabi', sub: 'share', id: 'u' + Date.now() }); toast(r === 'saved' ? '画像を保存しました' : 'シェアしました', 'ok'); }
   } catch (e) { const o = $('#tb-out'); if (o) o.innerHTML = '<p class="muted small">画像にできませんでした。</p>'; }
 }

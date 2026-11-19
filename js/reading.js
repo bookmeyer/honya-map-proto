@@ -1,12 +1,13 @@
 // 読書：いま読んでいる本・読書の時間（「ここから読む」〜「しおりをはさむ」）・どこで読んだか・前回の本・1冊の旅・本の里帰り。画面は reading_ui.js
 // v0.24.0：ボタンの名前を「読書をはじめる」→「ここから読む」、「おわる」→「しおりをはさむ」に。1km以上動いて読んだ記録の名前は「移動読書」（ぶっくまさん 11/18）
 // 中の名前は v0.14 の「移動読書」のなごり：S.trip＝いま計っている読書／S.reads＝おわった読書／S.trips の read=1＝v0.14.0〜0.14.3 の読書の記録（allReads でいっしょに数える）
-import { READ } from './config.js?v=0.24.0';
-import { emit, todayISO, dist, fmtDist, on, fmtDate, fmtMin } from './util.js?v=0.24.0';
-import { S, save } from './state.js?v=0.24.0';
-import { POS } from './position.js?v=0.24.0';
-import { STORES, BYID } from './data.js?v=0.24.0';
-import * as G from './game.js?v=0.24.0';
+import { READ } from './config.js?v=0.25.0';
+import { emit, todayISO, dist, fmtDist, on, fmtDate, fmtMin } from './util.js?v=0.25.0';
+import { S, save } from './state.js?v=0.25.0';
+import { POS } from './position.js?v=0.25.0';
+import { STORES, BYID } from './data.js?v=0.25.0';
+import * as G from './game.js?v=0.25.0';
+import { queueAct } from './events.js?v=0.25.0';
 
 // 読書を取り消す（「読んでいなかった」）。v0.14.3 までの記録（店と店のあいだに入れていた分）にも使える
 export function undoRead(id) {
@@ -30,7 +31,7 @@ export function addReading(book) {
   S.reading.push(b); save(); emit('records'); return b;
 }
 export const readingFromCard = (c) => addReading({ title: c.title, author: c.author, isbn: c.isbn, cover: c.cover, card: c.id });
-export function finishReading(id) { const b = (S.reading || []).find((x) => x.id === id); if (!b || b.done) return null; const read = S.trip && S.trip.book === id ? endTrip() : null; /* 読書中なら、ここまでの時間を残して終える（v0.15.1。前は記録せずに消えていた） */ b.done = todayISO(); b.tDone = Date.now(); if (S.lastBook === id) S.lastBook = ''; save(); emit('records'); return { book: b, read: read && read.min >= 1 ? read : null }; } // 本と、ここまでの読書（1分より短いときは null）
+export function finishReading(id) { const b = (S.reading || []).find((x) => x.id === id); if (!b || b.done) return null; const read = S.trip && S.trip.book === id ? endTrip() : null; /* 読書中なら、ここまでの時間を残して終える（v0.15.1。前は記録せずに消えていた） */ b.done = todayISO(); b.tDone = Date.now(); queueAct({ k: 'done', id: 'd' + b.id }); if (S.lastBook === id) S.lastBook = ''; save(); emit('records'); return { book: b, read: read && read.min >= 1 ? read : null }; } // 本と、ここまでの読書（1分より短いときは null）
 export function unfinishReading(id) { const b = (S.reading || []).find((x) => x.id === id); if (!b) return; b.done = ''; b.tDone = 0; save(); emit('records'); }
 export function dropReading(id) { S.reading = (S.reading || []).filter((x) => x.id !== id); if (S.trip && S.trip.book === id) S.trip.book = ''; /* 読書は続ける（本だけ外す。v0.15.1） */ if (S.lastBook === id) S.lastBook = ''; save(); emit('trip'); emit('records'); }
 // 読書中。v0.22 までは、はじめてから12時間を過ぎると記録せずに流していた。v0.23.0 からは消さずに残し、次に開いたときに「いつまで読んだか」を聞く
@@ -81,7 +82,7 @@ export function tripCountText(t) { if (!t || !t.n) return ''; return t.move ? `�
 export function satoAt(storeId) {
   const today = todayISO(), t = Date.now();
   const list = (S.reading || []).filter((b) => b.done && b.s === storeId && !b.sato);
-  for (const b of list) { b.sato = today; b.tSato = t; }
+  for (const b of list) { b.sato = today; b.tSato = t; queueAct({ k: 'sato', id: 's' + b.id }); }
   if (list.length) save();
   return list;
 }
@@ -112,5 +113,6 @@ export function endTrip(at = Date.now(), auto = false, endPos = null, chosen = f
   if (chosen) r.late = 1; // あとから長さを選んだ記録
   if (placeOn()) { r.p0 = tr.p0 || null; if (endPos === false) { r.p1 = null; r.pl = null; } else { r.p1 = endPos || herePos(60000); r.pl = placeOf(r.p0, r.p1); if (!r.p1) r.p1wait = 1; } } // どこで読んだか（v0.15.0）
   S.reads = S.reads || []; S.reads.push(r); if (S.reads.length > 1000) S.reads.splice(0, S.reads.length - 1000);
+  queueAct({ k: 'read', id: r.id }); // 管理画面の「読書」へ（v0.25.0。中身は送るときに記録から作る。本の名前・位置は送らない）
   G.addPages(r.pg); save(); emit('trip'); emit('records'); return r;
 }

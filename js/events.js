@@ -2,11 +2,12 @@
 // サーバーに送るのは「匿名の番号・店番号・日時・射程内か・お試し歩きか・イベント」だけ。位置の座標・名前・メモは送らない
 // 書店員さんの手書きのカードも、ここからサーバーに頼む（v0.16.1。その店で押した記録がある端末だけに渡る）
 // 店の情報の報告を送り、運営が直した閉店・名前を受け取る（v0.17.0）
+// 読書と使い方の記録（v0.25.0）：読書の日時・長さ・読んだ場所の種類・移動読書の距離など。本の名前・位置は送らない（queueAct）
 // サーバーに届かないときは、前回読んだ設定で動く。スタンプはいつでも押せる
-import { EVENTS_API, APP_VER } from './config.js?v=0.24.0';
-import { $, emit, prefOf, todayISO, on } from './util.js?v=0.24.0';
-import { S, save } from './state.js?v=0.24.0';
-import { isLib, setFixes } from './data.js?v=0.24.0';
+import { EVENTS_API, APP_VER, ACT_SINCE } from './config.js?v=0.25.0';
+import { $, emit, prefOf, todayISO, on } from './util.js?v=0.25.0';
+import { S, save } from './state.js?v=0.25.0';
+import { isLib, setFixes } from './data.js?v=0.25.0';
 
 export const EV = { list: [], permitted: new Set(), cards: new Set(), ok: false, at: 0 };
 const CACHE_KEY = 'meguri_events_v1';
@@ -150,21 +151,24 @@ export function flush() { if (!flushP) flushP = sendOutbox().finally(() => { flu
 async function sendOutbox() {
   const logs = (S.outbox || []).length > 0, reps = (S.repOut || []).length > 0; // 報告は、その人が「運営にも知らせる」を選んだものなので、参加の記録を送らない設定でも送る
   const prof = !!S.profOut; // プロフィール（v0.20.0）：本人が同意したとき・やめたとき
-  if (!logs && !reps && !prof) return;
+  const acts = (S.actOut || []).some((x) => !actWaiting(x)); // 読書と使い方の記録（v0.25.0）。しおりの位置を待っている読書だけ、あとで
+  if (!logs && !reps && !prof && !acts) { if ((S.actOut || []).length) flushSoon(60000); return; }
   if (!navigator.onLine) { flushSoon(retryMs); return; }
   let failed = false;
   if (logs && !(await sendQueue(S.outbox, 'checkin.php', 50))) failed = true;
   if (reps && !(await sendQueue(S.repOut, 'report.php', 20))) failed = true;
   if (prof && !(await sendProfile())) failed = true;
-  if (failed && ((S.outbox || []).length || (S.repOut || []).length || S.profOut)) { flushSoon(retryMs); retryMs = Math.min(retryMs * 2, 600000); } else retryMs = 60000;
+  if (acts && !(await sendActs())) failed = true;
+  if (failed && ((S.outbox || []).length || (S.repOut || []).length || S.profOut || (S.actOut || []).length)) { flushSoon(retryMs); retryMs = Math.min(retryMs * 2, 600000); } else { retryMs = 60000; if ((S.actOut || []).length) flushSoon(60000); }
 }
 // 1つの入れ物をまとめて送る。形のまちがい（400）は送り直しても通らないので捨てる。ほかのまちがいは残して、あとで送り直す
-async function sendQueue(q, file, n) {
+async function sendQueue(q, file, n, map) {
   try {
     while (q.length) {
-      const batch = q.slice(0, n);
+      const batch = q.slice(0, n); const items = map ? batch.map(map).filter(Boolean) : batch; // map：送るときに中身を作る（読書と使い方の記録）
+      if (!items.length) { q.splice(0, batch.length); save(); continue; }
       const ctl = new AbortController(); const tm = setTimeout(() => ctl.abort(), 10000);
-      const r = await fetch(new URL(file, apiBase()).toString(), { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ device: deviceId(), ver: APP_VER, items: batch }), signal: ctl.signal });
+      const r = await fetch(new URL(file, apiBase()).toString(), { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ device: deviceId(), ver: APP_VER, items }), signal: ctl.signal });
       clearTimeout(tm);
       if (r.status !== 400 && !r.ok) return false;
       q.splice(0, batch.length); save();
@@ -191,6 +195,33 @@ export function queueReport(r) {
   S.repOut = S.repOut || []; S.repOut.push(Object.assign({ at: new Date().toISOString() }, r));
   if (S.repOut.length > 50) S.repOut.splice(0, S.repOut.length - 50);
   save(); flushSoon(500);
+}
+// ---- 読書と使い方の記録（v0.25.0・サーバー 1.8.0。ぶっくまさん 11/19「誰が読書の機能を使っているとか、推移とか、管理画面からわかるとうれしい」） ----
+// 送るのは、記録の種類・日時（サーバーでは「時」まで残す）・読んだ長さ・読んだ場所の種類（移動読書／本屋のそば／その場で）・移動読書の距離（km）・本をえらんでいたか・あとから長さを選んだか と、名前のない端末の番号だけ
+// 本の名前・ISBN・位置（座標）・どの店のそばか・ハンドルネームは送らない。プライバシーポリシー 2026-11-19 に同意した人だけ（それより前の読書は、さかのぼって送らない）
+const ACT_MAX = 500;
+const actOk = () => String(S.settings.policy || '') >= ACT_SINCE;
+export function queueAct(it) {
+  if (!actOk() || !it || !it.k || !it.id) return;
+  S.actOut = S.actOut || []; S.actOut.push(Object.assign({ at: new Date().toISOString() }, it));
+  if (S.actOut.length > ACT_MAX) S.actOut.splice(0, S.actOut.length - ACT_MAX);
+  save(); flushSoon(3000);
+}
+// その日に開いた（1日1回）。使っている人の数を出すため。中身はない
+export function noteOpen() { if (!actOk()) return; const d = todayISO(); if (S.settings.openDay === d) return; S.settings.openDay = d; queueAct({ k: 'open', id: 'o' + d }); }
+// 読書は、送るときに記録から作る（しおりをはさんだ所の位置が押したあとに届いて、読んだ場所の種類が決まることがあるため。reading.js の p1wait）
+const actWaiting = (x) => x.k === 'read' && (S.reads || []).some((r) => r.id === x.id && r.p1wait && Date.now() - r.t1 < 180000);
+// 待っていない分だけ送る。送れた分を消す（送っているあいだに足された記録は残す）
+async function sendActs() {
+  const ready = (S.actOut || []).filter((x) => !actWaiting(x)); if (!ready.length) return true;
+  const tried = new Set(ready); const res = await sendQueue(ready, 'activity.php', 50, actItem); const left = new Set(ready);
+  S.actOut = (S.actOut || []).filter((x) => !tried.has(x) || left.has(x)); save(); return res;
+}
+function actItem(x) {
+  if (x.k !== 'read') return x.sub ? { k: x.k, id: x.id, at: x.at, sub: x.sub } : { k: x.k, id: x.id, at: x.at };
+  const r = (S.reads || []).find((y) => y.id === x.id); if (!r || r.off || !(r.min >= 1)) return null; // 取り消した読書（off）は送らない
+  const mv = !!(r.pl && r.pl.k === 'move');
+  return { k: 'read', id: r.id, at: new Date(r.t0 || r.t1).toISOString(), min: r.min, pl: r.pl ? r.pl.k : '', km: mv ? Math.round((r.pl.m || 0) / 1000) : 0, book: r.book ? 1 : 0, late: r.late ? 1 : 0 };
 }
 // ---- 書店員さんの手書きのカード（v0.16.1） ----
 // 写真はサーバーの中にしまってあり、その店の射程内でスタンプを押した記録がサーバーにある端末にだけ渡る（写真のアドレスを知っているだけでは見られない）
