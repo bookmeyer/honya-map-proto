@@ -1,11 +1,11 @@
 // シェア用の画像（スタンプ・常連度・カード・プレイヤーカード）
-import { prefOf, stars, fmtDate, todayISO } from './util.js?v=0.29.1';
-import { S } from './state.js?v=0.29.1';
-import { stampInk, stampSVG, rarityOf, rarityText } from './data.js?v=0.29.1';
-import { ensureStampData } from './shops.js?v=0.29.1';
+import { prefOf, stars, fmtDate, todayISO } from './util.js?v=0.29.2';
+import { S } from './state.js?v=0.29.2';
+import { stampInk, stampSVG, rarityOf, rarityText } from './data.js?v=0.29.2';
+import { ensureStampData } from './shops.js?v=0.29.2';
 const stampPic = async (st, size, opts) => { await ensureStampData(st); return svgToImage(stampSVG(st, true, size, opts)); }; // スタンプの写真（v0.26.0）は data URL にしてから描く
-import { snapshotAt } from './map.js?v=0.29.1';
-import { regularInfo } from './game.js?v=0.29.1';
+import { snapshotAt } from './map.js?v=0.29.2';
+import { regularInfo } from './game.js?v=0.29.2';
 
 const PAPER = '#FFF8EA', INK = '#1B1B1B', INK2 = '#5A554D', SHU = '#FF6A48', LINE = '#1B1B1B';
 const DISP = '"Mochiy Pop P One","Zen Maru Gothic","Hiragino Sans",sans-serif', BODY = '"Zen Maru Gothic","Hiragino Sans",sans-serif';
@@ -84,7 +84,7 @@ export async function profileImage({ level, title, st, topStamps, avatar, handle
   rows.forEach(([l, n], i) => { const x = 80 + i * 240; g.fillStyle = '#FFF3C2'; rrect(g, x, 340, 210, 140, 24); g.fill(); g.strokeStyle = INK; g.lineWidth = 3; g.stroke(); g.fillStyle = SHU; g.font = `64px ${DISP}`; g.textAlign = 'center'; g.fillText(String(n), x + 105, 425); g.fillStyle = INK2; g.font = `26px ${BODY}`; g.fillText(l, x + 105, 465); });
   let x = 80; for (const s of topStamps.slice(0, 4)) { try { const im = await stampPic(s, 220, { rank: regularInfo(s.i).rank }); g.drawImage(im, x, 520, 220, 220); } catch (e) {} x += 240; }
   g.textAlign = 'left'; g.fillStyle = INK2; g.font = `28px ${BODY}`; g.fillText(`${todayISO()} 時点`, 80, 810);
-  footer(g, W, H, opts.tags || '#本めぐり');
+  footer(g, W, H); // v0.29.1：ここに無い opts を読んでいて、いつも「画像にできませんでした」になっていた（v0.23.0 から。11/20 ぶっくまさん）
   return await new Promise((res) => cv.toBlob(res, 'image/png'));
 }
 export async function shareBlob(blob, filename, title, text) {
