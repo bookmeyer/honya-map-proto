@@ -1,7 +1,7 @@
 // 本屋・図書館・ラリーのデータ。スタンプ（その店だけの絵柄）の見た目もここ
-import { DEMO_STORE } from './config.js?v=0.26.0';
-import { sleep, $, weekKey, prefOf, hash32, esc, todayISO, dist } from './util.js?v=0.26.0';
-import { S } from './state.js?v=0.26.0';
+import { DEMO_STORE } from './config.js?v=0.27.0';
+import { sleep, $, weekKey, prefOf, hash32, esc, todayISO, dist } from './util.js?v=0.27.0';
+import { S } from './state.js?v=0.27.0';
 
 export let STORES = [];
 export let RALLIES = [];
@@ -48,6 +48,16 @@ function applyPicks(list, base) {
   const by = new Map(list.filter((p) => p && p.store && p.title).map((p) => [p.store, p]));
   for (const s of [...base, ...LIBS]) { const p = by.get(s.i); if (p) s.rec = { who: p.who || '書店員さん', title: p.title, author: p.author || '', isbn: p.isbn || '', say: p.say || '', shelf: p.shelf || '', d: p.d || '' }; } // photo（写真のアドレス）は読まない（v0.16.1）
 }
+// 参加店（v0.27.0）：店の受付から、公開中の中身が1つ以上ある店。目立つのは新しい中身があるあいだ
+// fresh＝フェアの期間中か、いちばん新しい公開から90日以内／isNew＝7日以内（「新しく届いた」）／bubble＝地図の吹き出しに出すヒント（1冊の公開から90日以内）
+// 日付のないとき（サーバー 1.9.3 より前）は、新しいものとして扱う
+export const PART_FRESH_DAYS = 90, PART_NEW_DAYS = 7;
+const daysAgo = (d) => (d ? Math.floor((Date.now() - Date.parse(d + 'T00:00:00+09:00')) / 86400000) : null);
+export function partOf(st) {
+  const sh = st && st.shop; if (!sh || st.demo || st.custom) return null;
+  const up = daysAgo(sh.up); const pk = sh.pick; const pd = pk ? daysAgo(pk.at) : null;
+  return { fresh: !!(sh.fairs && sh.fairs.length) || up == null || up <= PART_FRESH_DAYS, isNew: up != null && up <= PART_NEW_DAYS, bubble: pk && pk.hint && (pd == null || pd <= PART_FRESH_DAYS) ? pk.hint : '' };
+}
 export const pickOpen = (st) => !!(st && st.rec) && S.visits.some((v) => v.s === st.i && v.near && (st.demo || !v.trial));
 export const bookTitle = (t) => `『${String(t || '').replace(/^『/, '').replace(/』$/, '')}』`;
 export const isLib = (st) => !!st && st.t === 'l';
@@ -61,7 +71,7 @@ export function rebuild(base) {
   // 名前：この端末で直した名前 → 運営が直した名前（「名前を確認ずみ」）→ 地図データの名前
   const named = (s) => { const own = S.renames && S.renames[s.i]; const fx = FIX.rename.get(s.i); return own ? Object.assign({}, s, { n: own.n, fix: 1 }) : fx ? Object.assign({}, s, { n: fx, ov: 1 }) : s; };
   // 店のページ（v0.26.0）：サーバーの書店員さんの1冊は、書名なし（来た人だけ shops.js openPick）。picks.json の1冊（見本）はそのまま
-  for (const s of all) { const sh = SHOPMAP.get(s.i) || null; s.shop = sh; if (sh && sh.pick) s.rec = { who: sh.pick.who, title: '', author: '', hint: sh.pick.hint, genre: sh.pick.genre, srv: 1, v: sh.pick.v, photo: sh.pick.pics ? 'srv' : '' }; else if (s.rec && s.rec.srv) delete s.rec; }
+  for (const s of all) { const sh = SHOPMAP.get(s.i) || null; s.shop = sh; s.part = partOf(s); if (sh && sh.pick) s.rec = { who: sh.pick.who, title: '', author: '', hint: sh.pick.hint, genre: sh.pick.genre, srv: 1, v: sh.pick.v, photo: sh.pick.pics ? 'srv' : '' }; else if (s.rec && s.rec.srv) delete s.rec; }
   STORES = all.filter((s) => !FIX.closed.has(s.i) && !FIX.hide.has(s.i)).map(named);
   BYID.clear(); STORES.forEach((s) => BYID.set(s.i, s));
   for (const s of all) if (FIX.closed.has(s.i)) BYID.set(s.i, Object.assign(named(s), { closed: 1 })); // 閉店：記録の表示のためだけに残す

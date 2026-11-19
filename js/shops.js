@@ -4,10 +4,10 @@
 //  - 来る前（誰でも）：ヒント・ジャンル・名前の出し方・フェア・売場の写真・店の発信・スタンプの写真（api/shops.php・api/pic.php）
 //  - 来たあと（その店の射程内でスタンプを押した端末だけ）：書名・著者・写真（api/pick.php。端末の番号と店の番号を POST で送る）
 //  - 開いた1冊は、この端末に覚える（S.picks。写真は開いているあいだだけ）。サーバーに届かないときは、前回読んだ中身で動く
-import { S, save } from './state.js?v=0.26.0';
-import { todayISO, emit } from './util.js?v=0.26.0';
-import { setShops, setStampData, pickOpen } from './data.js?v=0.26.0';
-import { apiBase, deviceId, flush } from './events.js?v=0.26.0';
+import { S, save } from './state.js?v=0.27.0';
+import { todayISO, emit } from './util.js?v=0.27.0';
+import { setShops, setStampData, pickOpen } from './data.js?v=0.27.0';
+import { apiBase, deviceId, flush } from './events.js?v=0.27.0';
 
 const CACHE_KEY = 'meguri_shops_v1';
 const STAMP_KEY = 'meguri_stamp_imgs_v1';
@@ -28,12 +28,12 @@ function clean(raw) {
   for (const [id, v] of Object.entries(raw)) {
     if (!ID.test(id) || !v || typeof v !== 'object' || m.size >= 20000) continue;
     const o = {};
-    if (v.pick && typeof v.pick === 'object' && str(v.pick.hint, 40)) o.pick = { who: str(v.pick.who, 20) || '書店員さん', hint: str(v.pick.hint, 40), genre: GENRES[v.pick.genre] ? v.pick.genre : '', pics: Number.isInteger(v.pick.pics) ? Math.max(0, Math.min(4, v.pick.pics)) : 0, v: Number.isInteger(v.pick.v) ? v.pick.v : 0 };
-    if (Array.isArray(v.fairs)) { const fs = v.fairs.filter((f) => f && Number.isInteger(f.id) && str(f.name, 40)).slice(0, 3).map((f) => ({ id: f.id, name: str(f.name, 40), from: DAY.test(f.from || '') ? f.from : '', to: DAY.test(f.to || '') ? f.to : '', place: str(f.place, 40), say: str(f.say, 120), pics: ids(f.pics, 6) })).filter((f) => !f.to || f.to >= todayISO()); if (fs.length) o.fairs = fs; }
-    if (v.shelf && typeof v.shelf === 'object') { const p = ids(v.shelf.pics, 6); if (p.length) o.shelf = { say: str(v.shelf.say, 60), pics: p }; }
+    if (v.pick && typeof v.pick === 'object' && str(v.pick.hint, 40)) o.pick = { who: str(v.pick.who, 20) || '書店員さん', hint: str(v.pick.hint, 40), genre: GENRES[v.pick.genre] ? v.pick.genre : '', pics: Number.isInteger(v.pick.pics) ? Math.max(0, Math.min(4, v.pick.pics)) : 0, v: Number.isInteger(v.pick.v) ? v.pick.v : 0, at: DAY.test(v.pick.at || '') ? v.pick.at : '' };
+    if (Array.isArray(v.fairs)) { const fs = v.fairs.filter((f) => f && Number.isInteger(f.id) && str(f.name, 40)).slice(0, 3).map((f) => ({ id: f.id, name: str(f.name, 40), from: DAY.test(f.from || '') ? f.from : '', to: DAY.test(f.to || '') ? f.to : '', place: str(f.place, 40), say: str(f.say, 120), pics: ids(f.pics, 6), at: DAY.test(f.at || '') ? f.at : '' })).filter((f) => !f.to || f.to >= todayISO()); if (fs.length) o.fairs = fs; }
+    if (v.shelf && typeof v.shelf === 'object') { const p = ids(v.shelf.pics, 6); if (p.length) o.shelf = { say: str(v.shelf.say, 60), pics: p, at: DAY.test(v.shelf.at || '') ? v.shelf.at : '' }; }
     if (Array.isArray(v.sns)) { const l = v.sns.filter((x) => x && SNS[x.k] && https(x.url)).slice(0, 6).map((x) => ({ k: x.k, url: x.url })); if (l.length) o.sns = l; }
     if (Number.isInteger(v.stamp) && v.stamp > 0) o.stamp = v.stamp;
-    if (Object.keys(o).length) m.set(id, o);
+    if (Object.keys(o).length) { if (DAY.test(v.up || '')) o.up = v.up; m.set(id, o); } // up＝この店でいちばん新しい公開の日（サーバー 1.9.3〜）
   }
   return m;
 }
