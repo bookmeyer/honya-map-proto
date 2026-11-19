@@ -12,14 +12,14 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="本めぐり">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://tiles.openfreemap.org https://api.openbd.jp https://ndlsearch.ndl.go.jp https://tsunagubooks.com http://localhost:* http://127.0.0.1:*; worker-src 'self' blob:; child-src blob:; media-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https: http://localhost:* http://127.0.0.1:*; connect-src 'self' https://tiles.openfreemap.org https://api.openbd.jp https://ndlsearch.ndl.go.jp https://tsunagubooks.com http://localhost:* http://127.0.0.1:*; worker-src 'self' blob:; child-src blob:; media-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+P+One&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" integrity="sha384-MinO0mNliZ3vwppuPOUnGa+iq619pfMhLVUXfC4LHwSCvF9H+6P/KO4Q7qBOYV5V" crossorigin="anonymous">
-<link rel="stylesheet" href="css/app.css?v=0.25.0">
+<link rel="stylesheet" href="css/app.css?v=0.26.0">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -73,7 +73,7 @@
       <div id="want-alert" hidden></div>
       <div id="status-card" class="status-dock" hidden>
         <button id="sc-near" class="sc-near" hidden></button>
-        <div class="sc-pills"><button id="event-chip" class="sc-pill ev" hidden aria-label="開催中のイベント"></button><button id="mission-chip" class="sc-pill mi" hidden aria-label="きょうのお題"></button><button id="area-chip" class="sc-pill ar" hidden></button><button id="sc-more" class="sc-more" hidden></button></div>
+        <div class="sc-pills"><button id="event-chip" class="sc-pill ev" hidden aria-label="開催中のイベント"></button><button id="fair-chip" class="sc-pill ev fr" hidden aria-label="近くのフェア"></button><button id="pick-chip" class="sc-pill ev pk" hidden aria-label="近くの書店員さんの1冊"></button><button id="mission-chip" class="sc-pill mi" hidden aria-label="きょうのお題"></button><button id="area-chip" class="sc-pill ar" hidden></button><button id="sc-more" class="sc-more" hidden></button></div>
       </div>
       <div id="read-btn" class="read-btn" hidden></div>
     </div>
@@ -84,6 +84,7 @@
       <h2>ちかく</h2>
       <div id="radar-legend" class="legend"></div>
       <div id="radar-picks"></div>
+      <div id="radar-fairs"></div>
       <div id="radar-status" class="status-card"></div>
       <div id="radar-list" class="list"></div>
       <div id="radar-wants"></div>
@@ -140,6 +141,6 @@
 <div id="toasts" aria-live="polite"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js" integrity="sha384-SYKAG6cglRMN0RVvhNeBY0r3FYKNOJtznwA0v7B5Vp9tr31xAHsZC0DqkQ/pZDmj" crossorigin="anonymous"></script>
-<script type="module" src="js/main.js?v=0.25.0"></script>
+<script type="module" src="js/main.js?v=0.26.0"></script>
 </body>
 </html>

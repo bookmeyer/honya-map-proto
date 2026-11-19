@@ -1,14 +1,14 @@
 // 地図（MapLibre）。店はピンの絵で表示し、固まり（クラスタ）でまとめ、状態は feature-state で軽く更新する
-import { MAP_SKINS, STYLE_DARK, STYLE_LIGHT, TERRITORY_M, RANGE_M } from './config.js?v=0.25.0';
-import { emit, circlePoly } from './util.js?v=0.25.0';
-import { POS } from './position.js?v=0.25.0';
+import { MAP_SKINS, STYLE_DARK, STYLE_LIGHT, TERRITORY_M, RANGE_M } from './config.js?v=0.26.0';
+import { emit, circlePoly } from './util.js?v=0.26.0';
+import { POS } from './position.js?v=0.26.0';
 
 export const M = { map: null, ready: false, theme: 'light' };
 let storesGeo = { type: 'FeatureCollection', features: [] };
 let territoryGeo = { type: 'FeatureCollection', features: [] };
 let meGeo = { type: 'FeatureCollection', features: [] };
 let bound = false;
-const HIT_LAYERS = ['stores', 'stores-stamped', 'stores-near', 'stores-pick', 'ev-tag', 'ev-dot', 'clusters', 'reads']; // 押せるもの（地図の下地より先に受ける）
+const HIT_LAYERS = ['stores', 'stores-stamped', 'stores-near', 'stores-pick', 'stores-fair', 'ev-tag', 'ev-dot', 'clusters', 'reads']; // 押せるもの（地図の下地より先に受ける）
 let readsGeo = { type: 'FeatureCollection', features: [] }; // 読んだ場所（v0.15.0）
 const stateCache = new Map(); // id → 最後に送った状態
 let handlers = {};
@@ -46,6 +46,12 @@ function markImage() { // 行きたい（檸檬のハート）
   const W = 26, s = 2; const c = document.createElement('canvas'); c.width = W * s; c.height = W * s; const g = c.getContext('2d'); g.scale(s, s);
   const heart = () => { g.beginPath(); g.moveTo(13, 22); g.bezierCurveTo(5, 16, 3, 12, 3, 9); g.bezierCurveTo(3, 5.5, 6, 3.5, 8.5, 3.5); g.bezierCurveTo(10.5, 3.5, 12.2, 4.6, 13, 6.2); g.bezierCurveTo(13.8, 4.6, 15.5, 3.5, 17.5, 3.5); g.bezierCurveTo(20, 3.5, 23, 5.5, 23, 9); g.bezierCurveTo(23, 12, 21, 16, 13, 22); g.closePath(); };
   g.lineJoin = 'round'; heart(); g.lineWidth = 4; g.strokeStyle = '#FFFFFF'; g.stroke(); heart(); g.fillStyle = '#FFD447'; g.fill(); g.lineWidth = 1.6; g.strokeStyle = EDGE; g.stroke();
+  return g.getImageData(0, 0, W * s, W * s);
+}
+function fairMarkImage() { // フェア中の店（青い旗。v0.26.0）
+  const W = 26, s = 2; const c = document.createElement('canvas'); c.width = W * s; c.height = W * s; const g = c.getContext('2d'); g.scale(s, s);
+  g.lineWidth = 2; g.strokeStyle = EDGE; g.lineJoin = 'round'; g.beginPath(); g.moveTo(6, 24); g.lineTo(6, 3); g.stroke();
+  g.beginPath(); g.moveTo(7, 3.5); g.lineTo(23, 8.5); g.lineTo(7, 14); g.closePath(); g.fillStyle = '#2F6FD6'; g.fill(); g.stroke();
   return g.getImageData(0, 0, W * s, W * s);
 }
 function pickMarkImage() { // 書店員さんの1冊の店（白い丸に朱の開いた本。v0.11）
@@ -111,6 +117,7 @@ function addLayers() {
   for (const k of Object.keys(PIN)) if (!map.hasImage('pin-' + k)) map.addImage('pin-' + k, pinImage(k), { pixelRatio: 2 });
   if (!map.hasImage('mark-want')) map.addImage('mark-want', markImage(), { pixelRatio: 2 });
   if (!map.hasImage('mark-pick')) map.addImage('mark-pick', pickMarkImage(), { pixelRatio: 2 });
+  if (!map.hasImage('mark-fair')) map.addImage('mark-fair', fairMarkImage(), { pixelRatio: 2 });
   if (!map.hasImage('mark-shiori')) map.addImage('mark-shiori', readMarkImage(), { pixelRatio: 2 });
   map.addSource('territory', { type: 'geojson', data: territoryGeo });
   map.addLayer({ id: 'territory-fill', type: 'fill', source: 'territory', paint: { 'fill-color': '#4FC07A', 'fill-opacity': ['interpolate', ['linear'], ['coalesce', ['get', 'rank'], 1], 1, 0.14, 5, 0.3] } });
@@ -143,6 +150,7 @@ function addLayers() {
   map.addLayer({ id: 'stores-stamped', type: 'symbol', source: 'stores', filter: unc, layout: sym('pin-stamped', sz), paint: { 'icon-opacity': ['case', ['all', ['==', fs('stamp'), 1], ['!=', fs('near'), 1]], 1, 0] } });
   map.addLayer({ id: 'stores-near', type: 'symbol', source: 'stores', filter: unc, layout: sym('pin-near', ['interpolate', ['linear'], ['zoom'], 8, 0.6, 12, 0.8, 15, 1.05]), paint: { 'icon-opacity': fs('near') } });
   map.addLayer({ id: 'stores-want', type: 'symbol', source: 'stores', filter: unc, layout: { 'icon-image': 'mark-want', 'icon-size': ['interpolate', ['linear'], ['zoom'], 8, 0.5, 15, 0.8], 'icon-anchor': 'bottom-left', 'icon-offset': [10, -34], 'icon-allow-overlap': true, 'icon-ignore-placement': true }, paint: { 'icon-opacity': fs('want') } });
+  map.addLayer({ id: 'stores-fair', type: 'symbol', source: 'stores', filter: ['==', ['get', 'fr'], 1], minzoom: 10, layout: { 'icon-image': 'mark-fair', 'icon-size': ['interpolate', ['linear'], ['zoom'], 10, 0.6, 15, 0.9], 'icon-anchor': 'bottom-left', 'icon-offset': [6, -40], 'icon-allow-overlap': true, 'icon-ignore-placement': true } }); // フェア中（v0.26.0）
   map.addLayer({ id: 'stores-pick', type: 'symbol', source: 'stores', filter: ['all', unc, ['==', ['get', 'pk'], 1]], layout: { 'icon-image': 'mark-pick', 'icon-size': ['interpolate', ['linear'], ['zoom'], 8, 0.5, 15, 0.8], 'icon-anchor': 'bottom-right', 'icon-offset': [-10, -34], 'icon-allow-overlap': true, 'icon-ignore-placement': true } });
   map.addLayer({ id: 'reads-start', type: 'circle', source: 'reads', filter: ['all', ['==', ['geometry-type'], 'Point'], ['==', ['get', 'k'], 'start']], paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, 2.5, 15, 4.5], 'circle-color': '#FF7AB6', 'circle-stroke-color': EDGE, 'circle-stroke-width': 1.4 } });
   map.addLayer({ id: 'reads', type: 'symbol', source: 'reads', filter: ['all', ['==', ['geometry-type'], 'Point'], ['==', ['get', 'k'], 'at']], layout: { 'icon-image': 'mark-shiori', 'icon-size': ['interpolate', ['linear'], ['zoom'], 8, 0.7, 15, 1.1], 'icon-anchor': 'bottom', 'icon-allow-overlap': true, 'icon-ignore-placement': true } });
@@ -153,7 +161,7 @@ function addLayers() {
   if (!bound) { bound = true; // 押したときの受け口は1回だけ（v0.16.0：明・暗を切りかえるたびに増えていた）
   // しおりを押したとき（v0.24.0：しおりは店のピンより上に描くので、重なったら見えているしおりを先に。だから店より先に登録する。前は店が先）
   map.on('click', 'reads', (e) => { if (e.originalEvent._hit) return; const f = e.features && e.features[0]; if (!f) return; e.originalEvent._hit = true; handlers.onReadClick && handlers.onReadClick(f.properties); });
-  for (const id of ['stores', 'stores-stamped', 'stores-near', 'stores-pick', 'ev-tag', 'ev-dot']) {
+  for (const id of ['stores', 'stores-stamped', 'stores-near', 'stores-pick', 'stores-fair', 'ev-tag', 'ev-dot']) {
     map.on('click', id, (e) => { if (e.originalEvent._hit) return; const f = e.features && e.features[0]; if (f) { e.originalEvent._hit = true; handlers.onStoreClick && handlers.onStoreClick(f.properties.id); } });
     map.on('mouseenter', id, () => { map.getCanvas().style.cursor = 'pointer'; }); map.on('mouseleave', id, () => { map.getCanvas().style.cursor = ''; });
   }
@@ -223,7 +231,7 @@ export function setTheme(theme) {
   M.map.setStyle(theme === 'dark' ? STYLE_DARK : STYLE_LIGHT, { diff: false }); // 差分更新だと 'style.load' が来ず、自作の層が戻らない
 }
 export function setStores(stores) {
-  storesGeo = { type: 'FeatureCollection', features: stores.map((s) => ({ type: 'Feature', id: s.i, geometry: { type: 'Point', coordinates: [s.lo, s.la] }, properties: { id: s.i, r: s.k == null ? (s.demo ? 3 : 2) : (s.k === 0 ? 3 : s.k <= 6 ? 2 : 1), u: s.u ? 1 : 0, l: s.t === 'l' ? 1 : 0, custom: s.custom ? 1 : 0, demo: s.demo ? 1 : 0, pk: s.rec ? 1 : 0 } })) };
+  storesGeo = { type: 'FeatureCollection', features: stores.map((s) => ({ type: 'Feature', id: s.i, geometry: { type: 'Point', coordinates: [s.lo, s.la] }, properties: { id: s.i, r: s.k == null ? (s.demo ? 3 : 2) : (s.k === 0 ? 3 : s.k <= 6 ? 2 : 1), u: s.u ? 1 : 0, l: s.t === 'l' ? 1 : 0, custom: s.custom ? 1 : 0, demo: s.demo ? 1 : 0, pk: s.rec ? 1 : 0, fr: s.shop && s.shop.fairs ? 1 : 0 } })) };
   if (M.ready) M.map.getSource('stores').setData(storesGeo);
 }
 export function setStates(next) { // Map<id, {stamp, near, feat, want, st}>

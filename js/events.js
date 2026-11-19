@@ -4,10 +4,10 @@
 // 店の情報の報告を送り、運営が直した閉店・名前を受け取る（v0.17.0）
 // 読書と使い方の記録（v0.25.0）：読書の日時・長さ・読んだ場所の種類・移動読書の距離など。本の名前・位置は送らない（queueAct）
 // サーバーに届かないときは、前回読んだ設定で動く。スタンプはいつでも押せる
-import { EVENTS_API, APP_VER, ACT_SINCE } from './config.js?v=0.25.0';
-import { $, emit, prefOf, todayISO, on } from './util.js?v=0.25.0';
-import { S, save } from './state.js?v=0.25.0';
-import { isLib, setFixes } from './data.js?v=0.25.0';
+import { EVENTS_API, APP_VER, ACT_SINCE, MEET_SINCE } from './config.js?v=0.26.0';
+import { $, emit, prefOf, todayISO, on } from './util.js?v=0.26.0';
+import { S, save } from './state.js?v=0.26.0';
+import { isLib, setFixes } from './data.js?v=0.26.0';
 
 export const EV = { list: [], permitted: new Set(), cards: new Set(), ok: false, at: 0 };
 const CACHE_KEY = 'meguri_events_v1';
@@ -40,7 +40,21 @@ function applyFixes(f) {
   const inJP = (la, lo) => typeof la === 'number' && typeof lo === 'number' && la >= 20 && la <= 46.5 && lo >= 122 && lo <= 154.5;
   const adds = ok && Array.isArray(f.add) ? f.add.filter((s) => s && typeof s.i === 'string' && /^s\d{1,9}$/.test(s.i) && typeof s.n === 'string' && s.n.trim() && inJP(s.la, s.lo)).slice(0, 5000)
     .map((s) => Object.assign({ i: s.i, n: s.n.trim().slice(0, 80), la: s.la, lo: s.lo, srv: 1 }, typeof s.a === 'string' ? { a: s.a.slice(0, 200) } : {}, typeof s.p === 'string' ? { p: s.p.slice(0, 10) } : {}, s.u === 1 ? { u: 1 } : {}, s.t === 'l' ? { t: 'l' } : {})) : [];
-  if (setFixes(closed, rename, adds)) emit('fixes');
+  const hide = ok && Array.isArray(f.hide) ? f.hide.filter((x) => typeof x === 'string' && STORE_ID.test(x)).slice(0, 5000) : []; // お店の希望で地図から外した店（v0.26.0）
+  if (setFixes(closed, rename, adds, hide)) emit('fixes');
+  creditReports(closed, rename, hide, adds);
+}
+// ---- 地図守り・開拓者（v0.26.0。ぶっくまさん 11/19「むしろみんなで作り上げたい」）：自分の報告が、みんなの地図の直しになったら ----
+// この端末が送った報告（S.reported）と、運営が直したもの（fixes）を照らし合わせる。1つにつき1回だけ、ページのおまけ
+function creditReports(closed, rename, hide, adds) {
+  const rep = Array.isArray(S.reported) ? S.reported : []; if (!rep.length) return;
+  S.mapFix = S.mapFix || {}; S.mapAdd = S.mapAdd || {}; let fix = 0, add = 0;
+  const cl = new Set([...closed, ...hide]);
+  for (const r of rep) {
+    if ((r.k === 'closed' && cl.has(r.s)) || (r.k === 'rename' && rename.has(r.s))) { if (!S.mapFix[r.s]) { S.mapFix[r.s] = todayISO(); fix++; } }
+    if (r.k === 'add' && typeof r.la === 'number') { const a = adds.find((x) => Math.abs(x.la - r.la) < 0.0015 && Math.abs(x.lo - r.lo) < 0.0018); if (a && !S.mapAdd[a.i]) { S.mapAdd[a.i] = todayISO(); add++; } }
+  }
+  if (fix || add) { save(); emit('map-credit', { fix, add }); }
 }
 let evSeq = 0; // 読むのが重なったら、いちばん新しい返事だけ使う（v0.16.0：参加コードを変えた直後に、前の返事で上書きされることがあった）
 export async function loadEvents() {
@@ -152,14 +166,15 @@ async function sendOutbox() {
   const logs = (S.outbox || []).length > 0, reps = (S.repOut || []).length > 0; // 報告は、その人が「運営にも知らせる」を選んだものなので、参加の記録を送らない設定でも送る
   const prof = !!S.profOut; // プロフィール（v0.20.0）：本人が同意したとき・やめたとき
   const acts = (S.actOut || []).some((x) => !actWaiting(x)); // 読書と使い方の記録（v0.25.0）。しおりの位置を待っている読書だけ、あとで
-  if (!logs && !reps && !prof && !acts) { if ((S.actOut || []).length) flushSoon(60000); return; }
+  if (!logs && !reps && !prof && !acts && !(S.meetOut || []).length) { if ((S.actOut || []).length) flushSoon(60000); return; }
   if (!navigator.onLine) { flushSoon(retryMs); return; }
   let failed = false;
   if (logs && !(await sendQueue(S.outbox, 'checkin.php', 50))) failed = true;
   if (reps && !(await sendQueue(S.repOut, 'report.php', 20))) failed = true;
   if (prof && !(await sendProfile())) failed = true;
   if (acts && !(await sendActs())) failed = true;
-  if (failed && ((S.outbox || []).length || (S.repOut || []).length || S.profOut || (S.actOut || []).length)) { flushSoon(retryMs); retryMs = Math.min(retryMs * 2, 600000); } else { retryMs = 60000; if ((S.actOut || []).length) flushSoon(60000); }
+  if ((S.meetOut || []).length && !(await sendMeets())) failed = true; // 出会った本の数（v0.26.0）
+  if (failed && ((S.outbox || []).length || (S.repOut || []).length || S.profOut || (S.actOut || []).length || (S.meetOut || []).length)) { flushSoon(retryMs); retryMs = Math.min(retryMs * 2, 600000); } else { retryMs = 60000; if ((S.actOut || []).length) flushSoon(60000); }
 }
 // 1つの入れ物をまとめて送る。形のまちがい（400）は送り直しても通らないので捨てる。ほかのまちがいは残して、あとで送り直す
 async function sendQueue(q, file, n, map) {
@@ -193,6 +208,7 @@ async function sendProfile() {
 // 送るのは、店の番号・報告の種類・名前・ひとこと・（地図にない店だけ）その店の場所と、ランダムな番号。自分の位置は送らない
 export function queueReport(r) {
   S.repOut = S.repOut || []; S.repOut.push(Object.assign({ at: new Date().toISOString() }, r));
+  S.reported = S.reported || []; S.reported.push({ k: r.kind, s: r.store || '', la: typeof r.lat === 'number' ? r.lat : null, lo: typeof r.lon === 'number' ? r.lon : null, d: todayISO() }); if (S.reported.length > 300) S.reported.splice(0, S.reported.length - 300); // 地図守り（v0.26.0）
   if (S.repOut.length > 50) S.repOut.splice(0, S.repOut.length - 50);
   save(); flushSoon(500);
 }
@@ -222,6 +238,28 @@ function actItem(x) {
   const r = (S.reads || []).find((y) => y.id === x.id); if (!r || r.off || !(r.min >= 1)) return null; // 取り消した読書（off）は送らない
   const mv = !!(r.pl && r.pl.k === 'move');
   return { k: 'read', id: r.id, at: new Date(r.t0 || r.t1).toISOString(), min: r.min, pl: r.pl ? r.pl.k : '', km: mv ? Math.round((r.pl.m || 0) / 1000) : 0, book: r.book ? 1 : 0, late: r.late ? 1 : 0 };
+}
+// ---- どの店でどの本に出会ったか（v0.26.0・サーバー 1.9.0 の api/meet.php。11/19 ぶっくまさん「C」） ----
+// 送るのは、店の番号・本の番号（ISBN）・日だけ。**端末の番号はつけない**（誰のカードか、運営にもわからない）。ポリシー 2026-11-19b に同意した人だけ
+const ISBN_RE = /^(97[89]\d{10}|\d{9}[\dX])$/;
+export function queueMeet(store, isbn) {
+  if (String(S.settings.policy || '') < MEET_SINCE || !STORE_ID.test(store || '') || !ISBN_RE.test(isbn || '')) return;
+  S.meetOut = S.meetOut || []; S.meetOut.push({ store, isbn, at: new Date().toISOString() }); if (S.meetOut.length > 200) S.meetOut.splice(0, S.meetOut.length - 200);
+  save(); flushSoon(3000);
+}
+async function sendMeets() {
+  try {
+    const q = S.meetOut || [];
+    while (q.length) {
+      const batch = q.slice(0, 50);
+      const ctl = new AbortController(); const tm = setTimeout(() => ctl.abort(), 10000);
+      const r = await fetch(new URL('meet.php', apiBase()).toString(), { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ items: batch }), signal: ctl.signal });
+      clearTimeout(tm);
+      if (r.status !== 400 && !r.ok) return false;
+      q.splice(0, batch.length); save();
+    }
+    return true;
+  } catch (e) { return false; }
 }
 // ---- 書店員さんの手書きのカード（v0.16.1） ----
 // 写真はサーバーの中にしまってあり、その店の射程内でスタンプを押した記録がサーバーにある端末にだけ渡る（写真のアドレスを知っているだけでは見られない）

@@ -1,11 +1,12 @@
 // 設定値（数字はここだけで変える）
 
-export const APP_VER = '0.25.0';
+export const APP_VER = '0.26.0';
 export const STORAGE_KEY = 'honya_map_v3';
 // お試し歩き（地図を押した所にいることにする）：遊ぶ人には出さない（11/3 ぶっくまさん「OFFにしたい」）。作る人が試すときは localStorage の meguri_trial を 1 に
 export const TRIAL_ON = (() => { try { return localStorage.getItem('meguri_trial') === '1'; } catch (e) { return false; } })();
 // プロフィール（v0.20.0）：v0.20.2 から遊ぶ人にも出す（プライバシーポリシーを載せ、サーバーに profile.php が置かれたため）
-export const POLICY_VER = '2026-11-19'; // 11/19：読書と使い方の記録の一部を送る（管理画面の「読書」。本の名前・場所は送らない） // 11/4 2回目：参加の記録はいつも送る（オン・オフをなくした） // 11/4 改定：プロフィールをはじめるときに答えていただくように // プライバシーポリシーの版（制定日・変えた日）。privacy.html と合わせる
+export const POLICY_VER = '2026-11-19b'; // 11/19 2回目：どの店でどの本に出会ったか（端末の番号なし）・店の受付・集計を有償で提供することがある（v0.26.0） // 11/19：読書と使い方の記録の一部を送る（管理画面の「読書」。本の名前・場所は送らない） // 11/4 2回目：参加の記録はいつも送る（オン・オフをなくした） // 11/4 改定：プロフィールをはじめるときに答えていただくように // プライバシーポリシーの版（制定日・変えた日）。privacy.html と合わせる
+export const MEET_SINCE = '2026-11-19b'; // この版より新しいポリシーに同意した人だけ、出会った本（店と本の番号）を送る（v0.26.0）
 export const ACT_SINCE = '2026-11-19'; // この版より新しいポリシーに同意した人だけ、読書と使い方の記録を送る（v0.25.0）
 export const PROFILE_ON = true; // 11/3 深夜：プライバシーポリシーを載せ、サーバーに profile.php が置かれたので、遊ぶ人にも出す（v0.20.2）
 // プロフィールの質問。答えはコードで持ち、送る（サーバーの lib/profiles.php の PROFILE_Q と同じ）。max：いくつまで選べるか（なし＝1つ）。pref：都道府県（01〜47）
@@ -65,7 +66,7 @@ export const DEMO_STORE = { i: 'demo1', n: '【見本】架空の本屋', la: 35
   rec: { who: '書店員 Aさん（見本）', title: '（見本）ここに書名が入ります', author: '（見本）著者名', say: '（見本）取材でうかがった書店員さんのひとことが、ご本人の言葉のまま入ります。', shelf: '文庫の新刊台（見本）', photo: 'demo' } };
 // 称号（ゆるやかに増える）と実績（細かく増える）
 export const TITLES = [
-  { id: 't_s1', name: 'はじめの一押し', kind: 'stamps', n: 1 }, { id: 't_s3', name: '本屋あるき', kind: 'stamps', n: 3 }, { id: 't_s10', name: '本屋通', kind: 'stamps', n: 10 },
+  { id: 't_s1', name: 'はじめの一押し', kind: 'stamps', n: 1 }, { id: 't_m1', name: '地図守り', kind: 'mapfix', n: 1 }, { id: 't_m2', name: '開拓者', kind: 'mapadd', n: 1 }, // 地図守り・開拓者（v0.26.0）：自分の報告で、みんなの地図が直った・店が入った { id: 't_s3', name: '本屋あるき', kind: 'stamps', n: 3 }, { id: 't_s10', name: '本屋通', kind: 'stamps', n: 10 },
   { id: 't_s20', name: '本屋巡礼者', kind: 'stamps', n: 20 }, { id: 't_s50', name: '本屋のぬし', kind: 'stamps', n: 50 }, { id: 't_s100', name: '全国行脚', kind: 'stamps', n: 100 },
   { id: 't_p2', name: '越境', kind: 'prefs', n: 2 }, { id: 't_p5', name: '五県の旅人', kind: 'prefs', n: 5 }, { id: 't_p10', name: '列島めぐり', kind: 'prefs', n: 10 },
   { id: 't_u3', name: '古書の目利き', kind: 'used', n: 3 }, { id: 't_r3', name: '秘境の本屋さがし', kind: 'rare', n: 3 },

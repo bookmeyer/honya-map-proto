@@ -1,12 +1,13 @@
 // 画面の共通の部品：トースト・モーダル・確かめの箱・タブの切りかえ・見出し帯・地図の下のチケット・バーコードの読み取り・書名でさがす・道順のボタン
-import { pagesForVol } from './config.js?v=0.25.0';
-import { gmapDir, $$, icon, $, esc, emit } from './util.js?v=0.25.0';
-import { S } from './state.js?v=0.25.0';
-import { haptic } from './audio.js?v=0.25.0';
-import { lookupIsbn, lookupBook, searchBooks, coversOf } from './data.js?v=0.25.0';
-import * as MAP from './map.js?v=0.25.0';
-import * as G from './game.js?v=0.25.0';
-import * as E from './events.js?v=0.25.0';
+import { pagesForVol } from './config.js?v=0.26.0';
+import { gmapDir, $$, icon, $, esc, emit, dist } from './util.js?v=0.26.0';
+import { S } from './state.js?v=0.26.0';
+import { haptic } from './audio.js?v=0.26.0';
+import { lookupIsbn, lookupBook, searchBooks, coversOf, STORES } from './data.js?v=0.26.0';
+import { POS, hasPos } from './position.js?v=0.26.0';
+import * as MAP from './map.js?v=0.26.0';
+import * as G from './game.js?v=0.26.0';
+import * as E from './events.js?v=0.26.0';
 
 export const dirLink = (st, label = '道順') => `<a class="btn" href="${gmapDir(st)}" target="_blank" rel="noopener" data-stop>${label}</a>`;
 export const stopLinks = (root) => $$('[data-stop]', root).forEach((a) => a.addEventListener('click', (e) => e.stopPropagation()));
@@ -31,7 +32,18 @@ export function refreshHud() {
   const vol = G.volume(), pg = G.storyPages(), cur = pagesForVol(vol), next = pagesForVol(vol + 1);
   $('#lv-label').textContent = `第${vol}巻`; $('#xp-fill').style.width = `${Math.round(((pg - cur) / (next - cur)) * 100)}%`; $('#lv-btn').title = `第${vol}巻 ${pg}ページ（あと${next - pg}ページで第${vol + 1}巻）`;
   $('#brand-title').textContent = S.settings.handle || G.currentTitle() || '本屋あるき見習い';
-  renderMissionChip(); renderEventChip();
+  renderMissionChip(); renderEventChip(); renderShopChips();
+}
+// 店のページの札（v0.26.0）：近く（5km）のフェア・書店員さんの1冊の店の数。押すと「ちかく」の一覧へ
+export function renderShopChips() {
+  const fe = $('#fair-chip'), pk = $('#pick-chip'); if (!fe || !pk) return;
+  const c = hasPos() ? { la: POS.lat, lo: POS.lon } : S.lastPos ? { la: S.lastPos.lat, lo: S.lastPos.lon } : null;
+  let nf = 0, np = 0;
+  if (c) for (const s of STORES) { if (!(s.shop && s.shop.fairs) && !(s.rec && s.rec.srv)) continue; if (Math.abs(s.la - c.la) > 0.05 || Math.abs(s.lo - c.lo) > 0.065 || dist(c.la, c.lo, s.la, s.lo) > 5000) continue; if (s.shop && s.shop.fairs) nf++; if (s.rec && s.rec.srv) np++; }
+  fe.hidden = !nf; pk.hidden = !np;
+  fe.innerHTML = `<i>フェア</i><span>近く${nf}店</span>`; pk.innerHTML = `<i>1冊</i><span>近く${np}店</span>`;
+  fe.onclick = () => switchView('radar'); pk.onclick = () => switchView('radar');
+  syncStatusCard();
 }
 // 地図の下の札（v0.23.0 テストプレイの声「画面の四角が多い」）：1行目＝いちばん近い店（map_ui.js）、2行目＝開催中・お題・行きたい店・近く○店
 // 中身がひとつもないときは、札ごと出さない

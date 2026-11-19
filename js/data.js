@@ -1,7 +1,7 @@
 // 本屋・図書館・ラリーのデータ。スタンプ（その店だけの絵柄）の見た目もここ
-import { DEMO_STORE } from './config.js?v=0.25.0';
-import { sleep, $, weekKey, prefOf, hash32, esc, todayISO, dist } from './util.js?v=0.25.0';
-import { S } from './state.js?v=0.25.0';
+import { DEMO_STORE } from './config.js?v=0.26.0';
+import { sleep, $, weekKey, prefOf, hash32, esc, todayISO, dist } from './util.js?v=0.26.0';
+import { S } from './state.js?v=0.26.0';
 
 export let STORES = [];
 export let RALLIES = [];
@@ -27,11 +27,18 @@ let BASE = [], LIBS = [];
 // ---- みんなの地図への直し（v0.17.0）：運営が報告を確かめて直した閉店・名前（サーバーの events.php の fixes。events.js が渡す）----
 // 閉店した店は地図・さがす・近くから外す。ただしスタンプや来た記録の表示のために BYID には残す（closed: 1）
 // 管理画面（CSV）で足した店（v0.18.0。店番号 s＋番号）も重ねる。月1回、明晰が店のデータに書き写したら、ファイルの店のほうを使う
-let FIX = { closed: new Set(), rename: new Map(), adds: [], key: '' };
-export function setFixes(closed, rename, adds = []) {
-  const key = JSON.stringify([closed, [...rename], adds]); if (key === FIX.key) return false;
-  FIX = { closed: new Set(closed), rename, adds, key }; rebuild(); return true;
+// hide＝お店の希望で地図から外した店（v0.26.0）。閉店とちがい、記録には「閉店」と出さない
+let FIX = { closed: new Set(), rename: new Map(), adds: [], hide: new Set(), key: '' };
+export function setFixes(closed, rename, adds = [], hide = []) {
+  const key = JSON.stringify([closed, [...rename], adds, hide]); if (key === FIX.key) return false;
+  FIX = { closed: new Set(closed), rename, adds, hide: new Set(hide), key }; rebuild(); return true;
 }
+// ---- 店のページ（v0.26.0・shops.js が渡す）：書店員さんの1冊（来る前はヒントだけ）・フェア・売場の写真・店の発信・スタンプの写真 ----
+let SHOPMAP = new Map(), PICURL = () => '';
+const STAMP_DATA = new Map(); // スタンプの写真の番号 → data URL（シェアの画像に描くため。shops.js が覚えたもの）
+export function setShops(map, picUrl) { SHOPMAP = map; PICURL = picUrl; rebuild(); }
+export function setStampData(id, d) { STAMP_DATA.set(id, d); }
+export const stampPhoto = (st) => { const id = st && st.shop && st.shop.stamp; return id ? STAMP_DATA.get(id) || PICURL(id) : ''; };
 // まわり5kmの同じ種類の店の数（秘境スタンプの目安。ファイルの店は道具が数えてある）
 function around(s, list) { let k = 0; for (const o of list) { if (Math.abs(o.la - s.la) > 0.05 || Math.abs(o.lo - s.lo) > 0.062 || o.i === s.i) continue; if (dist(s.la, s.lo, o.la, o.lo) <= 5000) k++; } return k; }
 // ---- 書店員さんの1冊（v0.11）。お店に確かめて、許可をいただいた店だけ data/picks.json に書く ----
@@ -53,9 +60,12 @@ export function rebuild(base) {
   const all = [DEMO_STORE, ...BASE, ...libs, ...adds, ...S.custom.map((c) => Object.assign({}, c, { custom: 1 }))].filter((s) => !S.hidden[s.i]);
   // 名前：この端末で直した名前 → 運営が直した名前（「名前を確認ずみ」）→ 地図データの名前
   const named = (s) => { const own = S.renames && S.renames[s.i]; const fx = FIX.rename.get(s.i); return own ? Object.assign({}, s, { n: own.n, fix: 1 }) : fx ? Object.assign({}, s, { n: fx, ov: 1 }) : s; };
-  STORES = all.filter((s) => !FIX.closed.has(s.i)).map(named);
+  // 店のページ（v0.26.0）：サーバーの書店員さんの1冊は、書名なし（来た人だけ shops.js openPick）。picks.json の1冊（見本）はそのまま
+  for (const s of all) { const sh = SHOPMAP.get(s.i) || null; s.shop = sh; if (sh && sh.pick) s.rec = { who: sh.pick.who, title: '', author: '', hint: sh.pick.hint, genre: sh.pick.genre, srv: 1, v: sh.pick.v, photo: sh.pick.pics ? 'srv' : '' }; else if (s.rec && s.rec.srv) delete s.rec; }
+  STORES = all.filter((s) => !FIX.closed.has(s.i) && !FIX.hide.has(s.i)).map(named);
   BYID.clear(); STORES.forEach((s) => BYID.set(s.i, s));
   for (const s of all) if (FIX.closed.has(s.i)) BYID.set(s.i, Object.assign(named(s), { closed: 1 })); // 閉店：記録の表示のためだけに残す
+  for (const s of all) if (FIX.hide.has(s.i) && !FIX.closed.has(s.i)) BYID.set(s.i, named(s)); // 地図から外した店：記録の表示のためだけに残す（v0.26.0）
   computeFeatured();
 }
 // 支店名のない店（「TSUTAYA」「未来屋書店」だけの名前）は、今週の推し店に選ばない（どの店か分からないため。v0.13）
@@ -138,6 +148,7 @@ export function stampInk(st) { const h = hash32(st.i); const [main, pic] = INKS[
 export function stampSVG(st, collected, size = 96, opts = {}) {
   const h = hash32(st.i); const shape = h % 3; const pict = PICTS[(h >>> 8) % PICTS.length]; const [main, picCol] = INKS[(h >>> 16) % INKS.length]; const r = rarityOf(st); const rank = opts.rank || 0;
   const id = 'k' + h.toString(36) + (collected ? 'c' : 'u') + (opts.sfx || '');
+  const photo = opts.photo != null ? opts.photo : stampPhoto(st); // スタンプの写真（v0.26.0・店が送ったもの）。押す前は灰色でうすく
   const EDGE = '#1B1B1B'; const fill = collected ? main : '#ECE6DA', pic = collected ? picCol : '#BDB5A8', edge = collected ? EDGE : '#A69E91', nameCol = collected ? EDGE : '#A69E91';
   const outer = shape === 0 ? '<rect x="8" y="8" width="84" height="84" rx="22"/>' : shape === 1 ? '<circle cx="50" cy="50" r="42"/>' : '<path d="M50 7L87 28v44L50 93 13 72V28z"/>';
   const lines = stampLabel(st.n); const lw = lines.map(widthOf); const two = lines.length > 1;
@@ -158,7 +169,7 @@ export function stampSVG(st, collected, size = 96, opts = {}) {
   const ef = collected && opts.ev && /^#[0-9A-Fa-f]{6}$/.test(opts.ev.color || '') ? opts.ev : null;
   const evBand = ef ? `<g fill="none" stroke="${EDGE}" stroke-width="17" stroke-linejoin="round">${outer}</g><g fill="none" stroke="${ef.color}" stroke-width="14" stroke-linejoin="round">${outer}</g>` : '';
   const evLabel = ef && ef.label ? (() => { const lw = Math.min(76, Math.max(30, widthOf(ef.label) * 8.6 + 14)); return `<rect x="${50 - lw / 2}" y="0.8" width="${lw}" height="15" rx="7.5" fill="${ef.color}" stroke="${EDGE}" stroke-width="1.5"/><text x="50" y="8.4" text-anchor="middle" dominant-baseline="central" font-size="8.4" font-family="'Mochiy Pop P One','Zen Maru Gothic','Hiragino Sans',sans-serif" fill="${EDGE}">${esc(ef.label)}</text>`; })() : '';
-  return `<svg viewBox="0 0 100 100" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg" aria-label="${esc(st.n)}のスタンプ"><defs><clipPath id="c${id}">${outer}</clipPath></defs>${ef ? '<g transform="translate(50 52) scale(.86) translate(-50 -50)">' : ''}${ring}${evBand}<g fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linejoin="round">${outer}</g><g fill="${fill}" stroke="${edge}" stroke-width="2.5" stroke-linejoin="round"${collected ? '' : ' stroke-dasharray="5 3"'}>${outer}</g><ellipse cx="38" cy="22" rx="22" ry="9" fill="#fff" opacity="${collected ? '.22' : '.3'}" clip-path="url(#c${id})"/><g transform="translate(30 ${two ? 13 : 15})" fill="none" stroke="${pic}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">${pict}</g>${label}${marks}${pkMark}${ef ? '</g>' : ''}${evLabel}</svg>`;
+  return `<svg viewBox="0 0 100 100" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg" aria-label="${esc(st.n)}のスタンプ"><defs><clipPath id="c${id}">${outer}</clipPath>${photo && !collected ? `<filter id="g${id}"><feColorMatrix type="saturate" values="0"/></filter>` : ''}</defs>${ef ? '<g transform="translate(50 52) scale(.86) translate(-50 -50)">' : ''}${ring}${evBand}<g fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linejoin="round">${outer}</g><g fill="${fill}" stroke="${edge}" stroke-width="2.5" stroke-linejoin="round"${collected ? '' : ' stroke-dasharray="5 3"'}>${outer}</g>${photo ? `<image href="${esc(photo)}" x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMid slice" clip-path="url(#c${id})"${collected ? '' : ` filter="url(#g${id})" opacity=".45"`}/><g fill="none" stroke="${edge}" stroke-width="2.5" stroke-linejoin="round"${collected ? '' : ' stroke-dasharray="5 3"'}>${outer}</g>` : `<ellipse cx="38" cy="22" rx="22" ry="9" fill="#fff" opacity="${collected ? '.22' : '.3'}" clip-path="url(#c${id})"/><g transform="translate(30 ${two ? 13 : 15})" fill="none" stroke="${pic}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">${pict}</g>`}${label}${marks}${pkMark}${ef ? '</g>' : ''}${evLabel}</svg>`;
 }
 // ---- 本（openBD） ----
 const bookCache = new Map();

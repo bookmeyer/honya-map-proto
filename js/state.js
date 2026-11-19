@@ -1,11 +1,11 @@
 // 記録（この端末の中だけ）。版の違いを吸収して読み込み、まとめて書き込む
-import { SKINS, MAP_SKINS, STORAGE_KEY, LEGACY_KEYS, APP_VER, PROFILE_Q } from './config.js?v=0.25.0';
-import { $, emit, debounce } from './util.js?v=0.25.0';
+import { SKINS, MAP_SKINS, STORAGE_KEY, LEGACY_KEYS, APP_VER, PROFILE_Q } from './config.js?v=0.26.0';
+import { $, emit, debounce } from './util.js?v=0.26.0';
 
 export const empty = () => ({
   v: 4, visits: [], cards: [], wants: [], custom: [], stamps: {}, pg: 0, pgDay: {},
   claimedW: {}, claimedD: {}, rallyDone: {}, featDone: {}, looks: {},
-  hidden: {}, renames: {}, days: {}, posts: [], shares: [], reading: [], trips: [], trip: null, seen: 0, lastPos: null, shareCount: 0, evLog: {}, evTitles: [], outbox: [], repOut: [], actOut: [],
+  hidden: {}, renames: {}, days: {}, posts: [], shares: [], reading: [], trips: [], trip: null, seen: 0, lastPos: null, shareCount: 0, evLog: {}, evTitles: [], outbox: [], repOut: [], actOut: [], meetOut: [], reported: [], picks: {}, mapFix: {}, mapAdd: {},
   settings: { theme: 'light', sound: false, avatar: '', handle: '', wantAlert: true, wantAlertM: 2000, dev: '', joinCode: '', privacyV10: 0 }, createdAt: Date.now(),
 });
 export let S = empty();
@@ -30,8 +30,8 @@ function cleanProfile(p) {
   return { a, d: isDay(p.d) ? p.d : '', send: Object.keys(a).length > 0 }; // v0.20.1：答えがあれば、統計データとして送る
 }
 function sanitize(o) {
-  for (const k of ['visits', 'cards', 'wants', 'custom', 'posts', 'shares', 'reading', 'trips', 'reads', 'evTitles', 'outbox', 'repOut', 'actOut']) if (!Array.isArray(o[k])) o[k] = [];
-  for (const k of ['stamps', 'pgDay', 'claimedW', 'claimedD', 'rallyDone', 'featDone', 'looks', 'hidden', 'renames', 'days', 'evLog']) o[k] = plain(o[k]);
+  for (const k of ['visits', 'cards', 'wants', 'custom', 'posts', 'shares', 'reading', 'trips', 'reads', 'evTitles', 'outbox', 'repOut', 'actOut', 'meetOut', 'reported']) if (!Array.isArray(o[k])) o[k] = [];
+  for (const k of ['stamps', 'pgDay', 'claimedW', 'claimedD', 'rallyDone', 'featDone', 'looks', 'hidden', 'renames', 'days', 'evLog', 'picks', 'mapFix', 'mapAdd']) o[k] = plain(o[k]);
   for (const k of ['pg', 'seen', 'shareCount']) o[k] = num(o[k]);
   const ok = (x) => x && typeof x === 'object';
   o.visits = o.visits.filter((v) => ok(v) && isDay(v.d) && typeof v.s === 'string');
@@ -45,6 +45,9 @@ function sanitize(o) {
   const str = (x, n) => (typeof x === 'string' ? x.slice(0, n) : ''); // まだ送れていない店の報告（v0.17.0）
   o.repOut = o.repOut.filter((r) => ok(r) && ['closed', 'rename', 'add'].includes(r.kind) && typeof r.store === 'string').slice(-50).map((r) => ({ kind: r.kind, store: str(r.store, 40), orig: str(r.orig, 80), name: str(r.name, 80), note: str(r.note, 200), lat: num(r.lat, null), lon: num(r.lon, null), place: str(r.place, 8), at: str(r.at, 40) }));
   o.actOut = o.actOut.filter((x) => ok(x) && ['open', 'read', 'done', 'sato', 'tabi'].includes(x.k) && typeof x.id === 'string' && /^[a-z][0-9a-z-]{1,23}$/.test(x.id)).slice(-500).map((x) => (x.k === 'tabi' && ['open', 'share'].includes(x.sub) ? { k: x.k, id: x.id, at: str(x.at, 40), sub: x.sub } : { k: x.k, id: x.id, at: str(x.at, 40) })); // まだ送れていない読書と使い方の記録（v0.25.0）
+  o.meetOut = o.meetOut.filter((x) => ok(x) && typeof x.store === 'string' && typeof x.isbn === 'string').slice(-200).map((x) => ({ store: str(x.store, 40), isbn: str(x.isbn, 13), at: str(x.at, 40) })); // 出会った本（v0.26.0・端末の番号なしで送る）
+  o.reported = o.reported.filter((r) => ok(r) && typeof r.k === 'string').slice(-300).map((r) => ({ k: str(r.k, 10), s: str(r.s, 40), la: num(r.la, null), lo: num(r.lo, null), d: isDay(r.d) ? r.d : '' })); // 送った報告（地図守り）
+  for (const [k, v] of Object.entries(o.picks)) { if (!ok(v) || typeof v.title !== 'string') { delete o.picks[k]; continue; } o.picks[k] = { v: num(v.v), title: str(v.title, 80), author: str(v.author, 60), isbn: str(v.isbn, 13), who: str(v.who, 20), shelf: str(v.shelf, 40), hint: str(v.hint, 40), pics: num(v.pics), d: isDay(v.d) ? v.d : '' }; } // 開いた書店員さんの1冊（v0.26.0）
   for (const [k, v] of Object.entries(o.stamps)) if (!ok(v) || !isDay(v.d)) delete o.stamps[k];
   for (const [k, v] of Object.entries(o.days)) if (!isDay(k) || !ok(v)) delete o.days[k]; else { v.m = num(v.m); v.v = num(v.v); }
   for (const [k, v] of Object.entries(o.pgDay)) if (!isDay(k)) delete o.pgDay[k]; else o.pgDay[k] = num(v);

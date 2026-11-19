@@ -1,17 +1,20 @@
 // 地図の画面：現在地まわり（射程・いちばん近い店）・ピンの状態・現在地とお試し歩き・店のページ・さがす・店を足す・行きたい店のお知らせ
-import { RANGE_M, TERRITORY_M, PG, TRIAL_ON, PREFS } from './config.js?v=0.25.0';
-import { $, arrowOf, bearing, icon, fmtDist, esc, dist, $$, emit, fmtDate, gmapDir, stars, gmapPlace, prefOf } from './util.js?v=0.25.0';
-import { S, save } from './state.js?v=0.25.0';
-import { unlock, sfx } from './audio.js?v=0.25.0';
-import { hasPos, POS, startWatch, setTrial, setPos, jumped } from './position.js?v=0.25.0';
-import { STORES, BYID, isLib, isFeat, rarityOf, pickOpen, placeWord, bookTitle, stampSVG, rarityText, lookupIsbn, hideStore, renameStore, search, FEAT } from './data.js?v=0.25.0';
-import * as MAP from './map.js?v=0.25.0';
-import * as G from './game.js?v=0.25.0';
-import * as E from './events.js?v=0.25.0';
-import * as J from './journey.js?v=0.25.0';
-import { dirLink, openModal, closeModal, stopLinks, toast, closeSheet, refreshHud, currentView, switchView, syncStatusCard } from './ui.js?v=0.25.0';
-import { startCheckin, shareStampUI } from './checkin_ui.js?v=0.25.0';
-import { startCard } from './card_ui.js?v=0.25.0';
+import { RANGE_M, TERRITORY_M, PG, TRIAL_ON, PREFS } from './config.js?v=0.26.0';
+import { $, arrowOf, bearing, icon, fmtDist, esc, dist, $$, emit, fmtDate, gmapDir, stars, gmapPlace, prefOf } from './util.js?v=0.26.0';
+import { S, save } from './state.js?v=0.26.0';
+import { unlock, sfx } from './audio.js?v=0.26.0';
+import { hasPos, POS, startWatch, setTrial, setPos, jumped } from './position.js?v=0.26.0';
+import { STORES, BYID, isLib, isFeat, rarityOf, pickOpen, placeWord, bookTitle, stampSVG, rarityText, lookupIsbn, hideStore, renameStore, search, FEAT } from './data.js?v=0.26.0';
+import * as MAP from './map.js?v=0.26.0';
+import * as G from './game.js?v=0.26.0';
+import * as E from './events.js?v=0.26.0';
+import * as J from './journey.js?v=0.26.0';
+import { dirLink, openModal, closeModal, stopLinks, toast, closeSheet, refreshHud, currentView, switchView, syncStatusCard } from './ui.js?v=0.26.0';
+import { startCheckin, shareStampUI } from './checkin_ui.js?v=0.26.0';
+import { startCard } from './card_ui.js?v=0.26.0';
+import * as SH from './shops.js?v=0.26.0';
+import { addReading } from './reading.js?v=0.26.0';
+import { todayISO } from './util.js?v=0.26.0';
 
 // ---------- 行きたい店のお知らせ（地図の下に出る帯） ----------
 let waTimer = null;
@@ -126,23 +129,74 @@ function pickHTML(st) {
     : `<div class="pick-card" data-card="${esc(st.i)}"><div class="pick-wait">${CARD_TEXT[E.cardErr(st.i)] || '手書きのカードを読み込んでいます…'}</div></div>`;
   return `<div class="staff pick"><div class="who">${esc(p.who)}の手放せない1冊</div><div class="pick-book"><div class="pick-cover"${p.isbn ? ` data-isbn="${esc(p.isbn)}"` : ''}>${icon('book')}</div><div style="min-width:0"><div class="title">${esc(bookTitle(p.title))}</div>${p.author ? `<div class="muted small">${esc(p.author)}</div>` : ''}</div></div>${p.say ? `<div class="say">${esc(p.say)}</div>` : ''}${p.shelf ? `<div class="muted small">棚：${esc(p.shelf)}</div>` : ''}${card}</div>`;
 }
+// ---------- 店のページ（v0.26.0・サーバー 1.9.0）：書店員さんの1冊（来る前はヒント）・フェア・売場の写真・店の発信・確かさの印 ----------
+// ぶっくまさん 11/19「Bで」（書名も来た人だけ）「複数写真」「フェア」「SNSは X・Instagram・その他」「行ったらなかったにならないように」
+const mdOf = (d) => (d ? `${Number(d.slice(5, 7))}月${Number(d.slice(8, 10))}日` : '');
+const hostOf = (u) => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch (e) { return 'サイト'; } };
+function trustHTML(st) { const t = SH.trustOf(st); return t ? `<div class="trust ${t.k}">${t.k === 'ok' ? '✔' : '△'} ${esc(t.t)}</div>` : ''; }
+function snsHTML(st) {
+  const l = (st.shop && st.shop.sns) || []; if (!l.length) return '';
+  return `<div class="sns-row" aria-label="この店の発信">${l.map((x) => `<a class="sns" href="${esc(x.url)}" target="_blank" rel="noopener noreferrer">${x.k === 'x' ? '𝕏 X' : x.k === 'ig' ? 'Instagram' : esc(hostOf(x.url))}</a>`).join('')}</div>`;
+}
+const phRow = (ids) => `<div class="ph-row">${ids.map((id) => `<img src="${esc(SH.picUrl(id))}" alt="" loading="lazy" decoding="async" data-ph>`).join('')}</div>`;
+function fairsHTML(st) {
+  const fs = (st.shop && st.shop.fairs) || []; if (!fs.length) return '';
+  return `<div class="shop-sec"><h3>いまのフェア</h3>${fs.map((f) => `<div class="fair"><span class="fair-k">フェア</span><span class="muted small">${f.to ? mdOf(f.to) + 'まで' : ''}${f.from && f.from > todayISO() ? `（${mdOf(f.from)}から）` : ''}</span><div class="fair-t">${esc(f.name)}</div>${f.pics.length ? phRow(f.pics) : ''}${f.place ? `<div class="muted small">${esc(f.place)}</div>` : ''}${f.say ? `<div class="say">${esc(f.say)}</div>` : ''}</div>`).join('')}</div>`;
+}
+function shelfHTML(st) { const sh = st.shop && st.shop.shelf; return sh ? `<div class="shop-sec"><h3>売場の写真</h3>${phRow(sh.pics)}${sh.say ? `<div class="muted small">${esc(sh.say)}</div>` : ''}</div>` : ''; }
+function srvPickHTML(st) {
+  const p = st.rec; const open = pickOpen(st); const seen = SH.pickSeen(st); const g = SH.GENRES[p.genre] || '';
+  if (!open || !seen || seen.v !== p.v) {
+    return `<div class="staff pick lock" id="sheet-pick"><div class="who">書店員さんの1冊</div><div class="pick-book"><div class="pick-q" aria-hidden="true">？</div><div style="min-width:0"><div class="hint">「${esc(p.hint)}」</div>${g ? `<span class="genre">${esc(g)}</span>` : ''}</div></div>${open ? '<div class="pick-wait">書名を読み込んでいます…</div>' : `<div class="pick-lock">${icon('stamp')}<div>この${placeWord(st)}でスタンプを押すと、書名と写真が見られます</div></div>`}</div>`;
+  }
+  const idx = Object.keys(S.picks || {}).indexOf(st.i) + 1;
+  return `<div class="staff pick" id="sheet-pick"><div class="who">${esc(seen.who || p.who)}の手放せない1冊　<span class="badge shu">出会った1冊 ${idx}店目</span></div><div class="pick-book"><div class="pick-cover"${seen.isbn ? ` data-isbn="${esc(seen.isbn)}"` : ''}>${icon('book')}</div><div style="min-width:0"><div class="title">${esc(bookTitle(seen.title))}</div>${seen.author ? `<div class="muted small">${esc(seen.author)}</div>` : ''}</div></div><div class="muted small">ヒント：「${esc(p.hint)}」</div>${seen.pics ? `<div class="ph-row" data-pick-photos="${seen.pics}"></div>` : ''}${seen.shelf ? `<div class="muted small">棚：${esc(seen.shelf)}</div>` : ''}<div class="actions"><button class="btn primary" data-pick-read>${icon('book')}いま読んでいる本に入れる</button></div></div>`;
+}
+function bindPick(st) {
+  const el = $('#sheet-pick'); if (!el) return;
+  const row = el.querySelector('[data-pick-photos]');
+  if (row) { const n = +row.dataset.pickPhotos; for (let i = 0; i < n; i++) { const im = document.createElement('img'); im.alt = ''; im.setAttribute('data-ph', ''); row.appendChild(im); SH.pickPhoto(st, i).then((u) => { if (u) im.src = u; else im.remove(); }); } }
+  const rd = el.querySelector('[data-pick-read]');
+  if (rd) rd.onclick = () => { const seen = SH.pickSeen(st); if (!seen) return; const b = addReading({ title: seen.title, author: seen.author, isbn: seen.isbn }); if (b && !b.s) { b.s = st.i; b.sn = st.n; b.dm = todayISO(); save(); } toast(`『${seen.title}』を、いま読んでいる本に入れました`, 'ok'); };
+  const cv = el.querySelector('.pick-cover[data-isbn]'); if (cv) lookupIsbn(cv.dataset.isbn).then((bk) => { if (bk && bk.cover && cv.isConnected) cv.innerHTML = `<img src="${esc(bk.cover)}" alt="" referrerpolicy="no-referrer">`; });
+}
+// 写真を大きく（前後の写真もめくれる）
+function photoViewer(img) {
+  const list = [...img.parentNode.querySelectorAll('img[data-ph]')].filter((x) => x.src); let i = Math.max(0, list.indexOf(img));
+  const draw = () => { $('#pv-img').src = list[i].src; $('#pv-n').textContent = list.length > 1 ? `${i + 1} / ${list.length}` : ''; };
+  openModal(`<div class="ph-view"><img id="pv-img" alt=""></div><div class="muted small" id="pv-n" style="text-align:center"></div><div class="actions">${list.length > 1 ? '<button class="btn" id="pv-prev">前へ</button><button class="btn" id="pv-next">次へ</button>' : ''}<button class="btn ghost" id="pv-close">閉じる</button></div>`);
+  draw(); $('#pv-close').onclick = closeModal;
+  if (list.length > 1) { $('#pv-prev').onclick = () => { i = (i + list.length - 1) % list.length; draw(); }; $('#pv-next').onclick = () => { i = (i + 1) % list.length; draw(); }; }
+}
+// 「地図データだけ」の店・遠い店で道順を開く前に（v0.26.0・行ったらなかったにならないように）
+function dirWarn(st, d) {
+  const t = SH.trustOf(st); const far = d != null && d > 10000;
+  openModal(`<h2>お出かけの前に</h2><p>${t && t.k === 'map' ? 'この店は地図データだけで、本めぐりではまだ確かめられていません。' : ''}${far ? 'ここから10km以上あります。' : ''}閉店やお休みのこともあるので、Googleマップで営業しているかを見てからお出かけください。</p><div class="actions"><a class="btn primary wide" href="${gmapDir(st)}" target="_blank" rel="noopener" id="dw-go">${icon('map')}Googleマップで道順を見る</a><a class="btn wide" href="${gmapPlace(st)}" target="_blank" rel="noopener">${icon('search')}営業時間を見る</a><button class="btn ghost wide" id="dw-no">やめる</button></div>`);
+  $('#dw-no').onclick = closeModal; $('#dw-go').addEventListener('click', () => setTimeout(closeModal, 300));
+}
+// 店の前で「お店が見つからない」（v0.26.0・射程内だけ）：怒る場所ではなく、直す場所に
+function notFoundBox(st) {
+  const x = $('#sheet-extra');
+  x.innerHTML = `<div class="rp"><b>お店が見つかりませんか？</b><div class="muted small">教えていただくと、運営が確かめて、みんなの地図を直します。直ったら称号「地図守り」とページのおまけがあります。</div><div class="actions"><button class="btn" data-nf="closed">閉店していた</button><button class="btn" data-nf="moved">移転したみたい</button><button class="btn" data-nf="rename">名前がちがった</button><button class="btn ghost" data-nf="no">やめる</button></div></div>`;
+  x.querySelectorAll('[data-nf]').forEach((b) => b.addEventListener('click', () => { const k = b.dataset.nf; if (k === 'no') { x.innerHTML = ''; return; } reportBox(st, k === 'rename' ? 'rename' : 'report', { near: true, why: k === 'moved' ? '移転したみたい' : k === 'closed' ? '閉店していた' : '' }); }));
+}
 // 閉店している・名前が違う（v0.17.0）：この端末の地図はすぐ直し、「運営にも知らせる」なら報告を送る（確かめてから、みんなの地図も直る）
 const SEND_CHK = (what) => `<label class="chk rp-send"><input type="checkbox" id="rp-send" checked> 運営にも知らせる（確かめてから、みんなの地図も${what}）</label>`;
 const NOTE_IN = (eg) => `<div class="field"><input type="text" id="rp-note" maxlength="100" placeholder="ひとこと（なくてもよい）例：${eg}" aria-label="ひとこと"></div>`;
 const THANKS = '運営にも知らせました。ありがとうございます';
-function reportBox(st, a) {
-  const x = $('#sheet-extra'); const pw = placeWord(st);
+function reportBox(st, a, o = {}) {
+  const x = $('#sheet-extra'); const pw = placeWord(st); const tag = (nt) => (o.near ? `【店の前から${o.why ? '・' + o.why : ''}】` : '') + nt; // v0.26.0
   x.innerHTML = a === 'report'
     ? `<div class="rp"><b>この${pw}を地図から外しますか？</b><div class="muted small">${isLib(st) ? '閉館した図書館' : '閉店した店・本屋ではない店'}。あなたの地図からはすぐに外れます（設定から戻せます）</div>${SEND_CHK('直します')}${NOTE_IN('10月末で閉店と貼り紙があった')}<div class="actions"><button class="btn primary" id="rp-ok">外す</button><button class="btn ghost" id="rp-no">やめる</button></div></div>`
     : `<div class="rp"><div class="field"><label for="rn-name">いまの正しい${pw === '図書館' ? '館名' : '店名'}</label><input type="text" id="rn-name" value="${esc(st.n)}" maxlength="60"></div>${SEND_CHK('直します')}${NOTE_IN('看板が変わっていた')}<div class="actions"><button class="btn primary" id="rn-ok">直す</button><button class="btn ghost" id="rn-no">やめる</button></div></div>`;
   const send = () => $('#rp-send').checked; const note = () => $('#rp-note').value.trim().slice(0, 100);
   if (a === 'report') {
     $('#rp-no').onclick = () => { x.innerHTML = ''; };
-    $('#rp-ok').onclick = () => { const s = send(), nt = note(); hideStore(st); save(); if (s && !st.demo && !st.custom) E.queueReport({ kind: 'closed', store: st.i, orig: st.n, note: nt }); MAP.setStores(STORES); applyMapStates(); updateNear(); closeSheet(); toast(`${st.n} を外しました${s ? '。' + THANKS : ''}`, 'ok'); };
+    $('#rp-ok').onclick = () => { const s = send(), nt = note(); hideStore(st); save(); if (s && !st.demo && !st.custom) E.queueReport({ kind: 'closed', store: st.i, orig: st.n, note: tag(nt) }); MAP.setStores(STORES); applyMapStates(); updateNear(); closeSheet(); toast(`${st.n} を外しました${s ? '。' + THANKS : ''}`, 'ok'); };
     return;
   }
   $('#rn-name').focus(); $('#rn-no').onclick = () => { x.innerHTML = ''; };
-  $('#rn-ok').onclick = () => { const n = $('#rn-name').value.trim(); if (!n || n === st.n) { x.innerHTML = ''; return; } const s = send(), nt = note(); if (s && !st.demo && !st.custom) E.queueReport({ kind: 'rename', store: st.i, orig: st.n, name: n.slice(0, 80), note: nt }); renameStore(st, n); save(); MAP.setStores(STORES); applyMapStates(); updateNear(); toast(`名前を直しました（この端末）${s ? '。' + THANKS : ''}`, 'ok'); openSheet(st.i, true); };
+  $('#rn-ok').onclick = () => { const n = $('#rn-name').value.trim(); if (!n || n === st.n) { x.innerHTML = ''; return; } const s = send(), nt = note(); if (s && !st.demo && !st.custom) E.queueReport({ kind: 'rename', store: st.i, orig: st.n, name: n.slice(0, 80), note: tag(nt) }); renameStore(st, n); save(); MAP.setStores(STORES); applyMapStates(); updateNear(); toast(`名前を直しました（この端末）${s ? '。' + THANKS : ''}`, 'ok'); openSheet(st.i, true); };
 }
 export function openSheet(id, quiet) {
   const st = BYID.get(id); if (!st) return;
@@ -155,7 +209,8 @@ export function openSheet(id, quiet) {
   const evn = E.liveEvents().find((x) => E.narrow(x) && E.isTarget(x, st)); // 参加店の一覧へ（v0.18.1）
   const evl = evn ? `<button class="evlink" data-evlist="${evn.id}" style="--evc:${esc(evn.frame.color)}">${icon('pin')}<span>${esc(evn.frame.label || evn.name)}の参加店をすべて見る（${STORES.filter((s) => E.isTarget(evn, s)).length}店）</span><b>›</b></button>` : '';
   if (cs.length) b.push(`<span class="badge">カード${cs.length}枚</span>`); if (want) b.push(`<span class="badge gold">${icon('heart')}行きたい</span>`); if (near) b.push('<span class="badge gold">射程内</span>');
-  const rec = st.rec ? pickHTML(st) : '';
+  const rec = st.rec ? (st.rec.srv ? srvPickHTML(st) : pickHTML(st)) : '';
+  const warnDir = !near && !st.closed && !st.demo && !st.custom && !POS.fake && ((SH.trustOf(st) || {}).k === 'map' || (d != null && d > 10000)); // 道順の前のひとこと（v0.26.0）
   const hist = vs.length ? `<div class="muted small" style="margin-top:8px">${vs.slice(-3).reverse().map((v) => `${fmtDate(v.d)}${v.near ? '（スタンプ）' : '（記録）'}${v.memo ? '「' + esc(v.memo) + '」' : ''}`).join('<br>')}</div>` : '';
   const distText = st.closed ? '' : d == null ? '現在地なし' : jumped() ? '位置が大きく飛んだので、少し待ってから（1分）' : near ? `射程内（約${fmtDist(d)}）` : `ここから約${fmtDist(d)}（あと${fmtDist(d - RANGE_M)}で射程内）`;
   const srcLine = `情報：${st.srv ? '本めぐりの運営が追加' : st.ob ? 'SNS推し本大賞2026 展開店舗一覧' : st.x ? 'チェーンの公式店舗一覧' : 'OpenStreetMap'}${st.c ? `・${st.c.slice(0, 4)}年${Number(st.c.slice(5))}月に確認` : ''}${st.cf || st.x || st.srv ? '' : '（古いことがあります）'}`;
@@ -164,12 +219,13 @@ export function openSheet(id, quiet) {
     : near ? `<button class="btn primary wide" data-act="checkin">${stamp ? `${icon('stamp')}もう一度押す（来店）` : `${icon('stamp')}スタンプを押す${feat ? `（+${PG.feat}ページ）` : ''}`}</button>`
     : POS.fake ? `<button class="btn primary wide" data-act="warp">${icon('warp')}この店へワープ</button>`
     : st.demo ? '<button class="btn primary wide" data-act="checkin">来た記録だけ（スタンプなし）</button>'
+    : warnDir ? `<button class="btn primary wide" data-act="dir">${icon('map')}道順を見る</button>`
     : `<a class="btn primary wide" href="${gmapDir(st)}" target="_blank" rel="noopener">${icon('map')}道順を見る</a>`;
   $('#sheet-body').innerHTML = `
     <div class="sheet-head"><div class="stamp-sm">${stampSVG(st, !!stamp, 72, { rank: reg.rank, ev: stamp ? E.storeFrame(st.i) : null })}</div><div style="min-width:0"><h2>${esc(st.n)}</h2><div class="stars">${stars(r)} <span class="muted small">${esc(rarityText(st))}</span></div></div></div>
     <div style="margin-top:8px">${b.join('')}</div>${evl}
-    <div class="muted small">${esc(distText)}</div>
-    <div class="actions">${main}</div>${rec}
+    <div class="muted small">${esc(distText)}</div>${trustHTML(st)}
+    <div class="actions">${main}</div>${snsHTML(st)}${rec}${fairsHTML(st)}${shelfHTML(st)}
     <div class="actions">
       ${st.closed ? '' : `<button class="btn" data-act="card">${icon('barcode')}本と出会った</button>
       <button class="btn" data-act="want">${icon('heart')}${want ? '行きたいを外す' : '行きたい'}</button>`}
@@ -179,14 +235,18 @@ export function openSheet(id, quiet) {
       ${st.demo || st.closed ? '' : '<div class="muted small" style="grid-column:1/-1;width:100%">営業時間・道順は、Googleマップが開きます</div>'}
     </div>${st.demo ? '' : `<div class="reg"><div class="reg-h"><span class="badge ${reg.rank >= 3 ? 'shu' : reg.rank >= 2 ? 'gold' : ''}">常連度 ${reg.rank ? esc(reg.name) : 'まだ'}</span><span class="muted small">来店 ${reg.days}日${reg.next ? `・あと${reg.toNext}日で「${esc(reg.next.name)}」` : '・最高位'}</span></div><div class="rally" role="img" aria-label="常連度 ${G.REGULAR_NAMES.length}段階のうち${reg.rank}">${G.REGULAR_NAMES.map((nm, k) => `<i class="${k < reg.rank ? (k === G.REGULAR_NAMES.length - 1 ? 'top' : 'on') : ''}" title="${esc(nm)}">${k < reg.rank ? icon('check') : ''}</i>`).join('')}</div><div class="rally-l"><span>${esc(G.REGULAR_NAMES[0])}</span><span>${esc(G.REGULAR_NAMES[G.REGULAR_NAMES.length - 1])}</span></div></div>`}${hist}
     <div class="muted small" style="margin-top:10px">${esc(st.a || (st.custom ? '' : '住所の情報なし（地図データより）'))}　${esc(prefOf(st))}</div>${st.demo || st.custom ? '' : `<div class="muted small">${esc(srcLine)}</div>`}
-    ${st.demo || st.custom || st.closed ? '' : `<div class="actions"><button class="btn ghost" data-act="report">${isLib(st) ? '閉館している' : '閉店している'}</button><button class="btn ghost" data-act="rename">名前が違う</button></div>`}
+    ${st.demo || st.custom || st.closed ? '' : `<div class="actions"><button class="btn ghost" data-act="report">${isLib(st) ? '閉館している' : '閉店している'}</button><button class="btn ghost" data-act="rename">名前が違う</button>${near ? '<button class="btn ghost" data-act="notfound">お店が見つからない</button>' : ''}</div>`}
     <div id="sheet-extra"></div>`;
   $$('#sheet-body [data-evlist]').forEach((x) => x.addEventListener('click', () => emit('evlist', x.dataset.evlist)));
   const pc = $('#sheet-body .pick-card[data-card]'); if (pc) E.loadCard(st.i).then((r) => { if (pc.isConnected) pc.innerHTML = r.url ? cardImg(r.url, st.rec) : `<div class="pick-wait">${CARD_TEXT[r.error] || CARD_TEXT.net}</div>`; });
-  const cv = $('#sheet-body .pick-cover[data-isbn]'); if (cv) lookupIsbn(cv.dataset.isbn).then((bk) => { if (bk && bk.cover && cv.isConnected) cv.innerHTML = `<img src="${esc(bk.cover)}" alt="" referrerpolicy="no-referrer">`; });
+  if (st.rec && st.rec.srv) { bindPick(st); if (pickOpen(st)) SH.openPick(st).then((seen) => { const el = $('#sheet-pick'); if (seen && el && el.isConnected && $('#sheet').dataset.id === st.i) { el.outerHTML = srvPickHTML(st); bindPick(st); } else if (!seen && el && el.querySelector('.pick-wait')) el.querySelector('.pick-wait').textContent = 'いまは書名を読み込めませんでした。電波のよいところで、店のページを開き直してください'; }); }
+  $('#sheet-body').onclick = (e) => { const im = e.target.closest && e.target.closest('img[data-ph]'); if (im && im.src) photoViewer(im); };
+  const cv = $('#sheet-body .pick-cover[data-isbn]:not(#sheet-pick .pick-cover)'); if (cv) lookupIsbn(cv.dataset.isbn).then((bk) => { if (bk && bk.cover && cv.isConnected) cv.innerHTML = `<img src="${esc(bk.cover)}" alt="" referrerpolicy="no-referrer">`; });
   $$('#sheet-body [data-act]').forEach((btn) => btn.addEventListener('click', () => { sfx.click(); const a = btn.dataset.act;
     if (a === 'checkin') startCheckin(st, near); else if (a === 'card') startCard(st); else if (a === 'share') shareStampUI(st); else if (a === 'regshare') shareStampUI(st, { regular: true }); else if (a === 'warp') warp(st);
     else if (a === 'report' || a === 'rename') reportBox(st, a);
+    else if (a === 'dir') dirWarn(st, d);
+    else if (a === 'notfound') notFoundBox(st);
     else { const r2 = G.toggleWant(id); applyMapStates(); refreshHud(); openSheet(id, true); r2.rewards.forEach((x) => toast(x, 'ok')); } }));
   const sheet = $('#sheet'); sheet.dataset.id = id; sheet.hidden = false;
   if (!quiet) { if (currentView !== 'map') switchView('map'); MAP.flyTo(st.lo, st.la, 14); G.noteLook(id).forEach((x) => toast(x, 'ok')); refreshHud(); }

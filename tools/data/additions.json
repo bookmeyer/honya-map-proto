@@ -12128,5 +12128,16 @@
   "c": "2026-11",
   "src": "oshibon2026",
   "precise": true
+ },
+ {
+  "i": "xts5136",
+  "n": "TSUTAYA BOOKSTORE ららぽーとEXPOCITY",
+  "la": 34.80517,
+  "lo": 135.53548,
+  "a": "大阪府吹田市千里万博公園2-1 ららぽーとEXPOCITY 2階",
+  "p": "大阪府",
+  "c": "2026-11",
+  "src": "manual:tsutaya-official-2026-11-19（位置はららぽーとEXPOCITY の真ん中。店の前で確かめる）",
+  "precise": false
  }
 ]

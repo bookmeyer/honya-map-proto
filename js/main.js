@@ -1,31 +1,34 @@
 // 起動：記録を読み、データを取り、地図を出し、部品をつなぐ
-import { APP_VER, TRIAL_ON, POLICY_VER } from './config.js?v=0.25.0';
-import { $, on, $$, isStandalone, mobileOS, emit } from './util.js?v=0.25.0';
-import { load, S, save } from './state.js?v=0.25.0';
-import * as AUDIO from './audio.js?v=0.25.0';
-import { POS, setPos, setFollow, jumped } from './position.js?v=0.25.0';
-import { loadAll, STORES } from './data.js?v=0.25.0';
-import * as MAP from './map.js?v=0.25.0';
-import * as E from './events.js?v=0.25.0';
-import * as J from './journey.js?v=0.25.0';
-import * as R from './reading.js?v=0.25.0';
-import { toast, closeSheet, refreshHud, currentView, switchView, setSub, closeModal } from './ui.js?v=0.25.0';
-import { openSheet, refreshSheet, applyMapStates, updateNear, showWantAlerts, updateAreaChip, setupSearch, watchDock, locate, setTrialUI, warp, goPrefHome } from './map_ui.js?v=0.25.0';
-import * as RU from './reading_ui.js?v=0.25.0';
-import { renderRadar } from './radar_ui.js?v=0.25.0';
-import { renderZukan } from './zukan_ui.js?v=0.25.0';
-import { renderMissions, openEventStores } from './mission_ui.js?v=0.25.0';
-import { joinNotice, privacyNotice, policyNotice, homeTip, renderSettings, applyTheme } from './settings_ui.js?v=0.25.0';
-import { showOnboarding } from './onboard_ui.js?v=0.25.0';
-import * as UI0 from './ui.js?v=0.25.0'; // 試す入口（__honya）用
-import * as MU from './map_ui.js?v=0.25.0'; // 試す入口（__honya）用
-import * as CU from './checkin_ui.js?v=0.25.0'; // 試す入口（__honya）用
-import * as KU from './card_ui.js?v=0.25.0'; // 試す入口（__honya）用
-import * as SU from './settings_ui.js?v=0.25.0'; // 試す入口（__honya）用
-import * as RAD from './radar_ui.js?v=0.25.0'; // 試す入口（__honya）用
-import * as ZU from './zukan_ui.js?v=0.25.0'; // 試す入口（__honya）用
-import { startTour, autoTour } from './tour_ui.js?v=0.25.0';
-import { requireSetup } from './setup_ui.js?v=0.25.0';
+import { APP_VER, TRIAL_ON, POLICY_VER } from './config.js?v=0.26.0';
+import { $, on, $$, isStandalone, mobileOS, emit } from './util.js?v=0.26.0';
+import { load, S, save } from './state.js?v=0.26.0';
+import * as AUDIO from './audio.js?v=0.26.0';
+import { POS, setPos, setFollow, jumped } from './position.js?v=0.26.0';
+import { loadAll, STORES } from './data.js?v=0.26.0';
+import * as MAP from './map.js?v=0.26.0';
+import * as E from './events.js?v=0.26.0';
+import * as SH from './shops.js?v=0.26.0';
+import * as G from './game.js?v=0.26.0';
+import { renderShopChips } from './ui.js?v=0.26.0';
+import * as J from './journey.js?v=0.26.0';
+import * as R from './reading.js?v=0.26.0';
+import { toast, closeSheet, refreshHud, currentView, switchView, setSub, closeModal } from './ui.js?v=0.26.0';
+import { openSheet, refreshSheet, applyMapStates, updateNear, showWantAlerts, updateAreaChip, setupSearch, watchDock, locate, setTrialUI, warp, goPrefHome } from './map_ui.js?v=0.26.0';
+import * as RU from './reading_ui.js?v=0.26.0';
+import { renderRadar } from './radar_ui.js?v=0.26.0';
+import { renderZukan } from './zukan_ui.js?v=0.26.0';
+import { renderMissions, openEventStores } from './mission_ui.js?v=0.26.0';
+import { joinNotice, privacyNotice, policyNotice, homeTip, renderSettings, applyTheme } from './settings_ui.js?v=0.26.0';
+import { showOnboarding } from './onboard_ui.js?v=0.26.0';
+import * as UI0 from './ui.js?v=0.26.0'; // 試す入口（__honya）用
+import * as MU from './map_ui.js?v=0.26.0'; // 試す入口（__honya）用
+import * as CU from './checkin_ui.js?v=0.26.0'; // 試す入口（__honya）用
+import * as KU from './card_ui.js?v=0.26.0'; // 試す入口（__honya）用
+import * as SU from './settings_ui.js?v=0.26.0'; // 試す入口（__honya）用
+import * as RAD from './radar_ui.js?v=0.26.0'; // 試す入口（__honya）用
+import * as ZU from './zukan_ui.js?v=0.26.0'; // 試す入口（__honya）用
+import { startTour, autoTour } from './tour_ui.js?v=0.26.0';
+import { requireSetup } from './setup_ui.js?v=0.26.0';
 
 async function boot() {
   load(); applyTheme(); // 見た目（明・暗）と着せ替え。地図はまだないので、地図の色は決めておくだけ
@@ -55,6 +58,9 @@ async function boot() {
   on('tour', () => startTour()); // 設定の「画面の案内」から（v0.19.0）
   on('evlist', (id) => openEventStores(id)); // 店のページから、イベントの参加店の一覧へ（v0.18.1）
   on('fixes', () => { MAP.setStores(STORES); applyMapStates(); updateNear(); emit('records'); }); // 運営が直した閉店・名前が届いた（v0.17.0）
+  on('shops', () => { MAP.setStores(STORES); applyMapStates(); renderShopChips(); refreshSheet(); if (currentView === 'radar') renderRadar(); }); // 店のページの中身が届いた（v0.26.0）
+  on('map-credit', ({ fix, add }) => { const pg = (fix + add) * 30; G.addPages(pg); refreshHud(); toast(`あなたの報告で、みんなの地図が${add ? '広がり' : '直り'}ました。ありがとうございます（+${pg}ページ${add ? '・称号「開拓者」' : '・称号「地図守り」'}）`, 'ok'); }); // 地図守り・開拓者（v0.26.0）
+  SH.loadShops(); setInterval(() => { if (document.visibilityState === 'visible') SH.loadShops(); }, 15 * 60 * 1000);
   E.loadEvents(); setInterval(() => { if (document.visibilityState === 'visible') E.loadEvents(); }, 10 * 60 * 1000);
   document.addEventListener('visibilitychange', () => { if (document.visibilityState !== 'visible') return; if (Date.now() - E.EV.at > 5 * 60 * 1000) E.loadEvents(); E.noteOpen(); E.flushSoon(1000); RU.checkForgot(); }); // 読書の「おわる」の押し忘れ：開いたときに聞く（v0.23.0）
   window.addEventListener('online', () => E.flushSoon(500)); E.flushSoon(4000); setTimeout(() => E.noteOpen(), 3000); // その日に開いた（1日1回。ポリシー 2026-11-19 に同意した人だけ。v0.25.0）

@@ -1,18 +1,18 @@
 // 設定の画面と、そこから開くもの：見た目・着せ替え・アイコン・ハンドルネーム・参加コード・送るもののお知らせ・記録を守る・Googleマップの★
-import { SKINS, MAP_SKINS, APP_VER, TRIAL_ON, PROFILE_ON, POLICY_VER } from './config.js?v=0.25.0';
-import { openProfile, profileSummary } from './profile_ui.js?v=0.25.0';
-import { openAvatarPicker } from './setup_ui.js?v=0.25.0';
-import { openGiveCode, openTakeCode } from './transfer_ui.js?v=0.25.0';
-import { $, esc, fmtDist, icon, $$, mobileOS, isStandalone, emit, todayISO } from './util.js?v=0.25.0';
-import { S, save, parseImport, replace, reset, exportJSON } from './state.js?v=0.25.0';
-import { sfx } from './audio.js?v=0.25.0';
-import { POS } from './position.js?v=0.25.0';
-import { addCustom, STORES, DATA_DATE, rebuild, unhideAll } from './data.js?v=0.25.0';
-import * as MAP from './map.js?v=0.25.0';
-import * as E from './events.js?v=0.25.0';
-import * as GI from './gimport.js?v=0.25.0';
-import { openModal, closeModal, toast, refreshHud, switchView, confirmBox } from './ui.js?v=0.25.0';
-import { applyMapStates, updateNear, updateAreaChip, setTrialUI } from './map_ui.js?v=0.25.0';
+import { SKINS, MAP_SKINS, APP_VER, TRIAL_ON, PROFILE_ON, POLICY_VER } from './config.js?v=0.26.0';
+import { openProfile, profileSummary } from './profile_ui.js?v=0.26.0';
+import { openAvatarPicker } from './setup_ui.js?v=0.26.0';
+import { openGiveCode, openTakeCode } from './transfer_ui.js?v=0.26.0';
+import { $, esc, fmtDist, icon, $$, mobileOS, isStandalone, emit, todayISO } from './util.js?v=0.26.0';
+import { S, save, parseImport, replace, reset, exportJSON } from './state.js?v=0.26.0';
+import { sfx } from './audio.js?v=0.26.0';
+import { POS } from './position.js?v=0.26.0';
+import { addCustom, STORES, DATA_DATE, rebuild, unhideAll } from './data.js?v=0.26.0';
+import * as MAP from './map.js?v=0.26.0';
+import * as E from './events.js?v=0.26.0';
+import * as GI from './gimport.js?v=0.26.0';
+import { openModal, closeModal, toast, refreshHud, switchView, confirmBox } from './ui.js?v=0.26.0';
+import { applyMapStates, updateNear, updateAreaChip, setTrialUI } from './map_ui.js?v=0.26.0';
 
 // ---------- Googleマップの★を読み込む ----------
 export function googleHelp() {
@@ -78,6 +78,7 @@ export function renderSettings() {
     <div class="setting"><div><div class="l">画面の案内</div><div class="s">地図の画面のボタンを、順に指さして説明します</div></div><button class="btn" id="st-tour">もう一度見る</button></div>
     <div class="setting"><div><div class="l">使い方</div><div class="s">はじめての方へ。スタンプの押し方・本のカード・イベントなど</div></div><a class="btn" href="howto.html" target="_blank" rel="noopener">見る</a></div>
     <div class="setting"><div><div class="l">プライバシーポリシー</div><div class="s">運営に届くもの・使い方・消し方</div></div><a class="btn" href="privacy.html" target="_blank" rel="noopener">見る</a></div>
+    <div class="setting"><div><div class="l">利用規約</div><div class="s">使うときのきまり・お店の方への約束（v0.26.0）</div></div><a class="btn" href="terms.html" target="_blank" rel="noopener">見る</a></div>
     <div class="setting"><div><div class="l">端末の番号</div><div class="s">名前のないランダムな番号です。送った記録やプロフィールを消してほしいときに、お問い合わせに添えてください：<span class="mono">${esc(E.deviceId())}</span></div></div></div>
     <div class="about">本めぐり v${APP_VER}（試作）。本屋をめぐって、本とめぐりあう。本屋と図書館の位置ゲームです。<br>歩きながら画面を見ないでください。運転中は使わないでください。お店では、店の方やほかのお客さんの迷惑にならないようにお願いします。<br>位置（座標）は、この端末の中で距離を出すためだけに使い、送りません。参加の人数を数えるために、スタンプを押した店の番号・日時・店の近くで押したか・お試し歩きか・どのイベントかを、名前のない、ランダムな番号といっしょに、本をつなぐ（tsunagubooks.com）へ送ります。読書の機能の使われ方を見るために、読書の日時（何時まで）・長さ・読んだ場所の種類・移動読書の距離も送ります（本の名前と読んだ場所は送りません。くわしくはプライバシーポリシー）。そのほかの記録は、この端末の中だけに残ります。<br>画面を出すために、Google Fonts（文字）・jsDelivr（地図のプログラム）・OpenFreeMap（地図の絵。見ている範囲）へ、本を調べるときは openBD（その本の番号）へつなぎます。このとき、端末のIPアドレスやブラウザの種類が相手に届きます。<br><br>
       店の位置：© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors（ODbL）。地図：<a href="https://openfreemap.org/" target="_blank" rel="noopener">OpenFreeMap</a>・<a href="https://openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a>。本の情報と表紙：<a href="https://openbd.jp/" target="_blank" rel="noopener">openBD</a>（表紙は紹介のための参照表示で、保存しません）。書名でさがす：<a href="https://ndlsearch.ndl.go.jp/" target="_blank" rel="noopener">国立国会図書館サーチ</a>の API（国立国会図書館の書誌データ・<a href="https://creativecommons.org/licenses/by/4.0/deed.ja" target="_blank" rel="noopener">CC BY 4.0</a>。著者名の表し方を整えて出しています。送るのは、さがす言葉だけです）。地図の描画：MapLibre GL JS。文字：Google Fonts。<br>
@@ -161,7 +162,7 @@ export function privacyNotice() {
 // ---------- プライバシーポリシーのお知らせ（v0.20.1）：もう使っている人に一度だけ。「わかった」で同意 ----------
 export function policyNotice(after) {
   const changed = !!S.settings.policy; // 前の版に同意している人には「変えました」
-  openModal(`<h2>プライバシーポリシーを${changed ? '変えました' : '載せました'}</h2>${changed ? `<ul class="plain"><li>読書の記録の一部を送るようにしました：読んだ日と時刻（何時まで）・読んだ長さ・読んだ場所の種類（移動読書／本屋のそば／その場で）・移動読書の距離。本を読み終えた・里帰り・1冊の旅を開いた／シェアした、と、1日1回「開いた」ことも。読書の機能がどう使われているかを見るためです</li><li><b>本の名前・読んだ場所・名前は送りません</b></li>${String(S.settings.policy) < '2026-11-04b' ? '<li>はじめるときに、ハンドルネーム・アイコン・プロフィールを決めていただきます（プロフィールは、名前以外の答えを統計データとして使います）</li><li>参加の記録（スタンプを押した店と日時など）は、本めぐりを使うあいだ、いつも送ります</li><li>引き継ぎコードで、記録を暗号にして24時間だけ預けられるようにしました</li>' : ''}</ul>` : '<p>運営に届くもの（参加の記録・読書と使い方の記録・店の情報の報告・プロフィール）と、その使い方・持つ期間・消し方をまとめました。</p>'}<p>使い続けると、同意したことになります。</p><p class="muted small">名前・メールアドレス・位置は、これまでどおり送りません。</p><div class="actions"><a class="btn" href="privacy.html" target="_blank" rel="noopener">読む</a><button class="btn primary" id="pol-ok">わかった</button></div>`);
+  openModal(`<h2>プライバシーポリシーを${changed ? '変えました' : '載せました'}</h2>${changed ? `<ul class="plain">${String(S.settings.policy) < '2026-11-19b' ? '<li>本のカードを作ったとき、<b>店の番号・本の番号・日付だけ</b>を、端末の番号をつけずに送るようにしました（誰のカードかは運営にもわかりません）。「この店でこの本に出会った人が○人」を数えるためです</li><li>人数の集計（ひとりが特定されない統計）を、本屋さん・出版社などに、有償または無償で提供することがあると書きました</li><li>利用規約を作りました（使うときのきまり・お店の方への約束）</li>' : ''}${String(S.settings.policy) < '2026-11-19' ? '<li>読書の記録の一部を送るようにしました：読んだ日と時刻（何時まで）・読んだ長さ・読んだ場所の種類（移動読書／本屋のそば／その場で）・移動読書の距離。本を読み終えた・里帰り・1冊の旅を開いた／シェアした、と、1日1回「開いた」ことも。読書の機能がどう使われているかを見るためです</li><li><b>本の名前・読んだ場所・名前は送りません</b></li>' : ''}${String(S.settings.policy) < '2026-11-04b' ? '<li>はじめるときに、ハンドルネーム・アイコン・プロフィールを決めていただきます（プロフィールは、名前以外の答えを統計データとして使います）</li><li>参加の記録（スタンプを押した店と日時など）は、本めぐりを使うあいだ、いつも送ります</li><li>引き継ぎコードで、記録を暗号にして24時間だけ預けられるようにしました</li>' : ''}</ul>` : '<p>運営に届くもの（参加の記録・読書と使い方の記録・店の情報の報告・プロフィール）と、その使い方・持つ期間・消し方をまとめました。</p>'}<p>使い続けると、同意したことになります。</p><p class="muted small">名前・メールアドレス・位置は、これまでどおり送りません。</p><div class="actions"><a class="btn" href="privacy.html" target="_blank" rel="noopener">ポリシー</a><a class="btn" href="terms.html" target="_blank" rel="noopener">利用規約</a><button class="btn primary" id="pol-ok">わかった</button></div>`);
   $('#pol-ok').onclick = () => { S.settings.policy = POLICY_VER; S.settings.privacyV10 = 1; save(); E.noteOpen(); closeModal(); if (after) after(); };
 }
 // ---------- 記録を守る：ホーム画面に追加（v0.10.1） ----------

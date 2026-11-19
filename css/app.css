@@ -540,3 +540,28 @@ ul.plain,ol.plain{padding-left:1.2em;margin:8px 0;line-height:1.7;font-size:14px
 .fq .btn b{font-size:16px}
 .fq .btn small{font-size:11.5px;font-weight:500;color:var(--ink-2)}
 .fq .btn.now{background:var(--paper-2)}
+/* ---- v0.26.0 店のページ：確かさの印・店の発信・書店員さんの1冊（来る前はヒント）・フェア・売場の写真・写真を大きく ---- */
+.trust{display:inline-flex;align-items:center;gap:4px;margin:6px 0 0;font-size:12.5px;font-weight:700;border-radius:999px;padding:1px 10px;border:1.5px solid var(--edge);background:var(--card)}
+.trust.ok{background:rgba(79,192,122,.22)}
+.trust.map{background:rgba(255,212,71,.3)}
+.sns-row{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 2px}
+.sns-row .sns{border:2px solid var(--edge);border-radius:999px;padding:3px 12px;font-weight:700;font-size:13px;background:var(--card);color:var(--ink);text-decoration:none;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.staff.pick.lock{background:rgba(255,212,71,.2)}
+.staff.pick .hint{font-family:var(--display);font-size:17px;line-height:1.5;word-break:auto-phrase}
+.staff.pick .genre{display:inline-block;margin-top:4px;font-size:12px;font-weight:700;background:var(--card);border:1.5px solid var(--edge);border-radius:999px;padding:0 9px}
+.pick-q{width:52px;height:74px;flex:none;border:2px dashed var(--edge);border-radius:6px;display:grid;place-items:center;font-family:var(--display);font-size:30px;background:var(--paper);color:var(--shu-2)}
+.ph-row{display:flex;gap:8px;overflow-x:auto;margin:8px 0 4px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+.ph-row img{flex:none;width:72%;max-width:320px;aspect-ratio:4/3;object-fit:cover;border:2px solid var(--edge);border-radius:12px;scroll-snap-align:start;background:var(--paper-2);cursor:zoom-in}
+.shop-sec{margin:14px 0 4px}
+.shop-sec h3{font-family:var(--display);font-weight:400;font-size:16px;margin:0 0 6px}
+.shop-sec .fair{border:2px solid var(--edge);border-radius:var(--r-m);background:var(--card);padding:10px 12px;margin:8px 0}
+.fair-k{display:inline-block;background:#2F6FD6;color:#fff;border-radius:999px;font-size:12px;padding:1px 10px;font-weight:700;margin-right:6px}
+.fair-t{font-family:var(--display);font-size:16px;margin:4px 0 2px}
+.shop-sec .say{font-size:14px;line-height:1.7;margin-top:4px}
+.ph-view img{display:block;width:100%;max-height:70vh;object-fit:contain;border-radius:10px;background:#000}
+.sc-pill.fr i{background:#2F6FD6;color:#fff}.sc-pill.pk i{background:var(--shu)}
+#radar-fairs{margin-top:14px}
+.fair-item{display:flex;gap:10px;align-items:center}
+.fair-th{width:64px;height:48px;flex:none;border:2px solid var(--edge);border-radius:8px;object-fit:cover}
+#radar-picks .name.hint{font-family:var(--display);font-weight:400}
+

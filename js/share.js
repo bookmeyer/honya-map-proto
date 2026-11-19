@@ -1,9 +1,11 @@
 // シェア用の画像（スタンプ・常連度・カード・プレイヤーカード）
-import { prefOf, stars, fmtDate, todayISO } from './util.js?v=0.25.0';
-import { S } from './state.js?v=0.25.0';
-import { stampInk, stampSVG, rarityOf, rarityText } from './data.js?v=0.25.0';
-import { snapshotAt } from './map.js?v=0.25.0';
-import { regularInfo } from './game.js?v=0.25.0';
+import { prefOf, stars, fmtDate, todayISO } from './util.js?v=0.26.0';
+import { S } from './state.js?v=0.26.0';
+import { stampInk, stampSVG, rarityOf, rarityText } from './data.js?v=0.26.0';
+import { ensureStampData } from './shops.js?v=0.26.0';
+const stampPic = async (st, size, opts) => { await ensureStampData(st); return svgToImage(stampSVG(st, true, size, opts)); }; // スタンプの写真（v0.26.0）は data URL にしてから描く
+import { snapshotAt } from './map.js?v=0.26.0';
+import { regularInfo } from './game.js?v=0.26.0';
 
 const PAPER = '#FFF8EA', INK = '#1B1B1B', INK2 = '#5A554D', SHU = '#FF6A48', LINE = '#1B1B1B';
 const DISP = '"Mochiy Pop P One","Zen Maru Gothic","Hiragino Sans",sans-serif', BODY = '"Zen Maru Gothic","Hiragino Sans",sans-serif';
@@ -20,7 +22,7 @@ export async function stampImage(st, opts = {}) {
   if (mc) { try { const side = Math.min(mc.width, mc.height); g.save(); rrect(g, 60, 60, W - 120, W - 120, 36); g.clip(); g.drawImage(mc, (mc.width - side) / 2, (mc.height - side) / 2, side, side, 60, 60, W - 120, W - 120); g.restore(); mapDrawn = true; } catch (e) { mapDrawn = false; } }
   if (!mapDrawn) { g.fillStyle = '#FBEFD6'; rrect(g, 60, 60, W - 120, W - 120, 36); g.fill(); }
   g.strokeStyle = LINE; g.lineWidth = 4; rrect(g, 60, 60, W - 120, W - 120, 36); g.stroke();
-  try { const im = await svgToImage(stampSVG(st, true, 380, { rank: reg.rank, ev: opts.ev || null })); g.save(); g.translate(W - 60 - 200, W - 60 - 200); g.rotate(-0.1); g.shadowColor = 'rgba(0,0,0,.28)'; g.shadowBlur = 28; g.shadowOffsetY = 8; g.drawImage(im, -190, -190, 380, 380); g.restore(); } catch (e) {}
+  try { const im = await stampPic(st, 380, { rank: reg.rank, ev: opts.ev || null }); g.save(); g.translate(W - 60 - 200, W - 60 - 200); g.rotate(-0.1); g.shadowColor = 'rgba(0,0,0,.28)'; g.shadowBlur = 28; g.shadowOffsetY = 8; g.drawImage(im, -190, -190, 380, 380); g.restore(); } catch (e) {}
   g.fillStyle = INK; g.textAlign = 'left'; g.font = `54px ${DISP}`;
   const lines = wrap(g, st.n, W - 120).slice(0, 2); lines.forEach((l, i) => g.fillText(l, 60, W + 44 + i * 62));
   let y = W + 44 + lines.length * 62 + 14;
@@ -38,7 +40,7 @@ export async function tabiImage(t, st, opts = {}) {
   g.textAlign = 'left'; g.fillStyle = SHU; g.font = `30px ${DISP}`; g.fillText('本めぐり　1冊の旅', 96, 130);
   let y = 230;
   if (b.sn) {
-    if (st) { try { const im = await svgToImage(stampSVG(st, true, 280, { rank: regularInfo(st.i).rank })); g.save(); g.translate(W - 230, 250); g.rotate(-0.1); g.shadowColor = 'rgba(0,0,0,.25)'; g.shadowBlur = 20; g.shadowOffsetY = 6; g.drawImage(im, -130, -130, 260, 260); g.restore(); } catch (e) {} }
+    if (st) { try { const im = await stampPic(st, 280, { rank: regularInfo(st.i).rank }); g.save(); g.translate(W - 230, 250); g.rotate(-0.1); g.shadowColor = 'rgba(0,0,0,.25)'; g.shadowBlur = 20; g.shadowOffsetY = 6; g.drawImage(im, -130, -130, 260, 260); g.restore(); } catch (e) {} }
     g.fillStyle = INK2; g.font = `28px ${BODY}`; g.fillText('出会った店', 96, y); y += 60;
     g.fillStyle = INK; g.font = `40px ${DISP}`; wrap(g, b.sn, st ? W - 460 : W - 192).slice(0, 3).forEach((l) => { g.fillText(l, 96, y); y += 54; });
   }
@@ -80,7 +82,7 @@ export async function profileImage({ level, title, st, topStamps, avatar, handle
   if (handle) { g.fillStyle = INK2; g.font = `28px ${BODY}`; g.fillText(`称号「${title || '本屋あるき見習い'}」`, 80, 306); }
   const rows = [['スタンプ', st.stamps], ['行きつけ', st.regulars || 0], ['カード', st.cards], ['県', st.prefs]];
   rows.forEach(([l, n], i) => { const x = 80 + i * 240; g.fillStyle = '#FFF3C2'; rrect(g, x, 340, 210, 140, 24); g.fill(); g.strokeStyle = INK; g.lineWidth = 3; g.stroke(); g.fillStyle = SHU; g.font = `64px ${DISP}`; g.textAlign = 'center'; g.fillText(String(n), x + 105, 425); g.fillStyle = INK2; g.font = `26px ${BODY}`; g.fillText(l, x + 105, 465); });
-  let x = 80; for (const s of topStamps.slice(0, 4)) { try { const im = await svgToImage(stampSVG(s, true, 220, { rank: regularInfo(s.i).rank })); g.drawImage(im, x, 520, 220, 220); } catch (e) {} x += 240; }
+  let x = 80; for (const s of topStamps.slice(0, 4)) { try { const im = await stampPic(s, 220, { rank: regularInfo(s.i).rank }); g.drawImage(im, x, 520, 220, 220); } catch (e) {} x += 240; }
   g.textAlign = 'left'; g.fillStyle = INK2; g.font = `28px ${BODY}`; g.fillText(`${todayISO()} 時点`, 80, 810);
   footer(g, W, H, opts.tags || '#本めぐり');
   return await new Promise((res) => cv.toBlob(res, 'image/png'));
