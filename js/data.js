@@ -79,7 +79,7 @@ export function rebuild(base) {
   BYID.clear(); STORES.forEach((s) => BYID.set(s.i, s));
   for (const s of all) if (FIX.closed.has(s.i)) BYID.set(s.i, Object.assign(named(s), { closed: 1 })); // 閉店：記録の表示のためだけに残す
   for (const s of all) if (FIX.hide.has(s.i) && !FIX.closed.has(s.i)) BYID.set(s.i, named(s)); // 地図から外した店：記録の表示のためだけに残す（v0.26.0）
-  for (const g of GONE) { if (BYID.has(g.i)) continue; const to = g.to && BYID.get(g.to); BYID.set(g.i, to ? Object.assign({}, to, { i: g.i, alias: g.to }) : Object.assign({}, g, { closed: 1 })); } // 重なりで外した店は、残した店として見せる／閉店は「閉店」
+  for (const g of GONE) { if (BYID.has(g.i)) continue; const to = g.to && BYID.get(g.to); BYID.set(g.i, to ? Object.assign({}, to, { i: g.i, alias: g.to }) : g.h ? Object.assign({}, g, { off: 1 }) : Object.assign({}, g, { closed: 1 })); } // 重なりで外した店は、残した店として見せる／対象外（h）はそのまま／閉店は「閉店」
   computeFeatured();
 }
 // 支店名のない店（「TSUTAYA」「未来屋書店」だけの名前）は、今週の推し店に選ばない（どの店か分からないため。v0.13）
