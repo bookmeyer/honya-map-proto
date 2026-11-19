@@ -1,16 +1,16 @@
 // 本のカード：本と出会った（バーコード・書名でさがす・名前）→ カードの画面
-import { PG } from './config.js?v=0.29.0';
-import { esc, icon, $, fmtDate, todayISO, emit } from './util.js?v=0.29.0';
-import { S } from './state.js?v=0.29.0';
-import { sfx, haptic } from './audio.js?v=0.29.0';
-import { POS } from './position.js?v=0.29.0';
-import { placeWord, isLib, BYID } from './data.js?v=0.29.0';
-import * as G from './game.js?v=0.29.0';
-import * as E from './events.js?v=0.29.0';
-import { cardImage, shareBlob } from './share.js?v=0.29.0';
-import * as R from './reading.js?v=0.29.0';
-import { openModal, closeModal, searchBook, scanIsbn, stopScan, toast, refreshHud, setSub, switchView, confirmBox } from './ui.js?v=0.29.0';
-import { applyMapStates, openSheet } from './map_ui.js?v=0.29.0';
+import { PG } from './config.js?v=0.29.1';
+import { esc, icon, $, fmtDate, todayISO, emit } from './util.js?v=0.29.1';
+import { S } from './state.js?v=0.29.1';
+import { sfx, haptic } from './audio.js?v=0.29.1';
+import { POS } from './position.js?v=0.29.1';
+import { placeWord, isLib, BYID } from './data.js?v=0.29.1';
+import * as G from './game.js?v=0.29.1';
+import * as E from './events.js?v=0.29.1';
+import { cardImage, shareBlob } from './share.js?v=0.29.1';
+import * as R from './reading.js?v=0.29.1';
+import { openModal, closeModal, searchBook, scanIsbn, stopScan, toast, refreshHud, setSub, switchView, confirmBox } from './ui.js?v=0.29.1';
+import { applyMapStates, openSheet } from './map_ui.js?v=0.29.1';
 
 // ---------- カード ----------
 // カードをシェアする（v0.23.0：カードができた画面からも。テストプレイの声「この書店でこの本を買いました、を共有したい」・ぶっくまさん「シェアしやすい形が良い」）
@@ -38,7 +38,7 @@ function cardForm(st, b) {
       <div style="flex:1;min-width:0">${has ? `<div><b>${esc(b.title)}</b></div><div class="muted small">${esc(b.author)}${b.publisher ? '／' + esc(b.publisher) : ''}</div>` : `<div class="field"><label for="cd-title">本の名前</label><input type="text" id="cd-title" placeholder="書名（わかれば著者も）"></div>`}
       <div class="muted small" style="margin-top:6px">${esc(st.n)}　${fmtDate(todayISO())}</div><div class="muted small">${inStore ? '🏪 店で出会った +' + PG.cardInStore + 'ページ' : ''}</div></div></div>
     <div class="field"><label for="cd-why">なぜ手に取ったか（任意・100字まで）</label><textarea id="cd-why" maxlength="100" placeholder="例：表紙の青に目がとまった。店員さんの手書きPOPに「泣いた」とあった"></textarea></div>
-    <label class="chk"><input type="checkbox" id="cd-pub"> このカードを公開する（本番では「みんなの出会い」に流れます。試作では「公開」の札が付くだけ）</label>
+    <input type="checkbox" id="cd-pub" hidden>
     <div class="note">表紙はopenBDから毎回表示するだけで、保存しません。記録はこの端末の中だけに残ります。</div>
     <div class="actions"><button class="btn primary" id="cd-save">カードにする（+${total}ページ）</button><button class="btn ghost" id="cd-cancel2">やめる</button></div>`);
   $('#cd-cancel2').onclick = closeModal;
@@ -59,7 +59,7 @@ function cardDone(st, c, res, inStore) {
 export function openCard(id) {
   const c = S.cards.find((x) => x.id === id); if (!c) return;
   openModal(`<h2>カード</h2><div class="card-full"><div class="cover">${c.cover ? `<img src="${esc(c.cover)}" alt="" referrerpolicy="no-referrer">` : '<div class="notitle">表紙なし</div>'}</div>
-      <div style="flex:1;min-width:0"><div><b>${esc(c.title)}</b></div><div class="muted small">${esc(c.author)}${c.publisher ? '／' + esc(c.publisher) : ''}</div><div style="margin-top:8px">${esc(c.sn)}</div><div class="muted small">${fmtDate(c.d)}${c.pub ? '・公開' : '・自分だけ'}</div>${c.why ? `<div class="why">${esc(c.why)}</div>` : ''}</div></div>
+      <div style="flex:1;min-width:0"><div><b>${esc(c.title)}</b></div><div class="muted small">${esc(c.author)}${c.publisher ? '／' + esc(c.publisher) : ''}</div><div style="margin-top:8px">${esc(c.sn)}</div><div class="muted small">${fmtDate(c.d)}・自分だけ</div>${c.why ? `<div class="why">${esc(c.why)}</div>` : ''}</div></div>
     <div class="actions"><button class="btn primary" id="cv-img">${icon('share')}画像にする</button><button class="btn" id="cv-store">店を地図で見る</button><button class="btn danger" id="cv-del">${icon('trash')}消す</button><button class="btn ghost" id="cv-close">閉じる</button></div><div id="cv-out"></div>`);
   $('#cv-close').onclick = closeModal; $('#cv-store').onclick = () => { closeModal(); openSheet(c.s); };
   $('#cv-del').onclick = () => confirmBox($('#cv-out'), 'このカードを消しますか？ 戻せません。', () => { G.deleteCard(id); closeModal(); toast('消しました'); });

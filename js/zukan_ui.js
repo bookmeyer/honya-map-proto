@@ -1,18 +1,18 @@
 // めぐり帳（view-zukan）：スタンプ・本・物語・月のふり返り・県
-import { pagesForVol, frameOf, PREFS } from './config.js?v=0.29.0';
-import { esc, icon, $, todayISO, $$, fmtDate, prefOf, fmtMin } from './util.js?v=0.29.0';
-import { S, save } from './state.js?v=0.29.0';
-import { BYID, rarityOf, STORES, stampSVG } from './data.js?v=0.29.0';
-import * as G from './game.js?v=0.29.0';
-import * as E from './events.js?v=0.29.0';
-import { storyImage, shareBlob, profileImage } from './share.js?v=0.29.0';
-import * as J from './journey.js?v=0.29.0';
-import * as R from './reading.js?v=0.29.0';
-import { toast, openModal, closeModal, currentSub, emptyBox } from './ui.js?v=0.29.0';
-import { openSheet } from './map_ui.js?v=0.29.0';
-import { openCard } from './card_ui.js?v=0.29.0';
-import { renderReading } from './reading_ui.js?v=0.29.0';
-import { nameModal } from './settings_ui.js?v=0.29.0';
+import { pagesForVol, frameOf, PREFS } from './config.js?v=0.29.1';
+import { esc, icon, $, todayISO, $$, fmtDate, prefOf, fmtMin } from './util.js?v=0.29.1';
+import { S, save } from './state.js?v=0.29.1';
+import { BYID, rarityOf, STORES, stampSVG } from './data.js?v=0.29.1';
+import * as G from './game.js?v=0.29.1';
+import * as E from './events.js?v=0.29.1';
+import { storyImage, shareBlob, profileImage } from './share.js?v=0.29.1';
+import * as J from './journey.js?v=0.29.1';
+import * as R from './reading.js?v=0.29.1';
+import { toast, openModal, closeModal, currentSub, emptyBox } from './ui.js?v=0.29.1';
+import { openSheet } from './map_ui.js?v=0.29.1';
+import { openCard } from './card_ui.js?v=0.29.1';
+import { renderReading } from './reading_ui.js?v=0.29.1';
+import { nameModal } from './settings_ui.js?v=0.29.1';
 
 // ---------- 今日の物語 ----------
 function chapterHTML(ch) {
@@ -85,7 +85,7 @@ export function renderZukan() {
   $$('#stamp-grid .st').forEach((el) => el.addEventListener('click', () => openSheet(el.dataset.id)));
   // 本：いま読んでいる本・読み終えた本（v0.14）と、出会った本のカード
   renderReading();
-  const g = $('#card-grid'); g.innerHTML = S.cards.length ? S.cards.slice().reverse().map((c) => `<div class="card" data-id="${esc(c.id)}"><div class="cover">${c.cover ? `<img src="${esc(c.cover)}" alt="" referrerpolicy="no-referrer" loading="lazy">` : `<div class="notitle">${esc(c.title)}</div>`}</div><div class="stampmark">出会</div><div class="meta"><b>${esc(c.title)}</b>${esc(c.sn)}<br>${fmtDate(c.d)}${c.pub ? '・公開' : ''}</div></div>`).join('') : emptyBox('barcode', '店のページで「本と出会った」を押すと、ここに増えます。');
+  const g = $('#card-grid'); g.innerHTML = S.cards.length ? S.cards.slice().reverse().map((c) => `<div class="card" data-id="${esc(c.id)}"><div class="cover">${c.cover ? `<img src="${esc(c.cover)}" alt="" referrerpolicy="no-referrer" loading="lazy">` : `<div class="notitle">${esc(c.title)}</div>`}</div><div class="stampmark">出会</div><div class="meta"><b>${esc(c.title)}</b>${esc(c.sn)}<br>${fmtDate(c.d)}</div></div>`).join('') : emptyBox('barcode', '店のページで「本と出会った」を押すと、ここに増えます。');
   $$('#card-grid .card').forEach((el) => el.addEventListener('click', () => openCard(el.dataset.id)));
   // 帳
   const md = todayISO().slice(5), y = new Date().getFullYear();
