@@ -38,6 +38,8 @@ export const READ = { pgPerMin: 1, maxPg: 60, maxMin: 180 };
 // 常連度：同じ店でスタンプを押した「日数」で上がる（たくさんの店に行けない人の楽しみ）
 export const REGULAR = [{ n: 1, name: 'はじめまして' }, { n: 3, name: '顔なじみ' }, { n: 5, name: '常連' }, { n: 10, name: 'ぬし' }, { n: 20, name: '名物客' }, { n: 50, name: '殿堂入り' }];
 // 物語のページ：スタンプ・本との出会い・お題などで増える（歩いた道のりも 100m＝1ページで足される）
+// 報告が、みんなの地図の直しになったときのページ（v0.29.0。11/20 ぶっくまさん「２→OK」：直し +100・地図にない店 +150。前は どちらも +30）
+export const MAP_CREDIT = { fix: 100, add: 150 };
 export const PG = {
   shuFirst: 30, shuRepeat: 6, sumiFirst: 10, sumiRepeat: 2,
   card: 40, cardInStore: 20,
@@ -67,7 +69,9 @@ export const DEMO_STORE = { i: 'demo1', n: '【見本】架空の本屋', la: 35
   rec: { who: '書店員 Aさん（見本）', title: '（見本）ここに書名が入ります', author: '（見本）著者名', say: '（見本）取材でうかがった書店員さんのひとことが、ご本人の言葉のまま入ります。', shelf: '文庫の新刊台（見本）', photo: 'demo' } };
 // 称号（ゆるやかに増える）と実績（細かく増える）
 export const TITLES = [
-  { id: 't_s1', name: 'はじめの一押し', kind: 'stamps', n: 1 }, { id: 't_m1', name: '地図守り', kind: 'mapfix', n: 1 }, { id: 't_m2', name: '開拓者', kind: 'mapadd', n: 1 }, // 地図守り・開拓者（v0.26.0）：自分の報告で、みんなの地図が直った・店が入った { id: 't_s3', name: '本屋あるき', kind: 'stamps', n: 3 }, { id: 't_s10', name: '本屋通', kind: 'stamps', n: 10 },
+  // 地図守り・開拓者（v0.26.0）：自分の報告で、みんなの地図が直った・店が入った。地図職人・地図名人（v0.29.0）：直した・広げた店の数
+  { id: 't_s1', name: 'はじめの一押し', kind: 'stamps', n: 1 }, { id: 't_m1', name: '地図守り', kind: 'mapfix', n: 1 }, { id: 't_m2', name: '開拓者', kind: 'mapadd', n: 1 }, { id: 't_m5', name: '地図職人', kind: 'mapall', n: 5 }, { id: 't_m20', name: '地図名人', kind: 'mapall', n: 20 },
+  { id: 't_s3', name: '本屋あるき', kind: 'stamps', n: 3 }, { id: 't_s10', name: '本屋通', kind: 'stamps', n: 10 }, // v0.29.0：v0.26.0 から、前の行のひとことに隠れて出ていなかったので戻した
   { id: 't_s20', name: '本屋巡礼者', kind: 'stamps', n: 20 }, { id: 't_s50', name: '本屋のぬし', kind: 'stamps', n: 50 }, { id: 't_s100', name: '全国行脚', kind: 'stamps', n: 100 },
   { id: 't_p2', name: '越境', kind: 'prefs', n: 2 }, { id: 't_p5', name: '五県の旅人', kind: 'prefs', n: 5 }, { id: 't_p10', name: '列島めぐり', kind: 'prefs', n: 10 },
   { id: 't_u3', name: '古書の目利き', kind: 'used', n: 3 }, { id: 't_r3', name: '秘境の本屋さがし', kind: 'rare', n: 3 },

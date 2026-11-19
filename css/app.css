@@ -599,3 +599,14 @@ ul.plain,ol.plain{padding-left:1.2em;margin:8px 0;line-height:1.7;font-size:14px
 .banner.band.stack .band-t{flex:1 1 calc(100% - 80px)}
 .banner.band.stack .band-x{order:2}
 .banner.band.stack button[data-k]{order:3;margin-left:auto}
+/* v0.29.0 報告の特典のひとこと・めぐり帳の「あなたが直した店」 */
+.rp-reward{display:flex;gap:6px;align-items:flex-start;margin:10px 0 2px;font-size:13px;font-weight:700;color:var(--ink-2);line-height:1.5}
+.rp-reward .ic{flex:none;width:16px;height:16px;margin-top:2px;color:var(--shu)}
+.rp-reward b{color:var(--shu)}
+.rp-reward.invite{background:var(--card-2);border-radius:10px;padding:8px 10px}
+.mapcredit{display:flex;gap:6px;align-items:flex-start;margin:8px 0 4px;font-size:13px;font-weight:700;color:var(--ink-2)}
+.mapcredit .ic{flex:none;width:16px;height:16px;margin-top:2px;color:var(--shu)}
+.mapcredit b{color:var(--ink);font-size:15px}
+.rp .rp-reward b{display:inline;margin:0}
+.rp-reward b,.mapcredit b{white-space:nowrap}
+.rp-reward.invite{border:2px dashed var(--edge)}

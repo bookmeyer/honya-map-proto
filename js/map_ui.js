@@ -1,5 +1,5 @@
 // 地図の画面：現在地まわり（射程・いちばん近い店）・ピンの状態・現在地とお試し歩き・店のページ・さがす・店を足す・行きたい店のお知らせ
-import { RANGE_M, TERRITORY_M, PG, TRIAL_ON, PREFS } from './config.js?v=0.29.0';
+import { RANGE_M, TERRITORY_M, PG, TRIAL_ON, PREFS, MAP_CREDIT } from './config.js?v=0.29.0';
 import { $, arrowOf, bearing, icon, fmtDist, esc, dist, $$, emit, fmtDate, gmapDir, stars, gmapPlace, prefOf } from './util.js?v=0.29.0';
 import { S, save } from './state.js?v=0.29.0';
 import { unlock, sfx } from './audio.js?v=0.29.0';
@@ -179,18 +179,24 @@ function dirWarn(st, d) {
 // 店の前で「お店が見つからない」（v0.26.0・射程内だけ）：怒る場所ではなく、直す場所に
 function notFoundBox(st) {
   const x = $('#sheet-extra');
-  x.innerHTML = `<div class="rp"><b>お店が見つかりませんか？</b><div class="muted small">教えていただくと、運営が確かめて、みんなの地図を直します。直ったら称号「地図守り」とページのおまけがあります。</div><div class="actions"><button class="btn" data-nf="closed">閉店していた</button><button class="btn" data-nf="moved">移転したみたい</button><button class="btn" data-nf="rename">名前がちがった</button><button class="btn ghost" data-nf="no">やめる</button></div></div>`;
+  x.innerHTML = `<div class="rp"><b>お店が見つかりませんか？</b><div class="muted small">教えていただくと、運営が確かめて、みんなの地図を直します。</div>${REWARD(false)}<div class="actions"><button class="btn" data-nf="closed">閉店していた</button><button class="btn" data-nf="moved">移転したみたい</button><button class="btn" data-nf="rename">名前がちがった</button><button class="btn ghost" data-nf="no">やめる</button></div></div>`;
   x.querySelectorAll('[data-nf]').forEach((b) => b.addEventListener('click', () => { const k = b.dataset.nf; if (k === 'no') { x.innerHTML = ''; return; } reportBox(st, k === 'rename' ? 'rename' : 'report', { near: true, why: k === 'moved' ? '移転したみたい' : k === 'closed' ? '閉店していた' : '' }); }));
 }
 // 閉店している・名前が違う（v0.17.0）：この端末の地図はすぐ直し、「運営にも知らせる」なら報告を送る（確かめてから、みんなの地図も直る）
 const SEND_CHK = (what) => `<label class="chk rp-send"><input type="checkbox" id="rp-send" checked> 運営にも知らせる（確かめてから、みんなの地図も${what}）</label>`;
 const NOTE_IN = (eg) => `<div class="field"><input type="text" id="rp-note" maxlength="100" placeholder="ひとこと（なくてもよい）例：${eg}" aria-label="ひとこと"></div>`;
-const THANKS = '運営にも知らせました。ありがとうございます';
+const THANKS = `運営にも知らせました。直ったら +${MAP_CREDIT.fix}ページと称号をお届けします`; // ③ 送った直後に特典を約束する（v0.29.0）
+// ①② 報告の特典のひとこと（v0.29.0。11/20 ぶっくまさん「見つけて報告した場合に特典がつくことはもっとアピールしたい」）
+const REWARD = (add) => `<div class="rp-reward">${icon('flag')}<span>${add ? `地図に載ったら <b>+${MAP_CREDIT.add}ページ</b>と称号「開拓者」` : `直ったら <b>+${MAP_CREDIT.fix}ページ</b>と称号「地図守り」`}</span></div>`;
+// ④ 店のページ：まだ確かめられていない店（地図データだけ）には「行ったら見てください」
+const reportInvite = (st) => (SH.trustOf(st) || {}).k === 'map'
+  ? `<div class="rp-reward invite">${icon('flag')}<span>この店は、まだ本めぐりで確かめられていません。行ったら、名前や営業が合っているか見てください。ちがっていたら教えていただき、直ったら <b>+${MAP_CREDIT.fix}ページ</b>と称号</span></div>`
+  : `<div class="rp-reward">${icon('flag')}<span>情報がちがっていたら教えてください。直ったら <b>+${MAP_CREDIT.fix}ページ</b>と称号</span></div>`;
 function reportBox(st, a, o = {}) {
   const x = $('#sheet-extra'); const pw = placeWord(st); const tag = (nt) => (o.near ? `【店の前から${o.why ? '・' + o.why : ''}】` : '') + nt; // v0.26.0
   x.innerHTML = a === 'report'
-    ? `<div class="rp"><b>この${pw}を地図から外しますか？</b><div class="muted small">${isLib(st) ? '閉館した図書館' : '閉店した店・本屋ではない店'}。あなたの地図からはすぐに外れます（設定から戻せます）</div>${SEND_CHK('直します')}${NOTE_IN('10月末で閉店と貼り紙があった')}<div class="actions"><button class="btn primary" id="rp-ok">外す</button><button class="btn ghost" id="rp-no">やめる</button></div></div>`
-    : `<div class="rp"><div class="field"><label for="rn-name">いまの正しい${pw === '図書館' ? '館名' : '店名'}</label><input type="text" id="rn-name" value="${esc(st.n)}" maxlength="60"></div>${SEND_CHK('直します')}${NOTE_IN('看板が変わっていた')}<div class="actions"><button class="btn primary" id="rn-ok">直す</button><button class="btn ghost" id="rn-no">やめる</button></div></div>`;
+    ? `<div class="rp"><b>この${pw}を地図から外しますか？</b><div class="muted small">${isLib(st) ? '閉館した図書館' : '閉店した店・本屋ではない店'}。あなたの地図からはすぐに外れます（設定から戻せます）</div>${SEND_CHK('直します')}${REWARD(false)}${NOTE_IN('10月末で閉店と貼り紙があった')}<div class="actions"><button class="btn primary" id="rp-ok">外す</button><button class="btn ghost" id="rp-no">やめる</button></div></div>`
+    : `<div class="rp"><div class="field"><label for="rn-name">いまの正しい${pw === '図書館' ? '館名' : '店名'}</label><input type="text" id="rn-name" value="${esc(st.n)}" maxlength="60"></div>${SEND_CHK('直します')}${REWARD(false)}${NOTE_IN('看板が変わっていた')}<div class="actions"><button class="btn primary" id="rn-ok">直す</button><button class="btn ghost" id="rn-no">やめる</button></div></div>`;
   const send = () => $('#rp-send').checked; const note = () => $('#rp-note').value.trim().slice(0, 100);
   if (a === 'report') {
     $('#rp-no').onclick = () => { x.innerHTML = ''; };
@@ -238,7 +244,7 @@ export function openSheet(id, quiet) {
       ${st.demo || st.closed ? '' : '<div class="muted small" style="grid-column:1/-1;width:100%">営業時間・道順は、Googleマップが開きます</div>'}
     </div>${st.demo ? '' : `<div class="reg"><div class="reg-h"><span class="badge ${reg.rank >= 3 ? 'shu' : reg.rank >= 2 ? 'gold' : ''}">常連度 ${reg.rank ? esc(reg.name) : 'まだ'}</span><span class="muted small">来店 ${reg.days}日${reg.next ? `・あと${reg.toNext}日で「${esc(reg.next.name)}」` : '・最高位'}</span></div><div class="rally" role="img" aria-label="常連度 ${G.REGULAR_NAMES.length}段階のうち${reg.rank}">${G.REGULAR_NAMES.map((nm, k) => `<i class="${k < reg.rank ? (k === G.REGULAR_NAMES.length - 1 ? 'top' : 'on') : ''}" title="${esc(nm)}">${k < reg.rank ? icon('check') : ''}</i>`).join('')}</div><div class="rally-l"><span>${esc(G.REGULAR_NAMES[0])}</span><span>${esc(G.REGULAR_NAMES[G.REGULAR_NAMES.length - 1])}</span></div></div>`}${hist}
     <div class="muted small" style="margin-top:10px">${esc(st.a || (st.custom ? '' : '住所の情報なし（地図データより）'))}　${esc(prefOf(st))}</div>${st.demo || st.custom ? '' : `<div class="muted small">${esc(srcLine)}</div>`}
-    ${st.demo || st.custom || st.closed ? '' : `<div class="actions"><button class="btn ghost" data-act="report">${isLib(st) ? '閉館している' : '閉店している'}</button><button class="btn ghost" data-act="rename">名前が違う</button>${near ? '<button class="btn ghost" data-act="notfound">お店が見つからない</button>' : ''}</div>`}
+    ${st.demo || st.custom || st.closed ? '' : `${reportInvite(st)}<div class="actions"><button class="btn ghost" data-act="report">${isLib(st) ? '閉館している' : '閉店している'}</button><button class="btn ghost" data-act="rename">名前が違う</button>${near ? '<button class="btn ghost" data-act="notfound">お店が見つからない</button>' : ''}</div>`}
     <div id="sheet-extra"></div>`;
   $$('#sheet-body [data-evlist]').forEach((x) => x.addEventListener('click', () => emit('evlist', x.dataset.evlist)));
   const pc = $('#sheet-body .pick-card[data-card]'); if (pc) E.loadCard(st.i).then((r) => { if (pc.isConnected) pc.innerHTML = r.url ? cardImg(r.url, st.rec) : `<div class="pick-wait">${CARD_TEXT[r.error] || CARD_TEXT.net}</div>`; });
@@ -296,7 +302,7 @@ export function setupSearch() {
 // 前は、自分の地図にすぐ足していた（S.custom）。前に足した店は、その人の地図にそのまま残す
 export function startAdd() {
   const c = MAP.center();
-  openModal(`<h2>地図にない本屋を知らせる</h2><p class="hint">運営が確かめてから、みんなの地図に載せます（すぐには出ません）。送るのは、店の名前と場所と、書いたひとことだけです。</p>
+  openModal(`<h2>地図にない本屋を知らせる</h2><p class="hint">運営が確かめてから、みんなの地図に載せます（すぐには出ません）。送るのは、店の名前と場所と、書いたひとことだけです。</p>${REWARD(true)}
     <div class="field"><label for="ad-name">店の名前</label><input type="text" id="ad-name" placeholder="例：○○書店 △△店"></div><label class="chk"><input type="checkbox" id="ad-used"> 古書店</label>
     <div class="field"><label>場所</label><label class="chk"><input type="radio" name="ad-pos" value="center" checked> いま地図の真ん中（${c.lat.toFixed(4)}, ${c.lng.toFixed(4)}）</label><label class="chk"><input type="radio" name="ad-pos" value="here" ${hasPos() ? '' : 'disabled'}> いまいる場所</label></div>
     ${NOTE_IN('2階にある古本屋')}
@@ -304,5 +310,5 @@ export function startAdd() {
   $('#ad-cancel').onclick = closeModal; $('#ad-name').focus();
   $('#ad-save').onclick = () => { const n = $('#ad-name').value.trim(); if (!n) { toast('店の名前を入れてください', 'warn'); return; } let la = c.lat, lo = c.lng; if ($('input[name=ad-pos]:checked').value === 'here' && hasPos()) { la = POS.lat; lo = POS.lon; }
     E.queueReport({ kind: 'add', store: 'u' + Date.now(), name: n.slice(0, 80), lat: +la.toFixed(5), lon: +lo.toFixed(5), place: $('#ad-used').checked ? 'used' : 'book', note: $('#rp-note').value.trim().slice(0, 100) }); // つながらないときは、あとで送る
-    closeModal(); toast('運営に知らせました。確かめてから、みんなの地図に載せます。ありがとうございます', 'ok'); };
+    closeModal(); toast(`運営に知らせました。確かめて地図に載ったら、+${MAP_CREDIT.add}ページと称号「開拓者」をお届けします`, 'ok'); };
 }
