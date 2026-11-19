@@ -1,9 +1,9 @@
 // 遊びの仕組み：物語のページと巻・称号・実績・ミッション・ラリー・カード
-import { REGULAR, WALK, volOf, TITLES, ACHIEVEMENTS, PG } from './config.js?v=0.28.0';
-import { queueMeet } from './events.js?v=0.28.0';
-import { todayISO, emit, prefOf, weekKey, weekStartISO } from './util.js?v=0.28.0';
-import { S, save } from './state.js?v=0.28.0';
-import { BYID, rarityOf, RALLIES, isFeat } from './data.js?v=0.28.0';
+import { REGULAR, WALK, volOf, TITLES, ACHIEVEMENTS, PG } from './config.js?v=0.29.0';
+import { queueMeet, queueMeetAttr } from './events.js?v=0.29.0';
+import { todayISO, emit, prefOf, weekKey, weekStartISO } from './util.js?v=0.29.0';
+import { S, save } from './state.js?v=0.29.0';
+import { BYID, rarityOf, RALLIES, isFeat } from './data.js?v=0.29.0';
 
 // 今日さいごに、射程内で押したスタンプ（お試し歩きは入れない）。店と店のあいだ・読書のはじまりで使う（v0.16.0）
 export function lastNearVisitToday() { const today = todayISO(); for (let i = S.visits.length - 1; i >= 0; i--) { const v = S.visits[i]; if (v.d !== today) return null; if (v.near && !v.trial) return v; } return null; }
@@ -104,7 +104,7 @@ export function noteLook(id) { const st = BYID.get(id); if (!st || st.demo) retu
 export function makeCard(st, book, why, pub) {
   const { total } = cardBonus(st); const today = todayISO();
   S.cards.push({ id: 'c' + Date.now(), s: st.i, sn: st.n, d: today, t: Date.now(), isbn: book ? book.isbn : '', title: book.title, author: book.author || '', publisher: book.publisher || '', cover: book.cover || '', why, pub: pub ? 1 : 0 });
-  if (book && book.isbn && !st.demo && !st.custom) queueMeet(st.i, String(book.isbn).replace(/[^0-9X]/gi, '').toUpperCase()); // どの店でどの本に出会ったか（v0.26.0・端末の番号なしで送る）
+  if (book && book.isbn && !st.demo && !st.custom) { queueMeet(st.i, String(book.isbn).replace(/[^0-9X]/gi, '').toUpperCase()); queueMeetAttr(book.isbn); } // どの店でどの本に出会ったか（v0.26.0・端末の番号なしで送る）／世代・性別は別に、時間をおいて（v0.29.0。店・日なし）
   bump('card'); const lv = addPages(total); save(); const rewards = checkRewards(); lv.after = volume(); emit('records'); return { total, lv, rewards };
 }
 export function deleteCard(id) { S.cards = S.cards.filter((x) => x.id !== id); save(); emit('records'); }

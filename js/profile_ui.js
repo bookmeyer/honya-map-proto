@@ -2,11 +2,11 @@
 // v0.20.1：名前（ハンドルネーム）以外の答えは、統計データとして使う（ぶっくまさん 11/3「プロフィールは名前以外の情報を統計データとして使用。」）。画面の上でそう知らせ、答えた分を運営に送る
 // v0.21.0：9問すべて必須（性別だけ「答えない」あり）。はじめの設定（setup_ui.js）と同じ部品で入れる（ぶっくまさん 11/4「ハンドルネームとプロフィール、アイコン設定後にアプリが使えるように」）
 // 送るのは答え（コード）と名前のない端末の番号だけ。運営が見るのは人数の集計だけ。「答えをすべて消す」と、運営からも消える（次に開いたときに、もう一度答えていただく）
-import { PROFILE_Q, PREFS } from './config.js?v=0.28.0';
-import { $, $$, esc, todayISO } from './util.js?v=0.28.0';
-import { S, save } from './state.js?v=0.28.0';
-import * as E from './events.js?v=0.28.0';
-import { openModal, closeModal, toast } from './ui.js?v=0.28.0';
+import { PROFILE_Q, PREFS } from './config.js?v=0.29.0';
+import { $, $$, esc, todayISO } from './util.js?v=0.29.0';
+import { S, save } from './state.js?v=0.29.0';
+import * as E from './events.js?v=0.29.0';
+import { openModal, closeModal, toast } from './ui.js?v=0.29.0';
 
 const prefCode = (i) => String(i + 1).padStart(2, '0'); // 都道府県は JIS の番号（01 北海道 〜 47 沖縄県）
 const optsOf = (q) => (q.pref ? PREFS.map(([n], i) => [prefCode(i), n]) : q.o);
@@ -44,7 +44,7 @@ export function openProfile(onDone) {
   const box = $('#modal-box'); bindProfileFields(box);
   $('#pf-cancel').onclick = closeModal;
   const done = (msg) => { save(); closeModal(); toast(msg, 'ok'); if (onDone) onDone(); };
-  if ($('#pf-clear')) $('#pf-clear').onclick = () => { S.profile = { a: {}, d: todayISO(), send: false }; E.queueProfile('del'); done('答えをすべて消しました（運営からも消します）'); };
+  if ($('#pf-clear')) $('#pf-clear').onclick = () => { S.profile = { a: {}, d: todayISO(), send: false }; E.queueProfile('del'); E.clearAttrs(); /* まだ送っていない、出会った本の世代・性別も送らない（v0.29.0） */ done('答えをすべて消しました（運営からも消します）'); };
   $('#pf-save').onclick = () => {
     const na = readProfileFields(box), miss = missingOf(na);
     if (miss.length) { toast(`まだ答えていない質問：${miss.slice(0, 3).map(shortTitle).join('・')}${miss.length > 3 ? ` ほか${miss.length - 3}つ` : ''}`, 'warn'); pointMissing(box, box.querySelector(`[data-q="${miss[0].k}"]`)); return; }

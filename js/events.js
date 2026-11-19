@@ -4,10 +4,10 @@
 // 店の情報の報告を送り、運営が直した閉店・名前を受け取る（v0.17.0）
 // 読書と使い方の記録（v0.25.0）：読書の日時・長さ・読んだ場所の種類・移動読書の距離など。本の名前・位置は送らない（queueAct）
 // サーバーに届かないときは、前回読んだ設定で動く。スタンプはいつでも押せる
-import { EVENTS_API, APP_VER, ACT_SINCE, MEET_SINCE } from './config.js?v=0.28.0';
-import { $, emit, prefOf, todayISO, on } from './util.js?v=0.28.0';
-import { S, save } from './state.js?v=0.28.0';
-import { isLib, setFixes } from './data.js?v=0.28.0';
+import { EVENTS_API, APP_VER, ACT_SINCE, MEET_SINCE, ATTR_SINCE } from './config.js?v=0.29.0';
+import { $, emit, prefOf, todayISO, on } from './util.js?v=0.29.0';
+import { S, save } from './state.js?v=0.29.0';
+import { isLib, setFixes } from './data.js?v=0.29.0';
 
 export const EV = { list: [], permitted: new Set(), cards: new Set(), ok: false, at: 0 };
 const CACHE_KEY = 'meguri_events_v1';
@@ -166,7 +166,8 @@ async function sendOutbox() {
   const logs = (S.outbox || []).length > 0, reps = (S.repOut || []).length > 0; // 報告は、その人が「運営にも知らせる」を選んだものなので、参加の記録を送らない設定でも送る
   const prof = !!S.profOut; // プロフィール（v0.20.0）：本人が同意したとき・やめたとき
   const acts = (S.actOut || []).some((x) => !actWaiting(x)); // 読書と使い方の記録（v0.25.0）。しおりの位置を待っている読書だけ、あとで
-  if (!logs && !reps && !prof && !acts && !(S.meetOut || []).length) { if ((S.actOut || []).length) flushSoon(60000); return; }
+  const attrs = attrReady().length > 0; // 出会った本の世代・性別（v0.29.0）：時間がたったものだけ
+  if (!logs && !reps && !prof && !acts && !(S.meetOut || []).length && !attrs) { attrTimer(); if ((S.actOut || []).length) flushSoon(60000); return; }
   if (!navigator.onLine) { flushSoon(retryMs); return; }
   let failed = false;
   if (logs && !(await sendQueue(S.outbox, 'checkin.php', 50))) failed = true;
@@ -174,6 +175,8 @@ async function sendOutbox() {
   if (prof && !(await sendProfile())) failed = true;
   if (acts && !(await sendActs())) failed = true;
   if ((S.meetOut || []).length && !(await sendMeets())) failed = true; // 出会った本の数（v0.26.0）
+  if (attrs && !(await sendAttrs())) failed = true; // 出会った本の世代・性別（v0.29.0）
+  attrTimer();
   if (failed && ((S.outbox || []).length || (S.repOut || []).length || S.profOut || (S.actOut || []).length || (S.meetOut || []).length)) { flushSoon(retryMs); retryMs = Math.min(retryMs * 2, 600000); } else { retryMs = 60000; if ((S.actOut || []).length) flushSoon(60000); }
 }
 // 1つの入れ物をまとめて送る。形のまちがい（400）は送り直しても通らないので捨てる。ほかのまちがいは残して、あとで送り直す
@@ -257,6 +260,39 @@ async function sendMeets() {
       clearTimeout(tm);
       if (r.status !== 400 && !r.ok) return false;
       q.splice(0, batch.length); save();
+    }
+    return true;
+  } catch (e) { return false; }
+}
+// ---- 出会った本の世代・性別（v0.29.0・サーバー 1.9.7 の api/meet_attr.php。11/20 ぶっくまさん「ぜんぶ提案のとおりで」） ----
+// 送るのは、本の番号（ISBN）・月・プロフィールの世代と性別だけ。**店の番号・日付・端末の番号はつけない**
+// 店・本・日の記録（meet.php）とは別の入れ物で、カードを作ってから30分〜3時間おいて送る（ふたつを結びつけにくくする）
+// ポリシー 2026-11-20 に同意した人で、設定「出会った本に世代と性別を添える」がオン（はじめはオン）のときだけ
+const isbn13 = (s) => { const d = String(s || '').replace(/[^0-9X]/gi, '').toUpperCase(); if (/^97[89]\d{10}$/.test(d)) return d; if (!/^\d{9}[\dX]$/.test(d)) return ''; const b = '978' + d.slice(0, 9); let n = 0; for (let i = 0; i < 12; i++) n += +b[i] * (i % 2 ? 3 : 1); return b + ((10 - (n % 10)) % 10); };
+export const attrOn = () => S.settings.meetAttr !== false;
+export function queueMeetAttr(isbn) {
+  const a = (S.profile && S.profile.a) || {}; const gen = /^(10|20|30|40|50|60|70)$/.test(a.gen || '') ? a.gen : ''; const sex = /^[fmxn]$/.test(a.sex || '') ? a.sex : '';
+  const i13 = isbn13(isbn);
+  if (String(S.settings.policy || '') < ATTR_SINCE || !attrOn() || !i13 || (!gen && !sex)) return;
+  const d = new Date(); const m = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+  S.attrOut = S.attrOut || []; S.attrOut.push({ isbn: i13, m, gen, sex, after: Date.now() + Math.round((30 + Math.random() * 150) * 60000) }); if (S.attrOut.length > 200) S.attrOut.splice(0, S.attrOut.length - 200);
+  save(); attrTimer();
+}
+export function clearAttrs() { S.attrOut = []; save(); } // 設定で止めたとき：まだ送っていないものも送らない
+const attrReady = () => (S.attrOut || []).filter((x) => (x.after || 0) <= Date.now());
+let atimer = null;
+function attrTimer() { clearTimeout(atimer); const q = S.attrOut || []; if (!q.length) return; const next = Math.min(...q.map((x) => x.after || 0)); const ms = Math.max(5000, next - Date.now() + 2000); if (ms < 4 * 3600000) atimer = setTimeout(() => flushSoon(500), ms); }
+async function sendAttrs() {
+  try {
+    if (!attrOn()) { clearAttrs(); return true; }
+    let ready = attrReady();
+    while (ready.length) {
+      const batch = ready.slice(0, 50);
+      const ctl = new AbortController(); const tm = setTimeout(() => ctl.abort(), 10000);
+      const r = await fetch(new URL('meet_attr.php', apiBase()).toString(), { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ items: batch.map((x) => ({ isbn: x.isbn, m: x.m, gen: x.gen, sex: x.sex })) }), signal: ctl.signal });
+      clearTimeout(tm);
+      if (r.status !== 400 && !r.ok) return false;
+      S.attrOut = (S.attrOut || []).filter((x) => !batch.includes(x)); save(); ready = attrReady();
     }
     return true;
   } catch (e) { return false; }

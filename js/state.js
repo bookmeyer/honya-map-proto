@@ -1,11 +1,11 @@
 // 記録（この端末の中だけ）。版の違いを吸収して読み込み、まとめて書き込む
-import { SKINS, MAP_SKINS, STORAGE_KEY, LEGACY_KEYS, APP_VER, PROFILE_Q } from './config.js?v=0.28.0';
-import { $, emit, debounce } from './util.js?v=0.28.0';
+import { SKINS, MAP_SKINS, STORAGE_KEY, LEGACY_KEYS, APP_VER, PROFILE_Q } from './config.js?v=0.29.0';
+import { $, emit, debounce } from './util.js?v=0.29.0';
 
 export const empty = () => ({
   v: 4, visits: [], cards: [], wants: [], custom: [], stamps: {}, pg: 0, pgDay: {},
   claimedW: {}, claimedD: {}, rallyDone: {}, featDone: {}, looks: {},
-  hidden: {}, renames: {}, days: {}, posts: [], shares: [], reading: [], trips: [], trip: null, seen: 0, lastPos: null, shareCount: 0, evLog: {}, evTitles: [], outbox: [], repOut: [], actOut: [], meetOut: [], reported: [], picks: {}, mapFix: {}, mapAdd: {},
+  hidden: {}, renames: {}, days: {}, posts: [], shares: [], reading: [], trips: [], trip: null, seen: 0, lastPos: null, shareCount: 0, evLog: {}, evTitles: [], outbox: [], repOut: [], actOut: [], meetOut: [], attrOut: [], reported: [], picks: {}, mapFix: {}, mapAdd: {},
   settings: { theme: 'light', sound: false, avatar: '', handle: '', wantAlert: true, wantAlertM: 2000, dev: '', joinCode: '', privacyV10: 0 }, createdAt: Date.now(),
 });
 export let S = empty();
@@ -30,7 +30,7 @@ function cleanProfile(p) {
   return { a, d: isDay(p.d) ? p.d : '', send: Object.keys(a).length > 0 }; // v0.20.1：答えがあれば、統計データとして送る
 }
 function sanitize(o) {
-  for (const k of ['visits', 'cards', 'wants', 'custom', 'posts', 'shares', 'reading', 'trips', 'reads', 'evTitles', 'outbox', 'repOut', 'actOut', 'meetOut', 'reported']) if (!Array.isArray(o[k])) o[k] = [];
+  for (const k of ['visits', 'cards', 'wants', 'custom', 'posts', 'shares', 'reading', 'trips', 'reads', 'evTitles', 'outbox', 'repOut', 'actOut', 'meetOut', 'attrOut', 'reported']) if (!Array.isArray(o[k])) o[k] = [];
   for (const k of ['stamps', 'pgDay', 'claimedW', 'claimedD', 'rallyDone', 'featDone', 'looks', 'hidden', 'renames', 'days', 'evLog', 'picks', 'mapFix', 'mapAdd']) o[k] = plain(o[k]);
   for (const k of ['pg', 'seen', 'shareCount']) o[k] = num(o[k]);
   const ok = (x) => x && typeof x === 'object';
@@ -46,6 +46,7 @@ function sanitize(o) {
   o.repOut = o.repOut.filter((r) => ok(r) && ['closed', 'rename', 'add'].includes(r.kind) && typeof r.store === 'string').slice(-50).map((r) => ({ kind: r.kind, store: str(r.store, 40), orig: str(r.orig, 80), name: str(r.name, 80), note: str(r.note, 200), lat: num(r.lat, null), lon: num(r.lon, null), place: str(r.place, 8), at: str(r.at, 40) }));
   o.actOut = o.actOut.filter((x) => ok(x) && ['open', 'read', 'done', 'sato', 'tabi'].includes(x.k) && typeof x.id === 'string' && /^[a-z][0-9a-z-]{1,23}$/.test(x.id)).slice(-500).map((x) => (x.k === 'tabi' && ['open', 'share'].includes(x.sub) ? { k: x.k, id: x.id, at: str(x.at, 40), sub: x.sub } : { k: x.k, id: x.id, at: str(x.at, 40) })); // まだ送れていない読書と使い方の記録（v0.25.0）
   o.meetOut = o.meetOut.filter((x) => ok(x) && typeof x.store === 'string' && typeof x.isbn === 'string').slice(-200).map((x) => ({ store: str(x.store, 40), isbn: str(x.isbn, 13), at: str(x.at, 40) })); // 出会った本（v0.26.0・端末の番号なしで送る）
+  o.attrOut = o.attrOut.filter((x) => ok(x) && /^97[89]\d{10}$/.test(x.isbn) && /^\d{4}-\d{2}$/.test(x.m)).slice(-200).map((x) => ({ isbn: x.isbn, m: x.m, gen: /^(10|20|30|40|50|60|70)$/.test(x.gen) ? x.gen : '', sex: /^[fmxn]$/.test(x.sex) ? x.sex : '', after: num(x.after) })); // 出会った本の世代・性別（v0.29.0・店と日なし）
   o.reported = o.reported.filter((r) => ok(r) && typeof r.k === 'string').slice(-300).map((r) => ({ k: str(r.k, 10), s: str(r.s, 40), la: num(r.la, null), lo: num(r.lo, null), d: isDay(r.d) ? r.d : '' })); // 送った報告（地図守り）
   for (const [k, v] of Object.entries(o.picks)) { if (!ok(v) || typeof v.title !== 'string') { delete o.picks[k]; continue; } o.picks[k] = { v: num(v.v), title: str(v.title, 80), author: str(v.author, 60), isbn: str(v.isbn, 13), who: str(v.who, 20), shelf: str(v.shelf, 40), hint: str(v.hint, 40), pics: num(v.pics), d: isDay(v.d) ? v.d : '' }; } // 開いた書店員さんの1冊（v0.26.0）
   for (const [k, v] of Object.entries(o.stamps)) if (!ok(v) || !isDay(v.d)) delete o.stamps[k];
@@ -66,6 +67,7 @@ function sanitize(o) {
   if (s.moveId != null && !(typeof s.moveId === 'string' && /^[0-9a-f]{64}$/.test(s.moveId))) delete s.moveId; // 引き継ぎコードで移したか（v0.28.0）
   for (const k of ['moveAt', 'moved', 'homeAsk']) if (s[k] != null && !(typeof s[k] === 'number' && Number.isFinite(s[k]))) delete s[k];
   if (s.movedStay != null && s.movedStay !== 1) delete s.movedStay;
+  if (s.meetAttr != null && typeof s.meetAttr !== 'boolean') delete s.meetAttr; // 出会った本に世代と性別を添える（v0.29.0。はじめはオン）
   s.joinCode = typeof s.joinCode === 'string' && /^[a-z0-9_-]{2,40}$/.test(s.joinCode) ? s.joinCode : '';
   s.wantAlertM = num(s.wantAlertM, 2000);
   if (!['light', 'dark', 'auto'].includes(s.theme)) s.theme = 'light';
