@@ -579,3 +579,23 @@ ul.plain,ol.plain{padding-left:1.2em;margin:8px 0;line-height:1.7;font-size:14px
 .shop-cover img{display:block;width:100%;height:100%;object-fit:cover;cursor:zoom-in}
 .legend .lg-ring{width:12px;height:12px;border-radius:50%;display:inline-block;border:3px double var(--shu);box-sizing:border-box}
 #radar-part{margin-bottom:14px}
+/* v0.28.0 はじめの画面（開いた場所で変える）・上の帯・引き継ぎの箱 */
+.onboard h2.gate-h{font-size:21px;line-height:1.45}
+.onboard ol.plain{margin:0 0 10px;color:var(--ink)}
+.onboard .hint{text-align:left}
+.gate-actions a.btn{text-decoration:none}
+.ob-move{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;margin:0 0 6px;padding:12px;border:2px solid var(--edge);border-radius:var(--r-m);background:var(--card);box-shadow:var(--hard-s);font-size:14px}
+.ob-move b{font-size:15px}
+.ob-move .btn{min-height:42px}
+.banner.band{flex-wrap:wrap;align-items:center}
+.banner.band .band-t{flex:1 1 180px;line-height:1.5}
+.banner.band button{margin-left:0}
+.banner.band .band-x{min-width:34px;padding:4px 8px}
+.onboard .art.gate-art{flex:0 0 auto;min-height:0;padding:4px 0 8px}
+.onboard .art.gate-art svg{width:min(30vw,118px)}
+.onboard .gate-art + h2.gate-h{margin-top:0}
+.onboard .gate-actions{margin-top:6px}
+.onboard .gate-actions .btn{min-height:46px}
+.banner.band.stack .band-t{flex:1 1 calc(100% - 80px)}
+.banner.band.stack .band-x{order:2}
+.banner.band.stack button[data-k]{order:3;margin-left:auto}

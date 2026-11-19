@@ -2,14 +2,15 @@
 // ぶっくまさん 11/4「引継ぎコードのほうがよいですね」→「いま作る」
 // 記録（「書き出す」と同じ中身）をこの端末で暗号にして（AES-GCM。鍵はコードから作り、サーバーには送らない）、24時間だけサーバーに預ける
 // サーバーが知るのは、コードから作った見出し（SHA-256）と暗号だけ＝運営は中身を読めない。受け取ると、サーバーの中身は消える（1回だけ）
-import { APP_VER } from './config.js?v=0.27.0';
-import { $, esc } from './util.js?v=0.27.0';
-import { S, exportJSON, parseImport, replace } from './state.js?v=0.27.0';
-import { apiBase } from './events.js?v=0.27.0';
-import { rebuild, STORES } from './data.js?v=0.27.0';
-import * as MAP from './map.js?v=0.27.0';
-import { applyMapStates } from './map_ui.js?v=0.27.0';
-import { openModal, closeModal, toast, refreshHud } from './ui.js?v=0.27.0';
+// v0.28.0：預けた側は見出しを覚えておき、受け取られたら「記録は移した先にあります」の帯を出す（サーバー 1.9.4 の op:state。中身は返らない）
+import { APP_VER } from './config.js?v=0.28.0';
+import { $, esc } from './util.js?v=0.28.0';
+import { S, save, exportJSON, parseImport, replace } from './state.js?v=0.28.0';
+import { apiBase } from './events.js?v=0.28.0';
+import { rebuild, STORES } from './data.js?v=0.28.0';
+import * as MAP from './map.js?v=0.28.0';
+import { applyMapStates } from './map_ui.js?v=0.28.0';
+import { openModal, closeModal, toast, refreshHud } from './ui.js?v=0.28.0';
 
 const ABC = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; // 見まちがえやすい 0・O・1・I・L は使わない（31字×12＝約59ビット）
 const CODE_RE = /^[ABCDEFGHJKMNPQRSTUVWXYZ2-9]{12}$/;
@@ -37,17 +38,31 @@ export function openGiveCode() {
   $('#tc-go').onclick = async () => {
     const b = $('#tc-go'); b.disabled = true; b.textContent = '準備しています…';
     try {
-      const code = newCode(); const r = await call({ op: 'put', id: await idOf(code), data: await seal(code, exportJSON()), ver: APP_VER });
+      const code = newCode(); const id = await idOf(code); const r = await call({ op: 'put', id, data: await seal(code, exportJSON()), ver: APP_VER });
       if (!r.j || !r.j.ok) throw new Error((r.j && r.j.error) || 'net');
+      S.settings.moveId = id; S.settings.moveAt = Date.now(); delete S.settings.moved; delete S.settings.movedStay; save(); // 受け取られたかを、あとで確かめる（v0.28.0）
       const t = new Date(Date.now() + 86400000);
       $('#modal-box').innerHTML = `<h2>引き継ぎコード</h2><p class="tc-code" id="tc-code">${esc(fmt(code))}</p>
-        <p>新しい端末で本めぐりを開き、<b>最初の画面の「前の端末から引き継ぐ」</b>か、<b>設定の「コードで受け取る」</b>に入れてください。</p>
+        <p>移したい先（新しい端末や、ホーム画面のアイコン）で本めぐりを開き、<b>最初の画面の「引き継ぎコード」</b>か、<b>設定の「コードで受け取る」</b>に入れてください。</p>
         <p class="muted small">${t.getMonth() + 1}月${t.getDate()}日 ${t.getHours()}時${String(t.getMinutes()).padStart(2, '0')}分まで使えます。1回受け取ると消えます。</p>
         <div class="actions"><button class="btn" id="tc-copy">コードをコピー</button><button class="btn primary" id="tc-close">閉じる</button></div>`;
       $('#tc-close').onclick = closeModal;
       $('#tc-copy').onclick = async () => { try { await navigator.clipboard.writeText(fmt(code)); toast('コードをコピーしました', 'ok'); } catch (e) { toast('コピーできませんでした。書き写してください', 'warn'); } };
     } catch (e) { b.disabled = false; b.textContent = 'コードを出す'; toast(why(e), 'warn'); }
   };
+}
+// ---- 預けたコードが受け取られたか（預けた側。v0.28.0）。受け取られていたら true。31日たったもの・使われずに消えたものは忘れる ----
+const MOVE_KEYS = ['moveId', 'moveAt', 'moved', 'movedStay'];
+export async function checkMoved() {
+  const s = S.settings; if (!s.moveId || s.moved) return false;
+  const forget = () => { delete s.moveId; delete s.moveAt; save(); };
+  if (Date.now() - (s.moveAt || 0) > 31 * 86400000) { forget(); return false; }
+  try {
+    const r = await call({ op: 'state', id: s.moveId });
+    if (r.status === 404) { forget(); return false; } // 使われないまま24時間すぎた
+    if (r.j && r.j.ok && r.j.taken) { s.moved = Date.now(); delete s.moveId; delete s.moveAt; save(); return true; }
+  } catch (e) {}
+  return false;
 }
 // ---- コードで受け取る（新しい端末）。done：受け取ったあと／back：やめたとき ----
 export function openTakeCode(done, back) {
@@ -65,7 +80,7 @@ export function openTakeCode(done, back) {
       if (r.status === 404) throw new Error('none');
       if (!r.j || !r.j.ok) throw new Error((r.j && r.j.error) || 'net');
       const d = parseImport(await unseal(code, r.j.data));
-      replace(d); rebuild(); MAP.setStores(STORES); applyMapStates(); refreshHud(); closeModal();
+      replace(d); for (const k of MOVE_KEYS) delete S.settings[k]; save(); /* 前の端末の「移した」印は持ってこない（v0.28.0） */ rebuild(); MAP.setStores(STORES); applyMapStates(); refreshHud(); closeModal();
       toast(`記録を受け取りました（スタンプ${Object.keys(S.stamps).length}）`, 'ok');
       if (done) done();
     } catch (e) { b.disabled = false; b.textContent = '受け取る'; toast(e && e.name === 'OperationError' ? 'コードが合いませんでした' : why(e), 'warn'); }

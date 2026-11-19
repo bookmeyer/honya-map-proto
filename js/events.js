@@ -4,10 +4,10 @@
 // 店の情報の報告を送り、運営が直した閉店・名前を受け取る（v0.17.0）
 // 読書と使い方の記録（v0.25.0）：読書の日時・長さ・読んだ場所の種類・移動読書の距離など。本の名前・位置は送らない（queueAct）
 // サーバーに届かないときは、前回読んだ設定で動く。スタンプはいつでも押せる
-import { EVENTS_API, APP_VER, ACT_SINCE, MEET_SINCE } from './config.js?v=0.27.0';
-import { $, emit, prefOf, todayISO, on } from './util.js?v=0.27.0';
-import { S, save } from './state.js?v=0.27.0';
-import { isLib, setFixes } from './data.js?v=0.27.0';
+import { EVENTS_API, APP_VER, ACT_SINCE, MEET_SINCE } from './config.js?v=0.28.0';
+import { $, emit, prefOf, todayISO, on } from './util.js?v=0.28.0';
+import { S, save } from './state.js?v=0.28.0';
+import { isLib, setFixes } from './data.js?v=0.28.0';
 
 export const EV = { list: [], permitted: new Set(), cards: new Set(), ok: false, at: 0 };
 const CACHE_KEY = 'meguri_events_v1';

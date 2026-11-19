@@ -1,9 +1,9 @@
 // 遊びの仕組み：物語のページと巻・称号・実績・ミッション・ラリー・カード
-import { REGULAR, WALK, volOf, TITLES, ACHIEVEMENTS, PG } from './config.js?v=0.27.0';
-import { queueMeet } from './events.js?v=0.27.0';
-import { todayISO, emit, prefOf, weekKey, weekStartISO } from './util.js?v=0.27.0';
-import { S, save } from './state.js?v=0.27.0';
-import { BYID, rarityOf, RALLIES, isFeat } from './data.js?v=0.27.0';
+import { REGULAR, WALK, volOf, TITLES, ACHIEVEMENTS, PG } from './config.js?v=0.28.0';
+import { queueMeet } from './events.js?v=0.28.0';
+import { todayISO, emit, prefOf, weekKey, weekStartISO } from './util.js?v=0.28.0';
+import { S, save } from './state.js?v=0.28.0';
+import { BYID, rarityOf, RALLIES, isFeat } from './data.js?v=0.28.0';
 
 // 今日さいごに、射程内で押したスタンプ（お試し歩きは入れない）。店と店のあいだ・読書のはじまりで使う（v0.16.0）
 export function lastNearVisitToday() { const today = todayISO(); for (let i = S.visits.length - 1; i >= 0; i--) { const v = S.visits[i]; if (v.d !== today) return null; if (v.near && !v.trial) return v; } return null; }
@@ -95,7 +95,7 @@ export function checkin(st, { near, memo, trial }) {
   } else gain += visitsOf(st.i).length <= 1 ? PG.sumiFirst : (visitedToday ? 0 : PG.sumiRepeat);
   const lv = addPages(gain); save();
   const rewards = [...extras, ...checkRewards()]; lv.after = volume(); // お題の分で巻が上がっても、この画面で知らせる
-  emit('records'); return { gain, isNew, lv, rewards, r, regUp };
+  emit('records'); if (isNew) emit('stamp-new', { trial: !!trial }); /* 最初のスタンプのあとの声かけ（v0.28.0） */ return { gain, isNew, lv, rewards, r, regUp };
 }
 export function toggleWant(id) { const i = S.wants.indexOf(id); if (i >= 0) S.wants.splice(i, 1); else { S.wants.push(id); bump('want'); } save(); const rewards = checkRewards(); emit('records'); return { on: i < 0, rewards }; }
 // ---- カード（本との出会い） ----

@@ -1,18 +1,19 @@
 // 設定の画面と、そこから開くもの：見た目・着せ替え・アイコン・ハンドルネーム・参加コード・送るもののお知らせ・記録を守る・Googleマップの★
-import { SKINS, MAP_SKINS, APP_VER, TRIAL_ON, PROFILE_ON, POLICY_VER } from './config.js?v=0.27.0';
-import { openProfile, profileSummary } from './profile_ui.js?v=0.27.0';
-import { openAvatarPicker } from './setup_ui.js?v=0.27.0';
-import { openGiveCode, openTakeCode } from './transfer_ui.js?v=0.27.0';
-import { $, esc, fmtDist, icon, $$, mobileOS, isStandalone, emit, todayISO } from './util.js?v=0.27.0';
-import { S, save, parseImport, replace, reset, exportJSON } from './state.js?v=0.27.0';
-import { sfx } from './audio.js?v=0.27.0';
-import { POS } from './position.js?v=0.27.0';
-import { addCustom, STORES, DATA_DATE, rebuild, unhideAll } from './data.js?v=0.27.0';
-import * as MAP from './map.js?v=0.27.0';
-import * as E from './events.js?v=0.27.0';
-import * as GI from './gimport.js?v=0.27.0';
-import { openModal, closeModal, toast, refreshHud, switchView, confirmBox } from './ui.js?v=0.27.0';
-import { applyMapStates, updateNear, updateAreaChip, setTrialUI } from './map_ui.js?v=0.27.0';
+import { SKINS, MAP_SKINS, APP_VER, TRIAL_ON, PROFILE_ON, POLICY_VER } from './config.js?v=0.28.0';
+import { openProfile, profileSummary } from './profile_ui.js?v=0.28.0';
+import { openAvatarPicker } from './setup_ui.js?v=0.28.0';
+import { openGiveCode, openTakeCode } from './transfer_ui.js?v=0.28.0';
+import { homeTip, inAppName } from './start_ui.js?v=0.28.0';
+import { $, esc, fmtDist, icon, $$, mobileOS, isStandalone, emit, todayISO } from './util.js?v=0.28.0';
+import { S, save, parseImport, replace, reset, exportJSON } from './state.js?v=0.28.0';
+import { sfx } from './audio.js?v=0.28.0';
+import { POS } from './position.js?v=0.28.0';
+import { addCustom, STORES, DATA_DATE, rebuild, unhideAll } from './data.js?v=0.28.0';
+import * as MAP from './map.js?v=0.28.0';
+import * as E from './events.js?v=0.28.0';
+import * as GI from './gimport.js?v=0.28.0';
+import { openModal, closeModal, toast, refreshHud, switchView, confirmBox } from './ui.js?v=0.28.0';
+import { applyMapStates, updateNear, updateAreaChip, setTrialUI } from './map_ui.js?v=0.28.0';
 
 // ---------- Googleマップの★を読み込む ----------
 export function googleHelp() {
@@ -64,7 +65,7 @@ export function renderSettings() {
     ${TRIAL_ON ? `<div class="setting"><div><div class="l">お試し歩き</div><div class="s">地図を押した場所に自分がいることにする（作る人が試す用）</div></div><button class="switch ${POS.fake ? 'on' : ''}" id="st-trial" role="switch" aria-checked="${POS.fake}" aria-label="お試し歩き"></button></div>` : ''}
     ${PROFILE_ON ? `<h3>プロフィール</h3><div class="setting"><div><div class="l">プロフィール</div><div class="s">世代・性別・本の買い方など。答えなくても使えます。${esc(profileSummary())}</div></div><button class="btn" id="st-profile">入れる・変える</button></div>` : ''}
     <h3>記録</h3>
-    ${mobileOS() ? `<div class="setting"><div><div class="l">記録を守る</div><div class="s">${isStandalone() ? 'ホーム画面のアイコンから開いています。記録が消えにくい開き方です' : 'ホーム画面に追加して、アイコンから開くと、記録が消えにくくなります'}</div></div>${isStandalone() ? '' : '<button class="btn" id="st-home">やり方</button>'}</div>` : ''}
+    ${mobileOS() || inAppName() ? `<div class="setting"><div><div class="l">記録を守る</div><div class="s">${isStandalone() ? 'ホーム画面のアイコンから開いています。記録が消えにくい開き方です' : inAppName() ? 'アプリの中で開いています。Safari（Android は Chrome）で開き直すと、記録が残りやすくなります' : 'ホーム画面に追加して、アイコンから開くと、記録が消えにくくなります'}</div></div>${isStandalone() ? '' : '<button class="btn" id="st-home">やり方</button>'}</div>` : ''}
     <div class="setting"><div><div class="l">書き出す</div><div class="s">（読んだ場所・最後にいた場所も入ります。人に渡さないでください）スタンプ・カード・ページをファイルに</div></div><button class="btn" id="st-export">書き出す</button></div>
     <div class="setting"><div><div class="l">読み込む</div><div class="s">書き出したファイルから置き換え</div></div><label class="btn">読み込む<input type="file" id="st-import" accept="application/json" hidden></label></div>
     <div class="setting stack"><div><div class="l">引き継ぎコード</div><div class="s">機種変更や、ホーム画面のアイコンに移すときに。記録を暗号にして24時間だけ預け、新しい端末でコードを入れて受け取ります（運営も中身を読めません）</div></div><div class="avatar-ctl"><button class="btn" id="st-tc-give">コードを出す</button><button class="btn" id="st-tc-take">コードで受け取る</button></div></div>
@@ -167,19 +168,11 @@ export function policyNotice(after) {
 }
 // ---------- 記録を守る：ホーム画面に追加（v0.10.1） ----------
 // iPhone の Safari は、しばらく開かないサイトの記録を消すことがある。ホーム画面のアイコンから開けば消えにくい
-// iPhone ではアイコンと Safari で記録の置き場所が別なので、記録がある人には書き出し→読み込みを案内する
+// iPhone ではアイコンと Safari で記録の置き場所が別なので、記録がある人には引き継ぎコードを案内する（v0.28.0。前は書き出し→読み込み）
 export function exportFile() {
   const blob = new Blob([exportJSON()], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `honya-map-${todayISO()}.json`; document.body.appendChild(a); a.click(); a.remove(); toast('書き出しました', 'ok');
 }
-export function homeTip() {
-  S.settings.homeTip = 1; save();
-  const ios = mobileOS() === 'ios'; const has = Object.keys(S.stamps).length + S.cards.length > 0;
-  const why = ios ? 'Safariで開いているだけだと、しばらく開かないうちに、スタンプなどの記録が消えることがあります（Safariの決まりです）。' : 'ブラウザで開いているだけだと、端末の空きが少ないときなどに、記録が消えることがあります。';
-  const steps = ios ? '<ol class="plain"><li>Safariで本めぐりを開く</li><li>共有ボタン（四角に上向きの矢印）を押す</li><li>「ホーム画面に追加」→「追加」を押す</li></ol>' : '<ol class="plain"><li>右上のメニュー（︙）を押す</li><li>「ホーム画面に追加」か「アプリをインストール」を押す</li></ol>';
-  const move = ios && has ? '<p class="hint">いまの記録の移し方：iPhoneでは、ホーム画面のアイコンとSafariとで、記録の置き場所が別になります。先にここで「書き出す」を押してファイルにし、アイコンから開いた本めぐりの設定で「読み込む」を選んでください。</p>' : '';
-  openModal(`<h2>記録を守るために</h2><p>${why}ホーム画面に追加して、アイコンから開くと消えにくくなります。</p>${steps}${move}<div class="actions">${move ? '<button class="btn primary" id="ht-export">書き出す</button>' : ''}<button class="btn ${move ? 'ghost' : 'primary'}" id="ht-ok">わかった</button></div>`);
-  $('#ht-ok').onclick = closeModal; if ($('#ht-export')) $('#ht-export').onclick = exportFile;
-}
+// homeTip（ホーム画面に追加のやり方）は start_ui.js に移した（v0.28.0）
 export function joinModal(after) {
   const cur = S.settings.joinCode || '';
   openModal(`<h2>参加コード</h2><p class="hint">お試しなどで渡されたコードを入れると、その人たちだけのイベントが見えます。</p><div class="field"><label for="jc-in">コード（英数字と - _）</label><input type="text" id="jc-in" maxlength="40" value="${esc(cur)}" autocomplete="off" autocapitalize="off"></div><div class="actions"><button class="btn primary" id="jc-ok">決める</button>${cur ? '<button class="btn ghost" id="jc-clear">外す</button>' : '<button class="btn ghost" id="jc-cancel">やめる</button>'}</div>`);

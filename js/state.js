@@ -1,6 +1,6 @@
 // 記録（この端末の中だけ）。版の違いを吸収して読み込み、まとめて書き込む
-import { SKINS, MAP_SKINS, STORAGE_KEY, LEGACY_KEYS, APP_VER, PROFILE_Q } from './config.js?v=0.27.0';
-import { $, emit, debounce } from './util.js?v=0.27.0';
+import { SKINS, MAP_SKINS, STORAGE_KEY, LEGACY_KEYS, APP_VER, PROFILE_Q } from './config.js?v=0.28.0';
+import { $, emit, debounce } from './util.js?v=0.28.0';
 
 export const empty = () => ({
   v: 4, visits: [], cards: [], wants: [], custom: [], stamps: {}, pg: 0, pgDay: {},
@@ -63,6 +63,9 @@ function sanitize(o) {
   s.handle = typeof s.handle === 'string' ? s.handle.slice(0, 20) : '';
   if (s.avatarKind != null && !(typeof s.avatarKind === 'string' && /^[a-z]{1,12}$/.test(s.avatarKind))) delete s.avatarKind; // アイコンの種類（v0.21.0）
   if (s.openDay != null && !isDay(s.openDay)) delete s.openDay; // その日に開いたことを送った日（v0.25.0）
+  if (s.moveId != null && !(typeof s.moveId === 'string' && /^[0-9a-f]{64}$/.test(s.moveId))) delete s.moveId; // 引き継ぎコードで移したか（v0.28.0）
+  for (const k of ['moveAt', 'moved', 'homeAsk']) if (s[k] != null && !(typeof s[k] === 'number' && Number.isFinite(s[k]))) delete s[k];
+  if (s.movedStay != null && s.movedStay !== 1) delete s.movedStay;
   s.joinCode = typeof s.joinCode === 'string' && /^[a-z0-9_-]{2,40}$/.test(s.joinCode) ? s.joinCode : '';
   s.wantAlertM = num(s.wantAlertM, 2000);
   if (!['light', 'dark', 'auto'].includes(s.theme)) s.theme = 'light';
