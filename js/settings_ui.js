@@ -1,19 +1,19 @@
 // 設定の画面と、そこから開くもの：見た目・着せ替え・アイコン・ハンドルネーム・参加コード・送るもののお知らせ・記録を守る・Googleマップの★
-import { SKINS, MAP_SKINS, APP_VER, TRIAL_ON, PROFILE_ON, POLICY_VER } from './config.js?v=0.32.9';
-import { openProfile, profileSummary } from './profile_ui.js?v=0.32.9';
-import { openAvatarPicker } from './setup_ui.js?v=0.32.9';
-import { openGiveCode, openTakeCode } from './transfer_ui.js?v=0.32.9';
-import { homeTip, inAppName } from './start_ui.js?v=0.32.9';
-import { $, esc, fmtDist, icon, $$, mobileOS, isStandalone, emit, todayISO } from './util.js?v=0.32.9';
-import { S, save, parseImport, replace, reset, exportJSON } from './state.js?v=0.32.9';
-import { sfx } from './audio.js?v=0.32.9';
-import { POS } from './position.js?v=0.32.9';
-import { addCustom, STORES, DATA_DATE, rebuild, unhideAll } from './data.js?v=0.32.9';
-import * as MAP from './map.js?v=0.32.9';
-import * as E from './events.js?v=0.32.9';
-import * as GI from './gimport.js?v=0.32.9';
-import { openModal, closeModal, toast, refreshHud, switchView, confirmBox } from './ui.js?v=0.32.9';
-import { applyMapStates, updateNear, updateAreaChip, setTrialUI } from './map_ui.js?v=0.32.9';
+import { SKINS, MAP_SKINS, APP_VER, TRIAL_ON, PROFILE_ON, POLICY_VER } from './config.js?v=0.32.10';
+import { openProfile, profileSummary } from './profile_ui.js?v=0.32.10';
+import { openAvatarPicker } from './setup_ui.js?v=0.32.10';
+import { openGiveCode, openTakeCode } from './transfer_ui.js?v=0.32.10';
+import { homeTip, inAppName } from './start_ui.js?v=0.32.10';
+import { $, esc, fmtDist, icon, $$, mobileOS, isStandalone, emit, todayISO } from './util.js?v=0.32.10';
+import { S, save, parseImport, replace, reset, exportJSON } from './state.js?v=0.32.10';
+import { sfx } from './audio.js?v=0.32.10';
+import { POS } from './position.js?v=0.32.10';
+import { addCustom, STORES, DATA_DATE, rebuild, unhideAll } from './data.js?v=0.32.10';
+import * as MAP from './map.js?v=0.32.10';
+import * as E from './events.js?v=0.32.10';
+import * as GI from './gimport.js?v=0.32.10';
+import { openModal, closeModal, toast, refreshHud, switchView, confirmBox } from './ui.js?v=0.32.10';
+import { applyMapStates, updateNear, updateAreaChip, setTrialUI } from './map_ui.js?v=0.32.10';
 
 // ---------- Googleマップの★を読み込む ----------
 export function googleHelp() {

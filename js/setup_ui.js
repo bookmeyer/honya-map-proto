@@ -2,13 +2,13 @@
 // ぶっくまさん 11/4「ハンドルネームとプロフィール、アイコン設定後にアプリが使えるようにしてほしい。そうしないと入れないはず」
 // → アイコンは絵（12）から選ぶか写真。プロフィールは9問すべて必須（性別だけ「答えない」あり）。もう使っている人も、次に開いたときに（記録はそのまま）
 // ハンドルネームとアイコンは、この端末の中だけ（送らない）。プロフィールは名前以外の答えを統計データとして送る（profile_ui.js・events.js queueProfile）
-import { $, esc, todayISO, icon } from './util.js?v=0.32.9';
-import { S, save } from './state.js?v=0.32.9';
-import * as E from './events.js?v=0.32.9';
-import * as MAP from './map.js?v=0.32.9';
-import { toast, refreshHud, openModal, closeModal } from './ui.js?v=0.32.9';
-import { cleanHandle, makeAvatar } from './settings_ui.js?v=0.32.9';
-import { profileFields, bindProfileFields, readProfileFields, missingOf, profileComplete, shortTitle, pointMissing, STAT_NOTE } from './profile_ui.js?v=0.32.9';
+import { $, esc, todayISO, icon } from './util.js?v=0.32.10';
+import { S, save } from './state.js?v=0.32.10';
+import * as E from './events.js?v=0.32.10';
+import * as MAP from './map.js?v=0.32.10';
+import { toast, refreshHud, openModal, closeModal } from './ui.js?v=0.32.10';
+import { cleanHandle, makeAvatar } from './settings_ui.js?v=0.32.10';
+import { profileFields, bindProfileFields, readProfileFields, missingOf, profileComplete, shortTitle, pointMissing, STAT_NOTE } from './profile_ui.js?v=0.32.10';
 
 // ---- アイコンの絵（12）：アプリの見た目と同じ、太い墨のふち・べた塗り。選んだら PNG にして持つ ----
 const ST = 'stroke="#1B1B1B" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"';
@@ -48,7 +48,7 @@ export const AVATARS = [
     + eye(34, 23, 2.6) + eye(41, 19.5, 2.9) + eye(48, 24, 2.4) + eye(37.5, 29, 2.2, -0.6) + eye(45.5, 30.5, 2.1, 0.5, -0.4)
     + `<path d="M40 36 q-1 3 0.5 6 l2.5 9 l-2.6 -2.2 l-1.6 3.2 l-1.7 -9.5 q-0.6 -3.5 0.4 -6.5" fill="#FF6A48" ${T2}/>`
     + `<path d="M35.5 35.5 q4.5 2.6 9 0" fill="none" ${T2}/>`) }, // 少々キモい（v0.30.0）
-  { id: 'leaf', n: 'はっぱ', svg: svg('#FFF1D2', `<path d="M15 47 Q15 18 49 15 Q49 47 15 47 Z" fill="#4FC07A" ${ST}/><path d="M15 47 L39 25" fill="none" ${ST}/>`) },
+  { id: 'cyclops', n: 'キュクロプス', svg: svg('#FFD6E0', `<path d="M14 36 Q14 14 32 13 Q50 14 50 36 Q50 54 32 55 Q14 54 14 36 Z" fill="#A0C4FF" stroke="#1B1B1B" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M15 30 Q16 13 32 12 Q48 13 49 30 Q44 22 40 25 Q37 18 32 22 Q27 18 24 25 Q20 22 15 30 Z" fill="#5E60CE" stroke="#1B1B1B" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="32" cy="34" r="8.5" fill="#fff" stroke="#1B1B1B" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="32.5" cy="35" r="4.6" fill="#1B1B1B"/><circle cx="34.2" cy="33.2" r="1.6" fill="#fff"/><path d="M27.5 45 Q32 49 36.5 45" fill="none" stroke="#1B1B1B" stroke-width="2.4" stroke-linecap="round"/><ellipse cx="20.5" cy="42" rx="3" ry="2" fill="#FF8FAB" opacity=".85"/><ellipse cx="43.5" cy="42" rx="3" ry="2" fill="#FF8FAB" opacity=".85"/>`) }, // ひとつ目のゆるい巨人（v0.32.10）
   { id: 'pengin', n: 'ペンギン', svg: svg('#A9DEF9', `<ellipse cx="32" cy="37" rx="16" ry="18" fill="#2B2D42" stroke="#1B1B1B" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M32 26 Q24 25 22 33 Q21 46 32 49 Q43 46 42 33 Q40 25 32 26 Z" fill="#fff"/><circle cx="27" cy="34" r="2.4" fill="#1B1B1B"/><circle cx="27.8" cy="33.2" r="0.84" fill="#fff"/><circle cx="37" cy="34" r="2.4" fill="#1B1B1B"/><circle cx="37.8" cy="33.2" r="0.84" fill="#fff"/><path d="M29 38.5 L35 38.5 L32 42.5 Z" fill="#FFB703" stroke="#1B1B1B" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/><ellipse cx="24" cy="40" rx="3" ry="2" fill="#FF8FAB" opacity=".8"/><ellipse cx="40" cy="40" rx="3" ry="2" fill="#FF8FAB" opacity=".8"/>`) }, // かわいい子（v0.32.9）
   { id: 'bird', n: 'とり', svg: svg('#8ED8F8', `<path d="M13 37 Q13 22 30 22 Q41 22 45 30 L53 32 L45 36 Q43 47 30 47 Q13 47 13 37 Z" fill="#FFD447" ${ST}/><circle cx="37" cy="30" r="2.6" fill="#1B1B1B"/><path d="M19 37 Q26 32 33 38" fill="none" ${ST}/>`) },
   { id: 'loupe', n: 'ルーペの目玉', svg: svg('#B5E48C',

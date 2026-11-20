@@ -1,20 +1,20 @@
 // 地図の画面：現在地まわり（射程・いちばん近い店）・ピンの状態・現在地とお試し歩き・店のページ・さがす・店を足す・行きたい店のお知らせ
-import { RANGE_M, TERRITORY_M, PG, TRIAL_ON, PREFS, MAP_CREDIT } from './config.js?v=0.32.9';
-import { $, arrowOf, bearing, icon, fmtDist, esc, dist, $$, emit, fmtDate, gmapDir, stars, gmapPlace, prefOf } from './util.js?v=0.32.9';
-import { S, save } from './state.js?v=0.32.9';
-import { unlock, sfx } from './audio.js?v=0.32.9';
-import { hasPos, POS, startWatch, setTrial, setPos, jumped } from './position.js?v=0.32.9';
-import { STORES, BYID, isLib, isFeat, rarityOf, pickOpen, placeWord, bookTitle, stampSVG, rarityText, lookupIsbn, hideStore, renameStore, search, FEAT } from './data.js?v=0.32.9';
-import * as MAP from './map.js?v=0.32.9';
-import * as G from './game.js?v=0.32.9';
-import * as E from './events.js?v=0.32.9';
-import * as J from './journey.js?v=0.32.9';
-import { dirLink, openModal, closeModal, stopLinks, toast, closeSheet, refreshHud, currentView, switchView, syncStatusCard } from './ui.js?v=0.32.9';
-import { startCheckin, shareStampUI } from './checkin_ui.js?v=0.32.9';
-import { startCard } from './card_ui.js?v=0.32.9';
-import * as SH from './shops.js?v=0.32.9';
-import { addReading } from './reading.js?v=0.32.9';
-import { todayISO } from './util.js?v=0.32.9';
+import { RANGE_M, TERRITORY_M, PG, TRIAL_ON, PREFS, MAP_CREDIT } from './config.js?v=0.32.10';
+import { $, arrowOf, bearing, icon, fmtDist, esc, dist, $$, emit, fmtDate, gmapDir, stars, gmapPlace, prefOf } from './util.js?v=0.32.10';
+import { S, save } from './state.js?v=0.32.10';
+import { unlock, sfx } from './audio.js?v=0.32.10';
+import { hasPos, POS, startWatch, setTrial, setPos, jumped } from './position.js?v=0.32.10';
+import { STORES, BYID, isLib, isFeat, rarityOf, pickOpen, placeWord, bookTitle, stampSVG, rarityText, lookupIsbn, hideStore, renameStore, search, FEAT } from './data.js?v=0.32.10';
+import * as MAP from './map.js?v=0.32.10';
+import * as G from './game.js?v=0.32.10';
+import * as E from './events.js?v=0.32.10';
+import * as J from './journey.js?v=0.32.10';
+import { dirLink, openModal, closeModal, stopLinks, toast, closeSheet, refreshHud, currentView, switchView, syncStatusCard } from './ui.js?v=0.32.10';
+import { startCheckin, shareStampUI } from './checkin_ui.js?v=0.32.10';
+import { startCard } from './card_ui.js?v=0.32.10';
+import * as SH from './shops.js?v=0.32.10';
+import { addReading } from './reading.js?v=0.32.10';
+import { todayISO } from './util.js?v=0.32.10';
 
 // ---------- 行きたい店のお知らせ（地図の下に出る帯） ----------
 let waTimer = null;
