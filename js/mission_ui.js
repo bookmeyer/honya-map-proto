@@ -1,14 +1,14 @@
 // ラリー（view-mission）：イベント・今日と今週のお題・推し店
-import { PG, PREFS } from './config.js?v=0.32.4';
-import { esc, icon, $, $$, dist, fmtDist, weekKey, todayISO, fmtDate, prefOf } from './util.js?v=0.32.4';
-import { S } from './state.js?v=0.32.4';
-import { hasPos, POS } from './position.js?v=0.32.4';
-import { BYID, stampSVG, STORES, RALLIES, FEAT } from './data.js?v=0.32.4';
-import * as MAP from './map.js?v=0.32.4';
-import * as G from './game.js?v=0.32.4';
-import * as E from './events.js?v=0.32.4';
-import { switchView, toast, emptyBox, openModal, closeModal } from './ui.js?v=0.32.4';
-import { openSheet } from './map_ui.js?v=0.32.4';
+import { PG, PREFS } from './config.js?v=0.32.5';
+import { esc, icon, $, $$, dist, fmtDist, weekKey, todayISO, fmtDate, prefOf } from './util.js?v=0.32.5';
+import { S } from './state.js?v=0.32.5';
+import { hasPos, POS } from './position.js?v=0.32.5';
+import { BYID, stampSVG, STORES, RALLIES, FEAT } from './data.js?v=0.32.5';
+import * as MAP from './map.js?v=0.32.5';
+import * as G from './game.js?v=0.32.5';
+import * as E from './events.js?v=0.32.5';
+import { switchView, toast, emptyBox, openModal, closeModal } from './ui.js?v=0.32.5';
+import { openSheet } from './map_ui.js?v=0.32.5';
 
 // ---------- ラリー（view-mission）：今日・今週のお題、推し店、ご当地ラリー、実績 ----------
 // ---------- イベント（ラリーの画面の一番上。設定はサーバーの管理画面から） ----------

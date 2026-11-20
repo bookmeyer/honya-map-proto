@@ -3,14 +3,14 @@
 // 記録（「書き出す」と同じ中身）をこの端末で暗号にして（AES-GCM。鍵はコードから作り、サーバーには送らない）、24時間だけサーバーに預ける
 // サーバーが知るのは、コードから作った見出し（SHA-256）と暗号だけ＝運営は中身を読めない。受け取ると、サーバーの中身は消える（1回だけ）
 // v0.28.0：預けた側は見出しを覚えておき、受け取られたら「記録は移した先にあります」の帯を出す（サーバー 1.9.4 の op:state。中身は返らない）
-import { APP_VER } from './config.js?v=0.32.4';
-import { $, esc } from './util.js?v=0.32.4';
-import { S, save, exportJSON, parseImport, replace } from './state.js?v=0.32.4';
-import { apiBase } from './events.js?v=0.32.4';
-import { rebuild, STORES } from './data.js?v=0.32.4';
-import * as MAP from './map.js?v=0.32.4';
-import { applyMapStates } from './map_ui.js?v=0.32.4';
-import { openModal, closeModal, toast, refreshHud } from './ui.js?v=0.32.4';
+import { APP_VER } from './config.js?v=0.32.5';
+import { $, esc } from './util.js?v=0.32.5';
+import { S, save, exportJSON, parseImport, replace } from './state.js?v=0.32.5';
+import { apiBase } from './events.js?v=0.32.5';
+import { rebuild, STORES } from './data.js?v=0.32.5';
+import * as MAP from './map.js?v=0.32.5';
+import { applyMapStates } from './map_ui.js?v=0.32.5';
+import { openModal, closeModal, toast, refreshHud } from './ui.js?v=0.32.5';
 
 const ABC = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; // 見まちがえやすい 0・O・1・I・L は使わない（31字×12＝約59ビット）
 const CODE_RE = /^[ABCDEFGHJKMNPQRSTUVWXYZ2-9]{12}$/;
