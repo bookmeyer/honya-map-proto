@@ -1,16 +1,16 @@
 // ちかく（view-radar）：近い店・書店員さんの1冊・行きたい店・ピンの色の見方
-import { RANGE_M, TRIAL_ON } from './config.js?v=0.32.3';
-import { $, esc, fmtDist, arrowOf, bearing, icon, $$, dist, prefOf, stars } from './util.js?v=0.32.3';
-import { hasPos, POS } from './position.js?v=0.32.3';
-import { STORES, bookTitle, pickOpen, isFeat, rarityOf } from './data.js?v=0.32.3';
-import * as MAP from './map.js?v=0.32.3';
-import * as G from './game.js?v=0.32.3';
-import * as J from './journey.js?v=0.32.3';
-import { dirLink, stopLinks, switchView, emptyBox } from './ui.js?v=0.32.3';
-import { openSheet, locate, setTrialUI, warp, NEAR } from './map_ui.js?v=0.32.3';
-import { hasCard, liveEvents, narrow } from './events.js?v=0.32.3';
-import { S } from './state.js?v=0.32.3';
-import { GENRES, picUrl } from './shops.js?v=0.32.3';
+import { RANGE_M, TRIAL_ON } from './config.js?v=0.32.4';
+import { $, esc, fmtDist, arrowOf, bearing, icon, $$, dist, prefOf, stars } from './util.js?v=0.32.4';
+import { hasPos, POS } from './position.js?v=0.32.4';
+import { STORES, bookTitle, pickOpen, isFeat, rarityOf } from './data.js?v=0.32.4';
+import * as MAP from './map.js?v=0.32.4';
+import * as G from './game.js?v=0.32.4';
+import * as J from './journey.js?v=0.32.4';
+import { dirLink, stopLinks, switchView, emptyBox } from './ui.js?v=0.32.4';
+import { openSheet, locate, setTrialUI, warp, NEAR } from './map_ui.js?v=0.32.4';
+import { hasCard, liveEvents, narrow } from './events.js?v=0.32.4';
+import { S } from './state.js?v=0.32.4';
+import { GENRES, picUrl } from './shops.js?v=0.32.4';
 
 // ---------- ちかく：行きたい店（近い順） ----------
 export function renderRadarWants() {
