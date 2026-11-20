@@ -1,7 +1,7 @@
 // 地図（MapLibre）。店はピンの絵で表示し、固まり（クラスタ）でまとめ、状態は feature-state で軽く更新する
-import { MAP_SKINS, STYLE_DARK, STYLE_LIGHT, TERRITORY_M, RANGE_M } from './config.js?v=0.30.1';
-import { emit, circlePoly } from './util.js?v=0.30.1';
-import { POS } from './position.js?v=0.30.1';
+import { MAP_SKINS, STYLE_DARK, STYLE_LIGHT, TERRITORY_M, RANGE_M } from './config.js?v=0.31.0';
+import { emit, circlePoly } from './util.js?v=0.31.0';
+import { POS } from './position.js?v=0.31.0';
 
 export const M = { map: null, ready: false, theme: 'light' };
 let storesGeo = { type: 'FeatureCollection', features: [] };
@@ -221,14 +221,22 @@ function tintNight() {
   for (const id of ['place_other', 'place_suburb', 'place_village', 'place_town', 'place_city', 'place_city_large', 'place_state', 'place_country_other', 'place_country_minor', 'place_country_major']) { set(id, 'text-color', c.text); set(id, 'text-halo-color', c.halo); }
 }
 function safeAddLayers() { try { hideBasePoi(); tintBase(); tintNight(); addLayers(); } catch (e) { console.error('layers', e); window.__mapErr = String(e && e.message || e); } }
-export function initMap({ center, zoom, theme = 'light', onStoreClick, onMapClick, onDrag, onReadClick }) {
-  handlers = { onStoreClick, onMapClick, onDrag, onReadClick }; M.theme = theme; // onReadClick：しおりを押したとき（v0.24.0：v0.15.0 から渡し忘れていて、押しても何も出なかった）
+export function initMap({ center, zoom, theme = 'light', onStoreClick, onMapClick, onDrag, onReadClick, onLongPress }) {
+  handlers = { onStoreClick, onMapClick, onDrag, onReadClick, onLongPress }; M.theme = theme; // onReadClick：しおりを押したとき（v0.24.0：v0.15.0 から渡し忘れていて、押しても何も出なかった）
   const map = new maplibregl.Map({ container: 'map', style: theme === 'dark' ? STYLE_DARK : STYLE_LIGHT, center, zoom, attributionControl: false, preserveDrawingBuffer: true, maxZoom: 18 });
   M.map = map;
   map.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-left');
   map.on('load', () => { safeAddLayers(); M.ready = true; emit('map-ready'); });
   map.on('click', (e) => { const ls = HIT_LAYERS.filter((id) => map.getLayer(id)); if (ls.length && map.queryRenderedFeatures(e.point, { layers: ls }).length) return; handlers.onMapClick && handlers.onMapClick(e.lngLat); }); // ピンなどの上を押したときは、地図のほうの動きをしない（v0.16.0：お試し歩きでピンを押すと、そこへ移っていた）
   map.on('dragstart', () => { handlers.onDrag && handlers.onDrag(); });
+  // 長押し（スマホ）・右クリック（パソコン）＝「ここに地図にない本屋がある」（v0.31.0）。指が少し動いたら長押しにしない。重ねて呼ばない
+  let lpT = null, lpAt = null, lpLast = 0;
+  const lpFire = (ll) => { const now = Date.now(); if (now - lpLast < 1200) return; lpLast = now; handlers.onLongPress && handlers.onLongPress(ll); };
+  const lpStop = () => { clearTimeout(lpT); lpT = null; };
+  map.on('touchstart', (e) => { lpStop(); const t = e.originalEvent && e.originalEvent.touches; if (!t || t.length !== 1) return; lpAt = e.point; const ll = e.lngLat; lpT = setTimeout(() => { lpT = null; lpFire(ll); }, 650); });
+  map.on('touchmove', (e) => { if (lpT && lpAt && (Math.abs(e.point.x - lpAt.x) > 10 || Math.abs(e.point.y - lpAt.y) > 10)) lpStop(); });
+  ['touchend', 'touchcancel', 'dragstart', 'zoomstart', 'rotatestart'].forEach((ev) => map.on(ev, lpStop));
+  map.on('contextmenu', (e) => { lpStop(); lpFire(e.lngLat); });
   map.on('error', (e) => { console.warn('map', e && e.error && e.error.message); });
   return map;
 }

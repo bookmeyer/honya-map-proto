@@ -616,3 +616,5 @@ ul.plain,ol.plain{padding-left:1.2em;margin:8px 0;line-height:1.7;font-size:14px
 .av-photo{flex-direction:column;gap:2px}
 .av-photo .ic{width:22px;height:22px}
 .av-photo span{font-size:11px;line-height:1.25;text-align:center}
+/* v0.31.0 めぐり帳の「本屋を知らせる」 */
+.mapcredit .btn.small{margin-left:auto;flex:none;min-height:32px;padding:2px 10px;font-size:12.5px}

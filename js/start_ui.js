@@ -6,10 +6,10 @@
 // ・SNSのアプリの中では、上に帯（開くたび。× でその回は閉じる）。LINE は URL に印を付けて、Safari／Chrome で開き直してもらう
 // ・ホーム画面に追加の声かけは、最初の画面と、最初のスタンプの直後の2回まで（音・光・振動なし。帯で）
 // ・iPhone の Safari → アイコンの引っ越しは、引き継ぎコードで。移したあと、もとの場所で開くと「記録は移した先にあります」の帯
-import { $, esc, mobileOS, isStandalone, icon } from './util.js?v=0.30.1';
-import { S, save } from './state.js?v=0.30.1';
-import { openModal, closeModal, toast } from './ui.js?v=0.30.1';
-import { openGiveCode, checkMoved } from './transfer_ui.js?v=0.30.1';
+import { $, esc, mobileOS, isStandalone, icon } from './util.js?v=0.31.0';
+import { S, save } from './state.js?v=0.31.0';
+import { openModal, closeModal, toast } from './ui.js?v=0.31.0';
+import { openGiveCode, checkMoved } from './transfer_ui.js?v=0.31.0';
 
 // ---------- 開いた場所 ----------
 // SNSなどのアプリの中のブラウザなら、その名前（わからないアプリは 'app'）。ふつうのブラウザ・ホーム画面のアイコンなら ''
@@ -98,7 +98,7 @@ export function showBand(key, text, actions = [], ic = 'alert', stack = false) {
   d.querySelector('.band-x').onclick = () => d.remove();
   $('#banners').appendChild(d);
 }
-const hideBand = (key) => { const d = $(`#band-${key}`); if (d) d.remove(); };
+export const hideBand = (key) => { const d = $(`#band-${key}`); if (d) d.remove(); };
 
 // SNSなどのアプリの中のやり方（帯の「やり方」・設定の「記録を守る」から）
 export function openInAppHelp() {

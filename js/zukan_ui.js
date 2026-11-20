@@ -1,18 +1,18 @@
 // めぐり帳（view-zukan）：スタンプ・本・物語・月のふり返り・県
-import { pagesForVol, frameOf, PREFS } from './config.js?v=0.30.1';
-import { esc, icon, $, todayISO, $$, fmtDate, prefOf, fmtMin } from './util.js?v=0.30.1';
-import { S, save } from './state.js?v=0.30.1';
-import { BYID, rarityOf, STORES, stampSVG } from './data.js?v=0.30.1';
-import * as G from './game.js?v=0.30.1';
-import * as E from './events.js?v=0.30.1';
-import { storyImage, shareBlob, profileImage } from './share.js?v=0.30.1';
-import * as J from './journey.js?v=0.30.1';
-import * as R from './reading.js?v=0.30.1';
-import { toast, openModal, closeModal, currentSub, emptyBox } from './ui.js?v=0.30.1';
-import { openSheet } from './map_ui.js?v=0.30.1';
-import { openCard } from './card_ui.js?v=0.30.1';
-import { renderReading } from './reading_ui.js?v=0.30.1';
-import { nameModal } from './settings_ui.js?v=0.30.1';
+import { pagesForVol, frameOf, PREFS } from './config.js?v=0.31.0';
+import { esc, icon, $, todayISO, $$, fmtDate, prefOf, fmtMin } from './util.js?v=0.31.0';
+import { S, save } from './state.js?v=0.31.0';
+import { BYID, rarityOf, STORES, stampSVG } from './data.js?v=0.31.0';
+import * as G from './game.js?v=0.31.0';
+import * as E from './events.js?v=0.31.0';
+import { storyImage, shareBlob, profileImage } from './share.js?v=0.31.0';
+import * as J from './journey.js?v=0.31.0';
+import * as R from './reading.js?v=0.31.0';
+import { toast, openModal, closeModal, currentSub, emptyBox } from './ui.js?v=0.31.0';
+import { openSheet, startAdd } from './map_ui.js?v=0.31.0';
+import { openCard } from './card_ui.js?v=0.31.0';
+import { renderReading } from './reading_ui.js?v=0.31.0';
+import { nameModal } from './settings_ui.js?v=0.31.0';
 
 // ---------- 今日の物語 ----------
 function chapterHTML(ch) {
@@ -71,10 +71,11 @@ export function renderZukan() {
   const st = G.stats(); const lv = G.volume(); const pgs = G.storyPages(); const title = G.currentTitle();
   $('#profile').innerHTML = `<div class="ph">${S.settings.avatar ? `<img class="avatar big" src="${esc(S.settings.avatar)}" alt="">` : ''}<div class="lvbig"><small>第</small>${lv}<small>巻</small></div><div style="min-width:0"><div class="tt">${S.settings.handle ? `${esc(S.settings.handle)}<button class="icon-btn sm" id="pf-name" aria-label="名前を変える">${icon('pen')}</button>` : `<button class="linkish" id="pf-name">${icon('pen')}名前を付ける</button>`}</div><div class="t">称号「${esc(title || '本屋あるき見習い')}」</div><div class="t">📖 ${pgs}ページ（あと${pagesForVol(lv + 1) - pgs}ページで第${lv + 1}巻）${st.streak ? `　🔥 ${st.streak}週連続` : ''}<br>うち歩いて ${st.pages}ページ</div></div><button class="btn" id="pf-share" style="margin-left:auto">${icon('share')}</button></div>
     ${S.settings.pfOpen ? `<div class="stats">${[['スタンプ', st.stamps], ['行きつけ', st.regulars], ['カード', st.cards], ['県', `${st.prefs}/47`]].map(([l, n]) => `<div class="s"><div class="n">${n}</div><div class="l">${l}</div></div>`).join('')}</div>
-    <div class="mapcredit">${icon('flag')}<span>あなたが直した店 <b>${st.mapall}</b>店${st.mapall ? '' : '（店の情報のまちがいを見つけて教えると、直ったときに +100ページと称号）'}</span></div>
+    <div class="mapcredit">${icon('flag')}<span>あなたが直した店 <b>${st.mapall}</b>店${st.mapall ? '' : '（店の情報のまちがいを見つけて教えると、直ったときに +100ページと称号）'}</span><button type="button" class="btn small" id="pf-addstore">本屋を知らせる</button></div>
     <div class="titles">${(() => { const all = G.titles(); const got = all.filter((t) => t.ok); const next = all.filter((t) => !t.ok).slice(0, 3); const rest = all.length - got.length - next.length; return [...got.map((t) => t.name), ...(S.evTitles || []).map((t) => t.name)].map((n) => `<span class="t">🏅 ${esc(n)}</span>`).join('') + next.map((t) => `<span class="t off" title="${esc(t.need)}">${esc(t.name)}（${esc(t.need)}）</span>`).join('') + (rest > 0 ? `<span class="t off">ほか${rest}</span>` : ''); })()}</div>` : `<div class="pf-sum">スタンプ ${st.stamps}・行きつけ ${st.regulars}・カード ${st.cards}・県 ${st.prefs}/47</div>`}
     <button class="linkish pf-toggle" id="pf-toggle">${S.settings.pfOpen ? 'たたむ' : '称号とくわしい数字を見る'}</button>`;
   $('#pf-name').onclick = () => nameModal(renderZukan);
+  if ($('#pf-addstore')) $('#pf-addstore').onclick = () => startAdd(); // 地図にない本屋を知らせる（v0.31.0）
   $('#pf-toggle').onclick = () => { S.settings.pfOpen = !S.settings.pfOpen; save(); renderZukan(); }; // 上の枠は、ふだんはたたんでおく（スタンプを上に。v0.13）
   $('#pf-share').onclick = async () => { try { const ids = Object.keys(S.stamps); const top = ids.map((id) => BYID.get(id)).filter(Boolean).sort((a, b) => rarityOf(b) - rarityOf(a)); const blob = await profileImage({ level: lv, title, st, topStamps: top, avatar: S.settings.avatar, handle: S.settings.handle }); const r = await shareBlob(blob, 'honya-profile.png', '本めぐり', `${S.settings.handle ? S.settings.handle + '　' : ''}第${lv}巻 ${title} スタンプ${st.stamps} #本めぐり`); if (r !== 'cancel') G.noteShare('profile', '', r); if (r !== 'cancel') toast(r === 'saved' ? '画像を保存しました' : 'シェアしました', 'ok'); } catch (e) { toast('画像にできませんでした', 'warn'); } };
   $$('.segmented button').forEach((b) => b.classList.toggle('active', b.dataset.sub === currentSub));

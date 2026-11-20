@@ -1,20 +1,20 @@
 // 地図の画面：現在地まわり（射程・いちばん近い店）・ピンの状態・現在地とお試し歩き・店のページ・さがす・店を足す・行きたい店のお知らせ
-import { RANGE_M, TERRITORY_M, PG, TRIAL_ON, PREFS, MAP_CREDIT } from './config.js?v=0.30.1';
-import { $, arrowOf, bearing, icon, fmtDist, esc, dist, $$, emit, fmtDate, gmapDir, stars, gmapPlace, prefOf } from './util.js?v=0.30.1';
-import { S, save } from './state.js?v=0.30.1';
-import { unlock, sfx } from './audio.js?v=0.30.1';
-import { hasPos, POS, startWatch, setTrial, setPos, jumped } from './position.js?v=0.30.1';
-import { STORES, BYID, isLib, isFeat, rarityOf, pickOpen, placeWord, bookTitle, stampSVG, rarityText, lookupIsbn, hideStore, renameStore, search, FEAT } from './data.js?v=0.30.1';
-import * as MAP from './map.js?v=0.30.1';
-import * as G from './game.js?v=0.30.1';
-import * as E from './events.js?v=0.30.1';
-import * as J from './journey.js?v=0.30.1';
-import { dirLink, openModal, closeModal, stopLinks, toast, closeSheet, refreshHud, currentView, switchView, syncStatusCard } from './ui.js?v=0.30.1';
-import { startCheckin, shareStampUI } from './checkin_ui.js?v=0.30.1';
-import { startCard } from './card_ui.js?v=0.30.1';
-import * as SH from './shops.js?v=0.30.1';
-import { addReading } from './reading.js?v=0.30.1';
-import { todayISO } from './util.js?v=0.30.1';
+import { RANGE_M, TERRITORY_M, PG, TRIAL_ON, PREFS, MAP_CREDIT } from './config.js?v=0.31.0';
+import { $, arrowOf, bearing, icon, fmtDist, esc, dist, $$, emit, fmtDate, gmapDir, stars, gmapPlace, prefOf } from './util.js?v=0.31.0';
+import { S, save } from './state.js?v=0.31.0';
+import { unlock, sfx } from './audio.js?v=0.31.0';
+import { hasPos, POS, startWatch, setTrial, setPos, jumped } from './position.js?v=0.31.0';
+import { STORES, BYID, isLib, isFeat, rarityOf, pickOpen, placeWord, bookTitle, stampSVG, rarityText, lookupIsbn, hideStore, renameStore, search, FEAT } from './data.js?v=0.31.0';
+import * as MAP from './map.js?v=0.31.0';
+import * as G from './game.js?v=0.31.0';
+import * as E from './events.js?v=0.31.0';
+import * as J from './journey.js?v=0.31.0';
+import { dirLink, openModal, closeModal, stopLinks, toast, closeSheet, refreshHud, currentView, switchView, syncStatusCard } from './ui.js?v=0.31.0';
+import { startCheckin, shareStampUI } from './checkin_ui.js?v=0.31.0';
+import { startCard } from './card_ui.js?v=0.31.0';
+import * as SH from './shops.js?v=0.31.0';
+import { addReading } from './reading.js?v=0.31.0';
+import { todayISO } from './util.js?v=0.31.0';
 
 // ---------- 行きたい店のお知らせ（地図の下に出る帯） ----------
 let waTimer = null;
@@ -300,15 +300,15 @@ export function setupSearch() {
 }
 // 地図にない本屋（v0.18.1）：運営に知らせるだけ。運営が確かめて承認すると、みんなの地図に出る（11/3 ぶっくまさん「運営の承認のみにしたいです」）
 // 前は、自分の地図にすぐ足していた（S.custom）。前に足した店は、その人の地図にそのまま残す
-export function startAdd() {
-  const c = MAP.center();
+export function startAdd(at) { // at：地図を長押しした所 { lat, lng }（v0.31.0）
+  const c = MAP.center(); const first = at ? 'at' : hasPos() ? 'here' : 'center';
   openModal(`<h2>地図にない本屋を知らせる</h2><p class="hint">運営が確かめてから、みんなの地図に載せます（すぐには出ません）。送るのは、店の名前と場所と、書いたひとことだけです。</p>${REWARD(true)}
     <div class="field"><label for="ad-name">店の名前</label><input type="text" id="ad-name" placeholder="例：○○書店 △△店"></div><label class="chk"><input type="checkbox" id="ad-used"> 古書店</label>
-    <div class="field"><label>場所</label><label class="chk"><input type="radio" name="ad-pos" value="center" checked> いま地図の真ん中（${c.lat.toFixed(4)}, ${c.lng.toFixed(4)}）</label><label class="chk"><input type="radio" name="ad-pos" value="here" ${hasPos() ? '' : 'disabled'}> いまいる場所</label></div>
+    <div class="field"><label>場所</label>${at ? `<label class="chk"><input type="radio" name="ad-pos" value="at" checked> 長押しした所（${at.lat.toFixed(4)}, ${at.lng.toFixed(4)}）</label>` : ''}<label class="chk"><input type="radio" name="ad-pos" value="here" ${hasPos() ? '' : 'disabled'} ${first === 'here' ? 'checked' : ''}> いまいる場所</label><label class="chk"><input type="radio" name="ad-pos" value="center" ${first === 'center' ? 'checked' : ''}> いま地図の真ん中（${c.lat.toFixed(4)}, ${c.lng.toFixed(4)}）</label></div>
     ${NOTE_IN('2階にある古本屋')}
     <div class="actions"><button class="btn primary" id="ad-save">運営に知らせる</button><button class="btn ghost" id="ad-cancel">やめる</button></div>`);
   $('#ad-cancel').onclick = closeModal; $('#ad-name').focus();
-  $('#ad-save').onclick = () => { const n = $('#ad-name').value.trim(); if (!n) { toast('店の名前を入れてください', 'warn'); return; } let la = c.lat, lo = c.lng; if ($('input[name=ad-pos]:checked').value === 'here' && hasPos()) { la = POS.lat; lo = POS.lon; }
+  $('#ad-save').onclick = () => { const n = $('#ad-name').value.trim(); if (!n) { toast('店の名前を入れてください', 'warn'); return; } let la = c.lat, lo = c.lng; const pick = $('input[name=ad-pos]:checked').value; if (pick === 'here' && hasPos()) { la = POS.lat; lo = POS.lon; } else if (pick === 'at' && at) { la = at.lat; lo = at.lng; }
     E.queueReport({ kind: 'add', store: 'u' + Date.now(), name: n.slice(0, 80), lat: +la.toFixed(5), lon: +lo.toFixed(5), place: $('#ad-used').checked ? 'used' : 'book', note: $('#rp-note').value.trim().slice(0, 100) }); // つながらないときは、あとで送る
     closeModal(); toast(`運営に知らせました。確かめて地図に載ったら、+${MAP_CREDIT.add}ページと称号「開拓者」をお届けします`, 'ok'); };
 }

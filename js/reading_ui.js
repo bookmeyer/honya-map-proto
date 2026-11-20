@@ -2,16 +2,16 @@
 // 地図の大きなボタン「ここから読む」で時間を計りはじめ（本も読みかたも選ばない）、読み終えたら「しおりをはさむ」で止める（v0.14.4・名前は v0.24.0）。読んだ時間だけページが増える
 // v0.24.0（ぶっくまさん 11/18。mekuru との違いは「どこで」）：1km以上動いて読んだ記録は「移動読書」。しおりをはさんだあとは「どこで」を大きく。読み終えたら「1冊の旅」
 // アプリは閉じてよい（時刻で計る）。読んでいる本は、読書中のボタンを押したときに、えらびたい人だけえらぶ
-import { esc, icon, $, $$, fmtDate, fmtMin, fmtDist, todayISO, emit } from './util.js?v=0.30.1';
-import { READ } from './config.js?v=0.30.1';
-import { S, save } from './state.js?v=0.30.1';
-import { POS } from './position.js?v=0.30.1';
-import * as R from './reading.js?v=0.30.1';
-import { closeModal, toast, openModal, stopScan, scanIsbn, searchBook, confirmBox, dirLink, currentView } from './ui.js?v=0.30.1';
-import { BYID } from './data.js?v=0.30.1';
-import { tabiImage, shareBlob } from './share.js?v=0.30.1';
-import { noteShare } from './game.js?v=0.30.1';
-import { queueAct } from './events.js?v=0.30.1';
+import { esc, icon, $, $$, fmtDate, fmtMin, fmtDist, todayISO, emit } from './util.js?v=0.31.0';
+import { READ } from './config.js?v=0.31.0';
+import { S, save } from './state.js?v=0.31.0';
+import { POS } from './position.js?v=0.31.0';
+import * as R from './reading.js?v=0.31.0';
+import { closeModal, toast, openModal, stopScan, scanIsbn, searchBook, confirmBox, dirLink, currentView } from './ui.js?v=0.31.0';
+import { BYID } from './data.js?v=0.31.0';
+import { tabiImage, shareBlob } from './share.js?v=0.31.0';
+import { noteShare } from './game.js?v=0.31.0';
+import { queueAct } from './events.js?v=0.31.0';
 
 const cover = (b) => `<div class="rcover">${b.cover ? `<img src="${esc(b.cover)}" alt="" referrerpolicy="no-referrer" loading="lazy">` : icon('book')}</div>`;
 const hm = (t) => { const d = new Date(t); return `${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`; };
