@@ -1,19 +1,19 @@
 // スタンプを押す：チェックイン → スタンプの画面（道中のまとめ・読書）→ シェア・紙ふぶき
-import { PG, WALK } from './config.js?v=0.32.8';
-import { weekKey, stars, esc, $, fmtDist, icon, $$, emit, fmtMin } from './util.js?v=0.32.8';
-import { S } from './state.js?v=0.32.8';
-import { sfx, haptic } from './audio.js?v=0.32.8';
-import { POS } from './position.js?v=0.32.8';
-import { isFeat, placeWord, rarityOf, pickOpen, BYID, stampSVG, rarityText, stampInk } from './data.js?v=0.32.8';
-import { ensureStampData } from './shops.js?v=0.32.8';
-import * as G from './game.js?v=0.32.8';
-import * as E from './events.js?v=0.32.8';
-import { stampImage, shareBlob } from './share.js?v=0.32.8';
-import * as J from './journey.js?v=0.32.8';
-import * as R from './reading.js?v=0.32.8';
-import { openModal, closeModal, closeSheet, refreshHud, toast } from './ui.js?v=0.32.8';
-import { applyMapStates, openSheet } from './map_ui.js?v=0.32.8';
-import { startCard } from './card_ui.js?v=0.32.8';
+import { PG, WALK } from './config.js?v=0.32.9';
+import { weekKey, stars, esc, $, fmtDist, icon, $$, emit, fmtMin } from './util.js?v=0.32.9';
+import { S } from './state.js?v=0.32.9';
+import { sfx, haptic } from './audio.js?v=0.32.9';
+import { POS } from './position.js?v=0.32.9';
+import { isFeat, placeWord, rarityOf, pickOpen, BYID, stampSVG, rarityText, stampInk } from './data.js?v=0.32.9';
+import { ensureStampData } from './shops.js?v=0.32.9';
+import * as G from './game.js?v=0.32.9';
+import * as E from './events.js?v=0.32.9';
+import { stampImage, shareBlob } from './share.js?v=0.32.9';
+import * as J from './journey.js?v=0.32.9';
+import * as R from './reading.js?v=0.32.9';
+import { openModal, closeModal, closeSheet, refreshHud, toast } from './ui.js?v=0.32.9';
+import { applyMapStates, openSheet } from './map_ui.js?v=0.32.9';
+import { startCard } from './card_ui.js?v=0.32.9';
 
 // ---------- チェックイン → スタンプ ----------
 export function startCheckin(st, near) {
