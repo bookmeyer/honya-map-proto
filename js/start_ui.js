@@ -6,10 +6,10 @@
 // ・SNSのアプリの中では、上に帯（開くたび。× でその回は閉じる）。LINE は URL に印を付けて、Safari／Chrome で開き直してもらう
 // ・ホーム画面に追加の声かけは、最初の画面と、最初のスタンプの直後の2回まで（音・光・振動なし。帯で）
 // ・iPhone の Safari → アイコンの引っ越しは、引き継ぎコードで。移したあと、もとの場所で開くと「記録は移した先にあります」の帯
-import { $, esc, mobileOS, isStandalone, icon } from './util.js?v=0.32.1';
-import { S, save } from './state.js?v=0.32.1';
-import { openModal, closeModal, toast } from './ui.js?v=0.32.1';
-import { openGiveCode, checkMoved } from './transfer_ui.js?v=0.32.1';
+import { $, esc, mobileOS, isStandalone, icon } from './util.js?v=0.32.2';
+import { S, save } from './state.js?v=0.32.2';
+import { openModal, closeModal, toast } from './ui.js?v=0.32.2';
+import { openGiveCode, checkMoved } from './transfer_ui.js?v=0.32.2';
 
 // ---------- 開いた場所 ----------
 // SNSなどのアプリの中のブラウザなら、その名前（わからないアプリは 'app'）。ふつうのブラウザ・ホーム画面のアイコンなら ''
@@ -129,6 +129,8 @@ export function startBands() {
   if (S.settings.moved && !S.settings.movedStay) movedBand();
   // コードで移したかを確かめる（預けた側だけ。サーバーが「受け取られた」と答えたら帯）
   let last = 0; const check = () => { if (!S.settings.moveId || Date.now() - last < 60000) return; last = Date.now(); checkMoved().then((moved) => { if (moved) movedBand(); }); };
+  // はじめての1回だけ：地図にない本屋の知らせかた（v0.32.2）
+  if (!S.settings.addTip) setTimeout(() => { if (S.settings.addTip || document.visibilityState !== 'visible' || $('#modal-box') && !$('#modal-box').closest('[hidden]') && $('#modal-box').offsetParent) return; S.settings.addTip = 1; save(); showBand('addtip', '地図にない本屋は、その場所を長押し（パソコンは右クリック）か、右上の＋で知らせられます', [['わかった', () => hideBand('addtip')]], 'add'); setTimeout(() => hideBand('addtip'), 14000); }, 9000);
   setTimeout(check, 3500); document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') check(); });
 }
 function movedBand() {

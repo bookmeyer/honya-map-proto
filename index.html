@@ -27,7 +27,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+P+One&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" integrity="sha384-MinO0mNliZ3vwppuPOUnGa+iq619pfMhLVUXfC4LHwSCvF9H+6P/KO4Q7qBOYV5V" crossorigin="anonymous">
-<link rel="stylesheet" href="css/app.css?v=0.32.1">
+<link rel="stylesheet" href="css/app.css?v=0.32.2">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -72,6 +72,7 @@
     <div id="search-box" hidden><svg class="ic sicon"><use href="#i-search"></use></svg><input id="search" type="search" placeholder="店の名前や住所でさがす" autocomplete="off" aria-label="店をさがす"><div id="search-results" class="dropdown" hidden></div></div>
     <div class="map-ctl">
       <button id="btn-search" class="fab" title="店をさがす" aria-label="店をさがす" aria-expanded="false"><svg class="ic"><use href="#i-search"></use></svg></button>
+      <button id="btn-add" class="fab" title="地図にない本屋を知らせる" aria-label="地図にない本屋を知らせる"><svg class="ic"><use href="#i-add"></use></svg></button>
       <button id="btn-trial" class="fab" title="お試し歩き" aria-label="お試し歩き" hidden><svg class="ic"><use href="#i-foot"></use></svg></button>
       <button id="btn-warp" class="fab" title="本屋の近くへワープ" aria-label="本屋の近くへワープ" hidden><svg class="ic"><use href="#i-warp"></use></svg></button>
     </div>
@@ -150,6 +151,6 @@
 <div id="toasts" aria-live="polite"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js" integrity="sha384-SYKAG6cglRMN0RVvhNeBY0r3FYKNOJtznwA0v7B5Vp9tr31xAHsZC0DqkQ/pZDmj" crossorigin="anonymous"></script>
-<script type="module" src="js/main.js?v=0.32.1"></script>
+<script type="module" src="js/main.js?v=0.32.2"></script>
 </body>
 </html>
