@@ -624,3 +624,33 @@ ul.plain,ol.plain{padding-left:1.2em;margin:8px 0;line-height:1.7;font-size:14px
 .ad-addr{display:flex;gap:8px}
 .ad-addr input{flex:1;min-width:0;border:2px solid var(--edge);border-radius:10px;padding:8px 10px;font:inherit;background:var(--card);color:var(--ink)}
 .ad-addr .btn{flex:none;min-height:40px;padding:4px 14px}
+/* 9つの質問（v0.33.0）：1画面1問・ボタンを押すだけ */
+.pfask{z-index:72}
+.pfask .qz-note{text-align:left;margin:4px 0 6px}
+.pfask .qz-note details{margin-top:4px}
+.pfask .qz-note summary{cursor:pointer;color:var(--ink-2);font-size:13px;font-weight:700}
+.pfask .qz-later{text-align:center;margin:2px 0 0}
+.qz-box{padding-top:4px}
+.qz-top{display:flex;align-items:center;justify-content:space-between;min-height:40px}
+.qz-back{background:none;border:0;padding:8px 4px;font-weight:700;color:var(--ink-2);font-size:15px;cursor:pointer}
+.qz-count{font-weight:700;color:var(--ink-2)} .qz-count b{font-family:var(--display);font-weight:400;font-size:22px;color:var(--ink)}
+.qz-bar{height:10px;border:2px solid var(--edge);border-radius:999px;background:var(--card);overflow:hidden;margin:4px 0 22px}
+.qz-bar i{display:block;height:100%;background:var(--shu);transition:width var(--mid) var(--ease)}
+.pfask h2.qz-q{font-size:23px;line-height:1.4;text-align:center;margin:0 0 6px}
+.pfask p.qz-sub{text-align:center;color:var(--ink-2);margin:0 0 16px;font-size:14px}
+.qz-opts{display:flex;flex-direction:column;gap:10px}
+.qz-opts.multi{flex-direction:row;flex-wrap:wrap;justify-content:center;gap:8px}
+.qz-opts.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.qz-opt{min-height:52px;border:var(--edge-w,2.5px) solid var(--edge);border-radius:var(--r-l);background:var(--card);font-size:16px;font-weight:700;color:var(--ink);padding:10px 14px;cursor:pointer;box-shadow:var(--hard-s);text-align:center;line-height:1.35}
+.qz-opts.multi .qz-opt{min-height:46px;border-radius:999px;padding:8px 16px;font-size:15px}
+.qz-opt.on{background:var(--gold);color:var(--on-color)}
+.qz-opt:active{transform:translateY(2px);box-shadow:none}
+.qz-foot{position:sticky;bottom:0;margin:18px -16px 0;padding:14px 16px calc(var(--sab) + 14px);background:linear-gradient(to bottom,transparent,var(--paper) 26%)}
+.qz-re{text-align:center;margin:14px 0 0}
+.qz-box>*,.pfask .onboard-box>*{flex-shrink:0} /* 中身が長いときに、進みぐあいの棒がつぶれないように */
+/* 物語のプロローグ（v0.33.0） */
+.qz-pro .story{margin:8px 0 6px;text-align:left}
+.qz-pro .story p{text-align:left;color:var(--ink);margin:0 0 8px}
+.pfask p.qz-pro-note{text-align:center;margin:6px 0 4px}
+.story.prologue{background:var(--gold-soft)}
+details.chap-pro summary b{font-family:var(--display);font-weight:400}

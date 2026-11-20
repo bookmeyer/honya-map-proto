@@ -2,13 +2,14 @@
 // ぶっくまさん 11/4「ハンドルネームとプロフィール、アイコン設定後にアプリが使えるようにしてほしい。そうしないと入れないはず」
 // → アイコンは絵（12）から選ぶか写真。プロフィールは9問すべて必須（性別だけ「答えない」あり）。もう使っている人も、次に開いたときに（記録はそのまま）
 // ハンドルネームとアイコンは、この端末の中だけ（送らない）。プロフィールは名前以外の答えを統計データとして送る（profile_ui.js・events.js queueProfile）
-import { $, esc, todayISO, icon } from './util.js?v=0.32.12';
-import { S, save } from './state.js?v=0.32.12';
-import * as E from './events.js?v=0.32.12';
-import * as MAP from './map.js?v=0.32.12';
-import { toast, refreshHud, openModal, closeModal } from './ui.js?v=0.32.12';
-import { cleanHandle, makeAvatar } from './settings_ui.js?v=0.32.12';
-import { profileFields, bindProfileFields, readProfileFields, missingOf, profileComplete, shortTitle, pointMissing, STAT_NOTE } from './profile_ui.js?v=0.32.12';
+import { $, esc, todayISO, icon } from './util.js?v=0.33.0';
+import { S, save } from './state.js?v=0.33.0';
+import * as E from './events.js?v=0.33.0';
+import * as MAP from './map.js?v=0.33.0';
+import { toast, refreshHud, openModal, closeModal } from './ui.js?v=0.33.0';
+import { cleanHandle, makeAvatar } from './settings_ui.js?v=0.33.0';
+import { profileComplete, pointMissing } from './profile_ui.js?v=0.33.0';
+import { showProfileAsk } from './quiz_ui.js?v=0.33.0';
 
 // ---- アイコンの絵（12）：アプリの見た目と同じ、太い墨のふち・べた塗り。選んだら PNG にして持つ ----
 const ST = 'stroke="#1B1B1B" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"';
@@ -102,35 +103,35 @@ export function openAvatarPicker(after) {
 }
 // ---- はじめの設定 ----
 const SKIP = (() => { try { return /^(localhost|127\.0\.0\.1)$/.test(location.hostname) && localStorage.getItem('meguri_nosetup') === '1'; } catch (e) { return false; } })(); // 手元の試しだけ、とばせる
-export const setupDone = () => !!cleanHandle(S.settings.handle) && !!S.settings.avatar && profileComplete(S.profile);
+// v0.33.0：はじめの設定は、アイコンと名前だけ。9問は、そのあと「いま答える」か「あとで」（quiz_ui.js）。「あとで」の人には、最初のスタンプの次の日などに必ず
+export const setupDone = () => !!cleanHandle(S.settings.handle) && !!S.settings.avatar;
 export function requireSetup(cb) { if (SKIP || setupDone()) { if (cb) cb(); return; } showSetup(cb); }
 export function showSetup(cb) {
   if ($('#setup')) return;
-  const s = S.settings, a = (S.profile && S.profile.a) || {};
+  const s = S.settings;
   let av = s.avatar ? { kind: s.avatarKind || 'photo', url: s.avatar } : null;
   const box = document.createElement('div'); box.id = 'setup'; box.className = 'onboard setup';
   box.setAttribute('role', 'dialog'); box.setAttribute('aria-modal', 'true'); box.setAttribute('aria-label', 'はじめの設定');
   box.innerHTML = `<div class="onboard-box setup-box">
-    <div class="ob-catch"><b>はじめの設定</b>3つ決めると、本めぐりが始められます</div>
+    <div class="ob-catch"><b>はじめの設定</b>アイコンと名前を決めましょう</div>
     <p class="setup-sub">あとから、設定でいつでも変えられます。</p>
-    <section class="setup-sec" data-sec="name"><h3>1. ハンドルネーム<span class="req">必須</span></h3>
+    <section class="setup-sec" data-sec="icon"><h3>1. 自分のアイコン</h3>
+      <p class="muted small">地図の現在地に出ます。写真を選ぶこともできます（この端末の中だけに残し、運営には送りません）。</p>${avatarGrid(av ? av.kind : '')}</section>
+    <section class="setup-sec" data-sec="name"><h3>2. ハンドルネーム</h3>
       <input type="text" id="su-name" maxlength="20" placeholder="例：本の虫" autocomplete="nickname" value="${esc(s.handle || '')}">
       <p class="muted small">見出しや、その日の物語に出ます。この端末の中だけに残し、運営には送りません。</p></section>
-    <section class="setup-sec" data-sec="icon"><h3>2. 自分のアイコン<span class="req">必須</span></h3>
-      <p class="muted small">地図の現在地に出ます。絵から選ぶか、「写真を選ぶ」でスマホの写真を使えます。写真はこの端末の中だけに残し、運営には送りません。</p>${avatarGrid(av ? av.kind : '')}</section>
-    <section class="setup-sec" data-sec="profile"><h3>3. プロフィール<span class="req">必須</span></h3>${STAT_NOTE}${profileFields(a)}</section>
-    <div class="su-foot"><button class="btn primary wide" id="su-go">はじめる</button></div>
+    <div class="su-foot"><button class="btn primary wide" id="su-go">つぎへ</button></div>
   </div>`;
   document.body.appendChild(box);
-  bindProfileFields(box); bindAvatarGrid(box, (p) => { av = p; });
+  bindAvatarGrid(box, (p) => { av = p; });
   $('#su-go').onclick = () => {
-    const name = cleanHandle($('#su-name').value), na = readProfileFields(box), miss = [];
-    if (!name) miss.push(['[data-sec="name"]', 'ハンドルネーム']);
+    const name = cleanHandle($('#su-name').value), miss = [];
     if (!av) miss.push(['[data-sec="icon"]', 'アイコン']);
-    for (const q of missingOf(na)) miss.push([`[data-q="${q.k}"]`, shortTitle(q)]);
-    if (miss.length) { toast(`まだ決まっていないもの：${miss.slice(0, 4).map((m) => m[1]).join('・')}${miss.length > 4 ? ` ほか${miss.length - 4}つ` : ''}`, 'warn'); pointMissing(box, box.querySelector(miss[0][0])); return; }
-    s.handle = name; s.avatar = av.url; s.avatarKind = av.kind; S.profile = { a: na, d: todayISO(), send: true }; save();
-    E.queueProfile('put'); MAP.setAvatar(av.url); refreshHud(); box.remove();
-    toast(`ようこそ、${name}さん。本めぐりを始めましょう`, 'ok'); if (cb) cb();
+    if (!name) miss.push(['[data-sec="name"]', 'ハンドルネーム']);
+    if (miss.length) { toast(`まだ決まっていないもの：${miss.map((m) => m[1]).join('・')}`, 'warn'); pointMissing(box, box.querySelector(miss[0][0])); return; }
+    s.handle = name; s.avatar = av.url; s.avatarKind = av.kind; save();
+    MAP.setAvatar(av.url); refreshHud(); box.remove();
+    const start = () => { toast(`ようこそ、${name}さん。本めぐりを始めましょう`, 'ok'); if (cb) cb(); };
+    if (profileComplete(S.profile)) start(); else showProfileAsk({ onDone: start, onLater: start });
   };
 }

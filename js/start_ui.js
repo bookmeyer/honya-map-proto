@@ -6,22 +6,15 @@
 // ・SNSのアプリの中では、上に帯（開くたび。× でその回は閉じる）。LINE は URL に印を付けて、Safari／Chrome で開き直してもらう
 // ・ホーム画面に追加の声かけは、最初の画面と、最初のスタンプの直後の2回まで（音・光・振動なし。帯で）
 // ・iPhone の Safari → アイコンの引っ越しは、引き継ぎコードで。移したあと、もとの場所で開くと「記録は移した先にあります」の帯
-import { $, esc, mobileOS, isStandalone, icon } from './util.js?v=0.32.12';
-import { S, save } from './state.js?v=0.32.12';
-import { openModal, closeModal, toast } from './ui.js?v=0.32.12';
-import { openGiveCode, checkMoved } from './transfer_ui.js?v=0.32.12';
+import { $, esc, mobileOS, isStandalone, icon, inAppName } from './util.js?v=0.33.0';
+import { S, save } from './state.js?v=0.33.0';
+import { openModal, closeModal, toast } from './ui.js?v=0.33.0';
+import { openGiveCode, checkMoved } from './transfer_ui.js?v=0.33.0';
 
 // ---------- 開いた場所 ----------
 // SNSなどのアプリの中のブラウザなら、その名前（わからないアプリは 'app'）。ふつうのブラウザ・ホーム画面のアイコンなら ''
-const IN_APP = [[/\bLine\//i, 'LINE'], [/Instagram/, 'Instagram'], [/FBAN|FBAV|FB_IAB|FBIOS/, 'Facebook'], [/musical_ly|BytedanceWebview|TikTok/i, 'TikTok'], [/Twitter/i, 'X'], [/YJApp/i, 'Yahoo! JAPAN'], [/KAKAOTALK/i, 'カカオトーク'], [/\bGSA\//, 'Google']];
-export function inAppName(ua = navigator.userAgent || '') {
-  if (isStandalone()) return '';
-  for (const [re, n] of IN_APP) if (re.test(ua)) return n;
-  const os = mobileOS();
-  if (os === 'android' && /; wv\)/.test(ua)) return 'app'; // Android のアプリの中の画面（WebView）
-  if (os === 'ios' && /iPhone|iPad|iPod/.test(ua) && !/Safari\//.test(ua)) return 'app'; // iPhone のアプリの中の画面（Safari の名前が入らない）
-  return '';
-}
+// inAppName は util.js へ（v0.33.0：開いた日に「どこで開いたか」を添えるため、events.js からも使う）
+export { inAppName };
 const browserName = () => (mobileOS() === 'android' ? 'Chrome' : 'Safari');
 const whereText = (n) => (n === 'app' ? 'アプリの中の画面' : `${n}のアプリの中`);
 

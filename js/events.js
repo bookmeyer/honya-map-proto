@@ -4,10 +4,10 @@
 // 店の情報の報告を送り、運営が直した閉店・名前を受け取る（v0.17.0）
 // 読書と使い方の記録（v0.25.0）：読書の日時・長さ・読んだ場所の種類・移動読書の距離など。本の名前・位置は送らない（queueAct）
 // サーバーに届かないときは、前回読んだ設定で動く。スタンプはいつでも押せる
-import { EVENTS_API, APP_VER, ACT_SINCE, MEET_SINCE, ATTR_SINCE } from './config.js?v=0.32.12';
-import { $, emit, prefOf, todayISO, on } from './util.js?v=0.32.12';
-import { S, save } from './state.js?v=0.32.12';
-import { isLib, setFixes } from './data.js?v=0.32.12';
+import { EVENTS_API, APP_VER, ACT_SINCE, MEET_SINCE, ATTR_SINCE, VIA_SINCE } from './config.js?v=0.33.0';
+import { $, emit, prefOf, todayISO, on, openedVia } from './util.js?v=0.33.0';
+import { S, save } from './state.js?v=0.33.0';
+import { isLib, setFixes } from './data.js?v=0.33.0';
 
 export const EV = { list: [], permitted: new Set(), cards: new Set(), ok: false, at: 0 };
 const CACHE_KEY = 'meguri_events_v1';
@@ -227,7 +227,7 @@ export function queueAct(it) {
   save(); flushSoon(3000);
 }
 // その日に開いた（1日1回）。使っている人の数を出すため。中身はない
-export function noteOpen() { if (!actOk()) return; const d = todayISO(); if (S.settings.openDay === d) return; S.settings.openDay = d; queueAct({ k: 'open', id: 'o' + d }); }
+export function noteOpen() { if (!actOk()) return; const d = todayISO(); if (S.settings.openDay === d) return; S.settings.openDay = d; queueAct(String(S.settings.policy || '') >= VIA_SINCE ? { k: 'open', id: 'o' + d, sub: openedVia() } : { k: 'open', id: 'o' + d }); } // どこで開いたか（v0.33.0・サーバー 1.9.8 から残す。前のサーバーは読み捨てる）
 // 読書は、送るときに記録から作る（しおりをはさんだ所の位置が押したあとに届いて、読んだ場所の種類が決まることがあるため。reading.js の p1wait）
 const actWaiting = (x) => x.k === 'read' && (S.reads || []).some((r) => r.id === x.id && r.p1wait && Date.now() - r.t1 < 180000);
 // 待っていない分だけ送る。送れた分を消す（送っているあいだに足された記録は残す）

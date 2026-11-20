@@ -1,5 +1,5 @@
 // 小さな道具
-import { PREFS } from './config.js?v=0.32.12';
+import { PREFS } from './config.js?v=0.33.0';
 
 export const $ = (s, el = document) => el.querySelector(s);
 export const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
@@ -28,6 +28,18 @@ export const stars = (r) => '★'.repeat(r) + '☆'.repeat(3 - r);
 export const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
 // スマホの種類（ホーム画面への追加のしかたを出し分ける）。パソコンは ''
 export const mobileOS = () => { const ua = navigator.userAgent || ''; if (/iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) return 'ios'; return /Android/.test(ua) ? 'android' : ''; };
+// SNSなどのアプリの中のブラウザなら、その名前（わからないアプリは 'app'）。ふつうのブラウザ・ホーム画面のアイコンなら ''（v0.28.0。v0.33.0 で start_ui.js から移した）
+const IN_APP = [[/\bLine\//i, 'LINE'], [/Instagram/, 'Instagram'], [/FBAN|FBAV|FB_IAB|FBIOS/, 'Facebook'], [/musical_ly|BytedanceWebview|TikTok/i, 'TikTok'], [/Twitter/i, 'X'], [/YJApp/i, 'Yahoo! JAPAN'], [/KAKAOTALK/i, 'カカオトーク'], [/\bGSA\//, 'Google']];
+export function inAppName(ua = navigator.userAgent || '') {
+  if (isStandalone()) return '';
+  for (const [re, n] of IN_APP) if (re.test(ua)) return n;
+  const os = mobileOS();
+  if (os === 'android' && /; wv\)/.test(ua)) return 'app'; // Android のアプリの中の画面（WebView）
+  if (os === 'ios' && /iPhone|iPad|iPod/.test(ua) && !/Safari\//.test(ua)) return 'app'; // iPhone のアプリの中の画面（Safari の名前が入らない）
+  return '';
+}
+// どこで開いたか（v0.33.0）：app＝SNSなどのアプリの中／home＝ホーム画面のアイコン／web＝スマホのブラウザ／pc＝パソコン
+export const openedVia = () => (isStandalone() ? 'home' : inAppName() ? 'app' : mobileOS() ? 'web' : 'pc');
 // 小さな出来事の配信（画面の部品どうしをゆるくつなぐ）
 const subs = new Map();
 export const on = (ev, fn) => { (subs.get(ev) || subs.set(ev, []).get(ev)).push(fn); return () => { const a = subs.get(ev); const i = a.indexOf(fn); if (i >= 0) a.splice(i, 1); }; };

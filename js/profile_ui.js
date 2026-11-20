@@ -2,11 +2,11 @@
 // v0.20.1：名前（ハンドルネーム）以外の答えは、統計データとして使う（ぶっくまさん 11/3「プロフィールは名前以外の情報を統計データとして使用。」）。画面の上でそう知らせ、答えた分を運営に送る
 // v0.21.0：9問すべて必須（性別だけ「答えない」あり）。はじめの設定（setup_ui.js）と同じ部品で入れる（ぶっくまさん 11/4「ハンドルネームとプロフィール、アイコン設定後にアプリが使えるように」）
 // 送るのは答え（コード）と名前のない端末の番号だけ。運営が見るのは人数の集計だけ。「答えをすべて消す」と、運営からも消える（次に開いたときに、もう一度答えていただく）
-import { PROFILE_Q, PREFS } from './config.js?v=0.32.12';
-import { $, $$, esc, todayISO } from './util.js?v=0.32.12';
-import { S, save } from './state.js?v=0.32.12';
-import * as E from './events.js?v=0.32.12';
-import { openModal, closeModal, toast } from './ui.js?v=0.32.12';
+import { PROFILE_Q, PREFS } from './config.js?v=0.33.0';
+import { $, $$, esc, todayISO } from './util.js?v=0.33.0';
+import { S, save } from './state.js?v=0.33.0';
+import * as E from './events.js?v=0.33.0';
+import { openModal, closeModal, toast } from './ui.js?v=0.33.0';
 
 const prefCode = (i) => String(i + 1).padStart(2, '0'); // 都道府県は JIS の番号（01 北海道 〜 47 沖縄県）
 const optsOf = (q) => (q.pref ? PREFS.map(([n], i) => [prefCode(i), n]) : q.o);
@@ -15,8 +15,9 @@ export const profileComplete = (p) => !!(p && p.a) && PROFILE_Q.every((q) => { c
 export const missingOf = (a) => PROFILE_Q.filter((q) => (q.max ? !(a[q.k] || []).length : !a[q.k]));
 export const shortTitle = (q) => q.t.replace(/（.*?）/g, '');
 // 統計データとして使うことのお知らせ（はじめの設定とプロフィールの画面の上に）
+export const STAT_P = `<p class="muted small">運営に届くのは、ここで選んだ答えと、名前のない端末の番号だけです。名前・メールアドレス・位置は送りません。集計は人数だけ（例：20代が○人）で、ひとりひとりの答えは出しません。店ごとの集計は、その店に10人以上いるときだけ使います。性別は「答えない」も選べます。中学生以下の方は、保護者の方と相談してから入れてください。<a href="privacy.html" target="_blank" rel="noopener">プライバシーポリシー</a></p>`; // 9問の画面（quiz_ui.js）では「くわしく」の中に（v0.33.0）
 export const STAT_NOTE = `<div class="pf-send"><b>名前（ハンドルネーム）以外の答えは、統計データとして使います。</b>
-  <p class="muted small">運営に届くのは、ここで選んだ答えと、名前のない端末の番号だけです。名前・メールアドレス・位置は送りません。集計は人数だけ（例：20代が○人）で、ひとりひとりの答えは出しません。店ごとの集計は、その店に10人以上いるときだけ使います。性別は「答えない」も選べます。中学生以下の方は、保護者の方と相談してから入れてください。<a href="privacy.html" target="_blank" rel="noopener">プライバシーポリシー</a></p></div>`;
+  ${STAT_P}</div>`;
 // 質問の部品（a：いまの答え）。1つ選ぶものは「選んでください」から、いくつか選ぶものは札
 export function profileFields(a) {
   const one = (q) => `<div class="field" data-q="${q.k}"><label for="pf-${q.k}">${esc(q.t)}<span class="req">必須</span></label><select id="pf-${q.k}"><option value="">選んでください</option>${optsOf(q).map(([v, t]) => `<option value="${v}"${a[q.k] === v ? ' selected' : ''}>${esc(t)}</option>`).join('')}</select></div>`;

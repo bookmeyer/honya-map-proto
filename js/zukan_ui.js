@@ -1,18 +1,20 @@
 // めぐり帳（view-zukan）：スタンプ・本・物語・月のふり返り・県
-import { pagesForVol, frameOf, PREFS } from './config.js?v=0.32.12';
-import { esc, icon, $, todayISO, $$, fmtDate, prefOf, fmtMin } from './util.js?v=0.32.12';
-import { S, save } from './state.js?v=0.32.12';
-import { BYID, rarityOf, STORES, stampSVG } from './data.js?v=0.32.12';
-import * as G from './game.js?v=0.32.12';
-import * as E from './events.js?v=0.32.12';
-import { storyImage, shareBlob, profileImage } from './share.js?v=0.32.12';
-import * as J from './journey.js?v=0.32.12';
-import * as R from './reading.js?v=0.32.12';
-import { toast, openModal, closeModal, currentSub, emptyBox } from './ui.js?v=0.32.12';
-import { openSheet, startAdd } from './map_ui.js?v=0.32.12';
-import { openCard } from './card_ui.js?v=0.32.12';
-import { renderReading } from './reading_ui.js?v=0.32.12';
-import { nameModal } from './settings_ui.js?v=0.32.12';
+import { pagesForVol, frameOf, PREFS } from './config.js?v=0.33.0';
+import { esc, icon, $, todayISO, $$, fmtDate, prefOf, fmtMin } from './util.js?v=0.33.0';
+import { S, save } from './state.js?v=0.33.0';
+import { BYID, rarityOf, STORES, stampSVG } from './data.js?v=0.33.0';
+import * as G from './game.js?v=0.33.0';
+import * as E from './events.js?v=0.33.0';
+import { storyImage, shareBlob, profileImage } from './share.js?v=0.33.0';
+import * as J from './journey.js?v=0.33.0';
+import * as R from './reading.js?v=0.33.0';
+import { toast, openModal, closeModal, currentSub, emptyBox } from './ui.js?v=0.33.0';
+import { openSheet, startAdd } from './map_ui.js?v=0.33.0';
+import { openCard } from './card_ui.js?v=0.33.0';
+import { renderReading } from './reading_ui.js?v=0.33.0';
+import { nameModal } from './settings_ui.js?v=0.33.0';
+import { profileComplete } from './profile_ui.js?v=0.33.0';
+import { prologueHTML } from './quiz_ui.js?v=0.33.0'; // 物語のプロローグ（v0.33.0）
 
 // ---------- 今日の物語 ----------
 function chapterHTML(ch) {
@@ -28,7 +30,8 @@ export function renderStory() {
   box.innerHTML = chapterHTML(ch) + `<div class="actions"><button class="btn primary" id="sy-share">${icon('share')}今日の物語をシェア</button><button class="btn" id="sy-post">${icon('pen')}Xの投稿を記録</button></div><div class="note">歩いた距離は、現在地を追っているあいだと、店と店のあいだを数えます（100mで1ページ）。閉じて歩いた分は、次の店でスタンプを押したときに、前の店からのまっすぐの距離で足します。歩数は距離からの目安です。</div>`;
   $('#sy-share').onclick = () => shareChapter(todayISO()); $('#sy-post').onclick = postModal;
   const past = J.chapters(40).filter((c) => c.date !== todayISO());
-  list.innerHTML = past.length ? past.map((c) => `<details class="chap"><summary><b>${esc(c.title)}</b><span class="muted small">${c.pages}ページ${c.nStores ? `・${c.nStores}か所` : ''}${c.nCards ? `・本${c.nCards}冊` : ''}</span></summary>${chapterHTML(c)}<div class="actions"><button class="btn" data-share="${esc(c.date)}">${icon('share')}この日の物語をシェア</button></div></details>`).join('') : '<div class="muted small">まだ前の章はありません。歩いた日・本屋に行った日ごとに、1章ずつ増えていきます。</div>';
+  const pro = profileComplete(S.profile) ? `<details class="chap chap-pro"><summary><b>プロローグ</b><span class="muted small">物語のはじまり</span></summary>${prologueHTML()}</details>` : ''; // 9つの質問の答えから（v0.33.0）。いちばん古い章のあと＝物語の最初
+  list.innerHTML = (past.length ? past.map((c) => `<details class="chap"><summary><b>${esc(c.title)}</b><span class="muted small">${c.pages}ページ${c.nStores ? `・${c.nStores}か所` : ''}${c.nCards ? `・本${c.nCards}冊` : ''}</span></summary>${chapterHTML(c)}<div class="actions"><button class="btn" data-share="${esc(c.date)}">${icon('share')}この日の物語をシェア</button></div></details>`).join('') : pro ? '<div class="muted small">歩いた日・本屋に行った日ごとに、プロローグの上に1章ずつ増えていきます。</div>' : '<div class="muted small">まだ前の章はありません。歩いた日・本屋に行った日ごとに、1章ずつ増えていきます。</div>') + pro;
   $$('#chapters [data-share]').forEach((b) => b.addEventListener('click', () => shareChapter(b.dataset.share)));
 }
 function postModal() {
