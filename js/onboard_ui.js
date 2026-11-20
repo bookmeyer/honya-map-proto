@@ -1,11 +1,11 @@
 // 最初の案内（はじめて開いたとき）
-import { mobileOS, isStandalone, $, esc, icon } from './util.js?v=0.32.10';
-import { S, save } from './state.js?v=0.32.10';
-import { stampSVG, STORES } from './data.js?v=0.32.10';
-import * as MAP from './map.js?v=0.32.10';
-import { cleanHandle } from './settings_ui.js?v=0.32.10';
-import { TRIAL_ON, POLICY_VER } from './config.js?v=0.32.10';
-import { openTakeCode } from './transfer_ui.js?v=0.32.10';
+import { mobileOS, isStandalone, $, esc, icon } from './util.js?v=0.32.12';
+import { S, save } from './state.js?v=0.32.12';
+import { stampSVG, STORES } from './data.js?v=0.32.12';
+import * as MAP from './map.js?v=0.32.12';
+import { cleanHandle } from './settings_ui.js?v=0.32.12';
+import { TRIAL_ON, POLICY_VER } from './config.js?v=0.32.12';
+import { openTakeCode } from './transfer_ui.js?v=0.32.12';
 
 // ---------- 最初の案内 ----------
 export function showOnboarding(onDone) {

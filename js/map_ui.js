@@ -1,20 +1,20 @@
 // 地図の画面：現在地まわり（射程・いちばん近い店）・ピンの状態・現在地とお試し歩き・店のページ・さがす・店を足す・行きたい店のお知らせ
-import { RANGE_M, TERRITORY_M, PG, TRIAL_ON, PREFS, MAP_CREDIT } from './config.js?v=0.32.10';
-import { $, arrowOf, bearing, icon, fmtDist, esc, dist, $$, emit, fmtDate, gmapDir, stars, gmapPlace, prefOf } from './util.js?v=0.32.10';
-import { S, save } from './state.js?v=0.32.10';
-import { unlock, sfx } from './audio.js?v=0.32.10';
-import { hasPos, POS, startWatch, setTrial, setPos, jumped } from './position.js?v=0.32.10';
-import { STORES, BYID, isLib, isFeat, rarityOf, pickOpen, placeWord, bookTitle, stampSVG, rarityText, lookupIsbn, hideStore, renameStore, search, FEAT } from './data.js?v=0.32.10';
-import * as MAP from './map.js?v=0.32.10';
-import * as G from './game.js?v=0.32.10';
-import * as E from './events.js?v=0.32.10';
-import * as J from './journey.js?v=0.32.10';
-import { dirLink, openModal, closeModal, stopLinks, toast, closeSheet, refreshHud, currentView, switchView, syncStatusCard } from './ui.js?v=0.32.10';
-import { startCheckin, shareStampUI } from './checkin_ui.js?v=0.32.10';
-import { startCard } from './card_ui.js?v=0.32.10';
-import * as SH from './shops.js?v=0.32.10';
-import { addReading } from './reading.js?v=0.32.10';
-import { todayISO } from './util.js?v=0.32.10';
+import { RANGE_M, TERRITORY_M, PG, TRIAL_ON, PREFS, MAP_CREDIT } from './config.js?v=0.32.12';
+import { $, arrowOf, bearing, icon, fmtDist, esc, dist, $$, emit, fmtDate, gmapDir, stars, gmapPlace, prefOf } from './util.js?v=0.32.12';
+import { S, save } from './state.js?v=0.32.12';
+import { unlock, sfx } from './audio.js?v=0.32.12';
+import { hasPos, POS, startWatch, setTrial, setPos, jumped, setFollow } from './position.js?v=0.32.12';
+import { STORES, BYID, isLib, isFeat, rarityOf, pickOpen, placeWord, bookTitle, stampSVG, rarityText, lookupIsbn, hideStore, renameStore, search, FEAT } from './data.js?v=0.32.12';
+import * as MAP from './map.js?v=0.32.12';
+import * as G from './game.js?v=0.32.12';
+import * as E from './events.js?v=0.32.12';
+import * as J from './journey.js?v=0.32.12';
+import { dirLink, openModal, closeModal, stopLinks, toast, closeSheet, refreshHud, currentView, switchView, syncStatusCard } from './ui.js?v=0.32.12';
+import { startCheckin, shareStampUI } from './checkin_ui.js?v=0.32.12';
+import { startCard } from './card_ui.js?v=0.32.12';
+import * as SH from './shops.js?v=0.32.12';
+import { addReading } from './reading.js?v=0.32.12';
+import { todayISO } from './util.js?v=0.32.12';
 
 // ---------- 行きたい店のお知らせ（地図の下に出る帯） ----------
 let waTimer = null;
@@ -262,7 +262,10 @@ export function openSheet(id, quiet) {
 }
 // ---------- 地図の吹き出し（v0.27.0）：寄せたとき、参加店のピンから書店員さんのヒント ----------
 // 画面の中で、真ん中に近い3店まで。16字で切る。動かない（本めぐりは静かに）。押すと店のページ
-const BUB = new Map(); const BUB_ZOOM = 14, BUB_MAX = 3, BUB_LEN = 16;
+const BUB = new Map(); const BUB_ZOOM = 10, BUB_MAX = 3, BUB_LEN = 16; // v0.32.12：ピンが1軒ずつ見える広さ（10）から出す（前は14・ぶっくまさん「ある程度拡大しないと出ない」）
+// ピンの大きさは広さで変わる（map.js の sz：8→0.5、12→0.66、15→0.9）。吹き出しの高さをピンに合わせる
+const pinScale = (z) => (z <= 8 ? 0.5 : z <= 12 ? 0.5 + (z - 8) * (0.16 / 4) : z <= 15 ? 0.66 + (z - 12) * (0.24 / 3) : 0.9);
+const bubOff = (z) => -Math.round(62 * pinScale(z) / 0.9);
 const bubText = (t) => (t.length > BUB_LEN ? t.slice(0, BUB_LEN) + '…' : t);
 export function updateBubbles() {
   const map = MAP.M.map; if (!map || !MAP.M.ready || typeof maplibregl === 'undefined') return;
@@ -281,9 +284,10 @@ export function updateBubbles() {
     const stop = (e) => e.stopPropagation();
     el.addEventListener('mousedown', stop); el.addEventListener('touchstart', stop, { passive: true }); el.addEventListener('dblclick', stop);
     el.addEventListener('click', (e) => { e.stopPropagation(); openSheet(s.i); });
-    const mk = new maplibregl.Marker({ element: el, anchor: 'bottom', offset: [0, -62] }).setLngLat([s.lo, s.la]).addTo(map); mk._key = key; BUB.set(s.i, mk);
+    const mk = new maplibregl.Marker({ element: el, anchor: 'bottom', offset: [0, bubOff(map.getZoom())] }).setLngLat([s.lo, s.la]).addTo(map); mk._key = key; BUB.set(s.i, mk);
     el.setAttribute('aria-label', `${s.n}　書店員さんのひとこと「${s.part.bubble}」`); // 地図の部品が「Map marker」に書きかえるので、あとで入れる
   }
+  const off = bubOff(map.getZoom()); for (const mk of BUB.values()) mk.setOffset([0, off]); // 広さが変わったら、高さをピンに合わせ直す
 }
 // ---------- さがす・追加 ----------
 // v0.23.0：検索窓はふだんしまっておき、右上の虫めがねで開く（テストプレイの声「画面の四角が多い」）。＋（地図にない本屋）は、見つからなかったときに出す
@@ -294,7 +298,7 @@ export function setupSearch() {
   inp.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
   inp.addEventListener('input', () => { if (!inp.value.trim()) { res.hidden = true; res.innerHTML = ''; return; } const hits = search(inp.value);
     res.innerHTML = hits.map((s) => `<div class="item" data-id="${esc(s.i)}">${isFeat(s.i) ? '👑 ' : ''}${esc(s.n)} <span class="stars">${'★'.repeat(rarityOf(s))}</span><div class="muted small">${esc(s.a || prefOf(s))}</div></div>`).join('') || '<div class="item muted">見つかりません</div><div class="item add-link" id="sr-add">＋ 地図にない本屋を知らせる</div>'; res.hidden = false;
-    $$('#search-results .item[data-id]').forEach((el) => el.addEventListener('click', () => { const st = BYID.get(el.dataset.id); setOpen(false); openSheet(st.i); MAP.flyTo(st.lo, st.la, 15); }));
+    $$('#search-results .item[data-id]').forEach((el) => el.addEventListener('click', () => { const st = BYID.get(el.dataset.id); setOpen(false); setFollow(false); const lb = $('#btn-locate'); if (lb) lb.classList.remove('on'); /* 現在地を追っていると、すぐ現在地に戻されるので、追うのをやめてから飛ぶ（v0.32.11） */ openSheet(st.i); MAP.flyTo(st.lo, st.la, 15); }));
     const add = $('#sr-add'); if (add) add.addEventListener('click', () => { setOpen(false); startAdd(); }); });
   inp.addEventListener('blur', () => setTimeout(() => { res.hidden = true; if (!inp.value.trim() && document.activeElement !== inp) setOpen(false); }, 200));
 }

@@ -1,16 +1,16 @@
 // ちかく（view-radar）：近い店・書店員さんの1冊・行きたい店・ピンの色の見方
-import { RANGE_M, TRIAL_ON } from './config.js?v=0.32.10';
-import { $, esc, fmtDist, arrowOf, bearing, icon, $$, dist, prefOf, stars } from './util.js?v=0.32.10';
-import { hasPos, POS } from './position.js?v=0.32.10';
-import { STORES, bookTitle, pickOpen, isFeat, rarityOf } from './data.js?v=0.32.10';
-import * as MAP from './map.js?v=0.32.10';
-import * as G from './game.js?v=0.32.10';
-import * as J from './journey.js?v=0.32.10';
-import { dirLink, stopLinks, switchView, emptyBox } from './ui.js?v=0.32.10';
-import { openSheet, locate, setTrialUI, warp, NEAR } from './map_ui.js?v=0.32.10';
-import { hasCard, liveEvents, narrow } from './events.js?v=0.32.10';
-import { S } from './state.js?v=0.32.10';
-import { GENRES, picUrl } from './shops.js?v=0.32.10';
+import { RANGE_M, TRIAL_ON } from './config.js?v=0.32.12';
+import { $, esc, fmtDist, arrowOf, bearing, icon, $$, dist, prefOf, stars } from './util.js?v=0.32.12';
+import { hasPos, POS } from './position.js?v=0.32.12';
+import { STORES, bookTitle, pickOpen, isFeat, rarityOf } from './data.js?v=0.32.12';
+import * as MAP from './map.js?v=0.32.12';
+import * as G from './game.js?v=0.32.12';
+import * as J from './journey.js?v=0.32.12';
+import { dirLink, stopLinks, switchView, emptyBox } from './ui.js?v=0.32.12';
+import { openSheet, locate, setTrialUI, warp, NEAR } from './map_ui.js?v=0.32.12';
+import { hasCard, liveEvents, narrow } from './events.js?v=0.32.12';
+import { S } from './state.js?v=0.32.12';
+import { GENRES, picUrl } from './shops.js?v=0.32.12';
 
 // ---------- ちかく：行きたい店（近い順） ----------
 export function renderRadarWants() {
