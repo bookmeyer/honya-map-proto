@@ -4,10 +4,10 @@
 //  - 来る前（誰でも）：ヒント・ジャンル・名前の出し方・フェア・売場の写真・店の発信・スタンプの写真（api/shops.php・api/pic.php）
 //  - 来たあと（その店の射程内でスタンプを押した端末だけ）：書名・著者・写真（api/pick.php。端末の番号と店の番号を POST で送る）
 //  - 開いた1冊は、この端末に覚える（S.picks。写真は開いているあいだだけ）。サーバーに届かないときは、前回読んだ中身で動く
-import { S, save } from './state.js?v=0.32.7';
-import { todayISO, emit } from './util.js?v=0.32.7';
-import { setShops, setStampData, pickOpen } from './data.js?v=0.32.7';
-import { apiBase, deviceId, flush } from './events.js?v=0.32.7';
+import { S, save } from './state.js?v=0.32.8';
+import { todayISO, emit } from './util.js?v=0.32.8';
+import { setShops, setStampData, pickOpen } from './data.js?v=0.32.8';
+import { apiBase, deviceId, flush } from './events.js?v=0.32.8';
 
 const CACHE_KEY = 'meguri_shops_v1';
 const STAMP_KEY = 'meguri_stamp_imgs_v1';
