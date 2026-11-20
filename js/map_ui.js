@@ -1,20 +1,20 @@
 // 地図の画面：現在地まわり（射程・いちばん近い店）・ピンの状態・現在地とお試し歩き・店のページ・さがす・店を足す・行きたい店のお知らせ
-import { RANGE_M, TERRITORY_M, PG, TRIAL_ON, PREFS, MAP_CREDIT } from './config.js?v=0.31.0';
-import { $, arrowOf, bearing, icon, fmtDist, esc, dist, $$, emit, fmtDate, gmapDir, stars, gmapPlace, prefOf } from './util.js?v=0.31.0';
-import { S, save } from './state.js?v=0.31.0';
-import { unlock, sfx } from './audio.js?v=0.31.0';
-import { hasPos, POS, startWatch, setTrial, setPos, jumped } from './position.js?v=0.31.0';
-import { STORES, BYID, isLib, isFeat, rarityOf, pickOpen, placeWord, bookTitle, stampSVG, rarityText, lookupIsbn, hideStore, renameStore, search, FEAT } from './data.js?v=0.31.0';
-import * as MAP from './map.js?v=0.31.0';
-import * as G from './game.js?v=0.31.0';
-import * as E from './events.js?v=0.31.0';
-import * as J from './journey.js?v=0.31.0';
-import { dirLink, openModal, closeModal, stopLinks, toast, closeSheet, refreshHud, currentView, switchView, syncStatusCard } from './ui.js?v=0.31.0';
-import { startCheckin, shareStampUI } from './checkin_ui.js?v=0.31.0';
-import { startCard } from './card_ui.js?v=0.31.0';
-import * as SH from './shops.js?v=0.31.0';
-import { addReading } from './reading.js?v=0.31.0';
-import { todayISO } from './util.js?v=0.31.0';
+import { RANGE_M, TERRITORY_M, PG, TRIAL_ON, PREFS, MAP_CREDIT } from './config.js?v=0.32.0';
+import { $, arrowOf, bearing, icon, fmtDist, esc, dist, $$, emit, fmtDate, gmapDir, stars, gmapPlace, prefOf } from './util.js?v=0.32.0';
+import { S, save } from './state.js?v=0.32.0';
+import { unlock, sfx } from './audio.js?v=0.32.0';
+import { hasPos, POS, startWatch, setTrial, setPos, jumped } from './position.js?v=0.32.0';
+import { STORES, BYID, isLib, isFeat, rarityOf, pickOpen, placeWord, bookTitle, stampSVG, rarityText, lookupIsbn, hideStore, renameStore, search, FEAT } from './data.js?v=0.32.0';
+import * as MAP from './map.js?v=0.32.0';
+import * as G from './game.js?v=0.32.0';
+import * as E from './events.js?v=0.32.0';
+import * as J from './journey.js?v=0.32.0';
+import { dirLink, openModal, closeModal, stopLinks, toast, closeSheet, refreshHud, currentView, switchView, syncStatusCard } from './ui.js?v=0.32.0';
+import { startCheckin, shareStampUI } from './checkin_ui.js?v=0.32.0';
+import { startCard } from './card_ui.js?v=0.32.0';
+import * as SH from './shops.js?v=0.32.0';
+import { addReading } from './reading.js?v=0.32.0';
+import { todayISO } from './util.js?v=0.32.0';
 
 // ---------- 行きたい店のお知らせ（地図の下に出る帯） ----------
 let waTimer = null;
@@ -210,7 +210,7 @@ export function openSheet(id, quiet) {
   const st = BYID.get(id); if (!st) return;
   const vs = G.visitsOf(id), cs = G.cardsOf(id), want = S.wants.includes(id), stamp = S.stamps[id], r = rarityOf(st), feat = isFeat(st.i), reg = G.regularInfo(id);  const d = hasPos() ? dist(POS.lat, POS.lon, st.la, st.lo) : null; const near = !st.closed && d != null && d <= RANGE_M && !jumped();
   const b = [];
-  if (st.closed) b.push('<span class="badge">閉店（みんなの地図から外しました）</span>'); if (st.demo) b.push('<span class="badge">見本（実在しません）</span>'); if (st.custom) b.push('<span class="badge">自分で追加</span>'); if (st.fix) b.push('<span class="badge">名前を直した（この端末）</span>'); if (st.ov) b.push('<span class="badge">名前を確認ずみ</span>'); if (st.cf || st.x) b.push('<span class="badge ao">公式一覧で確認</span>');
+  if (st.closed) b.push('<span class="badge">閉店（みんなの地図から外しました）</span>'); if (st.demo) b.push('<span class="badge">見本（実在しません）</span>'); if (st.custom) b.push('<span class="badge">自分で追加</span>'); if (st.fix) b.push('<span class="badge">名前を直した（この端末）</span>'); if (st.ov) b.push('<span class="badge">名前を確認ずみ</span>'); if (st.sw) b.push('<span class="badge ao">店のサイト・SNSで確認</span>'); else if (st.cf || st.x) b.push('<span class="badge ao">公式一覧で確認</span>');
   if (st.part && st.part.fresh) b.push(`<span class="badge part">参加店</span>${st.part.isNew ? '<span class="badge new">新しく届いた</span>' : ''}`); // v0.27.0
   if (feat) b.push(`<span class="badge feat">${icon('crown')}今週の推し店</span>`); if (st.u) b.push('<span class="badge">古書店</span>'); if (isLib(st)) b.push('<span class="badge lib">図書館</span>');
   b.push(stamp ? `<span class="badge shu">スタンプ ${fmtDate(stamp.d)}</span>${stamp.trial ? '<span class="badge trial">体験</span>' : ''}` : vs.length ? `<span class="badge sumi">記録 ${vs.length}回</span>` : '<span class="badge">まだ</span>');
@@ -222,7 +222,7 @@ export function openSheet(id, quiet) {
   const warnDir = !near && !st.closed && !st.demo && !st.custom && !POS.fake && ((SH.trustOf(st) || {}).k === 'map' || (d != null && d > 10000)); // 道順の前のひとこと（v0.26.0）
   const hist = vs.length ? `<div class="muted small" style="margin-top:8px">${vs.slice(-3).reverse().map((v) => `${fmtDate(v.d)}${v.near ? '（スタンプ）' : '（記録）'}${v.memo ? '「' + esc(v.memo) + '」' : ''}`).join('<br>')}</div>` : '';
   const distText = st.closed ? '' : d == null ? '現在地なし' : jumped() ? '位置が大きく飛んだので、少し待ってから（1分）' : near ? `射程内（約${fmtDist(d)}）` : `ここから約${fmtDist(d)}（あと${fmtDist(d - RANGE_M)}で射程内）`;
-  const srcLine = `情報：${st.srv ? '本めぐりの運営が追加' : st.ob ? 'SNS推し本大賞2026 展開店舗一覧' : st.x ? 'チェーンの公式店舗一覧' : 'OpenStreetMap'}${st.c ? `・${st.c.slice(0, 4)}年${Number(st.c.slice(5))}月に確認` : ''}${st.cf || st.x || st.srv ? '' : '（古いことがあります）'}`;
+  const srcLine = `情報：${st.srv ? '本めぐりの運営が追加' : st.ob ? 'SNS推し本大賞2026 展開店舗一覧' : st.wk ? '全国書店案内などの名簿（最新の営業は未確認）' : st.sw ? '店のホームページ・SNS' : st.x ? 'チェーンの公式店舗一覧' : 'OpenStreetMap'}${st.c ? `・${st.c.slice(0, 4)}年${Number(st.c.slice(5))}月に確認` : ''}${st.cf || st.x || st.srv || st.wk ? '' : '（古いことがあります）'}`;
   // いちばん大きいボタン（v0.14.5）：射程内＝スタンプ／離れている＝道順（Googleマップ）／お試し歩き＝ワープ。「来た記録だけ」は下の段へ
   const main = st.closed ? '<div class="note">この店は閉店しました。押したスタンプと記録は、めぐり帳に残っています。</div>'
     : near ? `<button class="btn primary wide" data-act="checkin">${stamp ? `${icon('stamp')}もう一度押す（来店）` : `${icon('stamp')}スタンプを押す${feat ? `（+${PG.feat}ページ）` : ''}`}</button>`

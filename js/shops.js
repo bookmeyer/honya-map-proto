@@ -4,10 +4,10 @@
 //  - 来る前（誰でも）：ヒント・ジャンル・名前の出し方・フェア・売場の写真・店の発信・スタンプの写真（api/shops.php・api/pic.php）
 //  - 来たあと（その店の射程内でスタンプを押した端末だけ）：書名・著者・写真（api/pick.php。端末の番号と店の番号を POST で送る）
 //  - 開いた1冊は、この端末に覚える（S.picks。写真は開いているあいだだけ）。サーバーに届かないときは、前回読んだ中身で動く
-import { S, save } from './state.js?v=0.31.0';
-import { todayISO, emit } from './util.js?v=0.31.0';
-import { setShops, setStampData, pickOpen } from './data.js?v=0.31.0';
-import { apiBase, deviceId, flush } from './events.js?v=0.31.0';
+import { S, save } from './state.js?v=0.32.0';
+import { todayISO, emit } from './util.js?v=0.32.0';
+import { setShops, setStampData, pickOpen } from './data.js?v=0.32.0';
+import { apiBase, deviceId, flush } from './events.js?v=0.32.0';
 
 const CACHE_KEY = 'meguri_shops_v1';
 const STAMP_KEY = 'meguri_stamp_imgs_v1';
@@ -66,6 +66,8 @@ export function trustOf(st) {
   if (SHOP.confirmed.has(st.i)) return { k: 'ok', t: '店が確かめた' };
   if (SHOP.recent.has(st.i)) return { k: 'ok', t: '最近スタンプが押された' };
   if (st.srv) return { k: 'ok', t: '本めぐりの運営が確かめた' };
+  if (st.wk) return { k: 'map', t: '名簿にのっている店です（最新の営業は未確認・お出かけ前に営業時間を）' };
+  if (st.sw) return { k: 'ok', t: `店のホームページ・SNSで確かめた${st.c && /^\d{4}-\d{2}/.test(st.c) ? `（${st.c.slice(0, 4)}年${Number(st.c.slice(5, 7))}月）` : ''}` };
   if (st.cf || st.x || st.ob) return { k: 'ok', t: `公式一覧で確かめた${st.c && /^\d{4}-\d{2}/.test(st.c) ? `（${st.c.slice(0, 4)}年${Number(st.c.slice(5, 7))}月）` : ''}` };
   return { k: 'map', t: '地図データだけ（お出かけ前に営業時間を）' };
 }
