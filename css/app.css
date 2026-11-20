@@ -618,3 +618,9 @@ ul.plain,ol.plain{padding-left:1.2em;margin:8px 0;line-height:1.7;font-size:14px
 .av-photo span{font-size:11px;line-height:1.25;text-align:center}
 /* v0.31.0 めぐり帳の「本屋を知らせる」 */
 .mapcredit .btn.small{margin-left:auto;flex:none;min-height:32px;padding:2px 10px;font-size:12.5px}
+/* v0.31.0 住所で知らせる */
+.ad-addr{margin:4px 0 4px 26px}
+#ad-addr-out{margin-left:26px}
+.ad-addr{display:flex;gap:8px}
+.ad-addr input{flex:1;min-width:0;border:2px solid var(--edge);border-radius:10px;padding:8px 10px;font:inherit;background:var(--card);color:var(--ink)}
+.ad-addr .btn{flex:none;min-height:40px;padding:4px 14px}

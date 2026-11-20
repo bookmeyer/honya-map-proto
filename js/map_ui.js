@@ -304,11 +304,20 @@ export function startAdd(at) { // at：地図を長押しした所 { lat, lng }�
   const c = MAP.center(); const first = at ? 'at' : hasPos() ? 'here' : 'center';
   openModal(`<h2>地図にない本屋を知らせる</h2><p class="hint">運営が確かめてから、みんなの地図に載せます（すぐには出ません）。送るのは、店の名前と場所と、書いたひとことだけです。</p>${REWARD(true)}
     <div class="field"><label for="ad-name">店の名前</label><input type="text" id="ad-name" placeholder="例：○○書店 △△店"></div><label class="chk"><input type="checkbox" id="ad-used"> 古書店</label>
-    <div class="field"><label>場所</label>${at ? `<label class="chk"><input type="radio" name="ad-pos" value="at" checked> 長押しした所（${at.lat.toFixed(4)}, ${at.lng.toFixed(4)}）</label>` : ''}<label class="chk"><input type="radio" name="ad-pos" value="here" ${hasPos() ? '' : 'disabled'} ${first === 'here' ? 'checked' : ''}> いまいる場所</label><label class="chk"><input type="radio" name="ad-pos" value="center" ${first === 'center' ? 'checked' : ''}> いま地図の真ん中（${c.lat.toFixed(4)}, ${c.lng.toFixed(4)}）</label></div>
+    <div class="field"><label>場所</label>${at ? `<label class="chk"><input type="radio" name="ad-pos" value="at" checked> 長押しした所（${at.lat.toFixed(4)}, ${at.lng.toFixed(4)}）</label>` : ''}<label class="chk"><input type="radio" name="ad-pos" value="here" ${hasPos() ? '' : 'disabled'} ${first === 'here' ? 'checked' : ''}> いまいる場所</label><label class="chk"><input type="radio" name="ad-pos" value="center" ${first === 'center' ? 'checked' : ''}> いま地図の真ん中（${c.lat.toFixed(4)}, ${c.lng.toFixed(4)}）</label><label class="chk"><input type="radio" name="ad-pos" value="addr"> 住所で</label><div class="two ad-addr"><input type="text" class="in" id="ad-addr" maxlength="80" placeholder="例：大阪府大阪市北区梅田3-1-3" enterkeyhint="search"><button type="button" class="btn" id="ad-addr-go">さがす</button></div><div class="muted small" id="ad-addr-out">住所は、場所を調べるために国土地理院の住所検索に送ります。</div></div>
     ${NOTE_IN('2階にある古本屋')}
     <div class="actions"><button class="btn primary" id="ad-save">運営に知らせる</button><button class="btn ghost" id="ad-cancel">やめる</button></div>`);
   $('#ad-cancel').onclick = closeModal; $('#ad-name').focus();
-  $('#ad-save').onclick = () => { const n = $('#ad-name').value.trim(); if (!n) { toast('店の名前を入れてください', 'warn'); return; } let la = c.lat, lo = c.lng; const pick = $('input[name=ad-pos]:checked').value; if (pick === 'here' && hasPos()) { la = POS.lat; lo = POS.lon; } else if (pick === 'at' && at) { la = at.lat; lo = at.lng; }
+  // 住所 → 場所（国土地理院の住所検索。いちばん上の候補を使い、見つかった住所を見せて確かめてもらう）
+  let byAddr = null; const out = $('#ad-addr-out');
+  const findAddr = async () => { const q = $('#ad-addr').value.trim().slice(0, 80); if (!q) { toast('住所を入れてください', 'warn'); return; } $('input[name=ad-pos][value=addr]').checked = true; out.textContent = 'さがしています…'; byAddr = null;
+    try { const r = await fetch('https://msearch.gsi.go.jp/address-search/AddressSearch?q=' + encodeURIComponent(q)); const j = r.ok ? await r.json() : []; const f = Array.isArray(j) && j[0]; const co = f && f.geometry && f.geometry.coordinates;
+      if (!co || co.length < 2) { out.textContent = '見つかりませんでした。番地まで入れるか、地図を長押しして知らせてください'; return; }
+      byAddr = { lat: +co[1], lng: +co[0] }; out.textContent = `見つかった場所：${(f.properties && f.properties.title) || q}（${byAddr.lat.toFixed(4)}, ${byAddr.lng.toFixed(4)}）`; MAP.easeTo(byAddr.lng, byAddr.lat);
+    } catch (e) { out.textContent = 'さがせませんでした。ネットを確かめて、もう一度押してください'; } };
+  $('#ad-addr-go').onclick = findAddr; $('#ad-addr').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); findAddr(); } });
+  $('#ad-save').onclick = () => { const n = $('#ad-name').value.trim(); if (!n) { toast('店の名前を入れてください', 'warn'); return; }
+    if ($('input[name=ad-pos]:checked').value === 'addr' && !byAddr) { toast('住所の「さがす」を押して、場所を見つけてください', 'warn'); return; } let la = c.lat, lo = c.lng; const pick = $('input[name=ad-pos]:checked').value; if (pick === 'here' && hasPos()) { la = POS.lat; lo = POS.lon; } else if (pick === 'at' && at) { la = at.lat; lo = at.lng; } else if (pick === 'addr' && byAddr) { la = byAddr.lat; lo = byAddr.lng; }
     E.queueReport({ kind: 'add', store: 'u' + Date.now(), name: n.slice(0, 80), lat: +la.toFixed(5), lon: +lo.toFixed(5), place: $('#ad-used').checked ? 'used' : 'book', note: $('#rp-note').value.trim().slice(0, 100) }); // つながらないときは、あとで送る
     closeModal(); toast(`運営に知らせました。確かめて地図に載ったら、+${MAP_CREDIT.add}ページと称号「開拓者」をお届けします`, 'ok'); };
 }
