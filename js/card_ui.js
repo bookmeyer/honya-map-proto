@@ -1,16 +1,16 @@
 // 本のカード：本と出会った（バーコード・書名でさがす・名前）→ カードの画面
-import { PG } from './config.js?v=0.32.2';
-import { esc, icon, $, fmtDate, todayISO, emit } from './util.js?v=0.32.2';
-import { S } from './state.js?v=0.32.2';
-import { sfx, haptic } from './audio.js?v=0.32.2';
-import { POS } from './position.js?v=0.32.2';
-import { placeWord, isLib, BYID } from './data.js?v=0.32.2';
-import * as G from './game.js?v=0.32.2';
-import * as E from './events.js?v=0.32.2';
-import { cardImage, shareBlob } from './share.js?v=0.32.2';
-import * as R from './reading.js?v=0.32.2';
-import { openModal, closeModal, searchBook, scanIsbn, stopScan, toast, refreshHud, setSub, switchView, confirmBox } from './ui.js?v=0.32.2';
-import { applyMapStates, openSheet } from './map_ui.js?v=0.32.2';
+import { PG } from './config.js?v=0.32.3';
+import { esc, icon, $, fmtDate, todayISO, emit } from './util.js?v=0.32.3';
+import { S } from './state.js?v=0.32.3';
+import { sfx, haptic } from './audio.js?v=0.32.3';
+import { POS } from './position.js?v=0.32.3';
+import { placeWord, isLib, BYID } from './data.js?v=0.32.3';
+import * as G from './game.js?v=0.32.3';
+import * as E from './events.js?v=0.32.3';
+import { cardImage, shareBlob } from './share.js?v=0.32.3';
+import * as R from './reading.js?v=0.32.3';
+import { openModal, closeModal, searchBook, scanIsbn, stopScan, toast, refreshHud, setSub, switchView, confirmBox } from './ui.js?v=0.32.3';
+import { applyMapStates, openSheet } from './map_ui.js?v=0.32.3';
 
 // ---------- カード ----------
 // カードをシェアする（v0.23.0：カードができた画面からも。テストプレイの声「この書店でこの本を買いました、を共有したい」・ぶっくまさん「シェアしやすい形が良い」）
