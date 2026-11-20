@@ -1,5 +1,5 @@
 // 小さな道具
-import { PREFS } from './config.js?v=0.32.0';
+import { PREFS } from './config.js?v=0.32.1';
 
 export const $ = (s, el = document) => el.querySelector(s);
 export const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
@@ -20,7 +20,7 @@ export const monthKey = (d = new Date()) => `${d.getFullYear()}-${String(d.getMo
 export function circlePoly(lon, lat, m, n = 28) { const pts = []; const dLat = m / 111320, dLon = m / (111320 * Math.cos(lat * Math.PI / 180)); for (let i = 0; i <= n; i++) { const a = (i / n) * Math.PI * 2; pts.push([lon + dLon * Math.cos(a), lat + dLat * Math.sin(a)]); } return [pts]; }
 export function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
 export const icon = (name, cls = '') => `<svg class="ic ${cls}" aria-hidden="true"><use href="#i-${name}"></use></svg>`;
-export const gmapDir = (st) => `https://www.google.com/maps/dir/?api=1&destination=${(+st.la).toFixed(6)},${(+st.lo).toFixed(6)}&travelmode=walking`;
+export const gmapDir = (st) => `https://www.google.com/maps/dir/?api=1&destination=${(+st.la).toFixed(6)},${(+st.lo).toFixed(6)}&travelmode=${(document.documentElement.dataset.travel || 'transit')}`; // きほんは公共交通機関（設定で 歩き・車 に変えられる・v0.32.1）
 // Googleマップでお店そのものを開く（営業時間・定休日を見るため。店名＋住所か県で探す。Google の情報を取り込むのではなく開くだけ）
 export const gmapPlace = (st) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([st.n, st.a || st.aa || prefOf(st)].filter(Boolean).join(' '))}`;
 export const stars = (r) => '★'.repeat(r) + '☆'.repeat(3 - r);

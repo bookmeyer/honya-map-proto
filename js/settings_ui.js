@@ -1,19 +1,19 @@
 // 設定の画面と、そこから開くもの：見た目・着せ替え・アイコン・ハンドルネーム・参加コード・送るもののお知らせ・記録を守る・Googleマップの★
-import { SKINS, MAP_SKINS, APP_VER, TRIAL_ON, PROFILE_ON, POLICY_VER } from './config.js?v=0.32.0';
-import { openProfile, profileSummary } from './profile_ui.js?v=0.32.0';
-import { openAvatarPicker } from './setup_ui.js?v=0.32.0';
-import { openGiveCode, openTakeCode } from './transfer_ui.js?v=0.32.0';
-import { homeTip, inAppName } from './start_ui.js?v=0.32.0';
-import { $, esc, fmtDist, icon, $$, mobileOS, isStandalone, emit, todayISO } from './util.js?v=0.32.0';
-import { S, save, parseImport, replace, reset, exportJSON } from './state.js?v=0.32.0';
-import { sfx } from './audio.js?v=0.32.0';
-import { POS } from './position.js?v=0.32.0';
-import { addCustom, STORES, DATA_DATE, rebuild, unhideAll } from './data.js?v=0.32.0';
-import * as MAP from './map.js?v=0.32.0';
-import * as E from './events.js?v=0.32.0';
-import * as GI from './gimport.js?v=0.32.0';
-import { openModal, closeModal, toast, refreshHud, switchView, confirmBox } from './ui.js?v=0.32.0';
-import { applyMapStates, updateNear, updateAreaChip, setTrialUI } from './map_ui.js?v=0.32.0';
+import { SKINS, MAP_SKINS, APP_VER, TRIAL_ON, PROFILE_ON, POLICY_VER } from './config.js?v=0.32.1';
+import { openProfile, profileSummary } from './profile_ui.js?v=0.32.1';
+import { openAvatarPicker } from './setup_ui.js?v=0.32.1';
+import { openGiveCode, openTakeCode } from './transfer_ui.js?v=0.32.1';
+import { homeTip, inAppName } from './start_ui.js?v=0.32.1';
+import { $, esc, fmtDist, icon, $$, mobileOS, isStandalone, emit, todayISO } from './util.js?v=0.32.1';
+import { S, save, parseImport, replace, reset, exportJSON } from './state.js?v=0.32.1';
+import { sfx } from './audio.js?v=0.32.1';
+import { POS } from './position.js?v=0.32.1';
+import { addCustom, STORES, DATA_DATE, rebuild, unhideAll } from './data.js?v=0.32.1';
+import * as MAP from './map.js?v=0.32.1';
+import * as E from './events.js?v=0.32.1';
+import * as GI from './gimport.js?v=0.32.1';
+import { openModal, closeModal, toast, refreshHud, switchView, confirmBox } from './ui.js?v=0.32.1';
+import { applyMapStates, updateNear, updateAreaChip, setTrialUI } from './map_ui.js?v=0.32.1';
 
 // ---------- Googleマップの★を読み込む ----------
 export function googleHelp() {
@@ -49,6 +49,7 @@ export function renderSettings() {
   $('#settings-pane').innerHTML = `
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><button class="icon-btn" id="st-back" aria-label="戻る" style="transform:rotate(180deg)">${icon('chevron')}</button><h2 style="margin:0">設定</h2></div>
     <div class="setting"><div><div class="l">見た目</div><div class="s">明るい見た目が基本です。「自動」にすると端末の設定に合わせます</div></div><div class="seg3" id="st-theme">${['auto', 'light', 'dark'].map((t) => `<button data-t="${t}" class="${s.theme === t ? 'active' : ''}">${{ auto: '自動', light: '明', dark: '暗' }[t]}</button>`).join('')}</div></div>
+    <div class="setting"><div><div class="l">道順（Googleマップ）</div><div class="s">道順を開くときの、はじめの移動手段です。Googleマップの画面で、あとから変えられます</div></div><div class="seg3" id="st-travel">${['transit', 'walking', 'driving'].map((t) => `<button data-t="${t}" class="${(s.travel || 'transit') === t ? 'active' : ''}">${{ transit: '電車・バス', walking: '歩き', driving: '車' }[t]}</button>`).join('')}</div></div>
     <div class="setting stack"><div><div class="l">着せ替え</div><div class="s">画面の色と地図の色を選べます（明るい見た目のとき）。ピンとスタンプの色は変わりません</div>
       <div class="skins"><div class="sk-h">画面</div>${Object.entries(SKINS).map(([k, x]) => `<button class="skin${(s.skin || 'remon') === k ? ' on' : ''}" data-skin="${k}"><i style="background:linear-gradient(135deg,${x.sw[0]} 50%,${x.sw[1]} 50%)"></i>${esc(x.name)}</button>`).join('')}
       <div class="sk-h">地図</div>${Object.entries(MAP_SKINS).map(([k, x]) => `<button class="skin${(s.mapSkin || 'cream') === k ? ' on' : ''}" data-mapskin="${k}"><i style="background:linear-gradient(135deg,${x.bg} 50%,${x.water} 50%)"></i>${esc(x.name)}</button>`).join('')}</div></div></div>
@@ -85,6 +86,7 @@ export function renderSettings() {
       店の位置：© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors（ODbL）。地図：<a href="https://openfreemap.org/" target="_blank" rel="noopener">OpenFreeMap</a>・<a href="https://openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a>。本の情報と表紙：<a href="https://openbd.jp/" target="_blank" rel="noopener">openBD</a>（表紙は紹介のための参照表示で、保存しません）。書名でさがす：<a href="https://ndlsearch.ndl.go.jp/" target="_blank" rel="noopener">国立国会図書館サーチ</a>の API（国立国会図書館の書誌データ・<a href="https://creativecommons.org/licenses/by/4.0/deed.ja" target="_blank" rel="noopener">CC BY 4.0</a>。著者名の表し方を整えて出しています。送るのは、さがす言葉だけです）。地図にない本屋を住所で知らせるとき：国土地理院の住所検索（入れた住所だけを送ります）。住所の目安（「○○ 付近」）：<a href="https://github.com/geolonia/japanese-addresses" target="_blank" rel="noopener">Geolonia 住所データ</a>（<a href="https://creativecommons.org/licenses/by/4.0/deed.ja" target="_blank" rel="noopener">CC BY 4.0</a>。国土交通省 位置参照情報をもとに作成。店の位置にいちばん近い町丁目です）。地図の描画：MapLibre GL JS。文字：Google Fonts。<br>
       店のデータは ${DATA_DATE} 時点の OpenStreetMap（有志が作る地図）で、閉店や名前の変更が反映されていない店があります。店のページの「閉店している」で外せ、「名前が違う」で直せます（この端末だけ。記録の書き出しに含まれます）。</div>`;
   $('#st-back').onclick = () => switchView('map');
+  $$('#st-travel button').forEach((b) => b.addEventListener('click', () => { s.travel = b.dataset.t; save(); document.documentElement.dataset.travel = s.travel; renderSettings(); }));
   $$('#st-theme button').forEach((b) => b.addEventListener('click', () => { s.theme = b.dataset.t; save(); applyTheme(); renderSettings(); }));
   $('#st-avatar').onclick = () => openAvatarPicker(renderSettings); // 絵か画像から（v0.21.0。アイコンは必須なので外さない）
   $('#st-lib').onclick = () => { s.showLib = s.showLib === false; save(); rebuild(); MAP.setStores(STORES); applyMapStates(); updateNear(); refreshHud(); toast(s.showLib ? '図書館を地図に出しました' : '図書館を地図から隠しました'); renderSettings(); };
@@ -114,7 +116,7 @@ export function renderSettings() {
 }
 export function applyTheme() {
   const t = S.settings.theme; const dark = t === 'dark' || (t === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-  document.documentElement.dataset.theme = dark ? 'dark' : 'light'; applySkin(); MAP.setTheme(dark ? 'dark' : 'light');
+  document.documentElement.dataset.travel = S.settings.travel || 'transit'; document.documentElement.dataset.theme = dark ? 'dark' : 'light'; applySkin(); MAP.setTheme(dark ? 'dark' : 'light');
 }
 // 着せ替え（v0.15.2。v0.15.3 で正式に）：明るい見た目のときだけ、画面の色の変数を上書きする。地図の色も（明るいときだけ効く）
 export function applySkin() {

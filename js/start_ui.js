@@ -6,10 +6,10 @@
 // ・SNSのアプリの中では、上に帯（開くたび。× でその回は閉じる）。LINE は URL に印を付けて、Safari／Chrome で開き直してもらう
 // ・ホーム画面に追加の声かけは、最初の画面と、最初のスタンプの直後の2回まで（音・光・振動なし。帯で）
 // ・iPhone の Safari → アイコンの引っ越しは、引き継ぎコードで。移したあと、もとの場所で開くと「記録は移した先にあります」の帯
-import { $, esc, mobileOS, isStandalone, icon } from './util.js?v=0.32.0';
-import { S, save } from './state.js?v=0.32.0';
-import { openModal, closeModal, toast } from './ui.js?v=0.32.0';
-import { openGiveCode, checkMoved } from './transfer_ui.js?v=0.32.0';
+import { $, esc, mobileOS, isStandalone, icon } from './util.js?v=0.32.1';
+import { S, save } from './state.js?v=0.32.1';
+import { openModal, closeModal, toast } from './ui.js?v=0.32.1';
+import { openGiveCode, checkMoved } from './transfer_ui.js?v=0.32.1';
 
 // ---------- 開いた場所 ----------
 // SNSなどのアプリの中のブラウザなら、その名前（わからないアプリは 'app'）。ふつうのブラウザ・ホーム画面のアイコンなら ''
