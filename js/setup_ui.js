@@ -2,13 +2,13 @@
 // ぶっくまさん 11/4「ハンドルネームとプロフィール、アイコン設定後にアプリが使えるようにしてほしい。そうしないと入れないはず」
 // → アイコンは絵（12）から選ぶか写真。プロフィールは9問すべて必須（性別だけ「答えない」あり）。もう使っている人も、次に開いたときに（記録はそのまま）
 // ハンドルネームとアイコンは、この端末の中だけ（送らない）。プロフィールは名前以外の答えを統計データとして送る（profile_ui.js・events.js queueProfile）
-import { $, esc, todayISO, icon } from './util.js?v=0.30.0';
-import { S, save } from './state.js?v=0.30.0';
-import * as E from './events.js?v=0.30.0';
-import * as MAP from './map.js?v=0.30.0';
-import { toast, refreshHud, openModal, closeModal } from './ui.js?v=0.30.0';
-import { cleanHandle, makeAvatar } from './settings_ui.js?v=0.30.0';
-import { profileFields, bindProfileFields, readProfileFields, missingOf, profileComplete, shortTitle, pointMissing, STAT_NOTE } from './profile_ui.js?v=0.30.0';
+import { $, esc, todayISO, icon } from './util.js?v=0.30.1';
+import { S, save } from './state.js?v=0.30.1';
+import * as E from './events.js?v=0.30.1';
+import * as MAP from './map.js?v=0.30.1';
+import { toast, refreshHud, openModal, closeModal } from './ui.js?v=0.30.1';
+import { cleanHandle, makeAvatar } from './settings_ui.js?v=0.30.1';
+import { profileFields, bindProfileFields, readProfileFields, missingOf, profileComplete, shortTitle, pointMissing, STAT_NOTE } from './profile_ui.js?v=0.30.1';
 
 // ---- アイコンの絵（12）：アプリの見た目と同じ、太い墨のふち・べた塗り。選んだら PNG にして持つ ----
 const ST = 'stroke="#1B1B1B" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"';
@@ -19,14 +19,16 @@ const line = (d, w = 2, c = '#1B1B1B') => `<path d="${d}" fill="none" stroke="${
 const eye = (x, y, r = 2.6, px = 0.7, py = 0.3) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#fff" ${T2}/><circle cx="${x + px}" cy="${y + py}" r="${(r * 0.42).toFixed(2)}" fill="#1B1B1B"/>`;
 export const AVATARS = [
   { id: 'book', n: '本', svg: svg('#FFD447', `<path d="M10 22 Q21 17 31 22 V47 Q21 42 10 47 Z" fill="#fff" ${ST}/><path d="M54 22 Q43 17 33 22 V47 Q43 42 54 47 Z" fill="#fff" ${ST}/><path d="M15 29 Q21 27 26 29 M15 35 Q21 33 26 35 M38 29 Q43 27 49 29" fill="none" stroke="#D9CDB4" stroke-width="2.5" stroke-linecap="round"/>`) },
+  { id: 'nekodeppa', n: '出っ歯ネコ', svg: svg('#81B29A', `<path d="M17.0 27.0 L19.0 12.0 L29.0 20.0 Q32.0 19.0 35.0 20.0 L45.0 12.0 L47.0 27.0 Q51.0 34.0 47.0 42.0 Q41.0 51.0 32.0 51.0 Q23.0 51.0 17.0 42.0 Q13.0 34.0 17.0 27.0 Z" fill="#C9C1B1" stroke="#1B1B1B" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="26" cy="32" r="2.2" fill="#1B1B1B"/><circle cx="38" cy="32" r="2.2" fill="#1B1B1B"/><path d="M30.5 36.5 h3 l-1.5 1.6 Z" fill="#1B1B1B"/><path d="M27 40 q5 2 10 0" fill="none" stroke="#1B1B1B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="29" y="40" width="6" height="6" rx="1" fill="#fff" stroke="#1B1B1B" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><path d="M32 40.5 v5" fill="none" stroke="#1B1B1B" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>`) }, // ぶさいくなネコ（v0.30.1）
   { id: 'cat', n: 'ねこ', svg: svg('#FF7AB6', `<path d="M17 27 L19 12 L29 20 Q32 19 35 20 L45 12 L47 27 Q51 34 47 42 Q41 51 32 51 Q23 51 17 42 Q13 34 17 27 Z" fill="#fff" ${ST}/><circle cx="26" cy="34" r="2.6" fill="#1B1B1B"/><circle cx="38" cy="34" r="2.6" fill="#1B1B1B"/><path d="M29 41 Q32 44 35 41" fill="none" stroke="#1B1B1B" stroke-width="2.5" stroke-linecap="round"/>`) },
-  { id: 'shimi', n: '紙魚（しみ）', svg: svg('#22305A',
+  { id: 'shimi', n: '紙魚（しみ）', svg: svg('#264653',
     `<path d="M38 22 q6 -10 14 -10 M41 24 q9 -6 15 -2" fill="none" stroke="#C9D3DD" stroke-width="1.6" stroke-linecap="round"/>`
     + `<path d="M20 47 l-8 4 M21 49 l-6 7 M23 50 l-1 8" fill="none" stroke="#C9D3DD" stroke-width="1.6" stroke-linecap="round"/>`
     + `<path d="M19 47 Q14 38 24 32 Q34 24 43 25 Q48 27 44 33 Q38 42 28 47 Q22 50 19 47 Z" fill="#C9D3DD" ${ST}/>`
     + line('M24 37 q3 3 2 7 M29 33 q3 3 2.5 7.5 M34 30 q3 3 2.5 7', 1.4, '#8C98A5')
     + eye(40.5, 28.5, 2.8, -0.5, 0.4)) }, // 少々キモい（v0.30.0）
   { id: 'glasses', n: 'めがね', svg: svg('#2F9BFF', `<circle cx="22" cy="34" r="9.5" fill="#fff" ${ST}/><circle cx="42" cy="34" r="9.5" fill="#fff" ${ST}/><path d="M31.5 32 Q32 29 32.5 32" fill="none" ${ST}/><path d="M12.5 31 L8 25 M51.5 31 L56 25" fill="none" ${ST}/>`) },
+  { id: 'nekogunya', n: 'ぐにゃネコ', svg: svg('#E3D4F5', `<path d="M17 27 L22 10 L28 20 Q36 17 36 20 L47 15 L47 27 Q52 30 47 43 Q44 52 37 52 Q25 52 17 43 Q10 40 17 27 Z" fill="#fff" stroke="#1B1B1B" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="25" cy="34" r="2.2" fill="#1B1B1B"/><circle cx="39" cy="31" r="2.2" fill="#1B1B1B"/><path d="M31.4 38 h3.2 l-1.6 1.7 Z" fill="#1B1B1B"/><path d="M27 43 q5 1 11 -3" fill="none" stroke="#1B1B1B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`) }, // ぶさいくなネコ（v0.30.1）
   { id: 'coffee', n: 'コーヒー', svg: svg('#B9794A', `<path d="M16 29 H43 V40 Q43 50 29.5 50 Q16 50 16 40 Z" fill="#fff" ${ST}/><path d="M43 32 Q52 32 52 38 Q52 44 43 44" fill="none" ${ST}/><path d="M24 23 Q21 18 25 13 M32 23 Q29 18 33 13" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>`) },
   { id: 'tsundoku', n: '積読おばけ', svg: svg('#7A8CA3',
     `<rect x="12" y="45" width="40" height="8" rx="1.5" fill="#FF6A48" ${ST}/>`
@@ -38,6 +40,7 @@ export const AVATARS = [
     + `<path d="M19 45.5 V52.5 M46 37.5 V44.5" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".7"/>`
     + `<path d="M40 22 q0 -4.5 2 -4.5 q2 0 2 4.5 M44 22 q0 -5.5 2 -5.5 q2 0 2 5.5 M48 22.5 q0 -4 1.8 -4 q1.8 0 1.8 4" fill="#E9F0F7" ${T2}/>`) }, // 少々キモい（v0.30.0）
   { id: 'pencil', n: 'えんぴつ', svg: svg('#4FC07A', `<path d="M17 47 L19.5 38.5 L40 18 L46 24 L25.5 44.5 Z" fill="#FFD447" ${ST}/><path d="M17 47 L19.5 38.5 L25.5 44.5 Z" fill="#fff" ${ST}/><path d="M36 22 L42 28" fill="none" ${ST}/>`) },
+  { id: 'nekokuchi', n: 'くちびるネコ', svg: svg('#5BC0BE', `<path d="M17 27 L19 12 L28 20 Q32 19.5 36 20 L45 12 L47 27 Q50 35 47 43 Q41.5 51 32 51 Q22.5 51 17 43 Q14 35 17 27 Z" fill="#fff" stroke="#1B1B1B" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="26" cy="31" r="2.2" fill="#1B1B1B"/><circle cx="38" cy="31" r="2.2" fill="#1B1B1B"/><path d="M30.72 35 h2.5600000000000005 l-1.2800000000000002 1.36 Z" fill="#1B1B1B"/><path d="M25 41 Q28 38 32 40 Q36 38 39 41 Q36 46 32 46 Q28 46 25 41 Z" fill="#E8473C" stroke="#1B1B1B" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><path d="M26 41.5 q6 1.5 12 0" fill="none" stroke="#1B1B1B" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>`) }, // ぶさいくなネコ（v0.30.1）
   { id: 'star', n: 'ほし', svg: svg('#A86CFF', `<path d="M32 15 L36.4 26.4 L48.6 27.2 L39.2 35 L42.2 46.9 L32 40.4 L21.8 46.9 L24.8 35 L15.4 27.2 L27.6 26.4 Z" fill="#FFD447" ${ST}/>`) },
   { id: 'honnomushi', n: '本の虫', svg: svg('#FFE9A8',
     `<circle cx="14" cy="49" r="5.5" fill="#9BE07A" ${ST}/><circle cx="21" cy="44" r="6.5" fill="#9BE07A" ${ST}/><circle cx="29" cy="38" r="7.5" fill="#9BE07A" ${ST}/>`
@@ -46,13 +49,15 @@ export const AVATARS = [
     + `<path d="M40 36 q-1 3 0.5 6 l2.5 9 l-2.6 -2.2 l-1.6 3.2 l-1.7 -9.5 q-0.6 -3.5 0.4 -6.5" fill="#FF6A48" ${T2}/>`
     + `<path d="M35.5 35.5 q4.5 2.6 9 0" fill="none" ${T2}/>`) }, // 少々キモい（v0.30.0）
   { id: 'leaf', n: 'はっぱ', svg: svg('#FFF1D2', `<path d="M15 47 Q15 18 49 15 Q49 47 15 47 Z" fill="#4FC07A" ${ST}/><path d="M15 47 L39 25" fill="none" ${ST}/>`) },
+  { id: 'nekoago', n: 'しゃくれネコ', svg: svg('#3A5A40', `<path d="M17 27 L19 12 L28 20 Q32 19.5 36 20 L45 12 L47 27 Q52 40 47 43 Q43.5 58 36 58 Q24.5 58 17 43 Q14 35 17 27 Z" fill="#fff" stroke="#1B1B1B" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="25" cy="30" r="2" fill="#1B1B1B"/><circle cx="37" cy="30" r="2" fill="#1B1B1B"/><path d="M29.4 35 h3.2 l-1.6 1.7 Z" fill="#1B1B1B"/><path d="M29 45 q6 2 12 -2" fill="none" stroke="#1B1B1B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M31 45 l1.5 -2.5 l1.5 2.2 M36 44.5 l1.5 -2.5 l1.5 2" fill="#fff" stroke="#1B1B1B" stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round"/>`) }, // ぶさいくなネコ（v0.30.1。11/20「あと、14のしゃくれ」）
   { id: 'bird', n: 'とり', svg: svg('#8ED8F8', `<path d="M13 37 Q13 22 30 22 Q41 22 45 30 L53 32 L45 36 Q43 47 30 47 Q13 47 13 37 Z" fill="#FFD447" ${ST}/><circle cx="37" cy="30" r="2.6" fill="#1B1B1B"/><path d="M19 37 Q26 32 33 38" fill="none" ${ST}/>`) },
-  { id: 'loupe', n: 'ルーペの目玉', svg: svg('#FFB4A2',
+  { id: 'loupe', n: 'ルーペの目玉', svg: svg('#B5E48C',
     `<path d="M42 42 L53 53" stroke="#1B1B1B" stroke-width="7" stroke-linecap="round"/><path d="M42 42 L53 53" stroke="#B9794A" stroke-width="3.5" stroke-linecap="round"/>`
     + `<circle cx="29" cy="29" r="17" fill="#fff" ${ST}/>`
     + `<circle cx="30" cy="30" r="10" fill="#4FC07A" ${T2}/><circle cx="31" cy="31" r="5.5" fill="#1B1B1B"/><circle cx="28" cy="27" r="2" fill="#fff"/>`
     + line('M15 27 q2 -1 3 1 M17 20 q2 0 2.6 2', 1, '#E8473C')) }, // 少々キモい（v0.30.0）
   { id: 'apple', n: 'りんご', svg: svg('#22305A', `<path d="M32 23 C26 17 14 19 14 31 C14 43 23 51 29 50 C31 49.5 33 49.5 35 50 C41 51 50 43 50 31 C50 19 38 17 32 23 Z" fill="#FF6A48" ${ST}/><path d="M32 23 Q32 17 35 12" fill="none" ${ST}/><path d="M35 15 Q42 10 46 16 Q39 20 35 15 Z" fill="#4FC07A" ${ST}/>`) },
+  { id: 'nekogata', n: 'ガタガタネコ', svg: svg('#6D597A', `<path d="M17 27 L18 14 L28 20 Q32 19.5 36 20 L46 9 L47 27 Q50 35 47 43 Q41.5 51 32 51 Q22.5 51 17 43 Q14 35 17 27 Z" fill="#fff" stroke="#1B1B1B" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="25" cy="32" r="2.2" fill="#1B1B1B"/><circle cx="39" cy="30" r="2.6" fill="#1B1B1B"/><path d="M30.4 36 h3.2 l-1.6 1.7 Z" fill="#1B1B1B"/><path d="M22 39 l3 4 l3 -2 l3 4 l3 -3 l3 3 l3 -5 l2 2" fill="none" stroke="#1B1B1B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`) }, // ぶさいくなネコ（v0.30.1）
   { id: 'heart', n: 'ハート', svg: svg('#FF6A48', `<path d="M32 49 C15 38 11 30 11 24 C11 17 17 13 23 13 C27 13 30 15 32 18 C34 15 37 13 41 13 C47 13 53 17 53 24 C53 30 49 38 32 49 Z" fill="#fff" ${ST}/>`) },
   { id: 'shiori', n: 'しおりおじさん', svg: svg('#FF9E7A',
     `<path d="M32 9 q-3 -3 -5 -1 M32 9 q3 -3 5 -1" fill="none" stroke="#C0392B" stroke-width="2.4" stroke-linecap="round"/>`
@@ -66,6 +71,7 @@ export const AVATARS = [
     + `<path d="M29.5 42.6 h5" stroke="#1B1B1B" stroke-width="1.6" stroke-linecap="round"/>`
     + `<circle cx="26.3" cy="35" r="1.6" fill="#FF9E9E" opacity=".55"/><circle cx="37.7" cy="35" r="1.6" fill="#FF9E9E" opacity=".55"/>`) }, // 少々キモい（v0.30.0）
   { id: 'dog', n: 'いぬ', svg: svg('#F2C9A0', `<ellipse cx="32" cy="35" rx="13.5" ry="12.5" fill="#fff" ${ST}/><path d="M19 29 Q11 31 13 45 Q20 43 21 36 Z M45 29 Q53 31 51 45 Q44 43 43 36 Z" fill="#B9794A" ${ST}/><circle cx="27" cy="33" r="2.4" fill="#1B1B1B"/><circle cx="37" cy="33" r="2.4" fill="#1B1B1B"/><ellipse cx="32" cy="39.5" rx="3.2" ry="2.3" fill="#1B1B1B"/>`) },
+  { id: 'nekoshita', n: '舌ながネコ', svg: svg('#C1121F', `<path d="M17 27 L19 12 L28 20 Q32 19.5 36 20 L45 12 L47 27 Q50 35 47 43 Q41.5 48 32 48 Q22.5 48 17 43 Q14 35 17 27 Z" fill="#F4A259" stroke="#1B1B1B" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M22 32 h6 M36 32 h6" fill="none" stroke="#1B1B1B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M30.4 36 h3.2 l-1.6 1.7 Z" fill="#1B1B1B"/><path d="M28 40 q4 2 8 0" fill="none" stroke="#1B1B1B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M30 41 q-1 12 2 17 q3 -5 2 -17 Z" fill="#FF7AB6" stroke="#1B1B1B" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><path d="M32 44 v8" fill="none" stroke="#C45A86" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>`) }, // ぶさいくなネコ（v0.30.1。11/20「もっと崩したVer22も」）
   { id: 'flower', n: 'はな', svg: svg('#FFB4A2', `${[[32, 21.5], [42, 28.8], [38.2, 40.5], [25.8, 40.5], [22, 28.8]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="7.5" fill="#fff" ${ST}/>`).join('')}<circle cx="32" cy="32" r="6.5" fill="#FFD447" ${ST}/>`) },
 ];
 // 絵を PNG に（アイコンは PNG・JPEG だけ持つ。state.js の確かめ）
