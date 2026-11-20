@@ -1,13 +1,13 @@
 // 画面の共通の部品：トースト・モーダル・確かめの箱・タブの切りかえ・見出し帯・地図の下のチケット・バーコードの読み取り・書名でさがす・道順のボタン
-import { pagesForVol } from './config.js?v=0.32.5';
-import { gmapDir, $$, icon, $, esc, emit, dist } from './util.js?v=0.32.5';
-import { S } from './state.js?v=0.32.5';
-import { haptic } from './audio.js?v=0.32.5';
-import { lookupIsbn, lookupBook, searchBooks, coversOf, STORES } from './data.js?v=0.32.5';
-import { POS, hasPos } from './position.js?v=0.32.5';
-import * as MAP from './map.js?v=0.32.5';
-import * as G from './game.js?v=0.32.5';
-import * as E from './events.js?v=0.32.5';
+import { pagesForVol } from './config.js?v=0.32.6';
+import { gmapDir, $$, icon, $, esc, emit, dist } from './util.js?v=0.32.6';
+import { S } from './state.js?v=0.32.6';
+import { haptic } from './audio.js?v=0.32.6';
+import { lookupIsbn, lookupBook, searchBooks, coversOf, STORES } from './data.js?v=0.32.6';
+import { POS, hasPos } from './position.js?v=0.32.6';
+import * as MAP from './map.js?v=0.32.6';
+import * as G from './game.js?v=0.32.6';
+import * as E from './events.js?v=0.32.6';
 
 export const dirLink = (st, label = '道順') => `<a class="btn" href="${gmapDir(st)}" target="_blank" rel="noopener" data-stop>${label}</a>`;
 export const stopLinks = (root) => $$('[data-stop]', root).forEach((a) => a.addEventListener('click', (e) => e.stopPropagation()));
@@ -22,8 +22,8 @@ export function closeModal() { stopScan(); $('#modal').hidden = true; $('#modal-
 export function confirmBox(container, msg, onYes, yesLabel = '消す') { container.innerHTML = `<div class="status-card sumi">${esc(msg)}</div><div class="actions"><button class="btn danger" id="cf-yes">${esc(yesLabel)}</button><button class="btn ghost" id="cf-no">やめる</button></div>`; $('#cf-no', container).onclick = () => { container.innerHTML = ''; }; $('#cf-yes', container).onclick = () => { container.innerHTML = ''; onYes(); }; }
 export function switchView(v) {
   const prev = currentView; currentView = v; if (v !== 'map') closeSheet();
-  // めぐり帳を開いたとき：今日スタンプがある日は「物語」、ない日は「スタンプ」から（v0.32.5）
-  if (v === 'zukan' && prev !== 'zukan') { const t = new Date(); const day = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`; currentSub = Object.values(S.stamps || {}).some((x) => x && x.d === day && !x.trial) ? 'log' : 'stamps'; }
+  // めぐり帳を開いたとき：いつも「物語」から（v0.32.6・11/20 ぶっくまさん「defaultは物語がいいかな」）
+  if (v === 'zukan' && prev !== 'zukan') currentSub = 'log';
   $$('.view').forEach((el) => el.classList.toggle('active', el.id === 'view-' + v));
   $$('#tabs button').forEach((b) => b.classList.toggle('active', b.dataset.view === v));
   if (v === 'map') MAP.resize();
