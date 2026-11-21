@@ -1,9 +1,9 @@
 // 遊びの仕組み：物語のページと巻・称号・実績・ミッション・ラリー・カード
-import { REGULAR, WALK, volOf, TITLES, ACHIEVEMENTS, PG } from './config.js?v=0.33.1';
-import { queueMeet, queueMeetAttr } from './events.js?v=0.33.1';
-import { todayISO, emit, prefOf, weekKey, weekStartISO } from './util.js?v=0.33.1';
-import { S, save } from './state.js?v=0.33.1';
-import { BYID, rarityOf, RALLIES, isFeat } from './data.js?v=0.33.1';
+import { REGULAR, WALK, volOf, TITLES, TITLES_OLD, ACHIEVEMENTS, PG } from './config.js?v=0.34.1';
+import { queueMeet, queueMeetAttr } from './events.js?v=0.34.1';
+import { todayISO, emit, prefOf, weekKey, weekStartISO } from './util.js?v=0.34.1';
+import { S, save } from './state.js?v=0.34.1';
+import { BYID, rarityOf, RALLIES, isFeat } from './data.js?v=0.34.1';
 
 // 今日さいごに、射程内で押したスタンプ（お試し歩きは入れない）。店と店のあいだ・読書のはじまりで使う（v0.16.0）
 export function lastNearVisitToday() { const today = todayISO(); for (let i = S.visits.length - 1; i >= 0; i--) { const v = S.visits[i]; if (v.d !== today) return null; if (v.near && !v.trial) return v; } return null; }
@@ -33,7 +33,16 @@ export function stats() {
   const days = {}; S.visits.filter((v) => v.near).forEach((v) => { (days[v.s] = days[v.s] || new Set()).add(v.d); }); const regMax = Math.max(0, ...Object.values(days).map((x) => x.size)); const regulars = Object.values(days).filter((x) => regularRank(x.size) >= 3).length;
   const look = Object.keys(S.looks || {}).length;
   const mapfix = Object.keys(S.mapFix || {}).length, mapadd = Object.keys(S.mapAdd || {}).length;
-  return { mapfix, mapadd, mapall: mapfix + mapadd, stamps: ids.length, stores: visited.size, cards: S.cards.length, prefs: prefs.size, used, rare, featTotal, feat: featTotal, regMax, regulars, look, pages: pagesTotal(), libs: sts.filter((s) => s.t === 'l').length, rally: Object.keys(S.rallyDone).length, share: S.shareCount || 0, streak: streakWeeks() };
+  // 読書・かくれ称号の数（v0.34.0）。読書は取り消した（off）ものと1分より短いものは数えない。かくれ称号は、お試し歩きのスタンプは数えない
+  const rs = (S.reads || []).filter((r) => r && !r.off && r.min >= 1);
+  const books = S.reading || [];
+  const real = S.visits.filter((v) => v.near && !v.trial);
+  const byDay = {}; real.forEach((v) => { (byDay[v.d] = byDay[v.d] || new Set()).add(v.s); });
+  const hashigo = Math.max(0, ...Object.values(byDay).map((x) => x.size));
+  const libbook = Object.values(byDay).some((x) => { let l = 0, b = 0; x.forEach((id) => { const s = BYID.get(id); if (s) { if (s.t === 'l') l = 1; else b = 1; } }); return l && b; }) ? 1 : 0;
+  const early = real.some((v) => v.t && new Date(v.t).getHours() < 8) ? 1 : 0;
+  return { mapfix, mapadd, mapall: mapfix + mapadd, stamps: ids.length, stores: visited.size, cards: S.cards.length, prefs: prefs.size, used, rare, featTotal, feat: featTotal, regMax, regulars, look, pages: pagesTotal(), libs: sts.filter((s) => s.t === 'l').length, rally: Object.keys(S.rallyDone).length, share: S.shareCount || 0, streak: streakWeeks(),
+    reads: rs.length, readMin: rs.reduce((a, r) => a + (r.min || 0), 0), moveReads: rs.filter((r) => r.pl && r.pl.k === 'move').length, done: books.filter((b) => b && b.done).length, sato: books.filter((b) => b && b.sato).length, hashigo, libbook, early };
 }
 export function streakWeeks() {
   const weeks = new Set(Object.values(S.stamps).map((v) => weekKey(new Date(v.d)))); if (!weeks.size) return 0;
@@ -41,8 +50,18 @@ export function streakWeeks() {
   for (let i = 0; i < 200; i++) { if (!weeks.has(weekKey(d))) break; n++; d.setDate(d.getDate() - 7); }
   return n;
 }
-export function titles() { const st = stats(); const LBL = { stamps: 'スタンプ', prefs: '県', used: '古書店', rare: '秘境スタンプ', mapfix: '地図が直った報告', mapadd: '地図に入った店', mapall: '直した・広げた店' }; return TITLES.map((t) => ({ ...t, ok: (st[t.kind] ?? 0) >= t.n, need: t.kind === 'regMax' ? `同じ店に${t.n}日` : `${LBL[t.kind] || ''}${t.n}` })).concat(RALLIES.map((r) => ({ id: 'r_' + r.id, name: r.title, ok: !!S.rallyDone[r.id], need: r.name }))); }
-export function currentTitle() { const t = titles().filter((x) => x.ok); return t.length ? t[t.length - 1].name : ''; }
+export function titles() { const st = stats(); const LBL = { stamps: 'スタンプ', prefs: '県', used: '古書店', rare: '秘境スタンプ', mapfix: '地図が直った報告', mapadd: '地図に入った店', mapall: '直した・広げた店', libs: '図書館のスタンプ', cards: 'カード', reads: '読書', moveReads: '移動読書', done: '読み終えた本', sato: '本の里帰り', streak: '週つづけてスタンプ' }; const U = { reads: '回', moveReads: '回', done: '冊', sato: '回', cards: '枚', streak: '' }; return TITLES.map((t) => ({ ...t, ok: (st[t.kind] ?? 0) >= t.n, need: t.need || (t.kind === 'regMax' ? `同じ店に${t.n}日` : t.kind === 'streak' ? `${t.n}週つづけてスタンプ` : `${LBL[t.kind] || ''}${t.n}${U[t.kind] || ''}`) })).concat(RALLIES.map((r) => ({ id: 'r_' + r.id, name: r.title, ok: !!S.rallyDone[r.id], need: r.name }))); }
+// 名前の下に出る称号：いちばん最近もらった称号（v0.34.0。前は「一覧で最後のもの」だったので、称号を足すと急に変わった）。もらった日は S.titleAt（端末の中だけ）
+export function currentTitle() { const t = titles().filter((x) => x.ok); if (!t.length) return ''; const at = S.titleAt || {}; let best = t[t.length - 1], bt = -1; t.forEach((x, i) => { const v = at[x.id] ?? 0; if (v > bt || (v === bt && i >= t.indexOf(best))) { best = x; bt = v; } }); return best.name; }
+// もらった称号に、もらった時を付ける。新しくもらった称号を返す（お知らせ用）
+// はじめて（S.titleAt がない人）は、前からある称号に前の順番を引きつぐ（名前の下の称号が変わらないように）。この版で足した称号でもう条件に届いているものは「いまもらった」にする
+export function syncTitles() {
+  const ok = titles().filter((x) => x.ok); const now = Date.now(); const fresh = [];
+  if (!S.titleAt) { S.titleAt = {}; ok.forEach((x) => { const i = TITLES_OLD.indexOf(x.id); if (i >= 0 || x.id.startsWith('r_')) S.titleAt[x.id] = i >= 0 ? i + 1 : 50; }); }
+  ok.forEach((x) => { if (S.titleAt[x.id] == null) { S.titleAt[x.id] = now; fresh.push(x); } });
+  if (fresh.length) save();
+  return fresh;
+}
 export function achievements() { const st = stats(); return ACHIEVEMENTS.map((a) => { const cur = st[a.kind] ?? 0; return { ...a, cur: Math.min(cur, a.n), ok: cur >= a.n }; }); }
 // ---- ミッション ----
 export function dailyMissions() {

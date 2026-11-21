@@ -1,6 +1,6 @@
 // 設定値（数字はここだけで変える）
 
-export const APP_VER = '0.33.1';
+export const APP_VER = '0.34.1';
 export const STORAGE_KEY = 'honya_map_v3';
 // お試し歩き（地図を押した所にいることにする）：遊ぶ人には出さない（11/3 ぶっくまさん「OFFにしたい」）。作る人が試すときは localStorage の meguri_trial を 1 に
 export const TRIAL_ON = (() => { try { return localStorage.getItem('meguri_trial') === '1'; } catch (e) { return false; } })();
@@ -77,7 +77,30 @@ export const TITLES = [
   { id: 't_p2', name: '越境', kind: 'prefs', n: 2 }, { id: 't_p5', name: '五県の旅人', kind: 'prefs', n: 5 }, { id: 't_p10', name: '列島めぐり', kind: 'prefs', n: 10 },
   { id: 't_u3', name: '古書の目利き', kind: 'used', n: 3 }, { id: 't_r3', name: '秘境の本屋さがし', kind: 'rare', n: 3 },
   { id: 't_g5', name: '行きつけがある', kind: 'regMax', n: 5 }, { id: 't_g20', name: '町の本屋の顔', kind: 'regMax', n: 20 },
+  // ---- v0.34.0 で足した称号（11/21 ぶっくまさん「もっと称号の数を増やしたらおもしろくない？」→「提案のとおり」。案：戦略/書店まわり位置ゲーム/称号を増やす案_2026-11-21.md）----
+  // A. 段の間をうめる
+  { id: 't_s5', name: '本屋ごよみ', kind: 'stamps', n: 5 }, { id: 't_s30', name: '本屋めぐりの達人', kind: 'stamps', n: 30 }, { id: 't_s75', name: '本屋の地図帳', kind: 'stamps', n: 75 }, { id: 't_s200', name: '本屋の生き字引', kind: 'stamps', n: 200 },
+  { id: 't_p3', name: '三県の旅人', kind: 'prefs', n: 3 }, { id: 't_p20', name: '二十県の旅人', kind: 'prefs', n: 20 }, { id: 't_p30', name: '三十県の旅人', kind: 'prefs', n: 30 }, { id: 't_p47', name: '四十七都道府県', kind: 'prefs', n: 47 },
+  { id: 't_g3s', name: '常連が三つ', kind: 'regulars', n: 3, need: '常連の店（同じ店に5日）が3つ' }, { id: 't_g50', name: '通いの名人', kind: 'regMax', n: 50 },
+  // B. 図書館
+  { id: 't_l1', name: '図書館デビュー', kind: 'libs', n: 1 }, { id: 't_l5', name: '図書館の常連', kind: 'libs', n: 5 }, { id: 't_l20', name: '図書館めぐり', kind: 'libs', n: 20 },
+  // C. 本との出会い（カード）
+  { id: 't_c1', name: '一冊との出会い', kind: 'cards', n: 1 }, { id: 't_c10', name: '出会いの記録係', kind: 'cards', n: 10 }, { id: 't_c30', name: '本棚の主', kind: 'cards', n: 30 }, { id: 't_c100', name: '百冊の出会い', kind: 'cards', n: 100 },
+  // D. 読書
+  { id: 't_rd1', name: 'しおりをはさむ人', kind: 'reads', n: 1 }, { id: 't_rd10', name: '読書の習慣', kind: 'reads', n: 10 }, { id: 't_rm600', name: '十時間の読書家', kind: 'readMin', n: 600, need: '読んだ時間の合計10時間' },
+  { id: 't_mv10', name: '移動読書家', kind: 'moveReads', n: 10 }, { id: 't_dn1', name: '読み終えた', kind: 'done', n: 1 }, { id: 't_st1', name: '本の里帰り', kind: 'sato', n: 1 },
+  // E. 続ける・歩く
+  { id: 't_w4', name: '四週つづけて', kind: 'streak', n: 4 }, { id: 't_w12', name: '季節をまたいで', kind: 'streak', n: 12 }, { id: 't_pg1000', name: '百キロの本屋旅', kind: 'pages', n: 1000, need: '歩いて1000ページ（100km）' },
+  // G. 実績から移した称号（v0.34.0。11/21 ぶっくまさん「A」：実績を称号にまとめる。同じ条件の称号がもうあるもの〈最初の一歩・本と出会った・出会いの常連・常連・行きつけが三つ・四週つづけて・五つの県〉は、その称号にまとめた）
+  { id: 't_u1', name: '古書の香り', kind: 'used', n: 1, need: '古書店でスタンプ1' }, { id: 't_l3', name: '図書館通い', kind: 'libs', n: 3 }, { id: 't_r1', name: '秘境へ', kind: 'rare', n: 1, need: '★★★のスタンプ1' },
+  { id: 't_f3', name: '推し店めぐり', kind: 'feat', n: 3, need: '今週の推し店でスタンプ3回' }, { id: 't_g10', name: 'ぬし', kind: 'regMax', n: 10 },
+  { id: 't_look30', name: '下見', kind: 'look', n: 30, need: '本屋のページを30店見る' }, { id: 't_ra1', name: 'ラリー制覇', kind: 'rally', n: 1, need: 'ご当地ラリーを1つ' },
+  { id: 't_pg100', name: '百ページ歩いた', kind: 'pages', n: 100, need: '歩いて100ページ（10km）' }, { id: 't_pg300', name: '一冊ぶん歩いた', kind: 'pages', n: 300, need: '歩いて300ページ（30km）' },
+  { id: 't_sh1', name: '見せびらかし', kind: 'share', n: 1, need: 'スタンプなどをシェアする' },
+  // F. かくれ称号（もらうまで「？？？（ひみつ）」）
+  { id: 't_h_early', name: '朝の本屋', kind: 'early', n: 1, hidden: 1, need: '朝8時より前にスタンプ' }, { id: 't_h_hashigo', name: 'はしご', kind: 'hashigo', n: 3, hidden: 1, need: '1日に3店でスタンプ' }, { id: 't_h_libbook', name: '本屋と図書館', kind: 'libbook', n: 1, hidden: 1, need: '同じ日に本屋と図書館でスタンプ' },
 ];
+export const TITLES_OLD = ['t_s1', 't_m1', 't_m2', 't_m5', 't_m20', 't_s3', 't_s10', 't_s20', 't_s50', 't_s100', 't_p2', 't_p5', 't_p10', 't_u3', 't_r3', 't_g5', 't_g20']; // v0.33 までの称号（もらった日の記録がない人に、前の順番を引きつぐため）
 export const ACHIEVEMENTS = [
   { id: 'a_first', name: '最初の一歩', desc: 'スタンプを1つ押す', kind: 'stamps', n: 1 },
   { id: 'a_card1', name: '本と出会った', desc: 'カードを1枚作る', kind: 'cards', n: 1 },

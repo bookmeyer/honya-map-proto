@@ -1,6 +1,6 @@
 // 記録（この端末の中だけ）。版の違いを吸収して読み込み、まとめて書き込む
-import { SKINS, MAP_SKINS, STORAGE_KEY, LEGACY_KEYS, APP_VER, PROFILE_Q } from './config.js?v=0.33.1';
-import { $, emit, debounce } from './util.js?v=0.33.1';
+import { SKINS, MAP_SKINS, STORAGE_KEY, LEGACY_KEYS, APP_VER, PROFILE_Q } from './config.js?v=0.34.1';
+import { $, emit, debounce } from './util.js?v=0.34.1';
 
 export const empty = () => ({
   v: 4, visits: [], cards: [], wants: [], custom: [], stamps: {}, pg: 0, pgDay: {},
@@ -58,6 +58,7 @@ function sanitize(o) {
   o.lastPos = ok(o.lastPos) && num(o.lastPos.lat, NaN) === o.lastPos.lat && num(o.lastPos.lon, NaN) === o.lastPos.lon ? { lat: o.lastPos.lat, lon: o.lastPos.lon } : null;
   if (o.lastBook != null && typeof o.lastBook !== 'string') delete o.lastBook;
   o.profile = cleanProfile(o.profile); // プロフィール（v0.20.0）：決まったコードだけ残す
+  if (o.titleAt != null) { if (!ok(o.titleAt)) delete o.titleAt; else for (const [k, v] of Object.entries(o.titleAt)) if (!/^[a-z0-9_]{1,40}$/i.test(k) || !(typeof v === 'number' && Number.isFinite(v))) delete o.titleAt[k]; } // 称号をもらった時（v0.34.0）
   o.profOut = ok(o.profOut) && ['put', 'del'].includes(o.profOut.op) ? { op: o.profOut.op } : null;
   const s = o.settings;
   s.avatar = typeof s.avatar === 'string' && s.avatar.length < 400000 && AVATAR_RE.test(s.avatar) ? s.avatar : '';

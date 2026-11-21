@@ -1,13 +1,13 @@
 // 画面の共通の部品：トースト・モーダル・確かめの箱・タブの切りかえ・見出し帯・地図の下のチケット・バーコードの読み取り・書名でさがす・道順のボタン
-import { pagesForVol } from './config.js?v=0.33.1';
-import { gmapDir, $$, icon, $, esc, emit, dist } from './util.js?v=0.33.1';
-import { S } from './state.js?v=0.33.1';
-import { haptic } from './audio.js?v=0.33.1';
-import { lookupIsbn, lookupBook, searchBooks, coversOf, STORES } from './data.js?v=0.33.1';
-import { POS, hasPos } from './position.js?v=0.33.1';
-import * as MAP from './map.js?v=0.33.1';
-import * as G from './game.js?v=0.33.1';
-import * as E from './events.js?v=0.33.1';
+import { pagesForVol } from './config.js?v=0.34.1';
+import { gmapDir, $$, icon, $, esc, emit, dist } from './util.js?v=0.34.1';
+import { S } from './state.js?v=0.34.1';
+import { haptic } from './audio.js?v=0.34.1';
+import { lookupIsbn, lookupBook, searchBooks, coversOf, STORES } from './data.js?v=0.34.1';
+import { POS, hasPos } from './position.js?v=0.34.1';
+import * as MAP from './map.js?v=0.34.1';
+import * as G from './game.js?v=0.34.1';
+import * as E from './events.js?v=0.34.1';
 
 export const dirLink = (st, label = '道順') => `<a class="btn" href="${gmapDir(st)}" target="_blank" rel="noopener" data-stop>${label}</a>`;
 export const stopLinks = (root) => $$('[data-stop]', root).forEach((a) => a.addEventListener('click', (e) => e.stopPropagation()));
@@ -33,6 +33,9 @@ export function setSub(s) { currentSub = s; emit('view', currentView); }
 export function refreshHud() {
   const vol = G.volume(), pg = G.storyPages(), cur = pagesForVol(vol), next = pagesForVol(vol + 1);
   $('#lv-label').textContent = `第${vol}巻`; $('#xp-fill').style.width = `${Math.round(((pg - cur) / (next - cur)) * 100)}%`; $('#lv-btn').title = `第${vol}巻 ${pg}ページ（あと${next - pg}ページで第${vol + 1}巻）`;
+  // 新しくもらった称号（v0.34.0）：トーストで静かに1回だけ（音・光・振動なし）。まとめてもらったときは数で
+  const fresh = G.syncTitles();
+  if (fresh.length && S.seen) toast(fresh.length === 1 ? `称号「${fresh[0].name}」をもらいました（めぐり帳で見られます）` : `称号を${fresh.length}こもらいました：${fresh.slice(0, 3).map((t) => `「${t.name}」`).join('')}${fresh.length > 3 ? 'ほか' : ''}（めぐり帳で見られます）`, 'ok');
   $('#brand-title').textContent = S.settings.handle || G.currentTitle() || '本屋あるき見習い';
   renderMissionChip(); renderEventChip(); renderShopChips();
 }

@@ -1,14 +1,15 @@
 // ラリー（view-mission）：イベント・今日と今週のお題・推し店
-import { PG, PREFS } from './config.js?v=0.33.1';
-import { esc, icon, $, $$, dist, fmtDist, weekKey, todayISO, fmtDate, prefOf } from './util.js?v=0.33.1';
-import { S } from './state.js?v=0.33.1';
-import { hasPos, POS } from './position.js?v=0.33.1';
-import { BYID, stampSVG, STORES, RALLIES, FEAT } from './data.js?v=0.33.1';
-import * as MAP from './map.js?v=0.33.1';
-import * as G from './game.js?v=0.33.1';
-import * as E from './events.js?v=0.33.1';
-import { switchView, toast, emptyBox, openModal, closeModal } from './ui.js?v=0.33.1';
-import { openSheet } from './map_ui.js?v=0.33.1';
+import { PG, PREFS } from './config.js?v=0.34.1';
+import { esc, icon, $, $$, dist, fmtDist, weekKey, todayISO, fmtDate, prefOf } from './util.js?v=0.34.1';
+import { S } from './state.js?v=0.34.1';
+import { hasPos, POS } from './position.js?v=0.34.1';
+import { BYID, stampSVG, STORES, RALLIES, FEAT } from './data.js?v=0.34.1';
+import * as MAP from './map.js?v=0.34.1';
+import * as G from './game.js?v=0.34.1';
+import * as E from './events.js?v=0.34.1';
+import { switchView, toast, emptyBox, openModal, closeModal } from './ui.js?v=0.34.1';
+import { openSheet } from './map_ui.js?v=0.34.1';
+import { openTitles } from './titles_ui.js?v=0.34.1'; // 称号の一覧（実績を称号にまとめた・v0.34.0）
 
 // ---------- ラリー（view-mission）：今日・今週のお題、推し店、ご当地ラリー、実績 ----------
 // ---------- イベント（ラリーの画面の一番上。設定はサーバーの管理画面から） ----------
@@ -98,5 +99,8 @@ export function renderMissions() {
   $$('#feat-list .item').forEach((el) => el.addEventListener('click', () => openSheet(el.dataset.id)));
   $('#rally-list').innerHTML = G.rallyProgress().map((r) => `<div class="m ${r.done ? 'done' : ''}"><div class="h"><b>${r.done ? '🏆 ' : ''}${esc(r.name)}</b><span class="muted small">${r.got}/${r.stores.length}</span></div><div class="bar"><i style="width:${Math.round((r.got / r.stores.length) * 100)}%"></i></div><div class="sub">${esc(r.desc)}　称号「${esc(r.title)}」</div><div class="sub" style="margin-top:6px">${r.stores.map((id) => { const s = BYID.get(id); return s ? `<span class="badge ${G.hasStamp(id) ? 'shu' : ''}">${esc(s.n)}</span>` : ''; }).join('')}</div><div class="actions"><button class="btn" data-go="${esc(r.id)}">${icon('map')}地図で見る</button></div></div>`).join('') || emptyBox('flag', 'ラリーのデータがありません。');
   $$('#rally-list [data-go]').forEach((b) => b.addEventListener('click', () => { const r = RALLIES.find((x) => x.id === b.dataset.go); if (r) { switchView('map'); MAP.flyTo(r.lo, r.la, 14.5, { zoom: 14.5 }); } }));
-  $('#ach-list').innerHTML = G.achievements().map((a) => `<div class="m ${a.ok ? 'done' : ''}"><div class="h"><b>${a.ok ? '🏅 ' : ''}${esc(a.name)}</b><span class="muted small">${a.cur}/${a.n}</span></div><div class="bar"><i style="width:${Math.round((a.cur / a.n) * 100)}%"></i></div><div class="sub">${esc(a.desc)}</div></div>`).join('');
+  // 実績は称号にまとめた（v0.34.0。11/21 ぶっくまさん「A」）。ここは、もらった称号の数と、一覧への入口だけ
+  const tl = G.titles().filter((t) => !t.id.startsWith('r_')), tg = tl.filter((t) => t.ok).length;
+  $('#ach-list').innerHTML = `<div class="m"><div class="h"><b>🏅 もらった称号 ${tg}／${tl.length}</b></div><div class="bar"><i style="width:${Math.round((tg / Math.max(1, tl.length)) * 100)}%"></i></div><div class="sub">スタンプ・図書館・本との出会い・読書・続けることなどで、称号がもらえます（「実績」は称号にまとめました）。ひみつの称号もあります。</div><div class="actions"><button class="btn" id="ach-open">称号の一覧を見る</button></div></div>`;
+  $('#ach-open').onclick = openTitles;
 }
