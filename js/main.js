@@ -1,36 +1,36 @@
 // 起動：記録を読み、データを取り、地図を出し、部品をつなぐ
-import { APP_VER, TRIAL_ON, POLICY_VER, MAP_CREDIT } from './config.js?v=0.33.0';
-import { $, on, $$, isStandalone, mobileOS, emit } from './util.js?v=0.33.0';
-import { load, S, save } from './state.js?v=0.33.0';
-import * as AUDIO from './audio.js?v=0.33.0';
-import { POS, setPos, setFollow, jumped } from './position.js?v=0.33.0';
-import { loadAll, STORES } from './data.js?v=0.33.0';
-import * as MAP from './map.js?v=0.33.0';
-import * as E from './events.js?v=0.33.0';
-import * as SH from './shops.js?v=0.33.0';
-import * as G from './game.js?v=0.33.0';
-import { renderShopChips } from './ui.js?v=0.33.0';
-import * as J from './journey.js?v=0.33.0';
-import * as R from './reading.js?v=0.33.0';
-import { toast, closeSheet, refreshHud, currentView, switchView, setSub, closeModal } from './ui.js?v=0.33.0';
-import { NEAR, openSheet, refreshSheet, applyMapStates, updateNear, showWantAlerts, updateAreaChip, setupSearch, watchDock, locate, setTrialUI, warp, goPrefHome, updateBubbles } from './map_ui.js?v=0.33.0';
-import * as RU from './reading_ui.js?v=0.33.0';
-import { renderRadar } from './radar_ui.js?v=0.33.0';
-import { renderZukan } from './zukan_ui.js?v=0.33.0';
-import { renderMissions, openEventStores } from './mission_ui.js?v=0.33.0';
-import { joinNotice, privacyNotice, policyNotice, renderSettings, applyTheme } from './settings_ui.js?v=0.33.0';
-import * as ST from './start_ui.js?v=0.33.0'; // はじめの画面・SNSの中の帯・ホーム画面に追加の声かけ・「移りました」の帯（v0.28.0）
-import { showOnboarding } from './onboard_ui.js?v=0.33.0';
-import * as UI0 from './ui.js?v=0.33.0'; // 試す入口（__honya）用
-import * as MU from './map_ui.js?v=0.33.0'; // 試す入口（__honya）用
-import * as CU from './checkin_ui.js?v=0.33.0'; // 試す入口（__honya）用
-import * as KU from './card_ui.js?v=0.33.0'; // 試す入口（__honya）用
-import * as SU from './settings_ui.js?v=0.33.0'; // 試す入口（__honya）用
-import * as RAD from './radar_ui.js?v=0.33.0'; // 試す入口（__honya）用
-import * as ZU from './zukan_ui.js?v=0.33.0'; // 試す入口（__honya）用
-import { startTour, autoTour } from './tour_ui.js?v=0.33.0';
-import { requireSetup, setupDone } from './setup_ui.js?v=0.33.0';
-import * as QZ from './quiz_ui.js?v=0.33.0'; // 9つの質問（v0.33.0）
+import { APP_VER, TRIAL_ON, POLICY_VER, MAP_CREDIT } from './config.js?v=0.33.1';
+import { $, on, $$, isStandalone, mobileOS, emit } from './util.js?v=0.33.1';
+import { load, S, save } from './state.js?v=0.33.1';
+import * as AUDIO from './audio.js?v=0.33.1';
+import { POS, setPos, setFollow, jumped } from './position.js?v=0.33.1';
+import { loadAll, STORES } from './data.js?v=0.33.1';
+import * as MAP from './map.js?v=0.33.1';
+import * as E from './events.js?v=0.33.1';
+import * as SH from './shops.js?v=0.33.1';
+import * as G from './game.js?v=0.33.1';
+import { renderShopChips } from './ui.js?v=0.33.1';
+import * as J from './journey.js?v=0.33.1';
+import * as R from './reading.js?v=0.33.1';
+import { toast, closeSheet, refreshHud, currentView, switchView, setSub, closeModal } from './ui.js?v=0.33.1';
+import { NEAR, openSheet, refreshSheet, applyMapStates, updateNear, showWantAlerts, updateAreaChip, setupSearch, watchDock, locate, setTrialUI, warp, goPrefHome, updateBubbles, jumpTo } from './map_ui.js?v=0.33.1';
+import * as RU from './reading_ui.js?v=0.33.1';
+import { renderRadar } from './radar_ui.js?v=0.33.1';
+import { renderZukan } from './zukan_ui.js?v=0.33.1';
+import { renderMissions, openEventStores } from './mission_ui.js?v=0.33.1';
+import { joinNotice, privacyNotice, policyNotice, renderSettings, applyTheme } from './settings_ui.js?v=0.33.1';
+import * as ST from './start_ui.js?v=0.33.1'; // はじめの画面・SNSの中の帯・ホーム画面に追加の声かけ・「移りました」の帯（v0.28.0）
+import { showOnboarding } from './onboard_ui.js?v=0.33.1';
+import * as UI0 from './ui.js?v=0.33.1'; // 試す入口（__honya）用
+import * as MU from './map_ui.js?v=0.33.1'; // 試す入口（__honya）用
+import * as CU from './checkin_ui.js?v=0.33.1'; // 試す入口（__honya）用
+import * as KU from './card_ui.js?v=0.33.1'; // 試す入口（__honya）用
+import * as SU from './settings_ui.js?v=0.33.1'; // 試す入口（__honya）用
+import * as RAD from './radar_ui.js?v=0.33.1'; // 試す入口（__honya）用
+import * as ZU from './zukan_ui.js?v=0.33.1'; // 試す入口（__honya）用
+import { startTour, autoTour } from './tour_ui.js?v=0.33.1';
+import { requireSetup, setupDone } from './setup_ui.js?v=0.33.1';
+import * as QZ from './quiz_ui.js?v=0.33.1'; // 9つの質問（v0.33.0）
 
 async function boot() {
   if (ST.lineEscape()) return; ST.stripLineMark(); // LINE の中なら、Safari／Chrome で開き直してもらう（v0.28.0）
@@ -117,8 +117,12 @@ async function boot() {
   ST.startBands(); // SNSのアプリの中の帯・「記録は移した先にあります」の帯（v0.28.0）
   if (!S.seen) ST.startGate(() => showOnboarding((mode) => { S.seen = 1; S.settings.privacyV10 = join && join.isNew ? 0 : 1; save(); refreshHud(); E.noteOpen(); requireSetup(() => { if (mode === 'geo') locate(); else goPrefHome(); if (mode === 'trial' && TRIAL_ON) { setTrialUI(true); warp(); } if (join && join.isNew) joinNotice(join.code); autoTour(); askSoon(8000); }); })); // いちばん最初の画面（開いた場所で変える・v0.28.0）→ 最初の案内 → はじめの設定（v0.21.0）→ 地図の画面の案内（v0.19.0） // 最初の案内のあと、地図の画面の案内（v0.19.0）
   else startExisting();
+  // 店へのリンク（?shop=店の番号・v0.33.1）：その店のページを開いて、地図をその店へ。11/21 ぶっくまさん「アプリでいうとどのなのかをリンク貼れたりしますか」（管理画面の報告から）
+  // このときは、開いたときに現在地へ動かさない（すぐ現在地に戻されないように）。まだ始めていない人は、ふつうに最初の画面から
+  const shopLink = (() => { try { const u = new URL(location.href); const id = u.searchParams.get('shop'); if (id == null) return ''; u.searchParams.delete('shop'); history.replaceState(null, '', u.pathname + u.search + u.hash); return /^[0-9a-zA-Z_-]{1,40}$/.test(id) ? id : ''; } catch (e) { return ''; } })();
+  if (shopLink && S.seen) setTimeout(() => { if (!jumpTo(shopLink)) toast('この店は、いまの地図にありません（閉店などで外れたのかもしれません）', 'warn'); }, 1500);
   // 2回目からは、開いたときに自分のいる場所から始める（v0.13.2）。位置の許可がもうある人か、前に現在地を使った人だけ。断られている人には聞かない
-  if (S.seen && !POS.fake) {
+  if (S.seen && !POS.fake && !shopLink) {
     const go = () => locate();
     if (navigator.permissions && navigator.permissions.query) navigator.permissions.query({ name: 'geolocation' }).then((p) => { if (p.state === 'granted' || (p.state === 'prompt' && S.settings.geoOk)) go(); }).catch(() => { if (S.settings.geoOk) go(); });
     else if (S.settings.geoOk) go();

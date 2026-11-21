@@ -1,20 +1,20 @@
 // 地図の画面：現在地まわり（射程・いちばん近い店）・ピンの状態・現在地とお試し歩き・店のページ・さがす・店を足す・行きたい店のお知らせ
-import { RANGE_M, TERRITORY_M, PG, TRIAL_ON, PREFS, MAP_CREDIT } from './config.js?v=0.33.0';
-import { $, arrowOf, bearing, icon, fmtDist, esc, dist, $$, emit, fmtDate, gmapDir, stars, gmapPlace, prefOf } from './util.js?v=0.33.0';
-import { S, save } from './state.js?v=0.33.0';
-import { unlock, sfx } from './audio.js?v=0.33.0';
-import { hasPos, POS, startWatch, setTrial, setPos, jumped, setFollow } from './position.js?v=0.33.0';
-import { STORES, BYID, isLib, isFeat, rarityOf, pickOpen, placeWord, bookTitle, stampSVG, rarityText, lookupIsbn, hideStore, renameStore, search, FEAT } from './data.js?v=0.33.0';
-import * as MAP from './map.js?v=0.33.0';
-import * as G from './game.js?v=0.33.0';
-import * as E from './events.js?v=0.33.0';
-import * as J from './journey.js?v=0.33.0';
-import { dirLink, openModal, closeModal, stopLinks, toast, closeSheet, refreshHud, currentView, switchView, syncStatusCard } from './ui.js?v=0.33.0';
-import { startCheckin, shareStampUI } from './checkin_ui.js?v=0.33.0';
-import { startCard } from './card_ui.js?v=0.33.0';
-import * as SH from './shops.js?v=0.33.0';
-import { addReading } from './reading.js?v=0.33.0';
-import { todayISO } from './util.js?v=0.33.0';
+import { RANGE_M, TERRITORY_M, PG, TRIAL_ON, PREFS, MAP_CREDIT } from './config.js?v=0.33.1';
+import { $, arrowOf, bearing, icon, fmtDist, esc, dist, $$, emit, fmtDate, gmapDir, stars, gmapPlace, prefOf } from './util.js?v=0.33.1';
+import { S, save } from './state.js?v=0.33.1';
+import { unlock, sfx } from './audio.js?v=0.33.1';
+import { hasPos, POS, startWatch, setTrial, setPos, jumped, setFollow } from './position.js?v=0.33.1';
+import { STORES, BYID, isLib, isFeat, rarityOf, pickOpen, placeWord, bookTitle, stampSVG, rarityText, lookupIsbn, hideStore, renameStore, search, FEAT } from './data.js?v=0.33.1';
+import * as MAP from './map.js?v=0.33.1';
+import * as G from './game.js?v=0.33.1';
+import * as E from './events.js?v=0.33.1';
+import * as J from './journey.js?v=0.33.1';
+import { dirLink, openModal, closeModal, stopLinks, toast, closeSheet, refreshHud, currentView, switchView, syncStatusCard } from './ui.js?v=0.33.1';
+import { startCheckin, shareStampUI } from './checkin_ui.js?v=0.33.1';
+import { startCard } from './card_ui.js?v=0.33.1';
+import * as SH from './shops.js?v=0.33.1';
+import { addReading } from './reading.js?v=0.33.1';
+import { todayISO } from './util.js?v=0.33.1';
 
 // ---------- 行きたい店のお知らせ（地図の下に出る帯） ----------
 let waTimer = null;
@@ -95,6 +95,8 @@ export function applyMapStates() {
 }
 // ---------- 現在地・お試し ----------
 // 位置がないとき（「あとで」・許可しなかった・取れなかった）は、プロフィールの「住んでいる都道府県」の県庁のあたりから（v0.22.0。前は日本全体）
+// 店へ飛んで、店のページを開く（検索・店へのリンク ?shop= から。v0.33.1）。現在地を追っていると、すぐ現在地に戻されるので、追うのをやめてから飛ぶ（v0.32.11）
+export function jumpTo(id) { const st = BYID.get(id); if (!st) return false; setFollow(false); const lb = $('#btn-locate'); if (lb) lb.classList.remove('on'); openSheet(st.i); MAP.flyTo(st.lo, st.la, 15); return true; }
 export function goPrefHome() { const c = S.profile && S.profile.a && S.profile.a.pref; const p = c ? PREFS[Number(c) - 1] : null; if (!p || hasPos()) return false; MAP.flyTo(p[2], p[1], 11); return true; }
 export function locate() {
   unlock();
@@ -298,7 +300,7 @@ export function setupSearch() {
   inp.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
   inp.addEventListener('input', () => { if (!inp.value.trim()) { res.hidden = true; res.innerHTML = ''; return; } const hits = search(inp.value);
     res.innerHTML = hits.map((s) => `<div class="item" data-id="${esc(s.i)}">${isFeat(s.i) ? '👑 ' : ''}${esc(s.n)} <span class="stars">${'★'.repeat(rarityOf(s))}</span><div class="muted small">${esc(s.a || prefOf(s))}</div></div>`).join('') || '<div class="item muted">見つかりません</div><div class="item add-link" id="sr-add">＋ 地図にない本屋を知らせる</div>'; res.hidden = false;
-    $$('#search-results .item[data-id]').forEach((el) => el.addEventListener('click', () => { const st = BYID.get(el.dataset.id); setOpen(false); setFollow(false); const lb = $('#btn-locate'); if (lb) lb.classList.remove('on'); /* 現在地を追っていると、すぐ現在地に戻されるので、追うのをやめてから飛ぶ（v0.32.11） */ openSheet(st.i); MAP.flyTo(st.lo, st.la, 15); }));
+    $$('#search-results .item[data-id]').forEach((el) => el.addEventListener('click', () => { setOpen(false); jumpTo(el.dataset.id); }));
     const add = $('#sr-add'); if (add) add.addEventListener('click', () => { setOpen(false); startAdd(); }); });
   inp.addEventListener('blur', () => setTimeout(() => { res.hidden = true; if (!inp.value.trim() && document.activeElement !== inp) setOpen(false); }, 200));
 }
