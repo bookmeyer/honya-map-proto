@@ -1,20 +1,21 @@
 // 地図の画面：現在地まわり（射程・いちばん近い店）・ピンの状態・現在地とお試し歩き・店のページ・さがす・店を足す・行きたい店のお知らせ
-import { RANGE_M, TERRITORY_M, PG, TRIAL_ON, PREFS, MAP_CREDIT } from './config.js?v=0.34.1';
-import { $, arrowOf, bearing, icon, fmtDist, esc, dist, $$, emit, fmtDate, gmapDir, stars, gmapPlace, prefOf } from './util.js?v=0.34.1';
-import { S, save } from './state.js?v=0.34.1';
-import { unlock, sfx } from './audio.js?v=0.34.1';
-import { hasPos, POS, startWatch, setTrial, setPos, jumped, setFollow } from './position.js?v=0.34.1';
-import { STORES, BYID, isLib, isFeat, rarityOf, pickOpen, placeWord, bookTitle, stampSVG, rarityText, lookupIsbn, hideStore, renameStore, search, FEAT } from './data.js?v=0.34.1';
-import * as MAP from './map.js?v=0.34.1';
-import * as G from './game.js?v=0.34.1';
-import * as E from './events.js?v=0.34.1';
-import * as J from './journey.js?v=0.34.1';
-import { dirLink, openModal, closeModal, stopLinks, toast, closeSheet, refreshHud, currentView, switchView, syncStatusCard } from './ui.js?v=0.34.1';
-import { startCheckin, shareStampUI } from './checkin_ui.js?v=0.34.1';
-import { startCard } from './card_ui.js?v=0.34.1';
-import * as SH from './shops.js?v=0.34.1';
-import { addReading } from './reading.js?v=0.34.1';
-import { todayISO } from './util.js?v=0.34.1';
+import { RANGE_M, TERRITORY_M, PG, TRIAL_ON, PREFS, MAP_CREDIT } from './config.js?v=0.35.5';
+import { $, arrowOf, bearing, icon, fmtDist, esc, dist, $$, emit, fmtDate, gmapDir, stars, gmapPlace, prefOf } from './util.js?v=0.35.5';
+import { S, save } from './state.js?v=0.35.5';
+import { unlock, sfx } from './audio.js?v=0.35.5';
+import { hasPos, POS, startWatch, setTrial, setPos, jumped, setFollow } from './position.js?v=0.35.5';
+import { STORES, BYID, isLib, isFeat, rarityOf, pickOpen, placeWord, bookTitle, stampSVG, rarityText, lookupIsbn, hideStore, renameStore, search, FEAT } from './data.js?v=0.35.5';
+import * as MAP from './map.js?v=0.35.5';
+import * as G from './game.js?v=0.35.5';
+import * as E from './events.js?v=0.35.5';
+import * as J from './journey.js?v=0.35.5';
+import { dirLink, openModal, closeModal, stopLinks, toast, closeSheet, refreshHud, currentView, switchView, syncStatusCard } from './ui.js?v=0.35.5';
+import { startCheckin, shareStampUI } from './checkin_ui.js?v=0.35.5';
+import { startCard } from './card_ui.js?v=0.35.5';
+import * as SH from './shops.js?v=0.35.5';
+import { addReading } from './reading.js?v=0.35.5';
+import { todayISO } from './util.js?v=0.35.5';
+import { xBoxHTML, mountX } from './xembed.js?v=0.35.5';
 
 // ---------- 行きたい店のお知らせ（地図の下に出る帯） ----------
 let waTimer = null;
@@ -143,7 +144,10 @@ function snsHTML(st) {
 const phRow = (ids) => `<div class="ph-row">${ids.map((id) => `<img src="${esc(SH.picUrl(id))}" alt="" loading="lazy" decoding="async" data-ph>`).join('')}</div>`;
 function fairsHTML(st) {
   const fs = (st.shop && st.shop.fairs) || []; if (!fs.length) return '';
-  return `<div class="shop-sec"><h3>いまのフェア</h3>${fs.map((f) => `<div class="fair"><span class="fair-k">フェア</span><span class="muted small">${f.to ? mdOf(f.to) + 'まで' : ''}${f.from && f.from > todayISO() ? `（${mdOf(f.from)}から）` : ''}</span><div class="fair-t">${esc(f.name)}</div>${f.pics.length ? phRow(f.pics) : ''}${f.place ? `<div class="muted small">${esc(f.place)}</div>` : ''}${f.say ? `<div class="say">${esc(f.say)}</div>` : ''}</div>`).join('')}</div>`;
+  const one = (f) => { const ag = SH.postAge(f); return `<div class="fair${ag && ag.old ? ' old' : ''}">${f.x ? '<span class="fair-k xk">𝕏 お店の投稿</span>' : '<span class="fair-k">フェア</span>'}<span class="muted small">${ag ? ag.text : `${f.to ? mdOf(f.to) + 'まで' : ''}${f.from && f.from > todayISO() ? `（${mdOf(f.from)}から）` : ''}`}</span><div class="fair-t">${esc(f.name)}</div>${f.pics.length ? phRow(f.pics) : ''}${xBoxHTML(f)}${f.place ? `<div class="muted small">${esc(f.place)}</div>` : ''}${f.say ? `<div class="say">${esc(f.say)}</div>` : ''}</div>`; };
+  // はじめは3件。4件目からは「もっと見る」（10件まで。v0.35.1。11/22 ぶっくまさん）
+  const top = fs.slice(0, 3).map(one).join(''), rest = fs.slice(3);
+  return `<div class="shop-sec"><h3>いま行くと、出会えるもの</h3>${top}${rest.length ? `<div class="fair-more" hidden>${rest.map(one).join('')}</div><button class="btn ghost wide fair-more-btn" type="button">もっと見る（あと${rest.length}件）</button>` : ''}</div>`;
 }
 // 売場の写真：1枚目は店のページの表紙に（v0.27.0）。ここには2枚目から
 function shelfHTML(st) { const sh = st.shop && st.shop.shelf; if (!sh) return ''; const rest = sh.pics.slice(1); return rest.length || sh.say ? `<div class="shop-sec"><h3>売場の写真</h3>${rest.length ? phRow(rest) : ''}${sh.say ? `<div class="muted small">${esc(sh.say)}</div>` : ''}</div>` : ''; }
@@ -248,6 +252,8 @@ export function openSheet(id, quiet) {
     <div class="muted small" style="margin-top:10px">${st.a ? `${esc(st.a)}　${esc(prefOf(st))}` : st.aa ? `${esc(st.aa)} 付近<span class="addr-note">（位置からの目安）</span>` : `${st.custom ? '' : '住所の情報なし（地図データより）'}　${esc(prefOf(st))}`}</div>${st.demo || st.custom ? '' : `<div class="muted small">${esc(srcLine)}</div>`}
     ${st.demo || st.custom || st.closed ? '' : `${reportInvite(st)}<div class="actions"><button class="btn ghost" data-act="report">${isLib(st) ? '閉館している' : '閉店している'}</button><button class="btn ghost" data-act="rename">名前が違う</button>${near ? '<button class="btn ghost" data-act="notfound">お店が見つからない</button>' : ''}</div>`}
     <div id="sheet-extra"></div>`;
+  mountX($('#sheet-body')); // お店の X の投稿（v0.35.0）
+  const fm = $('#sheet-body .fair-more-btn'); if (fm) fm.onclick = () => { const box = $('#sheet-body .fair-more'); if (!box) return; box.hidden = false; fm.remove(); mountX(box); };
   $$('#sheet-body [data-evlist]').forEach((x) => x.addEventListener('click', () => emit('evlist', x.dataset.evlist)));
   const pc = $('#sheet-body .pick-card[data-card]'); if (pc) E.loadCard(st.i).then((r) => { if (pc.isConnected) pc.innerHTML = r.url ? cardImg(r.url, st.rec) : `<div class="pick-wait">${CARD_TEXT[r.error] || CARD_TEXT.net}</div>`; });
   if (st.rec && st.rec.srv) { bindPick(st); if (pickOpen(st)) SH.openPick(st).then((seen) => { const el = $('#sheet-pick'); if (seen && el && el.isConnected && $('#sheet').dataset.id === st.i) { el.outerHTML = srvPickHTML(st); bindPick(st); } else if (!seen && el && el.querySelector('.pick-wait')) el.querySelector('.pick-wait').textContent = 'いまは書名を読み込めませんでした。電波のよいところで、店のページを開き直してください'; }); }

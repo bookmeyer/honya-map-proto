@@ -669,3 +669,14 @@ details.chap-pro summary b{font-family:var(--display);font-weight:400}
 .ti.ok{background:var(--gold-soft)}
 .ti-c{color:var(--ink-2);text-align:right;font-size:13px}
 .ti-c b{color:var(--shu-2)}
+/* お店の X の投稿（v0.35.0） */
+.xbox{margin:8px 0 4px;padding:10px;border:2px dashed var(--line-2);border-radius:var(--r-m);background:var(--card-2);text-align:center}
+.xbox.on{border:0;padding:0;background:none;text-align:left}
+.xbox .xbtn{min-height:42px;font-size:14px}.xbox .xlogo{font-weight:900;font-size:17px}
+.xkeep{display:flex;gap:6px;align-items:center;justify-content:center;font-size:13px;margin:8px 0 2px}.xkeep input{width:18px;height:18px}
+.xbox .xwait{padding:8px}
+.fair-th.xth{display:flex;align-items:center;justify-content:center;font-weight:900;font-size:20px;background:var(--card)}
+.fair-k.xk{background:#1B1B1B;color:#fff}
+.xbox .xwait{padding:10px;text-align:center}.xbox .xlink{padding:4px 0}
+/* 2週間をこえた X の投稿は薄く（v0.35.5） */
+.shop-sec .fair.old,.fair-item.old{opacity:.6}

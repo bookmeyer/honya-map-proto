@@ -4,10 +4,10 @@
 //  - 来る前（誰でも）：ヒント・ジャンル・名前の出し方・フェア・売場の写真・店の発信・スタンプの写真（api/shops.php・api/pic.php）
 //  - 来たあと（その店の射程内でスタンプを押した端末だけ）：書名・著者・写真（api/pick.php。端末の番号と店の番号を POST で送る）
 //  - 開いた1冊は、この端末に覚える（S.picks。写真は開いているあいだだけ）。サーバーに届かないときは、前回読んだ中身で動く
-import { S, save } from './state.js?v=0.34.1';
-import { todayISO, emit } from './util.js?v=0.34.1';
-import { setShops, setStampData, pickOpen } from './data.js?v=0.34.1';
-import { apiBase, deviceId, flush } from './events.js?v=0.34.1';
+import { S, save } from './state.js?v=0.35.5';
+import { todayISO, emit } from './util.js?v=0.35.5';
+import { setShops, setStampData, pickOpen } from './data.js?v=0.35.5';
+import { apiBase, deviceId, flush } from './events.js?v=0.35.5';
 
 const CACHE_KEY = 'meguri_shops_v1';
 const STAMP_KEY = 'meguri_stamp_imgs_v1';
@@ -29,13 +29,22 @@ function clean(raw) {
     if (!ID.test(id) || !v || typeof v !== 'object' || m.size >= 20000) continue;
     const o = {};
     if (v.pick && typeof v.pick === 'object' && str(v.pick.hint, 40)) o.pick = { who: str(v.pick.who, 20) || '書店員さん', hint: str(v.pick.hint, 40), genre: GENRES[v.pick.genre] ? v.pick.genre : '', pics: Number.isInteger(v.pick.pics) ? Math.max(0, Math.min(4, v.pick.pics)) : 0, v: Number.isInteger(v.pick.v) ? v.pick.v : 0, at: DAY.test(v.pick.at || '') ? v.pick.at : '' };
-    if (Array.isArray(v.fairs)) { const fs = v.fairs.filter((f) => f && Number.isInteger(f.id) && str(f.name, 40)).slice(0, 3).map((f) => ({ id: f.id, name: str(f.name, 40), from: DAY.test(f.from || '') ? f.from : '', to: DAY.test(f.to || '') ? f.to : '', place: str(f.place, 40), say: str(f.say, 120), pics: ids(f.pics, 6), at: DAY.test(f.at || '') ? f.at : '' })).filter((f) => !f.to || f.to >= todayISO()); if (fs.length) o.fairs = fs; }
+    if (Array.isArray(v.fairs)) { const fs = v.fairs.filter((f) => f && Number.isInteger(f.id) && str(f.name, 40)).slice(0, 10).map((f) => ({ id: f.id, name: str(f.name, 40), from: DAY.test(f.from || '') ? f.from : '', to: DAY.test(f.to || '') ? f.to : '', place: str(f.place, 40), say: str(f.say, 120), pics: ids(f.pics, 6), at: DAY.test(f.at || '') ? f.at : '', x: /^\d{1,20}$/.test(f.x || '') ? f.x : '', xu: /^[A-Za-z0-9_]{1,15}$/.test(f.xu || '') ? f.xu : '' })) /* x＝X の #本めぐり から来たフェアの投稿の番号（サーバー 1.10.0〜） */.filter((f) => !f.to || f.to >= todayISO()); if (fs.length) o.fairs = fs; }
     if (v.shelf && typeof v.shelf === 'object') { const p = ids(v.shelf.pics, 6); if (p.length) o.shelf = { say: str(v.shelf.say, 60), pics: p, at: DAY.test(v.shelf.at || '') ? v.shelf.at : '' }; }
     if (Array.isArray(v.sns)) { const l = v.sns.filter((x) => x && SNS[x.k] && https(x.url)).slice(0, 6).map((x) => ({ k: x.k, url: x.url })); if (l.length) o.sns = l; }
     if (Number.isInteger(v.stamp) && v.stamp > 0) o.stamp = v.stamp;
+    else if (typeof v.stampx === 'string' && XPIC.test(v.stampx)) o.stampx = v.stampx; // X のアイコン（サーバー 1.10.0〜。X から読んで見せる）
     if (Object.keys(o).length) { if (DAY.test(v.up || '')) o.up = v.up; m.set(id, o); } // up＝この店でいちばん新しい公開の日（サーバー 1.9.3〜）
   }
   return m;
+}
+// X の投稿は「○日前の投稿」（おわりの日は運営が自動で付けた4週間なので出さない）。2週間をこえたら薄く（v0.35.5）
+const DAYMS = 86400000;
+export function postAge(f) {
+  if (!f || !f.x || !/^\d{4}-\d{2}-\d{2}$/.test(f.from || '')) return null;
+  const n = Math.max(0, Math.round((new Date(todayISO() + 'T00:00:00') - new Date(f.from + 'T00:00:00')) / DAYMS));
+  const text = n === 0 ? '今日の投稿' : n === 1 ? '昨日の投稿' : n < 14 ? `${n}日前の投稿` : `${Math.floor(n / 7)}週間前の投稿`;
+  return { n, text, old: n >= 14 };
 }
 export const picUrl = (id) => new URL('pic.php?id=' + id, apiBase()).toString();
 function apply(j) {
@@ -106,18 +115,19 @@ export async function pickPhoto(st, i) {
 }
 
 // ---- スタンプの写真：シェアの画像に描くため、押した店の分は端末に覚える（data URL） ----
-function loadStampCache() { try { const o = JSON.parse(localStorage.getItem(STAMP_KEY) || '{}'); for (const [id, d] of Object.entries(o)) if (/^\d+$/.test(id) && typeof d === 'string' && d.startsWith('data:image/')) setStampData(+id, d); } catch (e) {} }
+const XPIC = /^https:\/\/pbs\.twimg\.com\/profile_images\/[A-Za-z0-9_./-]+$/;
+function loadStampCache() { try { const o = JSON.parse(localStorage.getItem(STAMP_KEY) || '{}'); for (const [id, d] of Object.entries(o)) if ((/^\d+$/.test(id) || XPIC.test(id)) && typeof d === 'string' && d.startsWith('data:image/')) setStampData(/^\d+$/.test(id) ? +id : id, d); } catch (e) {} }
 loadStampCache();
 export async function ensureStampData(st) {
-  const sp = shopOf(st); if (!sp || !sp.stamp) return '';
+  const sp = shopOf(st); const key = sp && (sp.stamp || (!S.settings.xOff && sp.stampx)); if (!key) return ''; // X のアイコンは「X の投稿を表示しない」なら読まない
   try {
-    const o = JSON.parse(localStorage.getItem(STAMP_KEY) || '{}'); if (o[sp.stamp]) return o[sp.stamp];
-    const r = await fetch(picUrl(sp.stamp), { mode: 'cors' }); if (!r.ok) return '';
+    const o = JSON.parse(localStorage.getItem(STAMP_KEY) || '{}'); if (o[key]) return o[key];
+    const r = await fetch(sp.stamp ? picUrl(sp.stamp) : sp.stampx, { mode: 'cors' }); if (!r.ok) return '';
     const b = await r.blob();
     const d = await new Promise((ok) => { const fr = new FileReader(); fr.onload = () => ok(String(fr.result || '')); fr.onerror = () => ok(''); fr.readAsDataURL(b); });
     if (!d.startsWith('data:image/')) return '';
-    setStampData(sp.stamp, d);
-    if (S.stamps[st.i]) { const keys = Object.keys(o); if (keys.length >= STAMP_MAX) delete o[keys[0]]; o[sp.stamp] = d; try { localStorage.setItem(STAMP_KEY, JSON.stringify(o)); } catch (e) {} }
+    setStampData(key, d);
+    if (S.stamps[st.i]) { const keys = Object.keys(o); if (keys.length >= STAMP_MAX) delete o[keys[0]]; o[key] = d; try { localStorage.setItem(STAMP_KEY, JSON.stringify(o)); } catch (e) {} }
     return d;
   } catch (e) { return ''; }
 }

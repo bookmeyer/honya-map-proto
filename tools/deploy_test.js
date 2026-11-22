@@ -28,11 +28,15 @@ const TRANSFORM = {
   'index.html': (s) => noindex(s).replace(/(<body[^>]*>)/i, `$1\n${BAND}`),
   'howto.html': noindex, 'privacy.html': noindex, 'terms.html': noindex,
   'manifest.webmanifest': (s) => s.replace(/"name":\s*"[^"]*"/, '"name": "本めぐりテスト"').replace(/"short_name":\s*"[^"]*"/, '"short_name": "テスト版"'),
+  // テスト版だけのダミーデータ（?dummy=1。v0.35.2〜・tools/test_dummy.js）
+  'js/shops.js': (s) => DUMMY.patchShops(s),
+  'js/xembed.js': (s) => DUMMY.patchXembed(s),
 };
+const DUMMY = require('./test_dummy.js');
 
 fs.mkdirSync(DST, { recursive: true });
 // 前のテスト版にあって、今回ないファイルは消す（.git と、ここで作るファイルは残す）
-const made = new Set([...files, 'robots.txt', 'README.md', '.nojekyll']);
+const made = new Set([...files, 'robots.txt', 'README.md', '.nojekyll', ...DUMMY.FILES]);
 const walk = (d, base = '') => { for (const n of fs.readdirSync(d)) { if (!base && n === '.git') continue; const p = path.join(d, n), r = base ? `${base}/${n}` : n; if (fs.statSync(p).isDirectory()) walk(p, r); else if (!made.has(r)) { fs.unlinkSync(p); console.log('消した', r); } } };
 walk(DST);
 for (const f of files) {
@@ -41,6 +45,8 @@ for (const f of files) {
   if (TRANSFORM[f]) fs.writeFileSync(to, TRANSFORM[f](fs.readFileSync(from, 'utf8'))); else fs.copyFileSync(from, to);
 }
 fs.writeFileSync(path.join(DST, 'robots.txt'), 'User-agent: *\nDisallow: /\n');
+fs.writeFileSync(path.join(DST, 'data/dummy_shops.json'), DUMMY.shopsJSON);
+fs.writeFileSync(path.join(DST, 'js/dummy_widgets.js'), DUMMY.widgetsJS);
 fs.writeFileSync(path.join(DST, 'README.md'), '# 本めぐり テスト版\n\n本番（https://meguri.tsunagubooks.com/）に出す前に確かめるための、テスト版です。記録はテスト用のサーバーに送ります。\nこの中身は `tools/deploy_test.js` で作っています。ここを直接直さないでください。\n');
 fs.writeFileSync(path.join(DST, '.nojekyll'), '');
 

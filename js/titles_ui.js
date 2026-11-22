@@ -1,10 +1,10 @@
 // 称号の一覧と、もらい方（v0.33.2）
 // 11/21 ぶっくまさん「称号の意味やどんな種類があるのかわからないという声がありました」
 // めぐり帳の「称号「○○」」と、称号の並びの「称号の一覧」から開く。種類ごとに、もらったもの・まだのもの（あといくつ）を全部見せる
-import { esc } from './util.js?v=0.34.1';
-import { S } from './state.js?v=0.34.1';
-import * as G from './game.js?v=0.34.1';
-import { openModal, closeModal } from './ui.js?v=0.34.1';
+import { esc } from './util.js?v=0.35.5';
+import { S } from './state.js?v=0.35.5';
+import * as G from './game.js?v=0.35.5';
+import { openModal, closeModal } from './ui.js?v=0.35.5';
 
 // 種類（kind）ごとのまとまり。unit：「あと○○」の単位
 const GROUPS = [

@@ -1,7 +1,7 @@
 // 本屋・図書館・ラリーのデータ。スタンプ（その店だけの絵柄）の見た目もここ
-import { DEMO_STORE } from './config.js?v=0.34.1';
-import { sleep, $, weekKey, prefOf, hash32, esc, todayISO, dist } from './util.js?v=0.34.1';
-import { S } from './state.js?v=0.34.1';
+import { DEMO_STORE } from './config.js?v=0.35.5';
+import { sleep, $, weekKey, prefOf, hash32, esc, todayISO, dist } from './util.js?v=0.35.5';
+import { S } from './state.js?v=0.35.5';
 
 export let STORES = [];
 export let RALLIES = [];
@@ -41,7 +41,7 @@ let SHOPMAP = new Map(), PICURL = () => '';
 const STAMP_DATA = new Map(); // スタンプの写真の番号 → data URL（シェアの画像に描くため。shops.js が覚えたもの）
 export function setShops(map, picUrl) { SHOPMAP = map; PICURL = picUrl; rebuild(); }
 export function setStampData(id, d) { STAMP_DATA.set(id, d); }
-export const stampPhoto = (st) => { const id = st && st.shop && st.shop.stamp; return id ? STAMP_DATA.get(id) || PICURL(id) : ''; };
+export const stampPhoto = (st) => { const sh = st && st.shop; if (!sh) return ''; if (sh.stamp) return STAMP_DATA.get(sh.stamp) || PICURL(sh.stamp); if (sh.stampx && !S.settings.xOff) return STAMP_DATA.get(sh.stampx) || sh.stampx; return ''; }; // stampx＝お店の X のアイコン（v0.35.4）
 // まわり5kmの同じ種類の店の数（秘境スタンプの目安。ファイルの店は道具が数えてある）
 function around(s, list) { let k = 0; for (const o of list) { if (Math.abs(o.la - s.la) > 0.05 || Math.abs(o.lo - s.lo) > 0.062 || o.i === s.i) continue; if (dist(s.la, s.lo, o.la, o.lo) <= 5000) k++; } return k; }
 // ---- 書店員さんの1冊（v0.11）。お店に確かめて、許可をいただいた店だけ data/picks.json に書く ----

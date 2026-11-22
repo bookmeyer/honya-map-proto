@@ -1,16 +1,16 @@
 // ちかく（view-radar）：近い店・書店員さんの1冊・行きたい店・ピンの色の見方
-import { RANGE_M, TRIAL_ON } from './config.js?v=0.34.1';
-import { $, esc, fmtDist, arrowOf, bearing, icon, $$, dist, prefOf, stars } from './util.js?v=0.34.1';
-import { hasPos, POS } from './position.js?v=0.34.1';
-import { STORES, bookTitle, pickOpen, isFeat, rarityOf } from './data.js?v=0.34.1';
-import * as MAP from './map.js?v=0.34.1';
-import * as G from './game.js?v=0.34.1';
-import * as J from './journey.js?v=0.34.1';
-import { dirLink, stopLinks, switchView, emptyBox } from './ui.js?v=0.34.1';
-import { openSheet, locate, setTrialUI, warp, NEAR } from './map_ui.js?v=0.34.1';
-import { hasCard, liveEvents, narrow } from './events.js?v=0.34.1';
-import { S } from './state.js?v=0.34.1';
-import { GENRES, picUrl } from './shops.js?v=0.34.1';
+import { RANGE_M, TRIAL_ON } from './config.js?v=0.35.5';
+import { $, esc, fmtDist, arrowOf, bearing, icon, $$, dist, prefOf, stars } from './util.js?v=0.35.5';
+import { hasPos, POS } from './position.js?v=0.35.5';
+import { STORES, bookTitle, pickOpen, isFeat, rarityOf } from './data.js?v=0.35.5';
+import * as MAP from './map.js?v=0.35.5';
+import * as G from './game.js?v=0.35.5';
+import * as J from './journey.js?v=0.35.5';
+import { dirLink, stopLinks, switchView, emptyBox } from './ui.js?v=0.35.5';
+import { openSheet, locate, setTrialUI, warp, NEAR } from './map_ui.js?v=0.35.5';
+import { hasCard, liveEvents, narrow } from './events.js?v=0.35.5';
+import { S } from './state.js?v=0.35.5';
+import { GENRES, picUrl, postAge } from './shops.js?v=0.35.5';
 
 // ---------- ちかく：行きたい店（近い順） ----------
 export function renderRadarWants() {
@@ -67,7 +67,7 @@ function renderFairs() {
   if (!list.length) { el.innerHTML = ''; return; }
   list.sort((a, b) => a.d - b.d); const show = fairsAll ? list : list.slice(0, 3);
   const md = (x) => (x ? `${Number(x.slice(5, 7))}/${Number(x.slice(8, 10))}` : '');
-  el.innerHTML = `<h3>いまのフェア <span class="muted small">全国 ${list.length}</span></h3><div class="list">${show.map(({ s, f, d }) => `<div class="item fair-item" data-id="${esc(s.i)}">${f.pics.length ? `<img class="fair-th" src="${esc(picUrl(f.pics[0]))}" alt="" loading="lazy">` : ''}<div class="main"><div class="name">${esc(f.name)}</div><div class="sub">${esc(s.n)}${f.to ? '・' + md(f.to) + 'まで' : ''}　${base.lbl} ${fmtDist(d)}</div></div></div>`).join('')}</div>${list.length > 3 ? `<button class="linkish" id="fair-more">${fairsAll ? '近い3つだけにする' : `すべて見る（${list.length}）`}</button>` : ''}`;
+  el.innerHTML = `<h3>いま行くと出会えるもの <span class="muted small">全国 ${list.length}</span></h3><div class="list">${show.map(({ s, f, d }) => `<div class="item fair-item${postAge(f) && postAge(f).old ? ' old' : ''}" data-id="${esc(s.i)}">${!f.pics.length && f.x ? '<span class="fair-th xth" aria-hidden="true">𝕏</span>' : ''}${f.pics.length ? `<img class="fair-th" src="${esc(picUrl(f.pics[0]))}" alt="" loading="lazy">` : ''}<div class="main"><div class="name">${esc(f.name)}</div><div class="sub">${esc(s.n)}${postAge(f) ? '・' + postAge(f).text : f.to ? '・' + md(f.to) + 'まで' : ''}　${base.lbl} ${fmtDist(d)}</div></div></div>`).join('')}</div>${list.length > 3 ? `<button class="linkish" id="fair-more">${fairsAll ? '近い3つだけにする' : `すべて見る（${list.length}）`}</button>` : ''}`;
   $$('#radar-fairs .item').forEach((x) => x.addEventListener('click', () => openSheet(x.dataset.id)));
   if ($('#fair-more')) $('#fair-more').onclick = () => { fairsAll = !fairsAll; renderFairs(); };
 }
