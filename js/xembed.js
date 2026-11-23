@@ -9,8 +9,8 @@
 //  - dnt（追跡しないで）を付けて頼む
 //  - 投稿の写真や文をこちらに取り込まない（X の画面のまま）
 //  - 見たことが X に伝わることは、プライバシーポリシー第5条に書く
-import { esc } from './util.js?v=0.35.5';
-import { S } from './state.js?v=0.35.5';
+import { esc } from './util.js?v=0.36.0';
+import { S } from './state.js?v=0.36.0';
 
 const WIDGETS = 'https://platform.twitter.com/widgets.js';
 let loading = null, io = null;

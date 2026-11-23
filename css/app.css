@@ -544,6 +544,8 @@ ul.plain,ol.plain{padding-left:1.2em;margin:8px 0;line-height:1.7;font-size:14px
 .trust{display:inline-flex;align-items:center;gap:4px;margin:6px 0 0;font-size:12.5px;font-weight:700;border-radius:999px;padding:1px 10px;border:1.5px solid var(--edge);background:var(--card)}
 .trust.ok{background:rgba(79,192,122,.22)}
 .trust.map{background:rgba(255,212,71,.3)}
+.trust-warn{margin:8px 0 2px;padding:8px 12px;border:2px dashed var(--edge);border-radius:12px;background:rgba(255,212,71,.38);display:flex;flex-direction:column;gap:2px;font-size:12.5px;line-height:1.45}
+.trust-warn b{font-size:13.5px}
 .sns-row{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 2px}
 .sns-row .sns{border:2px solid var(--edge);border-radius:999px;padding:3px 12px;font-weight:700;font-size:13px;background:var(--card);color:var(--ink);text-decoration:none;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .staff.pick.lock{background:rgba(255,212,71,.2)}

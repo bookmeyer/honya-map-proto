@@ -1,13 +1,13 @@
 // 読書：いま読んでいる本・読書の時間（「ここから読む」〜「しおりをはさむ」）・どこで読んだか・前回の本・1冊の旅・本の里帰り。画面は reading_ui.js
 // v0.24.0：ボタンの名前を「読書をはじめる」→「ここから読む」、「おわる」→「しおりをはさむ」に。1km以上動いて読んだ記録の名前は「移動読書」（ぶっくまさん 11/18）
 // 中の名前は v0.14 の「移動読書」のなごり：S.trip＝いま計っている読書／S.reads＝おわった読書／S.trips の read=1＝v0.14.0〜0.14.3 の読書の記録（allReads でいっしょに数える）
-import { READ } from './config.js?v=0.35.5';
-import { emit, todayISO, dist, fmtDist, on, fmtDate, fmtMin } from './util.js?v=0.35.5';
-import { S, save } from './state.js?v=0.35.5';
-import { POS } from './position.js?v=0.35.5';
-import { STORES, BYID } from './data.js?v=0.35.5';
-import * as G from './game.js?v=0.35.5';
-import { queueAct } from './events.js?v=0.35.5';
+import { READ } from './config.js?v=0.36.0';
+import { emit, todayISO, dist, fmtDist, on, fmtDate, fmtMin } from './util.js?v=0.36.0';
+import { S, save } from './state.js?v=0.36.0';
+import { POS } from './position.js?v=0.36.0';
+import { STORES, BYID } from './data.js?v=0.36.0';
+import * as G from './game.js?v=0.36.0';
+import { queueAct } from './events.js?v=0.36.0';
 
 // 読書を取り消す（「読んでいなかった」）。v0.14.3 までの記録（店と店のあいだに入れていた分）にも使える
 export function undoRead(id) {

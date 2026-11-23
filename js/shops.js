@@ -4,10 +4,10 @@
 //  - 来る前（誰でも）：ヒント・ジャンル・名前の出し方・フェア・売場の写真・店の発信・スタンプの写真（api/shops.php・api/pic.php）
 //  - 来たあと（その店の射程内でスタンプを押した端末だけ）：書名・著者・写真（api/pick.php。端末の番号と店の番号を POST で送る）
 //  - 開いた1冊は、この端末に覚える（S.picks。写真は開いているあいだだけ）。サーバーに届かないときは、前回読んだ中身で動く
-import { S, save } from './state.js?v=0.35.5';
-import { todayISO, emit } from './util.js?v=0.35.5';
-import { setShops, setStampData, pickOpen } from './data.js?v=0.35.5';
-import { apiBase, deviceId, flush } from './events.js?v=0.35.5';
+import { S, save } from './state.js?v=0.36.0';
+import { todayISO, emit } from './util.js?v=0.36.0';
+import { setShops, setStampData, pickOpen } from './data.js?v=0.36.0';
+import { apiBase, deviceId, flush } from './events.js?v=0.36.0';
 
 const CACHE_KEY = 'meguri_shops_v1';
 const STAMP_KEY = 'meguri_stamp_imgs_v1';
@@ -17,7 +17,7 @@ const DAY = /^\d{4}-\d{2}-\d{2}$/;
 export const GENRES = { lit: '小説・文芸', mys: 'ミステリー・SF・ファンタジー', ess: 'エッセイ・ノンフィクション', biz: 'ビジネス・自己啓発', hum: '人文・社会・思想', his: '歴史', sci: '科学・技術', life: '暮らし・料理・趣味', kid: '絵本・児童書', comic: 'マンガ・ライトノベル', poem: '詩歌・短歌・俳句', etc: 'そのほか' };
 // 店の発信は X・Instagram・その他（11/19 ぶっくまさん。増やすときはサーバーの SHOP_SNS と、ここに足す）
 export const SNS = { x: 'X', ig: 'Instagram', other: 'その他' };
-export const SHOP = { map: new Map(), confirmed: new Set(), recent: new Set(), at: 0, ok: false };
+export const SHOP = { map: new Map(), confirmed: new Set(), recent: new Set(), shut: new Set(), at: 0, ok: false };
 
 const str = (x, n) => (typeof x === 'string' ? x.slice(0, n) : '');
 const ids = (a, n) => (Array.isArray(a) ? a.filter((x) => Number.isInteger(x) && x > 0).slice(0, n) : []);
@@ -52,6 +52,7 @@ function apply(j) {
   SHOP.map = clean(j.shops);
   SHOP.confirmed = new Set(Array.isArray(j.confirmed) ? j.confirmed.filter((x) => typeof x === 'string' && ID.test(x)) : []);
   SHOP.recent = new Set(Array.isArray(j.recent) ? j.recent.filter((x) => typeof x === 'string' && ID.test(x)) : []);
+  SHOP.shut = new Set(Array.isArray(j.shut) ? j.shut.filter((x) => typeof x === 'string' && ID.test(x)) : []);
   setShops(SHOP.map, picUrl); emit('shops');
 }
 // 前回の中身ですぐ動き、サーバーから新しいものを読む
@@ -73,6 +74,7 @@ export const shopOf = (st) => (st && SHOP.map.get(st.i)) || null;
 export function trustOf(st) {
   if (!st || st.demo || st.custom) return null;
   if (SHOP.confirmed.has(st.i)) return { k: 'ok', t: '店が確かめた' };
+  if (SHOP.shut.has(st.i)) return { k: 'map', t: '閉店したかもしれません（利用者から報告が届いています）', shut: 1 };
   if (SHOP.recent.has(st.i)) return { k: 'ok', t: '最近スタンプが押された' };
   if (st.srv) return { k: 'ok', t: '本めぐりの運営が確かめた' };
   if (st.wk) return { k: 'map', t: '名簿にのっている店です（最新の営業は未確認・お出かけ前に営業時間を）' };

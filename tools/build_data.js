@@ -41,7 +41,7 @@ const goneList = []; const goneRec = (r, extra) => { const g = { i: r.i, n: r.n,
 const dups = ov.dups || {}; // 重なり（tools/dedupe.js）：{ 外す店: { to: 残す店 } }
 // 本めぐりの対象に入れない店（11/20 ぶっくまさん「メロンブックス・アニメイトは入れない」）：地図には出さず、記録の表示だけ（閉店とは出さない）
 const NOT_TARGET = /メロンブックス|melonbooks|アニメイト|animate/i; let offN = 0;
-for (let i = out.length - 1; i >= 0; i--) { const r = out[i]; if (ov.closed && ov.closed[r.i]) { goneRec(r, { z: 1 }); out.splice(i, 1); closedN++; continue; } if (dups[r.i] && dups[r.i].to) { goneRec(r, { to: dups[r.i].to }); out.splice(i, 1); dupN++; continue; } if (NOT_TARGET.test(r.n)) { goneRec(r, { h: 1 }); out.splice(i, 1); offN++; continue; } if (ov.renames && ov.renames[r.i]) { r.n = ov.renames[r.i].n; r.ov = 1; renamed++; } }
+for (let i = out.length - 1; i >= 0; i--) { const r = out[i]; if (ov.closed && ov.closed[r.i]) { goneRec(r, { z: 1 }); out.splice(i, 1); closedN++; continue; } if (dups[r.i] && dups[r.i].to) { goneRec(r, { to: dups[r.i].to }); out.splice(i, 1); dupN++; continue; } if (NOT_TARGET.test(r.n)) { goneRec(r, { h: 1 }); out.splice(i, 1); offN++; continue; } if (ov.renames && ov.renames[r.i]) { r.n = ov.renames[r.i].n; r.ov = 1; renamed++; } if (ov.verified && ov.verified[r.i]) { r.sw = 1; r.c = ov.verified[r.i].c; if (ov.verified[r.i].url && /^https?:\/\//.test(ov.verified[r.i].url)) r.w = ov.verified[r.i].url; } }
 console.log('上書き：屋号変更', renamed, '閉店', closedN, '重なり', dupN, '対象外', offN);
 // 追加表（公式店舗一覧にあって OSM にない店。tools/chain_check.js → tools/apply_candidates.js --add で足す）
 const adds = must('additions.json');
