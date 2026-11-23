@@ -4,12 +4,12 @@
 // ・「あとで」の人には、最初のスタンプを押した日の次の日以降に開いたとき（スタンプがなくても、開いた日が3日目になったとき）、答えるまで進めない画面を出す
 // ・お店の近く（射程の中）で開いたときは出さない（出先で入れる手間をかけない）。お店から離れて開いたときに出す
 // 9問の中身・答えのコードは、これまでと同じ（config.js の PROFILE_Q。前に集まった答えとそのまま合わせて数えられる）
-import { PROFILE_Q, PREFS } from './config.js?v=0.36.0';
-import { $, esc, todayISO } from './util.js?v=0.36.0';
-import { S, save } from './state.js?v=0.36.0';
-import * as E from './events.js?v=0.36.0';
-import { toast } from './ui.js?v=0.36.0';
-import { profileComplete, STAT_P } from './profile_ui.js?v=0.36.0';
+import { PROFILE_Q, PREFS } from './config.js?v=0.36.5';
+import { $, esc, todayISO } from './util.js?v=0.36.5';
+import { S, save } from './state.js?v=0.36.5';
+import * as E from './events.js?v=0.36.5';
+import { toast } from './ui.js?v=0.36.5';
+import { profileComplete, STAT_P } from './profile_ui.js?v=0.36.5';
 
 // 都道府県は、地方を押してから県を押す（47の長い一覧から探さなくてよいように）。PREFS は JIS の順（0＝北海道）
 const REGIONS = [['北海道・東北', 0, 6], ['関東', 7, 13], ['中部', 14, 22], ['近畿', 23, 29], ['中国・四国', 30, 38], ['九州・沖縄', 39, 46]];

@@ -1,21 +1,21 @@
 // 地図の画面：現在地まわり（射程・いちばん近い店）・ピンの状態・現在地とお試し歩き・店のページ・さがす・店を足す・行きたい店のお知らせ
-import { RANGE_M, TERRITORY_M, PG, TRIAL_ON, PREFS, MAP_CREDIT } from './config.js?v=0.36.0';
-import { $, arrowOf, bearing, icon, fmtDist, esc, dist, $$, emit, fmtDate, gmapDir, stars, gmapPlace, prefOf } from './util.js?v=0.36.0';
-import { S, save } from './state.js?v=0.36.0';
-import { unlock, sfx } from './audio.js?v=0.36.0';
-import { hasPos, POS, startWatch, setTrial, setPos, jumped, setFollow } from './position.js?v=0.36.0';
-import { STORES, BYID, isLib, isFeat, rarityOf, pickOpen, placeWord, bookTitle, stampSVG, rarityText, lookupIsbn, hideStore, renameStore, search, FEAT } from './data.js?v=0.36.0';
-import * as MAP from './map.js?v=0.36.0';
-import * as G from './game.js?v=0.36.0';
-import * as E from './events.js?v=0.36.0';
-import * as J from './journey.js?v=0.36.0';
-import { dirLink, openModal, closeModal, stopLinks, toast, closeSheet, refreshHud, currentView, switchView, syncStatusCard } from './ui.js?v=0.36.0';
-import { startCheckin, shareStampUI } from './checkin_ui.js?v=0.36.0';
-import { startCard } from './card_ui.js?v=0.36.0';
-import * as SH from './shops.js?v=0.36.0';
-import { addReading } from './reading.js?v=0.36.0';
-import { todayISO } from './util.js?v=0.36.0';
-import { xBoxHTML, mountX } from './xembed.js?v=0.36.0';
+import { RANGE_M, TERRITORY_M, PG, TRIAL_ON, PREFS, MAP_CREDIT } from './config.js?v=0.36.5';
+import { $, arrowOf, bearing, icon, fmtDist, esc, dist, $$, emit, fmtDate, gmapDir, stars, gmapPlace, prefOf } from './util.js?v=0.36.5';
+import { S, save } from './state.js?v=0.36.5';
+import { unlock, sfx } from './audio.js?v=0.36.5';
+import { hasPos, POS, startWatch, setTrial, setPos, jumped, setFollow } from './position.js?v=0.36.5';
+import { STORES, BYID, isLib, isFeat, rarityOf, pickOpen, placeWord, bookTitle, stampSVG, rarityText, lookupIsbn, hideStore, renameStore, search, FEAT } from './data.js?v=0.36.5';
+import * as MAP from './map.js?v=0.36.5';
+import * as G from './game.js?v=0.36.5';
+import * as E from './events.js?v=0.36.5';
+import * as J from './journey.js?v=0.36.5';
+import { dirLink, openModal, closeModal, stopLinks, toast, closeSheet, refreshHud, currentView, switchView, syncStatusCard } from './ui.js?v=0.36.5';
+import { startCheckin, shareStampUI } from './checkin_ui.js?v=0.36.5';
+import { startCard } from './card_ui.js?v=0.36.5';
+import * as SH from './shops.js?v=0.36.5';
+import { addReading } from './reading.js?v=0.36.5';
+import { todayISO } from './util.js?v=0.36.5';
+import { xBoxHTML, mountX } from './xembed.js?v=0.36.5';
 
 // ---------- 行きたい店のお知らせ（地図の下に出る帯） ----------
 let waTimer = null;
@@ -136,7 +136,7 @@ function pickHTML(st) {
 // ぶっくまさん 11/19「Bで」（書名も来た人だけ）「複数写真」「フェア」「SNSは X・Instagram・その他」「行ったらなかったにならないように」
 const mdOf = (d) => (d ? `${Number(d.slice(5, 7))}月${Number(d.slice(8, 10))}日` : '');
 const hostOf = (u) => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch (e) { return 'サイト'; } };
-function trustHTML(st) { const t = SH.trustOf(st); if (!t) return ''; if (t.k === 'map') return `<div class="trust-warn"><b>△ ${t.shut ? '閉店したかもしれません' : 'まだ確かめられていません'}</b><span>${t.shut ? 'ちがう人から2件以上、閉店の報告が届いています。お出かけ前に、お店のホームページや営業時間を' : esc(t.t)}</span></div>`; return `<div class="trust ${t.k}">✔ ${esc(t.t)}</div>`; } // 確かめていない店は、目立つ枠で（v0.36.0・11/23 ぶっくまさん「B」）
+function trustHTML(st) { const t = SH.trustOf(st); if (!t) return ''; if (t.k === 'map') return `<div class="trust-warn"><b>△ ${t.pz ? '休業中のようです' : t.shut ? '閉店したかもしれません' : 'まだ確かめられていません'}</b><span>${t.shut ? 'ちがう人から2件以上、閉店の報告が届いています。お出かけ前に、お店のホームページや営業時間を' : esc(t.t)}</span></div>`; return `<div class="trust ${t.k}">✔ ${esc(t.t)}</div>`; } // 確かめていない店は、目立つ枠で（v0.36.0・11/23 ぶっくまさん「B」）
 function snsHTML(st) {
   const l = ((st.shop && st.shop.sns) || []).slice();
   // 調べて見つけたお店の公式サイト（v0.36.0・data の w）。お店が自分で登録したものと同じサイトなら重ねない
