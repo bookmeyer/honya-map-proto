@@ -1,36 +1,36 @@
 // 起動：記録を読み、データを取り、地図を出し、部品をつなぐ
-import { APP_VER, TRIAL_ON, POLICY_VER, MAP_CREDIT } from './config.js?v=0.36.5';
-import { $, on, $$, isStandalone, mobileOS, emit } from './util.js?v=0.36.5';
-import { load, S, save } from './state.js?v=0.36.5';
-import * as AUDIO from './audio.js?v=0.36.5';
-import { POS, setPos, setFollow, jumped } from './position.js?v=0.36.5';
-import { loadAll, STORES } from './data.js?v=0.36.5';
-import * as MAP from './map.js?v=0.36.5';
-import * as E from './events.js?v=0.36.5';
-import * as SH from './shops.js?v=0.36.5';
-import * as G from './game.js?v=0.36.5';
-import { renderShopChips } from './ui.js?v=0.36.5';
-import * as J from './journey.js?v=0.36.5';
-import * as R from './reading.js?v=0.36.5';
-import { toast, closeSheet, refreshHud, currentView, switchView, setSub, closeModal } from './ui.js?v=0.36.5';
-import { NEAR, openSheet, refreshSheet, applyMapStates, updateNear, showWantAlerts, updateAreaChip, setupSearch, watchDock, locate, setTrialUI, warp, goPrefHome, updateBubbles, jumpTo } from './map_ui.js?v=0.36.5';
-import * as RU from './reading_ui.js?v=0.36.5';
-import { renderRadar } from './radar_ui.js?v=0.36.5';
-import { renderZukan } from './zukan_ui.js?v=0.36.5';
-import { renderMissions, openEventStores } from './mission_ui.js?v=0.36.5';
-import { joinNotice, privacyNotice, policyNotice, renderSettings, applyTheme } from './settings_ui.js?v=0.36.5';
-import * as ST from './start_ui.js?v=0.36.5'; // はじめの画面・SNSの中の帯・ホーム画面に追加の声かけ・「移りました」の帯（v0.28.0）
-import { showOnboarding } from './onboard_ui.js?v=0.36.5';
-import * as UI0 from './ui.js?v=0.36.5'; // 試す入口（__honya）用
-import * as MU from './map_ui.js?v=0.36.5'; // 試す入口（__honya）用
-import * as CU from './checkin_ui.js?v=0.36.5'; // 試す入口（__honya）用
-import * as KU from './card_ui.js?v=0.36.5'; // 試す入口（__honya）用
-import * as SU from './settings_ui.js?v=0.36.5'; // 試す入口（__honya）用
-import * as RAD from './radar_ui.js?v=0.36.5'; // 試す入口（__honya）用
-import * as ZU from './zukan_ui.js?v=0.36.5'; // 試す入口（__honya）用
-import { startTour, autoTour } from './tour_ui.js?v=0.36.5';
-import { requireSetup, setupDone } from './setup_ui.js?v=0.36.5';
-import * as QZ from './quiz_ui.js?v=0.36.5'; // 9つの質問（v0.33.0）
+import { APP_VER, TRIAL_ON, POLICY_VER, MAP_CREDIT } from './config.js?v=0.37.9';
+import { $, on, $$, isStandalone, mobileOS, emit } from './util.js?v=0.37.9';
+import { load, S, save } from './state.js?v=0.37.9';
+import * as AUDIO from './audio.js?v=0.37.9';
+import { POS, setPos, setFollow, jumped } from './position.js?v=0.37.9';
+import { loadAll, STORES } from './data.js?v=0.37.9';
+import * as MAP from './map.js?v=0.37.9';
+import * as E from './events.js?v=0.37.9';
+import * as SH from './shops.js?v=0.37.9';
+import * as G from './game.js?v=0.37.9';
+import { renderShopChips } from './ui.js?v=0.37.9';
+import * as J from './journey.js?v=0.37.9';
+import * as R from './reading.js?v=0.37.9';
+import { toast, closeSheet, refreshHud, currentView, switchView, setSub, closeModal } from './ui.js?v=0.37.9';
+import { NEAR, openSheet, refreshSheet, applyMapStates, updateNear, showWantAlerts, updateAreaChip, setupSearch, watchDock, locate, setTrialUI, warp, goPrefHome, updateBubbles, jumpTo } from './map_ui.js?v=0.37.9';
+import * as RU from './reading_ui.js?v=0.37.9';
+import { renderRadar } from './radar_ui.js?v=0.37.9';
+import { renderZukan } from './zukan_ui.js?v=0.37.9';
+import { renderMissions, openEventStores } from './mission_ui.js?v=0.37.9';
+import { joinNotice, privacyNotice, policyNotice, renderSettings, applyTheme } from './settings_ui.js?v=0.37.9';
+import * as ST from './start_ui.js?v=0.37.9'; // はじめの画面・SNSの中の帯・ホーム画面に追加の声かけ・「移りました」の帯（v0.28.0）
+import { showOnboarding } from './onboard_ui.js?v=0.37.9';
+import * as UI0 from './ui.js?v=0.37.9'; // 試す入口（__honya）用
+import * as MU from './map_ui.js?v=0.37.9'; // 試す入口（__honya）用
+import * as CU from './checkin_ui.js?v=0.37.9'; // 試す入口（__honya）用
+import * as KU from './card_ui.js?v=0.37.9'; // 試す入口（__honya）用
+import * as SU from './settings_ui.js?v=0.37.9'; // 試す入口（__honya）用
+import * as RAD from './radar_ui.js?v=0.37.9'; // 試す入口（__honya）用
+import * as ZU from './zukan_ui.js?v=0.37.9'; // 試す入口（__honya）用
+import { startTour, autoTour } from './tour_ui.js?v=0.37.9';
+import { requireSetup, setupDone } from './setup_ui.js?v=0.37.9';
+import * as QZ from './quiz_ui.js?v=0.37.9'; // 9つの質問（v0.33.0）
 
 async function boot() {
   if (ST.lineEscape()) return; ST.stripLineMark(); // LINE の中なら、Safari／Chrome で開き直してもらう（v0.28.0）
@@ -97,7 +97,9 @@ async function boot() {
     }).catch(() => {});
   }
   // ホーム画面のアイコンから開いているときは、記録を消さないよう端末に頼む（ふつうのタブでは頼まない。確かめる窓を出すブラウザがあるため）
-  if (isStandalone() && navigator.storage && navigator.storage.persist) navigator.storage.persisted().then((p) => p || navigator.storage.persist()).catch(() => {});
+  // v0.37.8：Android の Chrome は、ふつうのタブでも頼む（窓は出ない。11/24 ぶっくまさん「ブラウザでやっている方が346人」→ iPhone はアプリ版が出てから）
+  const androidChrome = mobileOS() === 'android' && /Chrome\//.test(navigator.userAgent) && !/Firefox|SamsungBrowser|EdgA|OPR\//.test(navigator.userAgent);
+  if ((isStandalone() || androidChrome) && navigator.storage && navigator.storage.persist) navigator.storage.persisted().then((p) => p || navigator.storage.persist()).catch(() => {});
   // 9つの質問（v0.33.0）：「あとで」の人に、最初のスタンプの次の日（または開いた日が3日目）に、答えるまで進めない画面を出す
   // お店の近く（射程の中）では出さない。位置がまだ取れていないうちは待つ（出先で出さないように）。ほかの画面が出ているときも待つ
   QZ.countDay(); let askReady = false;

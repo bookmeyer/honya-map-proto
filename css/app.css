@@ -141,7 +141,7 @@ h3 .muted{font-weight:500;letter-spacing:0}
 .banner.action{background:var(--midori);color:var(--on-color)} .banner .btn,.banner button{min-height:34px;padding:4px 12px;margin-left:auto;background:var(--card);color:var(--ink);border:2px solid var(--edge);border-radius:10px;font-weight:700}
 
 /* ---- 入力 ---- */
-textarea,input[type=text],input[type=search]{width:100%;border:2px solid var(--edge);border-radius:var(--r-m);padding:10px 12px;background:var(--card);min-height:46px}
+textarea,input[type=text],input[type=search],input[type=email]{width:100%;border:2px solid var(--edge);border-radius:var(--r-m);padding:10px 12px;background:var(--card);min-height:46px}
 textarea{min-height:76px;resize:vertical}
 .field{margin:10px 0} .field label{display:block;font-size:13px;color:var(--ink-2);margin-bottom:4px;font-weight:700}
 .chk{display:flex;align-items:center;gap:8px;font-size:14px;margin:8px 0}
@@ -579,6 +579,9 @@ ul.plain,ol.plain{padding-left:1.2em;margin:8px 0;line-height:1.7;font-size:14px
 .badge.new{background:var(--gold);color:var(--on-color)}
 .shop-cover{margin:-4px 0 10px;border:var(--edge-w, 2px) solid var(--edge);border-radius:14px;overflow:hidden;height:118px;background:var(--card-2)}
 .shop-cover img{display:block;width:100%;height:100%;object-fit:cover;cursor:zoom-in}
+/* 表紙の写真と、お店のひとことを1つに（v0.37.7） */
+.shop-cover-wrap{margin:-4px 0 12px}.shop-cover-wrap .shop-cover{margin:0}
+.shop-cover-say{margin:6px 4px 0;font-size:13px;line-height:1.5;color:var(--ink-2)}
 .legend .lg-ring{width:12px;height:12px;border-radius:50%;display:inline-block;border:3px double var(--shu);box-sizing:border-box}
 #radar-part{margin-bottom:14px}
 /* v0.28.0 はじめの画面（開いた場所で変える）・上の帯・引き継ぎの箱 */
@@ -602,6 +605,16 @@ ul.plain,ol.plain{padding-left:1.2em;margin:8px 0;line-height:1.7;font-size:14px
 .banner.band.stack .band-x{order:2}
 .banner.band.stack button[data-k]{order:3;margin-left:auto}
 /* v0.29.0 報告の特典のひとこと・めぐり帳の「あなたが直した店」 */
+#pick-cross{position:absolute;left:50%;top:50%;width:44px;height:44px;margin:-22px 0 0 -22px;pointer-events:none;z-index:5;background:linear-gradient(var(--ink,#1B1B1B),var(--ink,#1B1B1B)) center/3px 100% no-repeat,linear-gradient(var(--ink,#1B1B1B),var(--ink,#1B1B1B)) center/100% 3px no-repeat;filter:drop-shadow(0 0 2px #fff) drop-shadow(0 0 2px #fff)}
+.mv-pick{margin:2px 0 8px 26px}
+/* 窓口（v0.37.0）：参加の申し込み・お問い合わせ */
+.ib-form .field label{margin-bottom:6px}.ib-form .chk{align-items:flex-start}.ib-form .chk input{margin-top:4px;flex:none}
+.ib-hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.ib-list{display:flex;flex-direction:column;gap:6px;margin-top:6px}.ib-hit{display:flex;flex-direction:column;align-items:flex-start;text-align:left;padding:8px 12px;border:2px solid var(--edge);border-radius:var(--r-m);background:var(--card);color:var(--ink)}
+.ib-chosen{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.ib-chosen .btn{min-height:36px;padding:4px 10px}
+.ib-err.on{color:var(--shu);font-weight:700;margin-top:8px}
+.ib-done{padding:14px;border:2px solid var(--edge);border-radius:var(--r-m);background:var(--card)}.ib-done b{font-size:18px}
+.ib-join-link{margin-top:10px;text-align:center}.linkish{background:none;border:0;padding:6px;color:var(--ink-2);text-decoration:underline;font-size:13px;font-weight:700}
 .rp-reward{display:flex;gap:6px;align-items:flex-start;margin:10px 0 2px;font-size:13px;font-weight:700;color:var(--ink-2);line-height:1.5}
 .rp-reward .ic{flex:none;width:16px;height:16px;margin-top:2px;color:var(--shu)}
 .rp-reward b{color:var(--shu)}
@@ -682,3 +695,12 @@ details.chap-pro summary b{font-family:var(--display);font-weight:400}
 .xbox .xwait{padding:10px;text-align:center}.xbox .xlink{padding:4px 0}
 /* 2週間をこえた X の投稿は薄く（v0.35.5） */
 .shop-sec .fair.old,.fair-item.old{opacity:.6}
+/* 店のページの下を1行に（v0.37.1） */
+.fix-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px}
+.fix-open{display:flex;align-items:center;gap:8px;flex:1;min-height:48px;padding:6px 12px;border:2px dashed var(--edge);border-radius:var(--r-m);background:transparent;color:var(--ink);text-align:left}
+.fix-open .ic{flex:none;width:18px;height:18px;color:var(--shu)}
+.fix-open span{display:flex;flex-direction:column;line-height:1.3}.fix-open b{font-size:15px}.fix-open small{font-size:12px;color:var(--ink-2)}
+.fix-row .linkish{flex:none;white-space:nowrap}
+.fix-acts .btn{flex:1 1 calc(50% - 5px);min-height:44px}
+/* 申し込みの売り（v0.37.5）：X の #本めぐり の自動表示 */
+.ib-sell{margin:0 0 10px;padding:12px 14px;background:var(--card-2,#FFF3C4);border:2px solid var(--edge);border-radius:var(--r-m)}.ib-sell b{display:block;font-size:16px}.ib-sell span{font-size:14px;color:var(--ink-2)}

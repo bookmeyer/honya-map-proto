@@ -4,10 +4,10 @@
 // 店の情報の報告を送り、運営が直した閉店・名前を受け取る（v0.17.0）
 // 読書と使い方の記録（v0.25.0）：読書の日時・長さ・読んだ場所の種類・移動読書の距離など。本の名前・位置は送らない（queueAct）
 // サーバーに届かないときは、前回読んだ設定で動く。スタンプはいつでも押せる
-import { EVENTS_API, APP_VER, ACT_SINCE, MEET_SINCE, ATTR_SINCE, VIA_SINCE } from './config.js?v=0.36.5';
-import { $, emit, prefOf, todayISO, on, openedVia } from './util.js?v=0.36.5';
-import { S, save } from './state.js?v=0.36.5';
-import { isLib, setFixes } from './data.js?v=0.36.5';
+import { EVENTS_API, APP_VER, ACT_SINCE, MEET_SINCE, ATTR_SINCE, VIA_SINCE } from './config.js?v=0.37.9';
+import { $, emit, prefOf, todayISO, on, openedVia } from './util.js?v=0.37.9';
+import { S, save } from './state.js?v=0.37.9';
+import { isLib, setFixes } from './data.js?v=0.37.9';
 
 export const EV = { list: [], permitted: new Set(), cards: new Set(), ok: false, at: 0 };
 const CACHE_KEY = 'meguri_events_v1';
@@ -41,17 +41,20 @@ function applyFixes(f) {
   const adds = ok && Array.isArray(f.add) ? f.add.filter((s) => s && typeof s.i === 'string' && /^s\d{1,9}$/.test(s.i) && typeof s.n === 'string' && s.n.trim() && inJP(s.la, s.lo)).slice(0, 5000)
     .map((s) => Object.assign({ i: s.i, n: s.n.trim().slice(0, 80), la: s.la, lo: s.lo, srv: 1 }, typeof s.a === 'string' ? { a: s.a.slice(0, 200) } : {}, typeof s.p === 'string' ? { p: s.p.slice(0, 10) } : {}, s.u === 1 ? { u: 1 } : {}, s.t === 'l' ? { t: 'l' } : {})) : [];
   const hide = ok && Array.isArray(f.hide) ? f.hide.filter((x) => typeof x === 'string' && STORE_ID.test(x)).slice(0, 5000) : []; // お店の希望で地図から外した店（v0.26.0）
-  if (setFixes(closed, rename, adds, hide)) emit('fixes');
-  creditReports(closed, rename, hide, adds);
+  // 場所を直した店（v0.36.6・サーバー 1.13.0）：{ 店番号: [緯度, 経度] }
+  const move = new Map();
+  if (ok && f.move && typeof f.move === 'object' && !Array.isArray(f.move)) for (const [k, v] of Object.entries(f.move)) if (STORE_ID.test(k) && Array.isArray(v) && inJP(v[0], v[1]) && move.size < 5000) move.set(k, [+v[0].toFixed(5), +v[1].toFixed(5)]);
+  if (setFixes(closed, rename, adds, hide, move)) emit('fixes');
+  creditReports(closed, rename, hide, adds, move);
 }
 // ---- 地図守り・開拓者（v0.26.0。ぶっくまさん 11/19「むしろみんなで作り上げたい」）：自分の報告が、みんなの地図の直しになったら ----
 // この端末が送った報告（S.reported）と、運営が直したもの（fixes）を照らし合わせる。1つにつき1回だけ、ページのおまけ
-function creditReports(closed, rename, hide, adds) {
+function creditReports(closed, rename, hide, adds, move = new Map()) {
   const rep = Array.isArray(S.reported) ? S.reported : []; if (!rep.length) return;
   S.mapFix = S.mapFix || {}; S.mapAdd = S.mapAdd || {}; let fix = 0, add = 0;
   const cl = new Set([...closed, ...hide]);
   for (const r of rep) {
-    if ((r.k === 'closed' && cl.has(r.s)) || (r.k === 'rename' && rename.has(r.s))) { if (!S.mapFix[r.s]) { S.mapFix[r.s] = todayISO(); fix++; } }
+    if ((r.k === 'closed' && cl.has(r.s)) || (r.k === 'rename' && rename.has(r.s)) || (r.k === 'moved' && move.has(r.s))) { if (!S.mapFix[r.s]) { S.mapFix[r.s] = todayISO(); fix++; } }
     if (r.k === 'add' && typeof r.la === 'number') { const a = adds.find((x) => Math.abs(x.la - r.la) < 0.0015 && Math.abs(x.lo - r.lo) < 0.0018); if (a && !S.mapAdd[a.i]) { S.mapAdd[a.i] = todayISO(); add++; } }
   }
   if (fix || add) { save(); emit('map-credit', { fix, add }); }

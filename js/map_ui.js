@@ -1,21 +1,23 @@
 // 地図の画面：現在地まわり（射程・いちばん近い店）・ピンの状態・現在地とお試し歩き・店のページ・さがす・店を足す・行きたい店のお知らせ
-import { RANGE_M, TERRITORY_M, PG, TRIAL_ON, PREFS, MAP_CREDIT } from './config.js?v=0.36.5';
-import { $, arrowOf, bearing, icon, fmtDist, esc, dist, $$, emit, fmtDate, gmapDir, stars, gmapPlace, prefOf } from './util.js?v=0.36.5';
-import { S, save } from './state.js?v=0.36.5';
-import { unlock, sfx } from './audio.js?v=0.36.5';
-import { hasPos, POS, startWatch, setTrial, setPos, jumped, setFollow } from './position.js?v=0.36.5';
-import { STORES, BYID, isLib, isFeat, rarityOf, pickOpen, placeWord, bookTitle, stampSVG, rarityText, lookupIsbn, hideStore, renameStore, search, FEAT } from './data.js?v=0.36.5';
-import * as MAP from './map.js?v=0.36.5';
-import * as G from './game.js?v=0.36.5';
-import * as E from './events.js?v=0.36.5';
-import * as J from './journey.js?v=0.36.5';
-import { dirLink, openModal, closeModal, stopLinks, toast, closeSheet, refreshHud, currentView, switchView, syncStatusCard } from './ui.js?v=0.36.5';
-import { startCheckin, shareStampUI } from './checkin_ui.js?v=0.36.5';
-import { startCard } from './card_ui.js?v=0.36.5';
-import * as SH from './shops.js?v=0.36.5';
-import { addReading } from './reading.js?v=0.36.5';
-import { todayISO } from './util.js?v=0.36.5';
-import { xBoxHTML, mountX } from './xembed.js?v=0.36.5';
+import { RANGE_M, TERRITORY_M, PG, TRIAL_ON, PREFS, MAP_CREDIT } from './config.js?v=0.37.9';
+import { $, arrowOf, bearing, icon, fmtDist, esc, dist, $$, emit, fmtDate, gmapDir, stars, gmapPlace, prefOf } from './util.js?v=0.37.9';
+import { S, save } from './state.js?v=0.37.9';
+import { unlock, sfx } from './audio.js?v=0.37.9';
+import { hasPos, POS, startWatch, setTrial, setPos, jumped, setFollow } from './position.js?v=0.37.9';
+import { STORES, BYID, isLib, isFeat, rarityOf, pickOpen, placeWord, bookTitle, stampSVG, rarityText, lookupIsbn, hideStore, renameStore, search, FEAT } from './data.js?v=0.37.9';
+import * as MAP from './map.js?v=0.37.9';
+import * as G from './game.js?v=0.37.9';
+import * as E from './events.js?v=0.37.9';
+import * as J from './journey.js?v=0.37.9';
+import { dirLink, openModal, closeModal, stopLinks, toast, closeSheet, refreshHud, currentView, switchView, syncStatusCard } from './ui.js?v=0.37.9';
+import { startCheckin, shareStampUI } from './checkin_ui.js?v=0.37.9';
+import { startCard } from './card_ui.js?v=0.37.9';
+import * as SH from './shops.js?v=0.37.9';
+import { addReading } from './reading.js?v=0.37.9';
+import { todayISO } from './util.js?v=0.37.9';
+import { xBoxHTML, mountX } from './xembed.js?v=0.37.9';
+import { showBand, hideBand } from './start_ui.js?v=0.37.9';
+import { openInbox } from './inbox_ui.js?v=0.37.9';
 
 // ---------- 行きたい店のお知らせ（地図の下に出る帯） ----------
 let waTimer = null;
@@ -142,7 +144,7 @@ function snsHTML(st) {
   // 調べて見つけたお店の公式サイト（v0.36.0・data の w）。お店が自分で登録したものと同じサイトなら重ねない
   if (st.w && /^https?:\/\//.test(st.w) && !l.some((x) => hostOf(x.url) === hostOf(st.w))) l.push({ k: 'web', url: st.w, label: 'お店のホームページ' });
   if (!l.length) return '';
-  return `<div class="sns-row" aria-label="この店の発信">${l.map((x) => `<a class="sns" href="${esc(x.url)}" target="_blank" rel="noopener noreferrer">${x.k === 'x' ? '𝕏 X' : x.k === 'ig' ? 'Instagram' : x.label ? esc(x.label) : esc(hostOf(x.url))}</a>`).join('')}</div>`;
+  return `<div class="sns-row" aria-label="この店の発信">${l.map((x) => `<a class="sns" href="${esc(x.url)}" target="_blank" rel="noopener noreferrer">${x.k === 'x' ? 'お店の𝕏' : x.k === 'ig' ? 'Instagram' : x.label ? esc(x.label) : esc(hostOf(x.url))}</a>`).join('')}</div>`;
 }
 const phRow = (ids) => `<div class="ph-row">${ids.map((id) => `<img src="${esc(SH.picUrl(id))}" alt="" loading="lazy" decoding="async" data-ph>`).join('')}</div>`;
 function fairsHTML(st) {
@@ -153,8 +155,9 @@ function fairsHTML(st) {
   return `<div class="shop-sec"><h3>いま行くと、出会えるもの</h3>${top}${rest.length ? `<div class="fair-more" hidden>${rest.map(one).join('')}</div><button class="btn ghost wide fair-more-btn" type="button">もっと見る（あと${rest.length}件）</button>` : ''}</div>`;
 }
 // 売場の写真：1枚目は店のページの表紙に（v0.27.0）。ここには2枚目から
-function shelfHTML(st) { const sh = st.shop && st.shop.shelf; if (!sh) return ''; const rest = sh.pics.slice(1); return rest.length || sh.say ? `<div class="shop-sec"><h3>売場の写真</h3>${rest.length ? phRow(rest) : ''}${sh.say ? `<div class="muted small">${esc(sh.say)}</div>` : ''}</div>` : ''; }
-function coverHTML(st) { const sh = st.shop && st.shop.shelf; return sh && sh.pics.length ? `<div class="shop-cover"><img src="${esc(SH.picUrl(sh.pics[0]))}" alt="${esc(st.n)}の売場" decoding="async" data-ph></div>` : ''; }
+// お店のひとことは、表紙の写真のすぐ下に（v0.37.7。11/24 ぶっくまさん「写真と売り場の説明が離れていてわかりづらい」）
+function shelfHTML(st) { const sh = st.shop && st.shop.shelf; if (!sh) return ''; const rest = sh.pics.slice(1); return rest.length ? `<div class="shop-sec"><h3>売場の写真</h3>${phRow(rest)}</div>` : sh.say && !sh.pics.length ? `<div class="shop-sec"><h3>売場の写真</h3><div class="muted small">${esc(sh.say)}</div></div>` : ''; }
+function coverHTML(st) { const sh = st.shop && st.shop.shelf; return sh && sh.pics.length ? `<figure class="shop-cover-wrap"><div class="shop-cover"><img src="${esc(SH.picUrl(sh.pics[0]))}" alt="${esc(st.n)}の売場" decoding="async" data-ph></div>${sh.say ? `<figcaption class="shop-cover-say">${esc(sh.say)}</figcaption>` : ''}</figure>` : ''; }
 function srvPickHTML(st) {
   const p = st.rec; const open = pickOpen(st); const seen = SH.pickSeen(st); const g = SH.GENRES[p.genre] || '';
   if (!open || !seen || seen.v !== p.v) {
@@ -186,10 +189,16 @@ function dirWarn(st, d) {
   $('#dw-no').onclick = closeModal; $('#dw-go').addEventListener('click', () => setTimeout(closeModal, 300));
 }
 // 店の前で「お店が見つからない」（v0.26.0・射程内だけ）：怒る場所ではなく、直す場所に
+// 直しの選び方（v0.37.1。11/24 ぶっくまさん「ここが長すぎて使い勝手が悪くなります」→ 4つのボタンと「お店の方へ」を1行に）：「情報がちがう？」を押したときだけ、4つのボタンを出す
+function fixMenu(st, near) {
+  const x = $('#sheet-extra'); x.innerHTML = `<div class="actions fix-acts"><button class="btn" data-f="report">${isLib(st) ? '閉館している' : '閉店している'}</button><button class="btn" data-f="rename">名前が違う</button><button class="btn" data-f="moved">場所が違う</button>${near ? '<button class="btn" data-f="notfound">お店が見つからない</button>' : ''}</div>`;
+  $$('#sheet-extra [data-f]').forEach((b) => b.addEventListener('click', () => { sfx.click(); const f = b.dataset.f; if (f === 'moved') movedBox(st); else if (f === 'notfound') notFoundBox(st); else reportBox(st, f); }));
+  x.scrollIntoView({ block: 'nearest' });
+}
 function notFoundBox(st) {
   const x = $('#sheet-extra');
   x.innerHTML = `<div class="rp"><b>お店が見つかりませんか？</b><div class="muted small">教えていただくと、運営が確かめて、みんなの地図を直します。</div>${REWARD(false)}<div class="actions"><button class="btn" data-nf="closed">閉店していた</button><button class="btn" data-nf="moved">移転したみたい</button><button class="btn" data-nf="rename">名前がちがった</button><button class="btn ghost" data-nf="no">やめる</button></div></div>`;
-  x.querySelectorAll('[data-nf]').forEach((b) => b.addEventListener('click', () => { const k = b.dataset.nf; if (k === 'no') { x.innerHTML = ''; return; } reportBox(st, k === 'rename' ? 'rename' : 'report', { near: true, why: k === 'moved' ? '移転したみたい' : k === 'closed' ? '閉店していた' : '' }); }));
+  x.querySelectorAll('[data-nf]').forEach((b) => b.addEventListener('click', () => { const k = b.dataset.nf; if (k === 'no') { x.innerHTML = ''; return; } if (k === 'moved') { movedBox(st, { near: true, why: '移転したみたい' }); return; } reportBox(st, k === 'rename' ? 'rename' : 'report', { near: true, why: k === 'closed' ? '閉店していた' : '' }); })); // 移転は「場所が違う」で（v0.36.6。前は閉店の報告になっていた）
 }
 // 閉店している・名前が違う（v0.17.0）：この端末の地図はすぐ直し、「運営にも知らせる」なら報告を送る（確かめてから、みんなの地図も直る）
 const SEND_CHK = (what) => `<label class="chk rp-send"><input type="checkbox" id="rp-send" checked> 運営にも知らせる（確かめてから、みんなの地図も${what}）</label>`;
@@ -198,9 +207,6 @@ const THANKS = `運営にも知らせました。直ったら +${MAP_CREDIT.fix}
 // ①② 報告の特典のひとこと（v0.29.0。11/20 ぶっくまさん「見つけて報告した場合に特典がつくことはもっとアピールしたい」）
 const REWARD = (add) => `<div class="rp-reward">${icon('flag')}<span>${add ? `地図に載ったら <b>+${MAP_CREDIT.add}ページ</b>と称号「開拓者」` : `直ったら <b>+${MAP_CREDIT.fix}ページ</b>と称号「地図守り」`}</span></div>`;
 // ④ 店のページ：まだ確かめられていない店（地図データだけ）には「行ったら見てください」
-const reportInvite = (st) => (SH.trustOf(st) || {}).k === 'map'
-  ? `<div class="rp-reward invite">${icon('flag')}<span>この店は、まだ本めぐりで確かめられていません。行ったら、名前や営業が合っているか見てください。ちがっていたら教えていただき、直ったら <b>+${MAP_CREDIT.fix}ページ</b>と称号</span></div>`
-  : `<div class="rp-reward">${icon('flag')}<span>情報がちがっていたら教えてください。直ったら <b>+${MAP_CREDIT.fix}ページ</b>と称号</span></div>`;
 function reportBox(st, a, o = {}) {
   const x = $('#sheet-extra'); const pw = placeWord(st); const tag = (nt) => (o.near ? `【店の前から${o.why ? '・' + o.why : ''}】` : '') + nt; // v0.26.0
   x.innerHTML = a === 'report'
@@ -214,6 +220,44 @@ function reportBox(st, a, o = {}) {
   }
   $('#rn-name').focus(); $('#rn-no').onclick = () => { x.innerHTML = ''; };
   $('#rn-ok').onclick = () => { const n = $('#rn-name').value.trim(); if (!n || n === st.n) { x.innerHTML = ''; return; } const s = send(), nt = note(); if (s && !st.demo && !st.custom) E.queueReport({ kind: 'rename', store: st.i, orig: st.n, name: n.slice(0, 80), note: tag(nt) }); renameStore(st, n); save(); MAP.setStores(STORES); applyMapStates(); updateNear(); toast(`名前を直しました（この端末）${s ? '。' + THANKS : ''}`, 'ok'); openSheet(st.i, true); };
+}
+// 場所が違う（v0.36.6・サーバー 1.13.0。11/24 ぶっくまさん「位置が違う店舗がありました。報告することがいまはできません」）
+// 正しい店の場所を「いまいる場所」「地図で選ぶ」「住所で」から選んで、運営に知らせる。運営が確かめてから、みんなの地図のピンが動く（この端末でもすぐには動かさない）
+// 送るのは、店の番号・選んだ店の場所・ひとことだけ。「いまいる場所」を選んだときは、その場所を店の場所として送る
+function movedBox(st, o = {}, picked = null) {
+  const x = $('#sheet-extra'); const pw = placeWord(st); const tag = (nt) => (o.near ? `【店の前から${o.why ? '・' + o.why : ''}】` : '') + nt;
+  const first = picked ? 'pick' : hasPos() && o.near ? 'here' : 'pick';
+  x.innerHTML = `<div class="rp"><b>この${pw}の正しい場所を教えてください</b><div class="muted small">運営が確かめてから、みんなの地図のピンを動かします。送るのは、${pw}の番号と、選んだ場所と、ひとことだけです。</div>${REWARD(false)}
+    <div class="field"><label>${pw === '図書館' ? '図書館' : 'お店'}がある場所</label>
+      <label class="chk"><input type="radio" name="mv-pos" value="here" ${hasPos() ? '' : 'disabled'} ${first === 'here' ? 'checked' : ''}> いまいる場所（${pw}の前にいるとき）</label>
+      <label class="chk"><input type="radio" name="mv-pos" value="pick" ${first === 'pick' ? 'checked' : ''}> 地図で選ぶ${picked ? `（選んだ場所 ${picked.lat.toFixed(4)}, ${picked.lng.toFixed(4)}）` : ''}</label>
+      <div class="mv-pick"><button type="button" class="btn" id="mv-pick">${picked ? '選び直す' : '地図で場所を選ぶ'}</button></div>
+      <label class="chk"><input type="radio" name="mv-pos" value="addr"> 住所で</label><div class="two ad-addr"><input type="text" class="in" id="mv-addr" maxlength="80" placeholder="例：大阪府大阪市北区梅田3-1-3" enterkeyhint="search"><button type="button" class="btn" id="mv-addr-go">さがす</button></div><div class="muted small" id="mv-addr-out">住所は、場所を調べるために国土地理院の住所検索に送ります。</div></div>
+    ${NOTE_IN('2つ先のビルに移っていた')}<div class="actions"><button class="btn primary" id="mv-ok">運営に知らせる</button><button class="btn ghost" id="mv-no">やめる</button></div></div>`;
+  $('#mv-no').onclick = () => { x.innerHTML = ''; };
+  $('#mv-pick').onclick = () => pickOnMap(st, (ll) => { openSheet(st.i, true); movedBox(st, o, ll); const e2 = $('#sheet-extra'); if (e2) e2.scrollIntoView({ block: 'nearest' }); });
+  let byAddr = null; const out = $('#mv-addr-out');
+  const findAddr = async () => { const q = $('#mv-addr').value.trim().slice(0, 80); if (!q) { toast('住所を入れてください', 'warn'); return; } $('input[name=mv-pos][value=addr]').checked = true; out.textContent = 'さがしています…'; byAddr = null;
+    try { const r = await fetch('https://msearch.gsi.go.jp/address-search/AddressSearch?q=' + encodeURIComponent(q)); const j = r.ok ? await r.json() : []; const f = Array.isArray(j) && j[0]; const co = f && f.geometry && f.geometry.coordinates;
+      if (!co || co.length < 2) { out.textContent = '見つかりませんでした。番地まで入れるか、「地図で選ぶ」で知らせてください'; return; }
+      byAddr = { lat: +co[1], lng: +co[0] }; out.textContent = `見つかった場所：${(f.properties && f.properties.title) || q}（いまのピンから${fmtDist(dist(st.la, st.lo, byAddr.lat, byAddr.lng))}）`;
+    } catch (e) { out.textContent = 'さがせませんでした。ネットを確かめて、もう一度押してください'; } };
+  $('#mv-addr-go').onclick = findAddr; $('#mv-addr').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); findAddr(); } });
+  $('#mv-ok').onclick = () => { const pick = ($('input[name=mv-pos]:checked') || {}).value; let ll = null;
+    if (pick === 'here' && hasPos()) ll = { lat: POS.lat, lng: POS.lon }; else if (pick === 'pick') ll = picked; else if (pick === 'addr') ll = byAddr;
+    if (!ll) { toast(pick === 'addr' ? '住所の「さがす」を押して、場所を見つけてください' : '「地図で場所を選ぶ」を押して、場所を選んでください', 'warn'); return; }
+    if (dist(st.la, st.lo, ll.lat, ll.lng) < 15) { toast('いまのピンと、ほとんど同じ場所です。場所を選び直してください', 'warn'); return; }
+    if (!st.demo && !st.custom) E.queueReport({ kind: 'moved', store: st.i, orig: st.n, lat: +ll.lat.toFixed(5), lon: +ll.lng.toFixed(5), note: tag($('#rp-note').value.trim().slice(0, 100)) });
+    x.innerHTML = ''; toast(THANKS, 'ok'); };
+}
+// 地図で場所を選ぶ（v0.36.6）：店のページを閉じて、真ん中に＋を出す。地図を動かして「ここにする」
+function pickOnMap(st, done) {
+  closeSheet(); MAP.flyTo(st.lo, st.la, 17);
+  const cross = document.createElement('div'); cross.id = 'pick-cross'; cross.setAttribute('aria-hidden', 'true'); $('#view-map').appendChild(cross);
+  const end = () => { cross.remove(); hideBand('pickpos'); };
+  hideBand('pickpos');
+  showBand('pickpos', '地図を動かして、＋をお店の場所に合わせてください', [['ここにする', () => { const c = MAP.center(); end(); done({ lat: c.lat, lng: c.lng }); }], ['やめる', () => { end(); openSheet(st.i, true); }]], 'pin', true);
+  const bx = $('#band-pickpos .band-x'); if (bx) bx.addEventListener('click', () => cross.remove());
 }
 export function openSheet(id, quiet) {
   const st = BYID.get(id); if (!st) return;
@@ -249,11 +293,11 @@ export function openSheet(id, quiet) {
       <button class="btn" data-act="want">${icon('heart')}${want ? '行きたいを外す' : '行きたい'}</button>`}
       ${stamp ? `<button class="btn" data-act="share">${icon('share')}シェア</button>` : ''}${reg.rank >= 2 ? `<button class="btn" data-act="regshare">${icon('crown')}常連度シェア</button>` : ''}
       ${st.demo || st.closed ? '' : `<a class="btn" href="${gmapPlace(st)}" target="_blank" rel="noopener">${icon('search')}営業時間</a>${near || POS.fake ? `<a class="btn" href="${gmapDir(st)}" target="_blank" rel="noopener">${icon('map')}道順</a>` : ''}`}
-      ${!near && !st.closed && (POS.fake || !st.demo) ? '<button class="btn" data-act="checkin">来た記録だけ（スタンプなし）</button>' : ''}
+      ${!near && !st.closed && (POS.fake || !st.demo) ? '<button class="btn" data-act="checkin" title="スタンプは押さず、来たことだけ記録します">来た記録だけ</button>' : ''}
       ${st.demo || st.closed ? '' : '<div class="muted small" style="grid-column:1/-1;width:100%">営業時間・道順は、Googleマップが開きます</div>'}
     </div>${st.demo ? '' : `<div class="reg"><div class="reg-h"><span class="badge ${reg.rank >= 3 ? 'shu' : reg.rank >= 2 ? 'gold' : ''}">常連度 ${reg.rank ? esc(reg.name) : 'まだ'}</span><span class="muted small">来店 ${reg.days}日${reg.next ? `・あと${reg.toNext}日で「${esc(reg.next.name)}」` : '・最高位'}</span></div><div class="rally" role="img" aria-label="常連度 ${G.REGULAR_NAMES.length}段階のうち${reg.rank}">${G.REGULAR_NAMES.map((nm, k) => `<i class="${k < reg.rank ? (k === G.REGULAR_NAMES.length - 1 ? 'top' : 'on') : ''}" title="${esc(nm)}">${k < reg.rank ? icon('check') : ''}</i>`).join('')}</div><div class="rally-l"><span>${esc(G.REGULAR_NAMES[0])}</span><span>${esc(G.REGULAR_NAMES[G.REGULAR_NAMES.length - 1])}</span></div></div>`}${hist}
     <div class="muted small" style="margin-top:10px">${st.a ? `${esc(st.a)}　${esc(prefOf(st))}` : st.aa ? `${esc(st.aa)} 付近<span class="addr-note">（位置からの目安）</span>` : `${st.custom ? '' : '住所の情報なし（地図データより）'}　${esc(prefOf(st))}`}</div>${st.demo || st.custom ? '' : `<div class="muted small">${esc(srcLine)}</div>`}
-    ${st.demo || st.custom || st.closed ? '' : `${reportInvite(st)}<div class="actions"><button class="btn ghost" data-act="report">${isLib(st) ? '閉館している' : '閉店している'}</button><button class="btn ghost" data-act="rename">名前が違う</button>${near ? '<button class="btn ghost" data-act="notfound">お店が見つからない</button>' : ''}</div>`}
+    ${st.demo || st.custom || st.closed ? '' : `<div class="fix-row"><button class="fix-open" data-act="fixmenu">${icon('flag')}<span><b>情報がちがう？</b><small>${(SH.trustOf(st) || {}).k === 'map' ? 'まだ確かめられていない店です・' : ''}直ったら +${MAP_CREDIT.fix}ページ</small></span></button>${st.part ? '' : `<button class="linkish" data-act="join">${isLib(st) ? '図書館' : 'お店'}の方へ</button>`}</div>`}
     <div id="sheet-extra"></div>`;
   mountX($('#sheet-body')); // お店の X の投稿（v0.35.0）
   const fm = $('#sheet-body .fair-more-btn'); if (fm) fm.onclick = () => { const box = $('#sheet-body .fair-more'); if (!box) return; box.hidden = false; fm.remove(); mountX(box); };
@@ -264,9 +308,12 @@ export function openSheet(id, quiet) {
   const cv = $('#sheet-body .pick-cover[data-isbn]:not(#sheet-pick .pick-cover)'); if (cv) lookupIsbn(cv.dataset.isbn).then((bk) => { if (bk && bk.cover && cv.isConnected) cv.innerHTML = `<img src="${esc(bk.cover)}" alt="" referrerpolicy="no-referrer">`; });
   $$('#sheet-body [data-act]').forEach((btn) => btn.addEventListener('click', () => { sfx.click(); const a = btn.dataset.act;
     if (a === 'checkin') startCheckin(st, near); else if (a === 'card') startCard(st); else if (a === 'share') shareStampUI(st); else if (a === 'regshare') shareStampUI(st, { regular: true }); else if (a === 'warp') warp(st);
+    else if (a === 'fixmenu') fixMenu(st, near);
     else if (a === 'report' || a === 'rename') reportBox(st, a);
     else if (a === 'dir') dirWarn(st, d);
     else if (a === 'notfound') notFoundBox(st);
+    else if (a === 'moved') movedBox(st);
+    else if (a === 'join') openInbox('join', { store: { i: st.i, n: st.n, lib: isLib(st) } }); // 参加の申し込み（v0.37.0・まだ参加店でない店だけ）
     else { const r2 = G.toggleWant(id); applyMapStates(); refreshHud(); openSheet(id, true); r2.rewards.forEach((x) => toast(x, 'ok')); } }));
   const sheet = $('#sheet'); sheet.dataset.id = id; sheet.hidden = false;
   if (!quiet) { if (currentView !== 'map') switchView('map'); MAP.flyTo(st.lo, st.la, 14); G.noteLook(id).forEach((x) => toast(x, 'ok')); refreshHud(); }

@@ -1,6 +1,6 @@
 // 記録（この端末の中だけ）。版の違いを吸収して読み込み、まとめて書き込む
-import { SKINS, MAP_SKINS, STORAGE_KEY, LEGACY_KEYS, APP_VER, PROFILE_Q } from './config.js?v=0.36.5';
-import { $, emit, debounce } from './util.js?v=0.36.5';
+import { SKINS, MAP_SKINS, STORAGE_KEY, LEGACY_KEYS, APP_VER, PROFILE_Q } from './config.js?v=0.37.9';
+import { $, emit, debounce } from './util.js?v=0.37.9';
 
 export const empty = () => ({
   v: 4, visits: [], cards: [], wants: [], custom: [], stamps: {}, pg: 0, pgDay: {},
@@ -43,7 +43,7 @@ function sanitize(o) {
   o.trips = o.trips.filter((g) => ok(g) && isDay(g.d)).map((g) => Object.assign(g, { min: num(g.min), m: num(g.m) }));
   o.evTitles = o.evTitles.filter((x) => ok(x) && isDay(x.d));
   const str = (x, n) => (typeof x === 'string' ? x.slice(0, n) : ''); // まだ送れていない店の報告（v0.17.0）
-  o.repOut = o.repOut.filter((r) => ok(r) && ['closed', 'rename', 'add'].includes(r.kind) && typeof r.store === 'string').slice(-50).map((r) => ({ kind: r.kind, store: str(r.store, 40), orig: str(r.orig, 80), name: str(r.name, 80), note: str(r.note, 200), lat: num(r.lat, null), lon: num(r.lon, null), place: str(r.place, 8), at: str(r.at, 40) }));
+  o.repOut = o.repOut.filter((r) => ok(r) && ['closed', 'rename', 'add', 'moved'].includes(r.kind) && typeof r.store === 'string').slice(-50).map((r) => ({ kind: r.kind, store: str(r.store, 40), orig: str(r.orig, 80), name: str(r.name, 80), note: str(r.note, 200), lat: num(r.lat, null), lon: num(r.lon, null), place: str(r.place, 8), at: str(r.at, 40) }));
   o.actOut = o.actOut.filter((x) => ok(x) && ['open', 'read', 'done', 'sato', 'tabi'].includes(x.k) && typeof x.id === 'string' && /^[a-z][0-9a-z-]{1,23}$/.test(x.id)).slice(-500).map((x) => ((x.k === 'tabi' && ['open', 'share'].includes(x.sub)) || (x.k === 'open' && ['app', 'web', 'home', 'pc'].includes(x.sub)) ? { k: x.k, id: x.id, at: str(x.at, 40), sub: x.sub } : { k: x.k, id: x.id, at: str(x.at, 40) })); // まだ送れていない読書と使い方の記録（v0.25.0）
   o.meetOut = o.meetOut.filter((x) => ok(x) && typeof x.store === 'string' && typeof x.isbn === 'string').slice(-200).map((x) => ({ store: str(x.store, 40), isbn: str(x.isbn, 13), at: str(x.at, 40) })); // 出会った本（v0.26.0・端末の番号なしで送る）
   o.attrOut = o.attrOut.filter((x) => ok(x) && /^97[89]\d{10}$/.test(x.isbn) && /^\d{4}-\d{2}$/.test(x.m)).slice(-200).map((x) => ({ isbn: x.isbn, m: x.m, gen: /^(10|20|30|40|50|60|70)$/.test(x.gen) ? x.gen : '', sex: /^[fmxn]$/.test(x.sex) ? x.sex : '', after: num(x.after) })); // 出会った本の世代・性別（v0.29.0・店と日なし）

@@ -1,7 +1,7 @@
 // 本屋・図書館・ラリーのデータ。スタンプ（その店だけの絵柄）の見た目もここ
-import { DEMO_STORE } from './config.js?v=0.36.5';
-import { sleep, $, weekKey, prefOf, hash32, esc, todayISO, dist } from './util.js?v=0.36.5';
-import { S } from './state.js?v=0.36.5';
+import { DEMO_STORE } from './config.js?v=0.37.9';
+import { sleep, $, weekKey, prefOf, hash32, esc, todayISO, dist } from './util.js?v=0.37.9';
+import { S } from './state.js?v=0.37.9';
 
 export let STORES = [];
 export let RALLIES = [];
@@ -31,10 +31,11 @@ let GONE = [];
 // 閉店した店は地図・さがす・近くから外す。ただしスタンプや来た記録の表示のために BYID には残す（closed: 1）
 // 管理画面（CSV）で足した店（v0.18.0。店番号 s＋番号）も重ねる。月1回、明晰が店のデータに書き写したら、ファイルの店のほうを使う
 // hide＝お店の希望で地図から外した店（v0.26.0）。閉店とちがい、記録には「閉店」と出さない
-let FIX = { closed: new Set(), rename: new Map(), adds: [], hide: new Set(), key: '' };
-export function setFixes(closed, rename, adds = [], hide = []) {
-  const key = JSON.stringify([closed, [...rename], adds, hide]); if (key === FIX.key) return false;
-  FIX = { closed: new Set(closed), rename, adds, hide: new Set(hide), key }; rebuild(); return true;
+// move＝場所を直した店（v0.36.6）：{ 店番号 → [緯度, 経度] }。ピンをその場所に動かす
+let FIX = { closed: new Set(), rename: new Map(), adds: [], hide: new Set(), move: new Map(), key: '' };
+export function setFixes(closed, rename, adds = [], hide = [], move = new Map()) {
+  const key = JSON.stringify([closed, [...rename], adds, hide, [...move]]); if (key === FIX.key) return false;
+  FIX = { closed: new Set(closed), rename, adds, hide: new Set(hide), move, key }; rebuild(); return true;
 }
 // ---- 店のページ（v0.26.0・shops.js が渡す）：書店員さんの1冊（来る前はヒントだけ）・フェア・売場の写真・店の発信・スタンプの写真 ----
 let SHOPMAP = new Map(), PICURL = () => '';
@@ -72,7 +73,8 @@ export function rebuild(base) {
   const adds = FIX.adds.filter((s) => !have.has(s.i) && (s.t !== 'l' || S.settings.showLib !== false)).map((s) => (s.k == null ? Object.assign(s, { k: around(s, s.t === 'l' ? LIBS : BASE) }) : s));
   const all = [DEMO_STORE, ...BASE, ...libs, ...adds, ...S.custom.map((c) => Object.assign({}, c, { custom: 1 }))].filter((s) => !S.hidden[s.i]);
   // 名前：この端末で直した名前 → 運営が直した名前（「名前を確認ずみ」）→ 地図データの名前
-  const named = (s) => { const own = S.renames && S.renames[s.i]; const fx = FIX.rename.get(s.i); return own ? Object.assign({}, s, { n: own.n, fix: 1 }) : fx ? Object.assign({}, s, { n: fx, ov: 1 }) : s; };
+  const named0 = (s) => { const own = S.renames && S.renames[s.i]; const fx = FIX.rename.get(s.i); return own ? Object.assign({}, s, { n: own.n, fix: 1 }) : fx ? Object.assign({}, s, { n: fx, ov: 1 }) : s; };
+  const named = (s) => { const r = named0(s); const mv = FIX.move.get(s.i); return mv ? Object.assign({}, r, { la: mv[0], lo: mv[1], mv: 1 }) : r; }; // 運営が直した場所（v0.36.6）
   // 店のページ（v0.26.0）：サーバーの書店員さんの1冊は、書名なし（来た人だけ shops.js openPick）。picks.json の1冊（見本）はそのまま
   for (const s of all) { const sh = SHOPMAP.get(s.i) || null; s.shop = sh; s.part = partOf(s); if (sh && sh.pick) s.rec = { who: sh.pick.who, title: '', author: '', hint: sh.pick.hint, genre: sh.pick.genre, srv: 1, v: sh.pick.v, photo: sh.pick.pics ? 'srv' : '' }; else if (s.rec && s.rec.srv) delete s.rec; }
   STORES = all.filter((s) => !FIX.closed.has(s.i) && !FIX.hide.has(s.i)).map(named);

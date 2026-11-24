@@ -16,8 +16,9 @@ const TEST_API = 'https://tsunagubooks.com/meguri-test/api/';
 const PROD_API = 'https://tsunagubooks.com/meguri/api/';
 const PUSH = process.argv.includes('--push');
 
-const KEEP = (f) => /^(index|howto|privacy|terms)\.html$/.test(f) || /^(sw\.js|manifest\.webmanifest|ogp\.png|icon-[a-z0-9-]+\.png|apple-touch-icon\.png)$/.test(f) || /^(css|js|data)\//.test(f);
+const KEEP = (f) => /^(index|howto|privacy|terms|join|contact)\.html$/.test(f) || /^(sw\.js|manifest\.webmanifest|ogp\.png|icon-[a-z0-9-]+\.png|apple-touch-icon\.png)$/.test(f) || /^(css|js|data)\//.test(f);
 const files = execSync('git ls-files', { cwd: SRC, encoding: 'utf8' }).split('\n').filter(Boolean).filter(KEEP);
+for (const f of ['join.html', 'contact.html']) if (!files.includes(f) && fs.existsSync(path.join(SRC, f))) files.push(f); // 窓口のページ（v0.37.0。まだ git に入っていないとき）
 // まだ git に入っていない新しい部品（js/*.js など）も写す
 for (const d of ['js', 'css']) for (const f of fs.readdirSync(path.join(SRC, d))) { const r = `${d}/${f}`; if (!files.includes(r) && fs.statSync(path.join(SRC, r)).isFile()) files.push(r); }
 
@@ -26,7 +27,7 @@ const noindex = (s) => s.replace(/<head>/i, '<head>\n<meta name="robots" content
 const TRANSFORM = {
   'js/config.js': (s) => { if (!s.includes(`'${PROD_API}'`)) throw new Error('config.js に本番の送り先が見つかりません（書きかえ方を見直してください）'); return s.replace(`'${PROD_API}'`, `'${TEST_API}'`); },
   'index.html': (s) => noindex(s).replace(/(<body[^>]*>)/i, `$1\n${BAND}`),
-  'howto.html': noindex, 'privacy.html': noindex, 'terms.html': noindex,
+  'howto.html': noindex, 'privacy.html': noindex, 'terms.html': noindex, 'join.html': noindex, 'contact.html': noindex,
   'manifest.webmanifest': (s) => s.replace(/"name":\s*"[^"]*"/, '"name": "本めぐりテスト"').replace(/"short_name":\s*"[^"]*"/, '"short_name": "テスト版"'),
   // テスト版だけのダミーデータ（?dummy=1。v0.35.2〜・tools/test_dummy.js）
   'js/shops.js': (s) => DUMMY.patchShops(s),

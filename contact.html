@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://tsunagubooks.com http://localhost:* http://127.0.0.1:*; object-src 'none'; base-uri 'self'; form-action 'none'">
+<title>お問い合わせ・ご要望｜本めぐり</title>
+<meta name="description" content="本めぐりへのお問い合わせ・ご要望・取材のご依頼はこちら。">
+<meta property="og:title" content="お問い合わせ・ご要望｜本めぐり">
+<meta property="og:description" content="本めぐりへのお問い合わせ・ご要望・取材のご依頼はこちら。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="本めぐり">
+<meta property="og:url" content="https://meguri.tsunagubooks.com/contact.html">
+<meta property="og:image" content="https://meguri.tsunagubooks.com/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://meguri.tsunagubooks.com/contact.html">
+<link rel="icon" href="icon-192.png?v=4">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=4">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+P+One&family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
+<!-- お問い合わせ・ご要望（v0.37.0）。11/24 ぶっくまさん「その他問い合わせ、要望窓口を入れたい（ユーザーやメディア）」。取材の方はアプリを入れずにここから。?k=media で「取材・メディア」を選んでおける -->
+<style>
+  :root { --ink: #1B1B1B; --ink2: #5A554D; --paper: #FFF8EA; --card: #FFFFFF; --line: #E6DCC8; --shu: #FF6A48; --gold: #FFD447; --edge: #1B1B1B; --r-m: 14px; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 500 16px/1.75 "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "Hiragino Sans", "Yu Gothic UI", "Meiryo", system-ui, sans-serif; }
+  main { max-width: 560px; margin: 0 auto; padding: 20px 16px 48px; }
+  h1 { font-family: "Mochiy Pop P One", sans-serif; font-size: 26px; line-height: 1.3; margin: 8px 0 6px; }
+  h2 { font-family: "Mochiy Pop P One", sans-serif; font-size: 19px; margin: 26px 0 8px; }
+  .lead { margin: 0 0 14px; }
+  ul.points { margin: 0; padding-left: 20px; }
+  .box { background: var(--card); border: 2px solid var(--ink); border-radius: 16px; padding: 14px 16px; }
+  .note { color: var(--ink2); font-size: 13px; text-align: center; margin-top: 18px; }
+  a { color: inherit; }
+  /* フォーム（アプリの見た目に合わせる） */
+  .muted { color: var(--ink2); } .small { font-size: 13px; }
+  .field { margin: 12px 0; } .field > label { display: block; font-size: 13px; color: var(--ink2); margin-bottom: 6px; font-weight: 700; }
+  .chk { display: flex; align-items: flex-start; gap: 8px; font-size: 15px; margin: 8px 0; } .chk input { margin-top: 6px; flex: none; width: 18px; height: 18px; accent-color: var(--shu); }
+  textarea, input[type=text], input[type=search], input[type=email], select { width: 100%; font: inherit; color: inherit; border: 2px solid var(--edge); border-radius: var(--r-m); padding: 10px 12px; background: var(--card); min-height: 46px; }
+  textarea { min-height: 90px; resize: vertical; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 10px 18px; border-radius: var(--r-m); border: 2px solid var(--edge); background: var(--card); color: var(--ink); font: inherit; font-weight: 700; cursor: pointer; }
+  .btn.primary { background: var(--shu); box-shadow: 3px 3px 0 var(--edge); }
+  .btn.ghost { background: transparent; border-color: transparent; color: var(--ink2); }
+  .btn.small { min-height: 36px; padding: 4px 10px; font-size: 14px; }
+  .btn:disabled { opacity: .6; }
+  .actions { display: flex; gap: 10px; margin-top: 16px; } .actions .btn { flex: 1; }
+  .ib-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .ib-list { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+  .ib-hit { display: flex; flex-direction: column; align-items: flex-start; text-align: left; padding: 8px 12px; border: 2px solid var(--edge); border-radius: var(--r-m); background: var(--card); color: var(--ink); font: inherit; cursor: pointer; }
+  .ib-chosen { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .ib-err.on { color: #C1121F; font-weight: 700; margin-top: 8px; }
+  .ib-done { padding: 16px; border: 2px solid var(--edge); border-radius: var(--r-m); background: var(--card); } .ib-done b { font-size: 19px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <h1>お問い合わせ・ご要望</h1>
+  <p class="lead">「本めぐり」（全国の本屋と図書館をめぐってスタンプを集める地図アプリ）への、使い方の質問・不具合・こんな機能がほしい・取材のご依頼などはこちらから。</p>
+  <p class="muted small">お店の1冊やフェアをのせたい書店・図書館の方は、<a href="join.html">参加のお申し込み</a>からどうぞ。メールでも受け付けています：meguri@tsunagubooks.co.jp</p>
+  <div id="ib-root" data-mode="contact"><p class="muted">読み込んでいます…</p></div>
+  <p class="note"><a href="./">本めぐりをひらく</a>　<a href="join.html">書店・図書館の方へ</a>　<a href="terms.html">利用規約</a>　<a href="privacy.html">プライバシーポリシー</a></p>
+</main>
+<script type="module" src="js/inbox_page.js?v=0.37.9"></script>
+</body>
+</html>
